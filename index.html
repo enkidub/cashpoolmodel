@@ -142,6 +142,12 @@ h1 em { font-style: italic; color: var(--gold); }
 .btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--rule); }
 .btn-outline:hover { border-color: var(--navy); background: var(--paper-w); }
 
+.trust-line {
+  margin-top: 28px; display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--ink-fnt); font-weight: 400;
+}
+.trust-line::before { content: ''; width: 22px; height: 1px; background: var(--rule); flex-shrink: 0; }
+
 /* ── SECTION ── */
 .section { padding: clamp(40px, 5vw, 72px) 0; }
 .section-alt { background: var(--paper-w); }
@@ -161,53 +167,94 @@ h2 {
 }
 .sec-sub { font-size: 15px; color: var(--ink-mid); font-weight: 300; max-width: 50ch; line-height: 1.65; }
 
-/* ── WAITLIST ── */
-.wl {
-  background: var(--navy); border-radius: var(--rl);
-  padding: clamp(36px, 5vw, 56px) clamp(28px, 5vw, 52px);
-  position: relative; overflow: hidden; margin-top: 36px;
+/* ── REPORT PREVIEW ── */
+.preview-wrap {
+  position: relative; margin-top: 36px;
+  border-radius: var(--rl); overflow: hidden;
+  box-shadow: var(--sh-lg); border: 1px solid var(--rule);
 }
-.wl::before {
-  content: ''; position: absolute; top: -60px; right: -60px;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, rgba(29,78,216,.13) 0%, transparent 65%);
+.preview-chrome {
+  background: var(--paper-w); border-bottom: 1px solid var(--rule);
+  padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+}
+.preview-dots { display: flex; gap: 6px; flex-shrink: 0; }
+.preview-dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--rule); }
+.preview-dots span:nth-child(1) { background: #fc5f57; }
+.preview-dots span:nth-child(2) { background: #febc2e; }
+.preview-dots span:nth-child(3) { background: #28c840; }
+.preview-url {
+  flex: 1; font-size: 11px; color: var(--ink-fnt);
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 3px 10px; font-family: var(--mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.preview-badge {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-p);
+  border: 1px solid rgba(154,110,16,.2); padding: 2px 8px; border-radius: 3px; flex-shrink: 0;
+}
+.preview-doc {
+  background: var(--white); padding: clamp(16px, 3vw, 28px) clamp(16px, 3vw, 28px) 48px;
+}
+.preview-doc-hd {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule);
+}
+.preview-doc-title {
+  font-family: var(--serif); font-size: clamp(15px, 2vw, 19px);
+  font-weight: 600; color: var(--navy); margin-bottom: 3px;
+}
+.preview-doc-sub { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
+.preview-verdict {
+  font-size: 11px; font-weight: 700; color: #fff; background: #16a34a;
+  padding: 5px 11px; border-radius: 4px; letter-spacing: .5px; white-space: nowrap; flex-shrink: 0;
+}
+.preview-kpis {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;
+}
+@media (max-width: 560px) { .preview-kpis { grid-template-columns: repeat(2, 1fr); } }
+.preview-kpi {
+  padding: 11px 13px; border: 1px solid var(--rule);
+  border-radius: var(--r); background: var(--paper);
+}
+.preview-kpi-val {
+  font-family: var(--mono); font-size: clamp(16px, 2.2vw, 20px);
+  font-weight: 400; color: var(--navy); margin-bottom: 2px; line-height: 1.2;
+}
+.preview-kpi-label { font-size: 10px; color: var(--ink-fnt); font-weight: 500; line-height: 1.3; }
+.preview-section-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--ink-fnt); margin-bottom: 10px;
+}
+.preview-chart-svg { width: 100%; max-width: 560px; display: block; overflow: visible; }
+.preview-matrix-wrap { margin-top: 20px; }
+.preview-matrix {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 3px; max-width: 260px;
+}
+.pm-cell {
+  height: 22px; border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-family: var(--mono);
+}
+.pm-g2 { background: #15803d; color: rgba(255,255,255,.9); }
+.pm-g1 { background: #4ade80; color: #14532d; }
+.pm-am { background: #fbbf24; color: #78350f; }
+.pm-rd { background: #fca5a5; color: #7f1d1d; }
+.preview-matrix-labels {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 3px; max-width: 260px; margin-bottom: 4px;
+}
+.pm-lbl { font-size: 8px; color: var(--ink-fnt); font-family: var(--mono); text-align: center; }
+.preview-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 72px;
+  background: linear-gradient(to bottom, transparent, var(--white));
   pointer-events: none;
 }
-.wl::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--gold), transparent 55%);
+.preview-note {
+  text-align: center; font-size: 11px; color: var(--ink-fnt);
+  margin-top: 14px; font-style: italic;
 }
-.wl-label { font-size: 9px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 11px; }
-.wl-title {
-  font-family: var(--serif); font-size: clamp(19px, 2.8vw, 30px);
-  font-weight: 600; color: #fff; letter-spacing: -.4px; line-height: 1.2;
-  max-width: 440px; margin-bottom: 9px;
-}
-.wl-sub { font-size: 14px; color: rgba(255,255,255,.42); max-width: 420px; margin-bottom: 26px; font-weight: 300; line-height: 1.65; }
-.wl-form { display: flex; gap: 8px; max-width: 420px; flex-wrap: wrap; }
-.wl-input {
-  flex: 1; min-width: 190px;
-  padding: 11px 15px; border-radius: var(--r);
-  border: 1.5px solid rgba(255,255,255,.11); background: rgba(255,255,255,.07);
-  color: #fff; font-family: var(--sans); font-size: 13px; outline: none;
-  transition: border-color .15s;
-}
-.wl-input::placeholder { color: rgba(255,255,255,.28); }
-.wl-input:focus { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.1); }
-.wl-btn {
-  padding: 11px 22px; border-radius: var(--r);
-  background: var(--gold); color: #fff;
-  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
-  font-family: var(--sans); transition: all .16s; white-space: nowrap;
-}
-.wl-btn:hover { background: var(--gold-h); transform: translateY(-1px); }
-.wl-note { font-size: 11px; color: rgba(255,255,255,.22); margin-top: 10px; }
-.wl-perks {
-  display: flex; gap: 18px; flex-wrap: wrap;
-  margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.07);
-}
-.wl-perk { font-size: 12px; color: rgba(255,255,255,.42); display: flex; align-items: center; gap: 6px; }
-.wl-perk::before { content: '✓'; color: #4ade80; font-weight: 700; font-size: 11px; }
 
 /* ── HOW IT WORKS ── */
 .how {
@@ -244,18 +291,67 @@ h2 {
   transition: transform .18s, box-shadow .18s, border-color .18s;
 }
 .fc:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); border-color: #c8c3ba; }
-.fc-icon {
-  width: 38px; height: 38px; margin-bottom: 14px;
-  color: var(--navy);
-}
+.fc-icon { width: 38px; height: 38px; margin-bottom: 14px; color: var(--navy); }
 .fc-t { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 7px; }
 .fc-d { font-size: 12px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
 
-/* ── NEWSLETTER ── */
+/* ── WAITLIST ── */
+.wl {
+  background: var(--navy); border-radius: var(--rl);
+  padding: clamp(36px, 5vw, 56px) clamp(28px, 5vw, 52px);
+  position: relative; overflow: hidden; margin-top: 36px;
+}
+.wl::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(29,78,216,.13) 0%, transparent 65%);
+  pointer-events: none;
+}
+.wl::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent 55%);
+}
+.wl-label { font-size: 9px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 11px; }
+.wl-title {
+  font-family: var(--serif); font-size: clamp(19px, 2.8vw, 30px);
+  font-weight: 600; color: #fff; letter-spacing: -.4px; line-height: 1.2;
+  max-width: 440px; margin-bottom: 9px;
+}
+.wl-sub { font-size: 14px; color: rgba(255,255,255,.55); max-width: 420px; margin-bottom: 26px; font-weight: 300; line-height: 1.65; }
+.wl-form { display: flex; gap: 8px; max-width: 420px; flex-wrap: wrap; }
+.wl-input {
+  flex: 1; min-width: 190px;
+  padding: 11px 15px; border-radius: var(--r);
+  border: 1.5px solid rgba(255,255,255,.11); background: rgba(255,255,255,.07);
+  color: #fff; font-family: var(--sans); font-size: 13px; outline: none;
+  transition: border-color .15s;
+}
+.wl-input::placeholder { color: rgba(255,255,255,.28); }
+.wl-input:focus { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.1); }
+.wl-btn {
+  padding: 11px 22px; border-radius: var(--r);
+  background: var(--gold); color: #fff;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); transition: all .16s; white-space: nowrap;
+}
+.wl-btn:hover { background: var(--gold-h); transform: translateY(-1px); }
+.wl-pricing {
+  margin-top: 14px; font-size: 11px; color: rgba(255,255,255,.28);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.wl-pricing strong { color: rgba(255,255,255,.5); font-weight: 500; }
+.wl-pricing-sep { color: rgba(255,255,255,.15); }
+.wl-perks {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.07);
+}
+.wl-perk { font-size: 12px; color: rgba(255,255,255,.42); display: flex; align-items: center; gap: 6px; }
+.wl-perk::before { content: '✓'; color: #4ade80; font-weight: 700; font-size: 11px; }
+
+/* ── NEWSLETTER (blog only) ── */
 .nl {
   background: var(--paper-w); border: 1px solid var(--rule);
-  border-radius: var(--rl); padding: 32px; text-align: center;
-  margin-top: 40px;
+  border-radius: var(--rl); padding: 32px; text-align: center; margin-top: 40px;
 }
 .nl-title { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
 .nl-sub { font-size: 13px; color: var(--ink-mid); margin-bottom: 18px; font-weight: 300; }
@@ -307,6 +403,7 @@ footer {
 h1           { animation-delay: .11s; }
 .hero-sub    { animation-delay: .18s; }
 .actions     { animation-delay: .24s; }
+.trust-line  { animation-delay: .30s; }
 </style>
 </head>
 <body>
@@ -353,32 +450,107 @@ h1           { animation-delay: .11s; }
       <button class="btn btn-navy" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access →</button>
       <a class="btn btn-outline" href="#how">See How It Works</a>
     </div>
+    <div class="trust-line">Built by treasury practitioners — independent of banks and vendors.</div>
   </div>
 </section>
 
-<!-- WAITLIST -->
-<section class="section section-bt" id="waitlist">
+<!-- REPORT PREVIEW -->
+<section class="section section-bt">
   <div class="wrap">
-    <div class="sec-eyebrow">Simulator</div>
-    <h2>Launching soon.<br>Be first in line.</h2>
-    <p class="sec-sub">Join the waitlist — you will be notified when the simulator goes live. Early access users receive their first PDF report at no charge.</p>
-    <div class="wl">
-      <div class="wl-label">Early Access · Free</div>
-      <div class="wl-title">Model your group's cashpooling potential — before any bank conversation.</div>
-      <div class="wl-sub">One email when we launch. No marketing, no spam.</div>
-      <div class="wl-form">
-        <input class="wl-input" type="email" id="wlEmail" placeholder="treasury@yourcompany.com">
-        <button class="wl-btn" onclick="handleWaitlist()">Join Waitlist →</button>
+    <div class="sec-eyebrow">Sample Output</div>
+    <h2>What lands in your inbox.</h2>
+    <p class="sec-sub">A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.</p>
+
+    <div class="preview-wrap">
+      <!-- Browser chrome -->
+      <div class="preview-chrome">
+        <div class="preview-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="preview-url">cashpoolmodel.com · Group Analysis Report · PDF</div>
+        <div class="preview-badge">Illustrative</div>
       </div>
-      <div class="wl-note">No commitment. Unsubscribe any time.</div>
-      <div class="wl-perks">
-        <span class="wl-perk">Before/after P&amp;L</span>
-        <span class="wl-perk">Netting efficiency model</span>
-        <span class="wl-perk">3 scenarios</span>
-        <span class="wl-perk">Regulatory matrix</span>
-        <span class="wl-perk">Board-ready PDF</span>
+
+      <!-- Document body -->
+      <div class="preview-doc">
+
+        <!-- Report header -->
+        <div class="preview-doc-hd">
+          <div>
+            <div class="preview-doc-title">Cash Pooling Analysis Report</div>
+            <div class="preview-doc-sub">Acme Manufacturing Group · 8 entities · 6 currencies · January 2025</div>
+          </div>
+          <div class="preview-verdict">✓ GO</div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="preview-kpis">
+          <div class="preview-kpi">
+            <div class="preview-kpi-val">€842k</div>
+            <div class="preview-kpi-label">Annual net savings</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-val">73%</div>
+            <div class="preview-kpi-label">Netting efficiency</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-val">14 mo</div>
+            <div class="preview-kpi-label">Payback period</div>
+          </div>
+          <div class="preview-kpi">
+            <div class="preview-kpi-val">281%</div>
+            <div class="preview-kpi-label">3-year ROI</div>
+          </div>
+        </div>
+
+        <!-- Before / After chart -->
+        <div class="preview-section-label">Before / After Interest Cost Comparison</div>
+        <svg class="preview-chart-svg" viewBox="0 0 560 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Before row -->
+          <text x="0" y="20" font-size="10" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">Before</text>
+          <rect x="58" y="7" width="340" height="20" rx="3" fill="#e8e4dc"/>
+          <text x="404" y="20" font-size="10" fill="#6b7d96" font-family="DM Sans, sans-serif">€2.14M / year</text>
+          <!-- After row -->
+          <text x="0" y="55" font-size="10" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After</text>
+          <rect x="58" y="42" width="202" height="20" rx="3" fill="#0b1929"/>
+          <text x="266" y="55" font-size="10" fill="#3d4f6a" font-family="DM Sans, sans-serif">€1.30M / year</text>
+          <!-- Dashed divider -->
+          <line x1="260" y1="4" x2="260" y2="66" stroke="#ddd9d0" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- Savings callout -->
+          <text x="58" y="84" font-size="10" fill="#16a34a" font-family="DM Sans, sans-serif" font-weight="600">↓ 39% reduction  ·  €842k annual savings</text>
+        </svg>
+
+        <!-- Sensitivity matrix -->
+        <div class="preview-matrix-wrap">
+          <div class="preview-section-label" style="margin-top:18px">Sensitivity Matrix — Net Benefit (rate × volatility)</div>
+          <div class="preview-matrix-labels">
+            <div class="pm-lbl">−50bp</div>
+            <div class="pm-lbl">Base</div>
+            <div class="pm-lbl">+100bp</div>
+            <div class="pm-lbl">+200bp</div>
+          </div>
+          <div class="preview-matrix">
+            <div class="pm-cell pm-am">312k</div>
+            <div class="pm-cell pm-g1">571k</div>
+            <div class="pm-cell pm-g2">842k</div>
+            <div class="pm-cell pm-g2">1.1M</div>
+
+            <div class="pm-cell pm-am">218k</div>
+            <div class="pm-cell pm-g1">486k</div>
+            <div class="pm-cell pm-g1">751k</div>
+            <div class="pm-cell pm-g2">1.0M</div>
+
+            <div class="pm-cell pm-rd">94k</div>
+            <div class="pm-cell pm-am">381k</div>
+            <div class="pm-cell pm-g1">647k</div>
+            <div class="pm-cell pm-g2">901k</div>
+          </div>
+        </div>
+
       </div>
+      <div class="preview-fade"></div>
     </div>
+    <div class="preview-note">Illustrative data. Actual report generated from your inputs.</div>
   </div>
 </section>
 
@@ -415,7 +587,6 @@ h1           { animation-delay: .11s; }
     <p class="sec-sub">Every output is designed for what treasury teams and CFOs actually need — not generic finance dashboards.</p>
     <div class="features">
 
-      <!-- Before/After -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="8" width="13" height="22" rx="2"/>
@@ -431,7 +602,6 @@ h1           { animation-delay: .11s; }
         <div class="fc-d">Full breakdown of interest costs, netting savings, FX reduction, facility fees, and total net benefit — line by line, period-accurate.</div>
       </div>
 
-      <!-- Daily cashflow -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="4,28 11,18 17,22 23,12 29,16 34,8"/>
@@ -441,7 +611,6 @@ h1           { animation-delay: .11s; }
         <div class="fc-d">90-day simulated cash flow with realistic volatility, showing the stabilisation effect of pool centralization across all entities.</div>
       </div>
 
-      <!-- Sensitivity -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="4" width="10" height="10" rx="1.5"/>
@@ -458,7 +627,6 @@ h1           { animation-delay: .11s; }
         <div class="fc-d">5×5 matrix showing net benefit across rate and volatility scenarios. Know what happens when rates shift by 1 percentage point.</div>
       </div>
 
-      <!-- Netting -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="13" cy="19" r="9"/>
@@ -470,7 +638,6 @@ h1           { animation-delay: .11s; }
         <div class="fc-d">Calculates the offset between surplus and deficit entities — the most important driver of cashpool ROI — with a visual flow diagram.</div>
       </div>
 
-      <!-- Regulatory -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 4 L33 10 L33 20 C33 27 26 33 19 35 C12 33 5 27 5 20 L5 10 Z"/>
@@ -480,7 +647,6 @@ h1           { animation-delay: .11s; }
         <div class="fc-d">Country-by-country overview of withholding taxes, cross-border restrictions, and transfer pricing safe harbour guidance.</div>
       </div>
 
-      <!-- CFO output -->
       <div class="fc">
         <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="6" y="4" width="26" height="30" rx="2"/>
@@ -498,17 +664,32 @@ h1           { animation-delay: .11s; }
   </div>
 </section>
 
-<!-- NEWSLETTER -->
-<section class="section section-alt section-bt">
+<!-- WAITLIST -->
+<section class="section section-alt section-bt" id="waitlist">
   <div class="wrap">
-    <div class="nl">
-      <div class="nl-title">Treasury Notes</div>
-      <div class="nl-sub">When something worth reading happens in treasury — we write about it.</div>
-      <div class="nl-form">
-        <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
-        <button class="nl-btn" onclick="handleNewsletter()">Subscribe</button>
+    <div class="sec-eyebrow">Simulator</div>
+    <h2>Launching soon.<br>Be first in line.</h2>
+    <p class="sec-sub">Early access users receive their first cashpool analysis report at no charge — before the simulator opens to the public.</p>
+    <div class="wl">
+      <div class="wl-label">Early Access · First Report Free</div>
+      <div class="wl-title">Model your group's cashpooling potential — before any bank conversation.</div>
+      <div class="wl-sub">Join now and get your first full PDF report complimentary when we launch. One notification email. No marketing, no spam.</div>
+      <div class="wl-form">
+        <input class="wl-input" type="email" id="wlEmail" placeholder="treasury@yourcompany.com">
+        <button class="wl-btn" onclick="handleWaitlist()">Join Waitlist →</button>
       </div>
-      <div class="nl-note">No spam. Unsubscribe any time.</div>
+      <div class="wl-pricing">
+        After launch: <strong>Reports from €299</strong>
+        <span class="wl-pricing-sep">·</span>
+        <strong>Expert consultation from €790</strong>
+      </div>
+      <div class="wl-perks">
+        <span class="wl-perk">Before/after P&amp;L</span>
+        <span class="wl-perk">Netting efficiency model</span>
+        <span class="wl-perk">3 scenarios</span>
+        <span class="wl-perk">Regulatory matrix</span>
+        <span class="wl-perk">Board-ready PDF</span>
+      </div>
     </div>
   </div>
 </section>
@@ -539,7 +720,7 @@ function toggleMobileNav() {
   document.getElementById('navMobile').classList.toggle('open');
 }
 
-async function addToBrevo(email, listId) {
+async function addToBrevo(email) {
   try {
     await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
       method: 'POST',
@@ -552,7 +733,7 @@ async function addToBrevo(email, listId) {
 async function handleWaitlist() {
   const e = document.getElementById('wlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e, 2);
+  await addToBrevo(e);
   showToast('You are on the list. We will notify you when the simulator launches.');
   document.getElementById('wlEmail').value = '';
 }
@@ -560,10 +741,11 @@ async function handleWaitlist() {
 async function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e, 2);
+  await addToBrevo(e);
   showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
