@@ -7,6 +7,12 @@
 <meta name="description" content="Book a treasury advisory session or send a message. Independent cash pooling advisory by Intercompany.io, Geneva.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<!-- Cal.com embed script -->
+<script type="text/javascript">
+(function(C,A,L){let p=function(a,ar){a.q.push(ar)};let d=C.document;C.Cal=C.Cal||function(){let cal=C.Cal;let ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement("script")).src=A;cal.loaded=true}if(ar[0]===L){const api=function(){p(api,arguments)};const namespace=ar[1];api.q=api.q||[];if(typeof namespace==="string"){cal.ns[namespace]=cal.ns[namespace]||api;p(cal.ns[namespace],ar);p(cal,["initNamespace",namespace])}else p(cal,ar);return}p(cal,ar)};})(window,"https://app.cal.com/embed/embed.js","init");
+Cal("init",{origin:"https://cal.com"});
+Cal("ui",{styles:{branding:{brandColor:"#0b1929"}},hideEventTypeDetails:false});
+</script>
 <style>
 :root {
   --navy:    #0b1929;
@@ -20,294 +26,118 @@
   --rule:    #ddd9d0;
   --gold:    #9a6e10;
   --gold-h:  #7d5808;
-  --gold-p:  #fdf8ec;
-  --green-m: #0d7a50;
   --white:   #ffffff;
   --serif:   'Cormorant Garamond', Georgia, serif;
   --sans:    'DM Sans', system-ui, sans-serif;
   --mono:    'DM Mono', monospace;
   --max:     1000px;
-  --pad:     clamp(20px, 4vw, 44px);
-  --sh:      0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
-  --sh-lg:   0 8px 40px rgba(11,25,41,.11), 0 2px 8px rgba(11,25,41,.04);
+  --pad:     clamp(20px,4vw,44px);
+  --sh:      0 1px 3px rgba(11,25,41,.06),0 4px 16px rgba(11,25,41,.06);
+  --sh-lg:   0 8px 40px rgba(11,25,41,.11),0 2px 8px rgba(11,25,41,.04);
   --r:       5px;
   --rl:      10px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
-body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; }
-a { color: inherit; text-decoration: none; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6}
+a{color:inherit;text-decoration:none}
 
-/* ── NAV ── */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--rule);
-}
-.nav-i {
-  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
-  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
-}
-.logo {
-  display: flex; align-items: center; gap: 9px;
-  font-family: var(--serif); font-size: 18px; font-weight: 600;
-  color: var(--navy); letter-spacing: -.2px;
-}
-.logo-mark {
-  width: 28px; height: 28px; border-radius: 4px; background: var(--navy);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.logo-sub { font-size: 9px; color: var(--ink-fnt); font-weight: 400; letter-spacing: .3px; font-family: var(--sans); margin-top: 1px; }
-.nav-links { display: flex; align-items: center; gap: 2px; }
-.nav-link { padding: 6px 12px; border-radius: var(--r); font-size: 13px; font-weight: 500; color: var(--ink-mid); transition: all .14s; }
-.nav-link:hover { background: var(--paper-w); color: var(--navy); }
-.nav-link.active { color: var(--navy); font-weight: 600; }
-.nav-cta {
-  padding: 8px 17px; border-radius: var(--r); background: var(--navy); color: #fff;
-  font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--sans);
-  transition: all .14s; white-space: nowrap;
-}
-.nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
-@media (max-width: 580px) { .nav-links { display: none; } }
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(249,248,245,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--rule)}
+.nav-i{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:58px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--navy);letter-spacing:-.2px}
+.logo-mark{width:28px;height:28px;border-radius:4px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-sub{font-size:9px;color:var(--ink-fnt);font-weight:400;letter-spacing:.3px;font-family:var(--sans);margin-top:1px}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-link{padding:6px 12px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--ink-mid);transition:all .14s}
+.nav-link:hover{background:var(--paper-w);color:var(--navy)}
+.nav-link.active{color:var(--navy);font-weight:600}
+.nav-cta{padding:8px 17px;border-radius:var(--r);background:var(--navy);color:#fff;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .14s;white-space:nowrap}
+.nav-cta:hover{background:var(--navy-h);transform:translateY(-1px)}
+@media(max-width:580px){.nav-links{display:none}}
 
-.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
 
-/* ── PAGE HEADER ── */
-.page-header {
-  padding: clamp(44px, 7vw, 80px) 0 clamp(32px, 5vw, 52px);
-  border-bottom: 1px solid var(--rule);
-}
-.ph-eyebrow {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
-}
-.ph-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
-.ph-title {
-  font-family: var(--serif);
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 600; letter-spacing: -1.2px; color: var(--navy);
-  line-height: 1.08; margin-bottom: 14px;
-}
-.ph-sub {
-  font-size: 15px; color: var(--ink-mid); font-weight: 300;
-  max-width: 50ch; line-height: 1.65;
-}
+/* PAGE HEADER */
+.page-header{padding:clamp(44px,7vw,80px) 0 clamp(32px,5vw,52px);border-bottom:1px solid var(--rule)}
+.ph-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.ph-eyebrow::before{content:'';width:18px;height:1px;background:var(--gold)}
+.ph-title{font-family:var(--serif);font-size:clamp(32px,5vw,52px);font-weight:600;letter-spacing:-1.2px;color:var(--navy);line-height:1.08;margin-bottom:14px}
+.ph-sub{font-size:15px;color:var(--ink-mid);font-weight:300;max-width:46ch;line-height:1.65}
 
-/* ── MAIN GRID ── */
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: clamp(32px, 5vw, 56px);
-  padding: clamp(40px, 6vw, 72px) 0;
-  align-items: start;
-}
-@media (max-width: 760px) { .contact-grid { grid-template-columns: 1fr; } }
+/* MAIN GRID */
+.contact-grid{display:grid;grid-template-columns:1fr 300px;gap:clamp(32px,5vw,52px);padding:clamp(36px,5vw,60px) 0;align-items:start}
+@media(max-width:720px){.contact-grid{grid-template-columns:1fr}}
 
-/* ── CALENDAR SECTION ── */
-.cal-section {}
-.cal-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--ink-fnt);
-  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+/* ADVISORY CARD */
+.advisory-card{border:1px solid var(--rule);border-radius:var(--rl);background:var(--white);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
+.ac-top{background:var(--navy);padding:24px 26px}
+.ac-eyebrow{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px}
+.ac-title{font-family:var(--serif);font-size:20px;font-weight:600;color:#fff;letter-spacing:-.3px;margin-bottom:6px}
+.ac-desc{font-size:13px;color:rgba(255,255,255,.45);font-weight:300;line-height:1.55}
+.ac-bottom{padding:18px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ac-meta{display:flex;gap:16px}
+.ac-meta-item{font-size:12px;color:var(--ink-mid);display:flex;align-items:center;gap:5px}
+.ac-meta-item::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.ac-price{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--navy)}
+.cal-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 22px;border-radius:var(--r);
+  background:var(--navy);color:#fff;
+  font-size:13px;font-weight:600;
+  cursor:pointer;border:none;font-family:var(--sans);
+  transition:all .15s;width:100%;justify-content:center;margin-top:14px;
 }
-.cal-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+.cal-btn:hover{background:var(--navy-h);transform:translateY(-1px)}
 
-.session-type {
-  display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap;
-}
-.st-card {
-  flex: 1; min-width: 160px;
-  padding: 16px 18px;
-  border: 1.5px solid var(--rule); border-radius: var(--rl);
-  background: var(--white); cursor: pointer;
-  transition: all .15s; position: relative;
-}
-.st-card:hover { border-color: #c8c3ba; background: var(--paper-w); }
-.st-card.selected { border-color: var(--navy); background: var(--white); }
-.st-card.selected::after {
-  content: '✓'; position: absolute; top: 10px; right: 12px;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: var(--navy); color: #fff;
-  font-size: 10px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-}
-.st-duration {
-  font-family: var(--mono); font-size: 11px; color: var(--gold);
-  font-weight: 400; margin-bottom: 5px;
-}
-.st-name { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
-.st-desc { font-size: 12px; color: var(--ink-lt); line-height: 1.45; }
-.st-price {
-  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule);
-  font-size: 18px; font-weight: 700; font-family: var(--serif); color: var(--navy);
-}
+/* INCLUDES */
+.includes{padding:16px 26px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:8px}
+.inc-item{font-size:12px;color:var(--ink-mid);display:flex;align-items:center;gap:9px}
+.inc-item::before{content:'✓';color:var(--gold);font-weight:700;font-size:11px;flex-shrink:0}
 
-/* Cal.com embed */
-.cal-embed-wrap {
-  background: var(--white);
-  border: 1px solid var(--rule); border-radius: var(--rl);
-  overflow: hidden; box-shadow: var(--sh);
-  min-height: 500px; position: relative;
-}
-.cal-embed-placeholder {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  min-height: 500px; padding: 40px;
-  text-align: center;
-}
-.cal-placeholder-icon {
-  width: 56px; height: 56px;
-  background: var(--paper-w); border-radius: var(--rl);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 20px;
-}
-.cal-placeholder-title {
-  font-family: var(--serif); font-size: 20px; font-weight: 600;
-  color: var(--navy); margin-bottom: 8px;
-}
-.cal-placeholder-sub {
-  font-size: 13px; color: var(--ink-lt); line-height: 1.6;
-  max-width: 30ch; margin-bottom: 24px;
-}
-.cal-setup-steps {
-  text-align: left; background: var(--paper-w);
-  border: 1px solid var(--rule); border-radius: var(--r);
-  padding: 16px 20px; margin-bottom: 20px; width: 100%; max-width: 360px;
-}
-.cal-step {
-  display: flex; gap: 10px; align-items: flex-start;
-  font-size: 12px; color: var(--ink-mid); margin-bottom: 10px;
-  line-height: 1.5;
-}
-.cal-step:last-child { margin-bottom: 0; }
-.cal-step-num {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--navy); color: #fff;
-  font-size: 10px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
-}
-.cal-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 12px 24px; border-radius: var(--r);
-  background: var(--navy); color: #fff;
-  font-size: 13px; font-weight: 600;
-  cursor: pointer; border: none; font-family: var(--sans);
-  transition: all .15s; text-decoration: none;
-}
-.cal-btn:hover { background: var(--navy-h); transform: translateY(-1px); }
+/* FORM */
+.form-card{border:1px solid var(--rule);border-radius:var(--rl);background:var(--white);box-shadow:var(--sh);padding:22px 24px}
+.form-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--navy);letter-spacing:-.3px;margin-bottom:5px}
+.form-sub{font-size:12px;color:var(--ink-lt);margin-bottom:18px;font-weight:300}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fg:last-of-type{margin-bottom:0}
+.fg label{font-size:11px;font-weight:600;color:var(--ink-mid)}
+.fg input,.fg select,.fg textarea{padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper-w);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .14s;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--navy);background:var(--white)}
+.fg textarea{resize:vertical;min-height:90px;line-height:1.55}
+.submit-btn{width:100%;padding:11px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:background .14s;margin-top:14px}
+.submit-btn:hover{background:var(--navy-h)}
+.form-success{display:none;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:var(--r);padding:12px 14px;font-size:12px;color:#065f46;margin-top:12px;line-height:1.5}
+.form-success.show{display:block}
 
-/* ── SIDEBAR ── */
-.sidebar { display: flex; flex-direction: column; gap: 16px; }
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:14px}
+.info-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);padding:20px;box-shadow:var(--sh)}
+.ic-logo{width:36px;height:36px;border-radius:var(--r);background:var(--navy);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
+.ic-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--navy);letter-spacing:-.2px}
+.ic-sub{font-size:11px;color:var(--ink-lt);margin-top:2px;line-height:1.4;margin-bottom:14px}
+.ic-divider{height:1px;background:var(--rule);margin:14px 0}
+.ic-row{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--ink-mid);margin-bottom:10px;line-height:1.5}
+.ic-row:last-of-type{margin-bottom:0}
+.ic-icon{font-size:13px;flex-shrink:0;margin-top:1px;width:16px}
+.ic-label{font-size:9px;color:var(--ink-fnt);letter-spacing:.6px;text-transform:uppercase;margin-bottom:1px}
 
-/* Contact details card */
-.info-card {
-  background: var(--white); border: 1px solid var(--rule);
-  border-radius: var(--rl); padding: 22px; box-shadow: var(--sh);
-}
-.ic-logo {
-  width: 40px; height: 40px; border-radius: var(--r);
-  background: var(--navy); margin-bottom: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--serif); font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9);
-}
-.ic-name { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); letter-spacing: -.2px; }
-.ic-sub { font-size: 12px; color: var(--ink-lt); margin-top: 2px; line-height: 1.4; }
-.ic-divider { height: 1px; background: var(--rule); margin: 16px 0; }
-.ic-row {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 12px; color: var(--ink-mid); margin-bottom: 11px; line-height: 1.55;
-}
-.ic-row:last-of-type { margin-bottom: 0; }
-.ic-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; width: 18px; }
-.ic-label { font-size: 9px; color: var(--ink-fnt); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 2px; }
+/* FOOTER */
+footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-i{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer-brand{font-family:var(--serif);font-size:16px;font-weight:600;color:#fff;margin-bottom:3px}
+.footer-sub{font-size:11px;line-height:1.6}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{font-size:12px;color:rgba(255,255,255,.38);transition:color .14s}
+.footer-links a:hover{color:rgba(255,255,255,.8)}
+.footer-copy{font-size:11px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
 
-/* What to expect */
-.expect-card {
-  background: var(--paper-w); border: 1px solid var(--rule);
-  border-radius: var(--rl); padding: 20px;
-}
-.ec-title { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 14px; }
-.ec-item {
-  display: flex; gap: 10px; font-size: 12px; color: var(--ink-mid);
-  margin-bottom: 10px; line-height: 1.5; align-items: flex-start;
-}
-.ec-item:last-child { margin-bottom: 0; }
-.ec-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 5px; }
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:var(--sh-lg);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:300;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
 
-/* General enquiry form */
-.form-section { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--rule); }
-.form-label-sec {
-  font-size: 10px; font-weight: 600; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--ink-fnt);
-  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-}
-.form-label-sec::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
-h2.form-title {
-  font-family: var(--serif); font-size: clamp(22px, 3vw, 30px);
-  font-weight: 600; color: var(--navy); letter-spacing: -.4px; margin-bottom: 6px;
-}
-.form-sub { font-size: 14px; color: var(--ink-mid); font-weight: 300; margin-bottom: 28px; }
-
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } }
-
-.fg { display: flex; flex-direction: column; gap: 5px; }
-.fg.full { grid-column: 1 / -1; }
-.fg label { font-size: 11px; font-weight: 600; color: var(--ink-mid); }
-.fg input, .fg select, .fg textarea {
-  padding: 10px 13px; border-radius: var(--r);
-  border: 1.5px solid var(--rule); background: var(--white);
-  font-family: var(--sans); font-size: 13px; color: var(--ink); outline: none;
-  transition: border-color .14s; width: 100%;
-}
-.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--navy); }
-.fg textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-
-.form-submit {
-  margin-top: 18px;
-  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-}
-.submit-btn {
-  padding: 12px 28px; border-radius: var(--r);
-  background: var(--navy); color: #fff;
-  font-family: var(--sans); font-size: 14px; font-weight: 600;
-  border: none; cursor: pointer; transition: all .15s;
-}
-.submit-btn:hover { background: var(--navy-h); transform: translateY(-1px); }
-.submit-note { font-size: 11px; color: var(--ink-fnt); }
-
-/* Success state */
-.form-success {
-  display: none;
-  background: var(--green-p, #ecfdf5); border: 1px solid #a7f3d0;
-  border-radius: var(--r); padding: 16px 20px;
-  font-size: 13px; color: #065f46; margin-top: 14px; line-height: 1.55;
-}
-.form-success.show { display: block; }
-
-/* ── FOOTER ── */
-footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 22px; border-top: 1px solid rgba(255,255,255,.06); }
-.footer-i { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.footer-brand { font-family: var(--serif); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 3px; }
-.footer-sub { font-size: 11px; line-height: 1.6; }
-.footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
-.footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
-.footer-links a:hover { color: rgba(255,255,255,.8); }
-.footer-copy { font-size: 11px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.06); }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
-  background: var(--navy); color: #fff; padding: 11px 22px; border-radius: var(--r);
-  font-size: 13px; font-weight: 500; box-shadow: var(--sh-lg);
-  transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-
-@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.page-header { animation: fadeUp .4s ease forwards; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page-header{animation:fadeUp .4s ease forwards}
 </style>
 </head>
 <body>
@@ -330,7 +160,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
       </div>
     </a>
     <div class="nav-links">
-      <a class="nav-link" href="/blog.html">Insights</a>
+      <a class="nav-link" href="/blog.html">Blog</a>
       <a class="nav-link active" href="/contact.html">Contact</a>
     </div>
     <a class="nav-cta" href="/index.html#waitlist">Get Early Access</a>
@@ -342,144 +172,71 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
   <div class="page-header">
     <div class="ph-eyebrow">Contact & Advisory</div>
     <h1 class="ph-title">Book a session or<br>send a message.</h1>
-    <p class="ph-sub">Independent treasury advisory — no vendor agenda. Available for structured sessions via video call.</p>
+    <p class="ph-sub">Independent treasury advisory. Available for structured sessions via video call.</p>
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 <div class="wrap">
   <div class="contact-grid">
 
-    <!-- LEFT: Calendar -->
-    <div class="cal-section">
+    <!-- LEFT -->
+    <div>
 
-      <!-- Session type selector -->
-      <div class="cal-label">Choose a session type</div>
-      <div class="session-type">
-        <div class="st-card selected" onclick="selectSession(this, 'advisory')">
-          <div class="st-duration">30 min</div>
-          <div class="st-name">Advisory Session</div>
-          <div class="st-desc">Review your cashpool model results, discuss bank selection, implementation strategy.</div>
-          <div class="st-price">€249</div>
+      <!-- Advisory booking card -->
+      <div class="advisory-card">
+        <div class="ac-top">
+          <div class="ac-eyebrow">Advisory Session · 30 min · Zoom</div>
+          <div class="ac-title">Treasury Advisory Session</div>
+          <div class="ac-desc">Review your cashpool model, discuss bank selection, pool structure, and implementation strategy.</div>
         </div>
-        <div class="st-card" onclick="selectSession(this, 'intro')">
-          <div class="st-duration">15 min</div>
-          <div class="st-name">Introductory Call</div>
-          <div class="st-desc">Quick call to understand your situation and whether we can help. No charge.</div>
-          <div class="st-price" style="color:var(--green-m)">Free</div>
+        <div class="includes">
+          <div class="inc-item">Review of your cashpool model and business case</div>
+          <div class="inc-item">Bank and structure recommendation for your situation</div>
+          <div class="inc-item">Written notes + two weeks of email follow-up</div>
         </div>
-      </div>
-
-      <!-- Cal.com embed -->
-      <div class="cal-label" style="margin-top:24px;">Select a time</div>
-      <div class="cal-embed-wrap" id="calEmbed">
-        <!-- 
-          SETUP INSTRUCTIONS FOR JAKUB:
-          1. Go to cal.com and create a free account
-          2. Create two event types:
-             - "Treasury Advisory Session" (30 min, €249 via Stripe)
-             - "Introductory Call" (15 min, free)
-          3. Replace the placeholder below with your Cal.com embed code:
-             <iframe src="https://cal.com/YOUR-USERNAME/advisory-session" 
-               style="width:100%;height:600px;border:none;" />
-          4. The embed code is available in Cal.com under:
-             Event Types → Share → Embed → Inline embed
-        -->
-        <div class="cal-embed-placeholder">
-          <div class="cal-placeholder-icon">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--ink-fnt)" stroke-width="1.5" stroke-linecap="round">
-              <rect x="3" y="4" width="20" height="19" rx="2"/>
-              <line x1="3" y1="9" x2="23" y2="9"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="18" y1="2" x2="18" y2="6"/>
-              <line x1="8" y1="14" x2="8" y2="14.01" stroke-width="2"/>
-              <line x1="13" y1="14" x2="13" y2="14.01" stroke-width="2"/>
-              <line x1="18" y1="14" x2="18" y2="14.01" stroke-width="2"/>
-              <line x1="8" y1="18" x2="8" y2="18.01" stroke-width="2"/>
-              <line x1="13" y1="18" x2="13" y2="18.01" stroke-width="2"/>
-            </svg>
+        <div class="ac-bottom">
+          <div class="ac-meta">
+            <span class="ac-meta-item">30 minutes</span>
+            <span class="ac-meta-item">Zoom</span>
+            <span class="ac-meta-item">Confirmation by email</span>
           </div>
-          <div class="cal-placeholder-title">Calendar coming soon</div>
-          <div class="cal-placeholder-sub">Online booking will be available here. For now, use the form below or email us directly.</div>
-          <div class="cal-setup-steps">
-            <div class="cal-step">
-              <div class="cal-step-num">1</div>
-              <div>Register at <strong>cal.com</strong> (free account)</div>
-            </div>
-            <div class="cal-step">
-              <div class="cal-step-num">2</div>
-              <div>Create event types: "Advisory Session" (30 min, €249) and "Intro Call" (15 min, free)</div>
-            </div>
-            <div class="cal-step">
-              <div class="cal-step-num">3</div>
-              <div>Connect Google Calendar and Zoom — automatic meeting links</div>
-            </div>
-            <div class="cal-step">
-              <div class="cal-step-num">4</div>
-              <div>Paste the embed code into this file — one line of HTML</div>
-            </div>
-          </div>
-          <a class="cal-btn" href="https://cal.com" target="_blank">Set up Cal.com →</a>
+          <div class="ac-price">€249</div>
+        </div>
+        <!-- Cal.com popup trigger -->
+        <div style="padding:0 26px 22px;">
+          <button
+            class="cal-btn"
+            data-cal-link="intercompany.io/30min"
+            data-cal-config='{"layout":"month_view"}'
+          >
+            Book a Session →
+          </button>
         </div>
       </div>
 
       <!-- General enquiry form -->
-      <div class="form-section">
-        <div class="form-label-sec">General Enquiry</div>
-        <h2 class="form-title">Or send a message.</h2>
-        <p class="form-sub">For general questions about the simulator, platform, or advisory services.</p>
-
-        <div class="form-grid" id="contactForm">
-          <div class="fg">
-            <label for="fname">First name</label>
-            <input type="text" id="fname" placeholder="Jana">
-          </div>
-          <div class="fg">
-            <label for="lname">Last name</label>
-            <input type="text" id="lname" placeholder="Nováková">
-          </div>
-          <div class="fg">
-            <label for="email">Work email</label>
-            <input type="email" id="email" placeholder="jana@company.com">
-          </div>
-          <div class="fg">
-            <label for="company">Company</label>
-            <input type="text" id="company" placeholder="ACME Group">
-          </div>
-          <div class="fg full">
-            <label for="topic">Topic</label>
-            <select id="topic">
-              <option value="">Select a topic...</option>
-              <option>Cash pooling business case</option>
-              <option>Bank RFP support</option>
-              <option>Transfer pricing guidance</option>
-              <option>TMS selection</option>
-              <option>Simulator question</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="fg full">
-            <label for="message">Message</label>
-            <textarea id="message" placeholder="Briefly describe your situation or question..."></textarea>
-          </div>
+      <div class="form-card">
+        <div class="form-title">Send a message</div>
+        <div class="form-sub">For general questions about the simulator or platform.</div>
+        <div class="fg">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="you@company.com">
         </div>
-
-        <div class="form-submit">
-          <button class="submit-btn" onclick="handleForm()">Send Message →</button>
-          <span class="submit-note">We respond within 1–2 business days.</span>
+        <div class="fg">
+          <label>Message</label>
+          <textarea id="message" placeholder="Briefly describe your situation or question..."></textarea>
         </div>
-
+        <button class="submit-btn" onclick="handleForm()">Send →</button>
         <div class="form-success" id="formSuccess">
-          ✓ Message received. We will get back to you within 1–2 business days at the email address provided.
+          ✓ Message received. We will get back to you within 1–2 business days.
         </div>
       </div>
 
     </div>
 
-    <!-- RIGHT: Sidebar -->
+    <!-- RIGHT: sidebar -->
     <div class="sidebar">
-
-      <!-- Contact details -->
       <div class="info-card">
         <div class="ic-logo">IC</div>
         <div class="ic-name">Intercompany.io</div>
@@ -489,9 +246,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
           <div class="ic-icon">📍</div>
           <div>
             <div class="ic-label">Address</div>
-            Rue François-Perréard 19<br>
-            1225 Chêne-Bourg<br>
-            Switzerland
+            Rue François-Perréard 19<br>1225 Chêne-Bourg, Switzerland
           </div>
         </div>
         <div class="ic-row">
@@ -512,48 +267,12 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
           <div class="ic-icon">🕐</div>
           <div>
             <div class="ic-label">Availability</div>
-            Mon–Fri, CET timezone<br>
-            Sessions via Zoom
+            Mon–Fri, CET timezone
           </div>
         </div>
       </div>
-
-      <!-- What to expect -->
-      <div class="expect-card">
-        <div class="ec-title">What to expect in an advisory session</div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Live review of your cashpool simulation results and business case</div>
-        </div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Recommendation on pool structure — zero-balancing vs. notional</div>
-        </div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Bank partner guidance tailored to your group's geography</div>
-        </div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Transfer pricing and regulatory considerations</div>
-        </div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Written session notes delivered after the call</div>
-        </div>
-        <div class="ec-item">
-          <div class="ec-dot"></div>
-          <div>Two weeks of priority email follow-up included</div>
-        </div>
-      </div>
-
-      <!-- Price note -->
-      <div style="padding:16px 18px;background:var(--gold-p);border:1px solid #e8d5a0;border-radius:var(--rl);font-size:12px;color:var(--ink-mid);line-height:1.6;">
-        <div style="font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;">Advisory rate</div>
-        Advisory sessions are priced at <strong style="color:var(--navy)">€249 for 30 minutes</strong>. Payment is processed securely via Stripe at the time of booking. For longer engagements, contact us directly.
-      </div>
-
     </div>
+
   </div>
 </div>
 
@@ -567,7 +286,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
       </div>
       <div class="footer-links">
         <a href="/index.html">Home</a>
-        <a href="/blog.html">Insights</a>
+        <a href="/blog.html">Blog</a>
         <a href="/contact.html">Contact</a>
         <a href="mailto:info@cashpoolmodel.com">info@cashpoolmodel.com</a>
       </div>
@@ -579,40 +298,16 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 32px 0 2
 <div class="toast" id="toast"></div>
 
 <script>
-function selectSession(el, type) {
-  document.querySelectorAll('.st-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  // When Cal.com is set up, switch the iframe src here:
-  // document.getElementById('calIframe').src = 
-  //   type === 'advisory' 
-  //     ? 'https://cal.com/YOUR-USERNAME/advisory-session'
-  //     : 'https://cal.com/YOUR-USERNAME/intro-call';
-}
-
 function handleForm() {
   const email = document.getElementById('email').value;
   const message = document.getElementById('message').value;
-  const fname = document.getElementById('fname').value;
-
-  if (!fname) { showToast('Please enter your first name.'); return; }
   if (!email || !email.includes('@')) { showToast('Please enter a valid email address.'); return; }
   if (!message || message.length < 10) { showToast('Please add a short message.'); return; }
-
-  // In production: POST to Brevo API or Formspree
-  // For now: open mailto as fallback
-  const subject = encodeURIComponent('Enquiry from ' + fname + ' — CashPoolModel');
-  const body = encodeURIComponent(
-    'Name: ' + document.getElementById('fname').value + ' ' + document.getElementById('lname').value + '\n' +
-    'Company: ' + document.getElementById('company').value + '\n' +
-    'Topic: ' + document.getElementById('topic').value + '\n\n' +
-    message
-  );
+  const subject = encodeURIComponent('Enquiry — CashPoolModel');
+  const body = encodeURIComponent(message);
   window.location.href = `mailto:info@cashpoolmodel.com?subject=${subject}&body=${body}`;
-
   document.getElementById('formSuccess').classList.add('show');
-  showToast('Message sent. We will be in touch shortly.');
 }
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
