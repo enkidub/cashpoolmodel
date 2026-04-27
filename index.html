@@ -67,7 +67,26 @@ a { color: inherit; text-decoration: none; }
   transition: all .14s; white-space: nowrap;
 }
 .nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
-@media (max-width: 580px) { .nav-links { display: none; } }
+.nav-burger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; cursor: pointer; border: none; background: none; padding: 4px; border-radius: var(--r);
+}
+.nav-burger span { display: block; height: 2px; background: var(--navy); border-radius: 2px; transition: all .2s; }
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-mobile {
+  display: none; flex-direction: column;
+  background: rgba(249,248,245,.98); border-top: 1px solid var(--rule);
+  padding: 8px 0 12px;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a { padding: 11px var(--pad); font-size: 15px; font-weight: 500; color: var(--ink-mid); }
+.nav-mobile a:hover { color: var(--navy); }
+@media (max-width: 580px) {
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+}
 
 /* ── WRAP ── */
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
@@ -314,6 +333,13 @@ h1           { animation-delay: .11s; }
       <a class="nav-link" href="/contact.html">Contact</a>
     </div>
     <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access</button>
+    <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile" id="navMobile">
+    <a href="/blog.html">Blog</a>
+    <a href="/contact.html">Contact</a>
   </div>
 </nav>
 
@@ -508,6 +534,11 @@ h1           { animation-delay: .11s; }
 <div class="toast" id="toast"></div>
 
 <script>
+function toggleMobileNav() {
+  document.getElementById('navBurger').classList.toggle('open');
+  document.getElementById('navMobile').classList.toggle('open');
+}
+
 async function addToBrevo(email, listId) {
   try {
     await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
