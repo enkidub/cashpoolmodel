@@ -85,8 +85,18 @@ a { color: inherit; text-decoration: none; }
 .nav-mobile a:hover { color: var(--navy); }
 @media (max-width: 580px) {
   .nav-links { display: none; }
+  .nav-cta { display: none; }
   .nav-burger { display: flex; }
 }
+.nav-mobile-cta {
+  margin: 6px var(--pad) 4px;
+  display: block; width: calc(100% - 2 * var(--pad));
+  padding: 13px; border-radius: var(--r);
+  background: var(--navy); color: #fff;
+  font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); text-align: center; transition: background .14s;
+}
+.nav-mobile-cta:hover { background: var(--navy-h); }
 
 /* ── WRAP ── */
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
@@ -453,6 +463,7 @@ h1              { animation-delay: .11s; }
   <div class="nav-mobile" id="navMobile">
     <a href="/blog.html">Blog</a>
     <a href="/contact.html">Contact</a>
+    <button class="nav-mobile-cta" onclick="toggleMobileNav(); document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access →</button>
   </div>
 </nav>
 
