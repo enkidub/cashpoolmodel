@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CashPool Simulator — Treasury Advisory</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off-white: #f8f7f4;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --navy: #0f1f3d;
+  --navy-mid: #1a3260;
+  --blue: #1d4ed8;
+  --blue-light: #3b82f6;
+  --blue-pale: #eff6ff;
+  --green: #065f46;
+  --green-mid: #059669;
+  --green-light: #d1fae5;
+  --red: #991b1b;
+  --red-mid: #dc2626;
+  --red-light: #fee2e2;
+  --amber: #92400e;
+  --amber-mid: #d97706;
+  --amber-light: #fef3c7;
+  --accent: #1d4ed8;
+  --border: #e5e7eb;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.05);
+  --radius: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 14px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off-white);
+  color: var(--gray-800);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--navy);
+  height: 4px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 4px; z-index: 90;
+  box-shadow: var(--shadow-sm);
+}
+.header-inner {
+  max-width: 1440px; margin: 0 auto;
+  padding: 0 40px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+  width: 36px; height: 36px;
+  background: var(--navy);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-mark svg { width: 20px; height: 20px; }
+.brand-name {
+  font-size: 15px; font-weight: 700;
+  color: var(--navy); letter-spacing: -0.3px;
+}
+.brand-name span { color: var(--blue); }
+.brand-tag {
+  font-size: 10px; color: var(--gray-500);
+  font-weight: 400; letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.3px;
+  border: 1px solid var(--border);
+  color: var(--gray-500);
+  background: var(--gray-50);
+}
+.pill.live { border-color: #bbf7d0; color: var(--green-mid); background: #f0fdf4; }
+.pill.live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green-mid); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ── LAYOUT ── */
+.app-shell {
+  max-width: 1440px; margin: 0 auto;
+  padding: 32px 40px 80px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .app-shell { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+}
+
+/* ── SIDEBAR ── */
+.sidebar { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 16px; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-size: 12px; font-weight: 600;
+  color: var(--gray-700); letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title-icon {
+  width: 24px; height: 24px;
+  background: var(--blue-pale);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.card-body { padding: 16px 20px; }
+
+/* ── FORM CONTROLS ── */
+.form-group { margin-bottom: 14px; }
+.form-group:last-child { margin-bottom: 0; }
+.form-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; font-weight: 500; color: var(--gray-600);
+  margin-bottom: 5px; letter-spacing: 0.2px;
+}
+.form-label-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--blue);
+  font-weight: 500;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%; height: 3px;
+  border-radius: 2px;
+  background: var(--gray-200);
+  outline: none; cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+.select-input {
+  width: 100%;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  color: var(--gray-800);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.select-input:focus { border-color: var(--blue); background: white; }
+
+.num-input {
+  width: 100%;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  color: var(--gray-800);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.num-input:focus { border-color: var(--blue); background: white; }
+
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* Rate presets */
+.rate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+.rate-btn {
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.rate-btn:hover { border-color: var(--blue); background: var(--blue-pale); }
+.rate-btn.active { border-color: var(--blue); background: var(--blue-pale); }
+.rate-btn-name { font-size: 11px; font-weight: 600; color: var(--navy); display: block; }
+.rate-btn-val { font-size: 10px; color: var(--blue); font-family: 'DM Mono', monospace; margin-top: 2px; display: block; }
+.rate-btn-source { font-size: 9px; color: var(--gray-400); display: block; margin-top: 1px; }
+
+/* ── ENTITY TABLE ── */
+.entity-section { padding: 0; }
+.entity-head {
+  display: grid;
+  grid-template-columns: 1fr 90px 80px 28px;
+  gap: 6px;
+  padding: 8px 20px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border);
+}
+.entity-head-label { font-size: 10px; font-weight: 600; color: var(--gray-400); letter-spacing: 0.5px; text-transform: uppercase; }
+.entity-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 80px 28px;
+  gap: 6px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  align-items: center;
+  transition: background 0.1s;
+}
+.entity-row:hover { background: var(--gray-50); }
+.entity-row:last-child { border-bottom: none; }
+.entity-input {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--gray-800);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 4px 7px;
+  border-radius: var(--radius);
+  outline: none;
+  width: 100%;
+  transition: all 0.15s;
+}
+.entity-input:focus { border-color: var(--blue); background: white; box-shadow: 0 0 0 2px rgba(29,78,216,0.08); }
+.entity-bal-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-align: right;
+}
+.entity-acc-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  text-align: center;
+}
+.del-btn {
+  width: 22px; height: 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--gray-400);
+  cursor: pointer;
+  font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.del-btn:hover { background: var(--red-light); color: var(--red-mid); border-color: #fca5a5; }
+
+.entity-footer { padding: 10px 20px; display: flex; gap: 8px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: none; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  transition: all 0.15s;
+  letter-spacing: 0.1px;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--navy);
+  color: white;
+  box-shadow: 0 1px 3px rgba(15,31,61,0.25);
+}
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-secondary {
+  background: var(--white);
+  color: var(--gray-700);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--gray-400); background: var(--gray-50); }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+
+/* ── MAIN CONTENT ── */
+.main { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+}
+.section-title {
+  font-size: 13px; font-weight: 600; color: var(--gray-800);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+}
+.section-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* ── SCENARIO TABS ── */
+.scenario-bar {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  display: inline-flex; gap: 4px;
+  box-shadow: var(--shadow-sm);
+}
+.scenario-tab {
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.scenario-tab.active {
+  background: var(--navy);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── KPI STRIP ── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+@media (max-width: 1300px) { .kpi-strip { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 800px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+
+.kpi-cell {
+  background: var(--white);
+  padding: 20px 18px;
+  position: relative;
+  transition: background 0.15s;
+}
+.kpi-cell:hover { background: var(--gray-50); }
+.kpi-label {
+  font-size: 10px; font-weight: 600;
+  color: var(--gray-400); letter-spacing: 0.8px;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.kpi-value {
+  font-size: 22px; font-weight: 700;
+  color: var(--gray-900); line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.kpi-value.positive { color: var(--green-mid); }
+.kpi-value.negative { color: var(--red-mid); }
+.kpi-value.blue { color: var(--blue); }
+.kpi-delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 20px;
+}
+.kpi-delta.up { background: var(--green-light); color: var(--green); }
+.kpi-delta.down { background: var(--red-light); color: var(--red); }
+.kpi-delta.neutral { background: var(--gray-100); color: var(--gray-600); }
+.kpi-bar {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px;
+  background: var(--blue);
+  border-radius: 0 2px 0 0;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── BEFORE/AFTER TABLE ── */
+.ba-table-wrap {
+  overflow-x: auto;
+}
+.ba-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12px;
+}
+.ba-table thead th {
+  padding: 10px 16px;
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--border);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  color: var(--gray-500); text-transform: uppercase;
+  white-space: nowrap;
+}
+.ba-table thead th:first-child { text-align: left; }
+.ba-table thead th:not(:first-child) { text-align: right; }
+.ba-table thead th.col-after { color: var(--blue); background: var(--blue-pale); }
+.ba-table thead th.col-saving { color: var(--green); background: var(--green-light); }
+.ba-table td {
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  font-family: 'DM Mono', monospace; font-size: 11px;
+}
+.ba-table td:first-child { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--gray-700); font-weight: 400; }
+.ba-table td:not(:first-child) { text-align: right; }
+.ba-table td.col-after { color: var(--blue); background: rgba(239,246,255,0.5); }
+.ba-table td.col-saving { font-weight: 600; }
+.ba-table td.col-saving.pos { color: var(--green-mid); }
+.ba-table td.col-saving.neg { color: var(--red-mid); }
+.ba-table tr.subtotal td { background: var(--gray-50); font-weight: 600; border-top: 1px solid var(--border); }
+.ba-table tr.subtotal td:first-child { font-weight: 600; color: var(--gray-800); }
+.ba-table tr.total td { background: var(--navy); color: white; font-weight: 700; }
+.ba-table tr.total td.col-after { background: var(--blue); color: white; }
+.ba-table tr.total td.col-saving { background: var(--green); color: white; }
+.ba-table tr:hover:not(.total):not(.subtotal) td { background: var(--blue-pale); }
+
+/* ── ENTITY RESULTS ── */
+.er-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.er-table thead th {
+  padding: 9px 14px;
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--border);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  color: var(--gray-500); text-transform: uppercase;
+  white-space: nowrap;
+}
+.er-table thead th:first-child { text-align: left; }
+.er-table thead th:not(:first-child) { text-align: right; }
+.er-table td { padding: 9px 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+.er-table td:not(:first-child) { text-align: right; font-family: 'DM Mono', monospace; font-size: 11px; }
+.er-table tr:hover td { background: var(--gray-50); }
+.entity-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
+.entity-name-cell { display: flex; align-items: center; }
+.tag-s { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 20px; font-size: 9px; font-weight: 600; letter-spacing: 0.3px; margin-left: 8px; }
+.tag-surplus { background: var(--green-light); color: var(--green); }
+.tag-deficit { background: var(--red-light); color: var(--red); }
+
+/* ── CHART CANVAS ── */
+.chart-wrap { position: relative; width: 100%; }
+canvas { display: block; width: 100% !important; }
+
+/* ── WATERFALL ── */
+.waterfall-wrap { padding: 20px; }
+
+/* ── NETTING DIAGRAM ── */
+.netting-diagram { padding: 24px 20px; }
+.netting-svg-wrap { display: flex; justify-content: center; }
+
+/* ── SENSITIVITY TABLE ── */
+.sens-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.sens-table th {
+  padding: 8px 10px; background: var(--gray-50);
+  border: 1px solid var(--border);
+  font-size: 10px; font-weight: 600; color: var(--gray-500); letter-spacing: 0.5px;
+  text-align: center; text-transform: uppercase;
+}
+.sens-table th:first-child { text-align: left; }
+.sens-table td {
+  padding: 7px 10px; border: 1px solid var(--gray-100);
+  text-align: center; font-family: 'DM Mono', monospace;
+}
+.sens-table td:first-child { text-align: left; font-family: 'DM Sans', sans-serif; color: var(--gray-700); }
+.sens-cell-high { background: #d1fae5; color: #065f46; font-weight: 600; }
+.sens-cell-med { background: #fef3c7; color: #92400e; }
+.sens-cell-low { background: #fee2e2; color: #991b1b; }
+.sens-cell-base { background: var(--blue-pale); color: var(--blue); font-weight: 700; border: 2px solid var(--blue) !important; }
+
+/* ── PAYBACK ── */
+.payback-bar-track {
+  width: 100%; height: 8px;
+  background: var(--gray-200);
+  border-radius: 4px; overflow: hidden; margin: 8px 0;
+}
+.payback-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue), #3b82f6);
+  transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+  min-width: 4px;
+}
+
+/* ── ROADMAP ── */
+.roadmap { display: flex; flex-direction: column; gap: 0; }
+.roadmap-step {
+  display: flex; gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.roadmap-step:last-child { border-bottom: none; }
+.roadmap-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--navy); color: white;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.roadmap-content { flex: 1; }
+.roadmap-title { font-size: 12px; font-weight: 600; color: var(--gray-800); margin-bottom: 2px; }
+.roadmap-period { font-size: 10px; color: var(--blue); font-family: 'DM Mono', monospace; }
+.roadmap-desc { font-size: 11px; color: var(--gray-500); margin-top: 4px; line-height: 1.5; }
+
+/* ── RISK ITEMS ── */
+.risk-item {
+  display: flex; gap: 12px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--border);
+  margin-bottom: 8px;
+  background: var(--gray-50);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.risk-item:last-child { margin-bottom: 0; }
+.risk-item.med { border-left-color: var(--amber-mid); background: var(--amber-light); }
+.risk-item.low { border-left-color: var(--green-mid); background: var(--green-light); }
+.risk-item.info { border-left-color: var(--blue-light); background: var(--blue-pale); }
+.risk-title { font-size: 12px; font-weight: 600; color: var(--gray-800); margin-bottom: 3px; }
+.risk-desc { font-size: 11px; color: var(--gray-600); line-height: 1.5; }
+.risk-badge {
+  font-size: 9px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; letter-spacing: 0.5px;
+  align-self: flex-start; white-space: nowrap; margin-top: 2px;
+}
+.badge-med { background: var(--amber-mid); color: white; }
+.badge-low { background: var(--green-mid); color: white; }
+.badge-info { background: var(--blue-light); color: white; }
+
+/* ── RECOMMENDATION BOX ── */
+.rec-box {
+  background: var(--navy);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  color: white;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 24px; align-items: center;
+}
+.rec-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.rec-verdict { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
+.rec-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px; }
+.rec-badge {
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  font-size: 18px; font-weight: 800;
+  letter-spacing: 1px; text-align: center;
+  white-space: nowrap;
+}
+.rec-badge.go { background: #059669; color: white; }
+.rec-badge.consider { background: var(--amber-mid); color: white; }
+.rec-badge.nogo { background: var(--red-mid); color: white; }
+
+/* ── DATAFLOW DIAGRAM ── */
+.pool-diagram { padding: 20px; display: flex; justify-content: center; }
+.pool-diagram svg { max-width: 560px; width: 100%; }
+
+/* ── FOOTER SOURCES ── */
+.sources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.source-item {
+  padding: 10px 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 10px; color: var(--gray-500); line-height: 1.5;
+}
+.source-item strong { display: block; color: var(--gray-700); font-size: 11px; margin-bottom: 2px; }
+
+/* ── TABS (nav) ── */
+.nav-tabs { display: flex; gap: 2px; border-bottom: 2px solid var(--border); margin-bottom: 0; }
+.nav-tab {
+  padding: 10px 18px;
+  border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500; color: var(--gray-500);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: all 0.15s;
+}
+.nav-tab:hover { color: var(--gray-800); }
+.nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 600; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeUp 0.3s ease forwards; }
+
+/* ── MISC ── */
+.text-mono { font-family: 'DM Mono', monospace; }
+.text-right { text-align: right; }
+.text-green { color: var(--green-mid); }
+.text-red { color: var(--red-mid); }
+.text-blue { color: var(--blue); }
+.text-muted { color: var(--gray-500); }
+.text-small { font-size: 11px; }
+.fw-600 { font-weight: 600; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.flex-row { display: flex; align-items: center; gap: 8px; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.info-note {
+  background: var(--blue-pale);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 11px; color: var(--gray-600); line-height: 1.5;
+  margin-bottom: 12px;
+}
+.stat-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px; }
+.stat-mini { }
+.stat-mini-label { font-size: 10px; color: var(--gray-400); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+.stat-mini-val { font-size: 16px; font-weight: 700; color: var(--gray-900); font-variant-numeric: tabular-nums; }
+
+.no-results { padding: 40px; text-align: center; color: var(--gray-400); font-size: 13px; }
+
+/* Print */
+@media print {
+  .sidebar, .header-actions, .scenario-bar { display: none; }
+  .app-shell { grid-template-columns: 1fr; }
+  body { background: white; }
+  .card { box-shadow: none; border: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="10" width="4" height="8" rx="1" fill="#3b82f6"/>
+          <rect x="8" y="6" width="4" height="12" rx="1" fill="#60a5fa"/>
+          <rect x="14" y="2" width="4" height="16" rx="1" fill="#93c5fd"/>
+          <path d="M3 8 L9 5 L15 2" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Cash<span>Pool</span> Simulator</div>
+        <div class="brand-tag">Treasury Advisory Platform · v3.0</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="pill live">Live kalkulace</div>
+      <div class="pill" id="entityCount">3 entity · 4 účty</div>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">⬇ Export PDF</button>
+    </div>
+  </div>
+</header>
+
+<div class="app-shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+
+    <!-- Struktura -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">⚙</div> Konfigurace</div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <div class="form-label">Typ cashpoolingu</div>
+          <select class="select-input" id="poolType" onchange="recalc()">
+            <option value="zero">Zero-balancing (fyzický sweep)</option>
+            <option value="notional">Notional (pomyslný offset)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Měna skupiny</div>
+          <select class="select-input" id="currency" onchange="recalc()">
+            <option value="CZK">CZK — česká koruna</option>
+            <option value="EUR">EUR — euro</option>
+            <option value="USD">USD — americký dolar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Horizont simulace <span class="form-label-val" id="horizonLbl">12 měs.</span></div>
+          <input type="range" class="slider" min="3" max="60" value="12" id="horizon" oninput="document.getElementById('horizonLbl').textContent=this.value+' měs.';recalc()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Úrokové sazby -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">%</div> Úrokové sazby</div>
+      </div>
+      <div class="card-body">
+        <div class="rate-grid">
+          <button class="rate-btn active" onclick="setRates('czk',this)">
+            <span class="rate-btn-name">CZK</span>
+            <span class="rate-btn-val">3.75%</span>
+            <span class="rate-btn-source">ČNB 2025</span>
+          </button>
+          <button class="rate-btn" onclick="setRates('eur',this)">
+            <span class="rate-btn-name">EUR</span>
+            <span class="rate-btn-val">2.65%</span>
+            <span class="rate-btn-source">ECB 2025</span>
+          </button>
+          <button class="rate-btn" onclick="setRates('usd',this)">
+            <span class="rate-btn-name">USD</span>
+            <span class="rate-btn-val">4.50%</span>
+            <span class="rate-btn-source">Fed 2025</span>
+          </button>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Debitní sazba (bez poolu) <span class="form-label-val" id="drLbl">5.50%</span></div>
+          <input type="range" class="slider" min="0.5" max="15" step="0.05" value="5.5" id="debitRate" oninput="document.getElementById('drLbl').textContent=parseFloat(this.value).toFixed(2)+'%';recalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Kreditní sazba (bez poolu) <span class="form-label-val" id="crLbl">2.80%</span></div>
+          <input type="range" class="slider" min="0.1" max="10" step="0.05" value="2.8" id="creditRate" oninput="document.getElementById('crLbl').textContent=parseFloat(this.value).toFixed(2)+'%';recalc()">
+        </div>
+        <div class="divider"></div>
+        <div class="form-group">
+          <div class="form-label">Pool debitní sazba <span class="form-label-val" id="pdLbl">3.20%</span></div>
+          <input type="range" class="slider" min="0.5" max="12" step="0.05" value="3.2" id="poolDebit" oninput="document.getElementById('pdLbl').textContent=parseFloat(this.value).toFixed(2)+'%';recalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Pool kreditní sazba <span class="form-label-val" id="pcLbl">4.00%</span></div>
+          <input type="range" class="slider" min="0.5" max="12" step="0.05" value="4.0" id="poolCredit" oninput="document.getElementById('pcLbl').textContent=parseFloat(this.value).toFixed(2)+'%';recalc()">
+        </div>
+        <div class="info-note">Spread pool/bilaterální = úspora z centralizace. Standardně 1–2 p.b. dle objemu a ratingu skupiny.</div>
+      </div>
+    </div>
+
+    <!-- Náklady -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">💼</div> Náklady poolingu</div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <div class="form-label">Implementace (tis. <span id="currSym1">CZK</span>) <span class="form-label-val" id="implLbl">250</span></div>
+          <input type="range" class="slider" min="0" max="3000" step="10" value="250" id="implCost" oninput="document.getElementById('implLbl').textContent=this.value;recalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Roční poplatek bance (tis.) <span class="form-label-val" id="bankLbl">60</span></div>
+          <input type="range" class="slider" min="0" max="600" step="5" value="60" id="bankFee" oninput="document.getElementById('bankLbl').textContent=this.value;recalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Roční interní admin (tis.) <span class="form-label-val" id="adminLbl">80</span></div>
+          <input type="range" class="slider" min="0" max="500" step="5" value="80" id="adminCost" oninput="document.getElementById('adminLbl').textContent=this.value;recalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Obj. transakcí/rok (M) <span class="form-label-val" id="txLbl">500</span></div>
+          <input type="range" class="slider" min="10" max="10000" step="10" value="500" id="txVol" oninput="document.getElementById('txLbl').textContent=this.value;recalc()">
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- 1. Entities -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">🏢</div> Entity skupiny &amp; účty</div>
+        <div class="flex-row">
+          <button class="btn btn-secondary btn-sm" onclick="loadTemplate('small')">Šablona S</button>
+          <button class="btn btn-secondary btn-sm" onclick="loadTemplate('large')">Šablona L</button>
+          <button class="btn btn-primary btn-sm" onclick="addEntity()">+ Entita</button>
+        </div>
+      </div>
+      <div class="entity-section">
+        <div class="entity-head">
+          <div class="entity-head-label">Název entity</div>
+          <div class="entity-head-label" style="text-align:right">Avg. zůstatek (tis.)</div>
+          <div class="entity-head-label" style="text-align:center">Počet účtů</div>
+          <div></div>
+        </div>
+        <div id="entityBody"></div>
+      </div>
+      <div class="entity-footer">
+        <div class="text-small text-muted">Kladný zůstatek = přebytek likvidity &nbsp;·&nbsp; Záporný = deficit (čerpání)</div>
+      </div>
+    </div>
+
+    <!-- 2. Scénáře + KPIs -->
+    <div>
+      <div class="section-header">
+        <div>
+          <div class="section-title"><div class="section-num">1</div> Výsledky simulace</div>
+          <div class="section-desc">Klíčové ukazatele — dopad zavedení cashpoolingu na skupinu</div>
+        </div>
+        <div class="scenario-bar">
+          <button class="scenario-tab active" onclick="setScenario('base',this)">Základní</button>
+          <button class="scenario-tab" onclick="setScenario('best',this)">Optimistický</button>
+          <button class="scenario-tab" onclick="setScenario('worst',this)">Pesimistický</button>
+        </div>
+      </div>
+      <div class="kpi-strip" id="kpiStrip"></div>
+    </div>
+
+    <!-- 3. Před / Po tabulka -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">⚖</div> Analýza před / po zavedení cashpoolingu</div>
+        <div class="pill" id="horizonPill">Horizont: 12 měs.</div>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div class="ba-table-wrap">
+          <table class="ba-table" id="baTable">
+            <thead>
+              <tr>
+                <th style="text-align:left;min-width:200px">Položka</th>
+                <th>PŘED poolingem</th>
+                <th class="col-after">PO poolingu</th>
+                <th class="col-saving">Úspora / Dopad</th>
+                <th>% změna</th>
+              </tr>
+            </thead>
+            <tbody id="baBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Tabs: entity / sensitivity / diagram / CFO -->
+    <div class="card">
+      <div class="card-header" style="padding-bottom:0;">
+        <div class="nav-tabs" style="border-bottom:none;">
+          <button class="nav-tab active" onclick="showTab('entities',this)">Detail entit</button>
+          <button class="nav-tab" onclick="showTab('cashflow',this)">Denní cash flow</button>
+          <button class="nav-tab" onclick="showTab('sensitivity',this)">Citlivostní analýza</button>
+          <button class="nav-tab" onclick="showTab('diagram',this)">Struktura poolu</button>
+          <button class="nav-tab" onclick="showTab('cfo',this)">CFO Výstup</button>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- Tab: entities -->
+        <div class="tab-pane active" id="tab-entities">
+          <div style="overflow-x:auto;">
+            <table class="er-table" id="erTable">
+              <thead>
+                <tr>
+                  <th style="text-align:left">Entita</th>
+                  <th>Zůstatek (tis.)</th>
+                  <th>Počet účtů</th>
+                  <th>Náklady PŘED</th>
+                  <th>Náklady PO</th>
+                  <th>Úspora</th>
+                  <th>Efekt. sazba</th>
+                  <th>Konsolid. účtů</th>
+                </tr>
+              </thead>
+              <tbody id="erBody"></tbody>
+            </table>
+          </div>
+          <div id="nettingStats" class="stat-row mt-16"></div>
+        </div>
+
+        <!-- Tab: cashflow -->
+        <div class="tab-pane" id="tab-cashflow">
+          <div class="info-note">Simulace denního vývoje zůstatků skupiny za 90 dní. Barevné pásmo ukazuje rozsah před (šedá) a po (modrá) zavedení poolu.</div>
+          <div class="chart-wrap" style="height:260px;">
+            <canvas id="cfChart"></canvas>
+          </div>
+          <div id="cfStats" class="stat-row mt-16"></div>
+        </div>
+
+        <!-- Tab: sensitivity -->
+        <div class="tab-pane" id="tab-sensitivity">
+          <div class="info-note">Analýza citlivosti čisté úspory na změnu debitní sazby a volatility zůstatků. Modré pole = základní scénář.</div>
+          <div style="overflow-x:auto;"><table class="sens-table" id="sensTable"></table></div>
+          <div class="mt-16">
+            <div class="chart-wrap" style="height:220px;">
+              <canvas id="sensChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: diagram -->
+        <div class="tab-pane" id="tab-diagram">
+          <div class="pool-diagram" id="poolDiagram"></div>
+          <div class="divider"></div>
+          <div id="nettingBar"></div>
+        </div>
+
+        <!-- Tab: CFO -->
+        <div class="tab-pane" id="tab-cfo">
+          <div id="cfoBox"></div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:12px;"><div class="card-title-icon">🗺</div> Implementační roadmap</div>
+          <div class="roadmap" id="roadmap"></div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:12px;"><div class="card-title-icon">⚠</div> Klíčová rizika</div>
+          <div id="riskItems"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 5. Datové zdroje -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><div class="card-title-icon">📚</div> Datové zdroje &amp; metodika</div>
+      </div>
+      <div class="card-body">
+        <div class="sources-grid">
+          <div class="source-item"><strong>ČNB</strong>Repo sazba 3.75 %, PRIBOR 1T/1M/3M, zdroj: cnb.cz/cs/financni-trhy</div>
+          <div class="source-item"><strong>ECB</strong>Deposit facility 2.65 %, €STR, EURIBOR term rates, zdroj: ecb.europa.eu</div>
+          <div class="source-item"><strong>Fed / SOFR</strong>Fed funds 4.50 %, SOFR overnight, CME FedWatch, zdroj: federalreserve.gov</div>
+          <div class="source-item"><strong>Komerční banky CZ</strong>Pool pricing KB, ČSOB, Erste — indikativní sazby 2025 (korporátní segment)</div>
+          <div class="source-item"><strong>Citi / UniCredit / ING</strong>European notional pool pricing — regionální skupiny 50M+ EUR</div>
+          <div class="source-item"><strong>OECD TP Guidelines</strong>Pravidla intercompany úrokového stanovení, safe harbour sazby</div>
+          <div class="source-item"><strong>EBA / Basel III</strong>LCR benchmark, NSFR metodika, liquidity buffer požadavky</div>
+          <div class="source-item"><strong>SWIFT gpi data</strong>Průměrné poplatky přeshraničních transakcí 0.05–0.15 % z objemu</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let entities = [];
+let activeScenario = 'base';
+let cfChartInstance = null;
+let sensChartInstance = null;
+
+const COLORS = ['#1d4ed8','#059669','#d97706','#dc2626','#7c3aed','#0891b2','#be185d','#15803d'];
+
+const SCENARIOS = {
+  base:  { debitMult: 1.00, creditMult: 1.00, volMult: 1.00, label: 'Základní scénář' },
+  best:  { debitMult: 0.85, creditMult: 1.10, volMult: 0.80, label: 'Optimistický scénář' },
+  worst: { debitMult: 1.20, creditMult: 0.85, volMult: 1.30, label: 'Pesimistický scénář' },
+};
+
+const RATE_PRESETS = {
+  czk: { debit: 5.50, credit: 2.80, poolDebit: 3.20, poolCredit: 4.00 },
+  eur: { debit: 4.15, credit: 2.40, poolDebit: 2.65, poolCredit: 3.50 },
+  usd: { debit: 6.50, credit: 3.80, poolDebit: 4.50, poolCredit: 5.20 },
+};
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function init() { loadTemplate('small'); }
+
+function loadTemplate(size) {
+  if (size === 'small') {
+    entities = [
+      { name: 'HoldCo Praha', balance: 1200, accounts: 2 },
+      { name: 'OpCo Brno', balance: -450, accounts: 1 },
+      { name: 'SalesCo Bratislava', balance: 800, accounts: 1 },
+    ];
+  } else {
+    entities = [
+      { name: 'HoldCo Praha', balance: 2500, accounts: 3 },
+      { name: 'Manufacturing CZ', balance: -1800, accounts: 2 },
+      { name: 'Sales SK', balance: 600, accounts: 1 },
+      { name: 'Logistics PL', balance: -300, accounts: 1 },
+      { name: 'R&D Hungary', balance: -950, accounts: 2 },
+      { name: 'Services Austria', balance: 1100, accounts: 1 },
+    ];
+  }
+  renderEntityTable();
+  recalc();
+}
+
+function addEntity() {
+  entities.push({ name: `Entita ${entities.length + 1}`, balance: 0, accounts: 1 });
+  renderEntityTable();
+  recalc();
+}
+
+function removeEntity(i) {
+  entities.splice(i, 1);
+  renderEntityTable();
+  recalc();
+}
+
+function renderEntityTable() {
+  document.getElementById('entityBody').innerHTML = entities.map((e, i) => `
+    <div class="entity-row">
+      <input class="entity-input" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()" placeholder="Název entity">
+      <input class="entity-input entity-bal-input" type="number" value="${e.balance}" onchange="entities[${i}].balance=parseFloat(this.value)||0;recalc()">
+      <input class="entity-input entity-acc-input" type="number" min="1" max="20" value="${e.accounts}" onchange="entities[${i}].accounts=parseInt(this.value)||1;recalc()">
+      <button class="del-btn" onclick="removeEntity(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// RATES & SCENARIOS
+// ═══════════════════════════════════════════════════════
+function setRates(key, btn) {
+  const p = RATE_PRESETS[key];
+  const set = (id, val, lblId) => {
+    document.getElementById(id).value = val;
+    document.getElementById(lblId).textContent = val.toFixed(2) + '%';
+  };
+  set('debitRate', p.debit, 'drLbl');
+  set('creditRate', p.credit, 'crLbl');
+  set('poolDebit', p.poolDebit, 'pdLbl');
+  set('poolCredit', p.poolCredit, 'pcLbl');
+  document.querySelectorAll('.rate-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  recalc();
+}
+
+function setScenario(key, btn) {
+  activeScenario = key;
+  document.querySelectorAll('.scenario-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  recalc();
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULATION ENGINE
+// ═══════════════════════════════════════════════════════
+function getParams() {
+  const sc = SCENARIOS[activeScenario];
+  const baseDebit = parseFloat(document.getElementById('debitRate').value) / 100;
+  const baseCredit = parseFloat(document.getElementById('creditRate').value) / 100;
+  return {
+    horizon: parseInt(document.getElementById('horizon').value),
+    debitRate: baseDebit * sc.debitMult,
+    creditRate: baseCredit * sc.creditMult,
+    poolDebitRate: parseFloat(document.getElementById('poolDebit').value) / 100 * sc.debitMult,
+    poolCreditRate: parseFloat(document.getElementById('poolCredit').value) / 100 * sc.creditMult,
+    implCost: parseFloat(document.getElementById('implCost').value),
+    bankFee: parseFloat(document.getElementById('bankFee').value),
+    adminCost: parseFloat(document.getElementById('adminCost').value),
+    txVol: parseFloat(document.getElementById('txVol').value),
+    poolType: document.getElementById('poolType').value,
+    currency: document.getElementById('currency').value,
+    volMult: sc.volMult,
+  };
+}
+
+function calculate() {
+  const p = getParams();
+  const f = p.horizon / 12;
+  const cur = p.currency;
+
+  let totalSurplus = 0, totalDeficit = 0;
+  let interestCostBefore = 0, interestIncomeBefore = 0;
+  let interestCostAfter = 0, interestIncomeAfter = 0;
+  let totalAccounts = 0;
+
+  const entityCalc = entities.map((e, i) => {
+    const bal = e.balance;
+    totalAccounts += e.accounts;
+    let cb = 0, ib = 0, ca = 0, ia = 0;
+    if (bal < 0) {
+      cb = Math.abs(bal) * p.debitRate * f;
+      ca = Math.abs(bal) * p.poolDebitRate * f;
+      totalDeficit += Math.abs(bal);
+    } else {
+      ib = bal * p.creditRate * f;
+      ia = bal * p.poolCreditRate * f;
+      totalSurplus += bal;
+    }
+    interestCostBefore += cb;
+    interestIncomeBefore += ib;
+    interestCostAfter += ca;
+    interestIncomeAfter += ia;
+    const saving = (cb - ca) + (ia - ib);
+    const effRate = bal >= 0 ? p.poolCreditRate * 100 : p.poolDebitRate * 100;
+    const consolidatedAccounts = Math.max(1, e.accounts - Math.floor(e.accounts * 0.3));
+    return { ...e, cb, ib, ca, ia, saving, effRate, consolidatedAccounts };
+  });
+
+  const poolBalance = entities.reduce((s, e) => s + e.balance, 0);
+  const netting = Math.min(totalSurplus, totalDeficit);
+  const nettingEff = totalSurplus + totalDeficit > 0 ? netting / Math.max(totalSurplus, totalDeficit) : 0;
+
+  // Netting saving: interest on offset balances
+  const nettingSaving = netting * (p.debitRate - p.poolDebitRate) * f * 0.85;
+
+  const netBefore = interestIncomeBefore - interestCostBefore;
+  const netAfter = interestIncomeAfter - interestCostAfter;
+  const interestSaving = (netAfter - netBefore) + Math.max(0, nettingSaving);
+
+  // Operational
+  const fxSaving = p.poolType === 'zero' ? p.txVol * 0.0009 * f : 0;
+  const bankChargeReduction = p.txVol * 0.00035 * f;
+  const facilityFeeReduction = totalDeficit * 0.006 * f;
+  const accountConsolidation = entities.reduce((s, e) => s + (e.accounts - Math.max(1, Math.floor(e.accounts * 0.7))), 0) * 8 * f;
+  const totalOpSaving = fxSaving + bankChargeReduction + facilityFeeReduction + accountConsolidation;
+
+  // Costs
+  const totalOpCostPeriod = (p.bankFee + p.adminCost) * f;
+  const totalCostPeriod = p.implCost + totalOpCostPeriod;
+  const totalBenefit = interestSaving + totalOpSaving;
+  const netBenefit = totalBenefit - totalCostPeriod;
+  const roi = totalCostPeriod > 0 ? (netBenefit / totalCostPeriod) * 100 : 0;
+  const annualBenefit = totalBenefit / f;
+  const annualCost = p.bankFee + p.adminCost;
+  const annualNetBenefit = annualBenefit - annualCost;
+  const paybackMonths = annualNetBenefit > 0 ? (p.implCost / annualNetBenefit) * 12 : 999;
+
+  const consolidatedAccounts = entities.reduce((s, e) => s + Math.max(1, Math.floor(e.accounts * 0.7)), 0);
+  const lcrImprovement = poolBalance >= 0 ? Math.min(40, (totalSurplus / (totalSurplus + totalDeficit + 1)) * 60) : 8;
+
+  return {
+    p, f, entityCalc, poolBalance, netting, nettingEff,
+    interestCostBefore, interestIncomeBefore, netBefore,
+    interestCostAfter, interestIncomeAfter, netAfter,
+    interestSaving, nettingSaving,
+    fxSaving, bankChargeReduction, facilityFeeReduction, accountConsolidation, totalOpSaving,
+    totalCostPeriod, totalOpCostPeriod, totalBenefit, netBenefit, roi,
+    annualBenefit, annualCost, annualNetBenefit, paybackMonths,
+    totalSurplus, totalDeficit, totalAccounts, consolidatedAccounts,
+    lcrImprovement,
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// FORMAT HELPERS
+// ═══════════════════════════════════════════════════════
+function fmt(n, cur, decimals = 0) {
+  const abs = Math.abs(n);
+  let s;
+  if (abs >= 1000000) s = (n / 1000000).toFixed(2) + ' M';
+  else if (abs >= 1000) s = (n / 1000).toFixed(1) + ' tis.';
+  else s = n.toFixed(decimals);
+  return s + (cur ? ' ' + cur : '');
+}
+function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(1) + ' %'; }
+function fmtChg(n, cur) { return (n >= 0 ? '+' : '') + fmt(n, cur); }
+function pctChange(before, after) {
+  if (before === 0) return after === 0 ? '—' : '∞';
+  return fmtPct((after - before) / Math.abs(before) * 100);
+}
+
+// ═══════════════════════════════════════════════════════
+// RECALC — orchestrates all renders
+// ═══════════════════════════════════════════════════════
+function recalc() {
+  try {
+    const R = calculate();
+    renderKPIs(R);
+    renderBATable(R);
+    renderEntityResults(R);
+    renderCashflowChart(R);
+    renderSensitivity(R);
+    renderDiagram(R);
+    renderCFO(R);
+    updateHeader(R);
+    document.getElementById('horizonPill').textContent = `Horizont: ${R.p.horizon} měs.`;
+  } catch(e) { console.error(e); }
+}
+
+function updateHeader(R) {
+  const cur = R.p.currency;
+  document.getElementById('currSym1').textContent = cur;
+  const totalAcc = entities.reduce((s, e) => s + e.accounts, 0);
+  document.getElementById('entityCount').textContent = `${entities.length} entit · ${totalAcc} účtů`;
+}
+
+// ═══════════════════════════════════════════════════════
+// KPI STRIP
+// ═══════════════════════════════════════════════════════
+function renderKPIs(R) {
+  const { interestSaving, totalOpSaving, netBenefit, roi, paybackMonths, lcrImprovement, nettingEff, p, totalAccounts, consolidatedAccounts } = R;
+  const cur = p.currency;
+  const savingTotal = interestSaving + totalOpSaving;
+
+  const kpis = [
+    {
+      label: 'Čistý přínos', value: fmt(netBenefit, cur),
+      cls: netBenefit > 0 ? 'positive' : 'negative',
+      delta: netBenefit > 0 ? '▲ kladné NPV' : '▼ záporné NPV',
+      deltaClass: netBenefit > 0 ? 'up' : 'down',
+      bar: Math.min(100, Math.abs(netBenefit) / Math.max(Math.abs(netBenefit), 1) * 100),
+    },
+    {
+      label: 'Úroková úspora', value: fmt(interestSaving, cur),
+      cls: 'blue',
+      delta: `${((interestSaving / Math.max(savingTotal, 1)) * 100).toFixed(0)}% celkové úspory`,
+      deltaClass: 'neutral',
+      bar: 70,
+    },
+    {
+      label: 'Provozní úspory', value: fmt(totalOpSaving, cur),
+      cls: 'positive',
+      delta: `FX + poplatky + facility`,
+      deltaClass: 'neutral',
+      bar: 50,
+    },
+    {
+      label: 'Payback period', value: paybackMonths < 120 ? paybackMonths.toFixed(1) + ' měs.' : 'N/A',
+      cls: paybackMonths < 24 ? 'positive' : paybackMonths < 48 ? 'blue' : 'negative',
+      delta: paybackMonths < 24 ? 'Rychlá návratnost' : paybackMonths < 48 ? 'Přiměřená' : 'Pomalá',
+      deltaClass: paybackMonths < 24 ? 'up' : paybackMonths < 48 ? 'neutral' : 'down',
+      bar: Math.max(10, 100 - Math.min(100, paybackMonths / 60 * 100)),
+    },
+    {
+      label: 'Netting efektivita', value: (nettingEff * 100).toFixed(0) + '%',
+      cls: nettingEff > 0.5 ? 'positive' : 'blue',
+      delta: `Offset přebytek/deficit`,
+      deltaClass: nettingEff > 0.5 ? 'up' : 'neutral',
+      bar: nettingEff * 100,
+    },
+    {
+      label: 'Úspora účtů', value: `${totalAccounts} → ${consolidatedAccounts}`,
+      cls: 'blue',
+      delta: `${totalAccounts - consolidatedAccounts} účtů zrušeno`,
+      deltaClass: 'up',
+      bar: ((totalAccounts - consolidatedAccounts) / totalAccounts) * 100,
+    },
+  ];
+  document.getElementById('kpiStrip').innerHTML = kpis.map(k => `
+    <div class="kpi-cell">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.cls}">${k.value}</div>
+      <div class="kpi-delta ${k.deltaClass}">${k.delta}</div>
+      <div class="kpi-bar" style="width:${k.bar}%"></div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// BEFORE / AFTER TABLE
+// ═══════════════════════════════════════════════════════
+function renderBATable(R) {
+  const { interestCostBefore, interestIncomeBefore, netBefore,
+    interestCostAfter, interestIncomeAfter, netAfter, interestSaving,
+    nettingSaving, fxSaving, bankChargeReduction, facilityFeeReduction, accountConsolidation,
+    totalOpSaving, totalCostPeriod, totalBenefit, netBenefit, p } = R;
+  const cur = p.currency;
+
+  const rows = [
+    { label: '— Úrokové náklady (debitní pozice)', b: -interestCostBefore, a: -interestCostAfter },
+    { label: '+ Úrokový výnos (kreditní pozice)', b: interestIncomeBefore, a: interestIncomeAfter },
+    { label: '+ Netting úspora (offset P/D)', b: 0, a: nettingSaving, sub: true },
+    { type: 'subtotal', label: 'Čistý úrokový výsledek', b: netBefore, a: netAfter + nettingSaving },
+    { label: '+ Úspora FX konverzí', b: 0, a: fxSaving, sub: true },
+    { label: '+ Úspora bankovních poplatků', b: 0, a: bankChargeReduction, sub: true },
+    { label: '+ Redukce facility fees', b: 0, a: facilityFeeReduction, sub: true },
+    { label: '+ Konsolidace bankovních účtů', b: 0, a: accountConsolidation, sub: true },
+    { type: 'subtotal', label: 'Celkové provozní úspory', b: 0, a: totalOpSaving },
+    { label: '− Náklady na implementaci (jednorázově)', b: 0, a: -R.p.implCost },
+    { label: '− Roční poplatky bance + admin', b: 0, a: -(R.p.bankFee + R.p.adminCost) * R.f },
+    { type: 'total', label: 'ČISTÝ PŘÍNOS ZA OBDOBÍ', b: netBefore, a: netBefore + netBenefit },
+  ];
+
+  document.getElementById('baBody').innerHTML = rows.map(r => {
+    if (r.type === 'subtotal') {
+      const sav = r.a - r.b;
+      const pc = r.b !== 0 ? pctChange(r.b, r.a) : (sav > 0 ? '+∞' : '—');
+      return `<tr class="subtotal">
+        <td>${r.label}</td>
+        <td>${fmt(r.b, cur)}</td>
+        <td class="col-after">${fmt(r.a, cur)}</td>
+        <td class="col-saving ${sav >= 0 ? 'pos' : 'neg'}">${fmtChg(sav, cur)}</td>
+        <td class="text-mono">${pc}</td>
+      </tr>`;
+    }
+    if (r.type === 'total') {
+      const sav = netBenefit;
+      return `<tr class="total">
+        <td>${r.label}</td>
+        <td>${fmt(r.b, cur)}</td>
+        <td class="col-after">${fmt(r.a, cur)}</td>
+        <td class="col-saving">${fmtChg(sav, cur)}</td>
+        <td>${R.roi.toFixed(0)}% ROI</td>
+      </tr>`;
+    }
+    const sav = r.a - r.b;
+    const pc = r.b !== 0 ? pctChange(r.b, r.a) : (sav !== 0 ? (sav > 0 ? 'nové' : '—') : '—');
+    return `<tr>
+      <td style="padding-left:${r.sub ? '28px' : '16px'};color:${r.sub ? 'var(--gray-500)' : ''}">${r.label}</td>
+      <td>${r.b !== 0 ? fmt(r.b, cur) : '—'}</td>
+      <td class="col-after">${r.a !== 0 ? fmt(r.a, cur) : '—'}</td>
+      <td class="col-saving ${sav >= 0 ? 'pos' : 'neg'}">${sav !== 0 ? fmtChg(sav, cur) : '—'}</td>
+      <td class="text-mono text-muted">${pc}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// ENTITY RESULTS TAB
+// ═══════════════════════════════════════════════════════
+function renderEntityResults(R) {
+  const { entityCalc, nettingEff, netting, totalSurplus, totalDeficit, poolBalance, p } = R;
+  const cur = p.currency;
+
+  document.getElementById('erBody').innerHTML = entityCalc.map((e, i) => {
+    const color = COLORS[i % COLORS.length];
+    const isPos = e.balance >= 0;
+    const tag = isPos
+      ? `<span class="tag-s tag-surplus">přebytek</span>`
+      : `<span class="tag-s tag-deficit">deficit</span>`;
+    const costB = isPos ? e.ib : -e.cb;
+    const costA = isPos ? e.ia : -e.ca;
+    const consolidated = Math.max(1, Math.floor(e.accounts * 0.7));
+    const savedAccounts = e.accounts - consolidated;
+    return `<tr>
+      <td><div class="entity-name-cell">
+        <span class="entity-dot" style="background:${color}"></span>
+        <span style="font-weight:500;color:var(--gray-800)">${e.name}</span>
+        ${tag}
+      </div></td>
+      <td class="text-mono ${isPos ? 'text-green' : 'text-red'}">${fmt(e.balance, cur)}</td>
+      <td class="text-mono">${e.accounts}</td>
+      <td class="text-mono text-muted">${fmt(costB, cur)}</td>
+      <td class="text-mono text-blue">${fmt(costA, cur)}</td>
+      <td class="text-mono fw-600 ${e.saving >= 0 ? 'text-green' : 'text-red'}">${fmtChg(e.saving, cur)}</td>
+      <td class="text-mono">${e.effRate.toFixed(2)}%</td>
+      <td class="text-mono">${e.accounts} → ${consolidated}${savedAccounts > 0 ? ` <span class="text-green text-small">(−${savedAccounts})</span>` : ''}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('nettingStats').innerHTML = `
+    <div class="stat-mini"><div class="stat-mini-label">Pool Balance</div><div class="stat-mini-val ${poolBalance >= 0 ? 'text-green' : 'text-red'}">${fmt(poolBalance, cur)}</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Celk. přebytek</div><div class="stat-mini-val text-green">${fmt(totalSurplus, cur)}</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Celk. deficit</div><div class="stat-mini-val text-red">${fmt(totalDeficit, cur)}</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Netting offset</div><div class="stat-mini-val text-blue">${fmt(netting, cur)}</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Netting efektivita</div><div class="stat-mini-val">${(nettingEff * 100).toFixed(0)}%</div></div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// DAILY CASH FLOW SIMULATION
+// ═══════════════════════════════════════════════════════
+function renderCashflowChart(R) {
+  const { entityCalc, p } = R;
+  const days = 90;
+  const labels = Array.from({ length: days }, (_, i) => `D${i + 1}`);
+
+  // Simulate group cash flow
+  const seed = (i, freq, amp) => Math.sin(i * freq) * amp + Math.cos(i * freq * 0.7) * amp * 0.4;
+
+  const poolBalance = entities.reduce((s, e) => s + e.balance, 0);
+  const totalBefore = [];
+  const totalAfterBase = [];
+  const totalAfterBest = [];
+  const totalAfterWorst = [];
+
+  for (let d = 0; d < days; d++) {
+    // Before pool: sum of individual balances with volatility
+    const noise = p.volMult;
+    let b = 0;
+    entities.forEach(e => {
+      b += e.balance + seed(d, 0.15, Math.abs(e.balance) * 0.25 * noise) + (Math.random() - 0.5) * Math.abs(e.balance) * 0.1 * noise;
+    });
+    totalBefore.push(b);
+
+    // After pool: concentrated, smoother
+    const poolNoise = p.volMult * 0.4;
+    totalAfterBase.push(poolBalance + seed(d, 0.12, Math.abs(poolBalance) * 0.15 * poolNoise));
+    totalAfterBest.push(poolBalance * 1.1 + seed(d, 0.10, Math.abs(poolBalance) * 0.10));
+    totalAfterWorst.push(poolBalance * 0.85 + seed(d, 0.18, Math.abs(poolBalance) * 0.22));
+  }
+
+  if (cfChartInstance) { cfChartInstance.destroy(); cfChartInstance = null; }
+  const ctx = document.getElementById('cfChart').getContext('2d');
+  cfChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'PŘED poolingem',
+          data: totalBefore,
+          borderColor: '#9ca3af',
+          backgroundColor: 'rgba(156,163,175,0.08)',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: 'PO poolingu (base)',
+          data: totalAfterBase,
+          borderColor: '#1d4ed8',
+          backgroundColor: 'rgba(29,78,216,0.08)',
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: 'Optimistický',
+          data: totalAfterBest,
+          borderColor: '#059669',
+          borderDash: [4, 4],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: false,
+          tension: 0.4,
+        },
+        {
+          label: 'Pesimistický',
+          data: totalAfterWorst,
+          borderColor: '#d97706',
+          borderDash: [4, 4],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: false,
+          tension: 0.4,
+        },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { font: { family: 'DM Sans', size: 11 }, color: '#6b7280', boxWidth: 12, padding: 16 }
+        },
+        tooltip: {
+          backgroundColor: '#fff',
+          borderColor: '#e5e7eb',
+          borderWidth: 1,
+          titleColor: '#111827',
+          bodyColor: '#6b7280',
+          titleFont: { family: 'DM Sans', size: 12, weight: '600' },
+          bodyFont: { family: 'DM Mono', size: 11 },
+          callbacks: {
+            label: ctx => `  ${ctx.dataset.label}: ${Math.round(ctx.raw).toLocaleString()} tis.`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#f3f4f6' },
+          ticks: { font: { family: 'DM Mono', size: 9 }, color: '#9ca3af', maxTicksLimit: 12 }
+        },
+        y: {
+          grid: { color: '#f3f4f6' },
+          ticks: { font: { family: 'DM Mono', size: 10 }, color: '#9ca3af', callback: v => Math.round(v).toLocaleString() + ' tis.' }
+        }
+      }
+    }
+  });
+
+  const vol = (arr) => { const m = arr.reduce((a,b) => a+b,0)/arr.length; return Math.sqrt(arr.reduce((s,v) => s+(v-m)**2,0)/arr.length); };
+  document.getElementById('cfStats').innerHTML = `
+    <div class="stat-mini"><div class="stat-mini-label">Volatilita PŘED</div><div class="stat-mini-val text-red">${Math.round(vol(totalBefore)).toLocaleString()} tis.</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Volatilita PO</div><div class="stat-mini-val text-blue">${Math.round(vol(totalAfterBase)).toLocaleString()} tis.</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Snížení volatility</div><div class="stat-mini-val text-green">${Math.round((1 - vol(totalAfterBase)/Math.max(vol(totalBefore),1))*100)}%</div></div>
+    <div class="stat-mini"><div class="stat-mini-label">Dní simulace</div><div class="stat-mini-val">90 dní</div></div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// SENSITIVITY ANALYSIS
+// ═══════════════════════════════════════════════════════
+function renderSensitivity(R) {
+  const { p } = R;
+  const baseDebit = parseFloat(document.getElementById('debitRate').value) / 100;
+  const basePoolDebit = parseFloat(document.getElementById('poolDebit').value) / 100;
+  const cur = p.currency;
+
+  const debitDiffs = [-1.5, -0.75, 0, +0.75, +1.5]; // p.p. change in spread
+  const volFactors = [0.7, 0.85, 1.0, 1.2, 1.5];
+
+  // Build table
+  let html = `<thead><tr>
+    <th>Spread ↓ / Volatilita →</th>
+    ${volFactors.map(v => `<th>Vol ×${v}</th>`).join('')}
+  </tr></thead><tbody>`;
+
+  debitDiffs.forEach(dd => {
+    html += '<tr>';
+    const spreadLabel = dd === 0 ? 'Základní spread' : `Spread ${dd > 0 ? '+' : ''}${dd.toFixed(2)} p.p.`;
+    html += `<td>${spreadLabel}</td>`;
+    volFactors.forEach(vf => {
+      // Modified calc
+      const modDebit = Math.max(0.005, baseDebit + dd/100);
+      const modPoolDebit = Math.max(0.003, basePoolDebit + dd/100 * 0.6);
+      const f = p.horizon / 12;
+      let saving = 0;
+      entities.forEach(e => {
+        const bal = e.balance;
+        if (bal < 0) {
+          saving += Math.abs(bal) * (modDebit - modPoolDebit) * f * vf;
+        } else {
+          saving += bal * (p.poolCreditRate - p.creditRate) * f;
+        }
+      });
+      saving = Math.max(0, saving * 0.85);
+      const net = saving - R.totalCostPeriod;
+      const isBase = dd === 0 && vf === 1.0;
+      const cls = isBase ? 'sens-cell-base' : net > R.totalCostPeriod * 0.5 ? 'sens-cell-high' : net > 0 ? 'sens-cell-med' : 'sens-cell-low';
+      html += `<td class="${cls}">${fmt(net, cur)}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('sensTable').innerHTML = html;
+
+  // Sensitivity bar chart
+  const spreads = debitDiffs.map(dd => {
+    const modDebit = Math.max(0.005, baseDebit + dd/100);
+    const modPoolDebit = Math.max(0.003, basePoolDebit + dd/100 * 0.6);
+    const f = p.horizon / 12;
+    let saving = 0;
+    entities.forEach(e => {
+      if (e.balance < 0) saving += Math.abs(e.balance) * (modDebit - modPoolDebit) * f;
+      else saving += e.balance * (p.poolCreditRate - p.creditRate) * f;
+    });
+    return Math.max(0, saving * 0.85) - R.totalCostPeriod;
+  });
+
+  if (sensChartInstance) { sensChartInstance.destroy(); sensChartInstance = null; }
+  const ctx2 = document.getElementById('sensChart').getContext('2d');
+  sensChartInstance = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: debitDiffs.map(d => `Spread ${d >= 0 ? '+' : ''}${d.toFixed(2)} p.p.`),
+      datasets: [{
+        label: 'Čistý přínos',
+        data: spreads,
+        backgroundColor: spreads.map(v => v > 0 ? 'rgba(5,150,105,0.7)' : 'rgba(220,38,38,0.7)'),
+        borderColor: spreads.map(v => v > 0 ? '#059669' : '#dc2626'),
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#fff', borderColor: '#e5e7eb', borderWidth: 1,
+          titleColor: '#111827', bodyColor: '#374151',
+          titleFont: { family: 'DM Sans', size: 11 },
+          bodyFont: { family: 'DM Mono', size: 11 },
+          callbacks: { label: ctx => `  Čistý přínos: ${Math.round(ctx.raw).toLocaleString()} tis. ${cur}` }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#6b7280' } },
+        y: { grid: { color: '#f3f4f6' }, ticks: { font: { family: 'DM Mono', size: 10 }, color: '#9ca3af', callback: v => Math.round(v).toLocaleString() } }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// POOL STRUCTURE DIAGRAM
+// ═══════════════════════════════════════════════════════
+function renderDiagram(R) {
+  const { entityCalc, poolBalance, totalSurplus, totalDeficit, netting, nettingEff, p } = R;
+  const cur = p.currency;
+  const n = entityCalc.length;
+  const W = 560, H = 380;
+  const cx = W / 2, cy = 160;
+  const radius = Math.min(130, 40 + n * 15);
+
+  let svgParts = [];
+  // BG
+  svgParts.push(`<rect width="${W}" height="${H}" rx="8" fill="#f9fafb"/>`);
+
+  // Master account
+  const poolCol = poolBalance >= 0 ? '#059669' : '#d97706';
+  svgParts.push(`
+    <rect x="${cx-60}" y="${cy-30}" width="120" height="60" rx="6" fill="white" stroke="${poolCol}" stroke-width="2"/>
+    <text x="${cx}" y="${cy-8}" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="#111827">MASTER ACCOUNT</text>
+    <text x="${cx}" y="${cy+8}" text-anchor="middle" font-family="DM Mono" font-size="10" fill="${poolCol}">${poolBalance >= 0 ? '+' : ''}${Math.round(poolBalance)} tis.</text>
+    <text x="${cx}" y="${cy+22}" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#9ca3af">${p.poolType === 'zero' ? 'Zero-balancing' : 'Notional pool'}</text>
+  `);
+
+  // Entities
+  entityCalc.forEach((e, i) => {
+    const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    const ex = cx + radius * Math.cos(angle);
+    const ey = cy + radius * Math.sin(angle);
+    const color = COLORS[i % COLORS.length];
+    const isPos = e.balance >= 0;
+    const lineCol = isPos ? '#059669' : '#dc2626';
+    const lw = Math.max(1, Math.min(4, Math.abs(e.balance) / 600));
+
+    // Line
+    svgParts.push(`<line x1="${ex}" y1="${ey}" x2="${cx}" y2="${cy}" stroke="${lineCol}" stroke-width="${lw}" stroke-opacity="0.5" stroke-dasharray="${isPos ? 'none' : '5,3'}"/>`);
+
+    // Entity box
+    const bw = 94, bh = 44;
+    const bx = ex - bw / 2, by = ey - bh / 2;
+    const label = e.name.length > 13 ? e.name.substring(0, 12) + '…' : e.name;
+    svgParts.push(`
+      <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="5" fill="white" stroke="${color}" stroke-width="1.5"/>
+      <text x="${ex}" y="${ey-6}" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="600" fill="#374151">${label}</text>
+      <text x="${ex}" y="${ey+8}" text-anchor="middle" font-family="DM Mono" font-size="9" fill="${isPos ? '#059669' : '#dc2626'}">${isPos ? '+' : ''}${Math.round(e.balance)} tis.</text>
+    `);
+  });
+
+  // Legend
+  svgParts.push(`
+    <text x="20" y="${H - 60}" font-family="DM Sans" font-size="9" fill="#9ca3af">Legenda:</text>
+    <line x1="20" y1="${H-46}" x2="50" y2="${H-46}" stroke="#059669" stroke-width="1.5"/>
+    <text x="55" y="${H-42}" font-family="DM Sans" font-size="9" fill="#6b7280">Příliv (přebytek → pool)</text>
+    <line x1="20" y1="${H-28}" x2="50" y2="${H-28}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="55" y="${H-24}" font-family="DM Sans" font-size="9" fill="#6b7280">Čerpání (deficit ← pool)</text>
+    <text x="${W-20}" y="${H-46}" text-anchor="end" font-family="DM Mono" font-size="9" fill="#9ca3af">Netting efektivita: ${(nettingEff*100).toFixed(0)}%</text>
+    <text x="${W-20}" y="${H-30}" text-anchor="end" font-family="DM Mono" font-size="9" fill="#059669">Offset: ${Math.round(netting)} tis. ${cur}</text>
+  `);
+
+  document.getElementById('poolDiagram').innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px;width:100%">${svgParts.join('')}</svg>`;
+
+  // Netting bar
+  const pct = totalSurplus + totalDeficit > 0 ? Math.min(100, netting / Math.max(totalSurplus, totalDeficit) * 100) : 0;
+  document.getElementById('nettingBar').innerHTML = `
+    <div style="padding:0 0 8px;">
+      <div class="flex-between" style="margin-bottom:6px;">
+        <span class="text-small fw-600" style="color:var(--gray-700)">Netting efektivita skupiny</span>
+        <span class="text-mono text-small text-blue">${pct.toFixed(0)}%</span>
+      </div>
+      <div class="payback-bar-track"><div class="payback-bar-fill" style="width:${pct}%"></div></div>
+      <div class="flex-between text-small text-muted" style="margin-top:4px;">
+        <span>Přebytek: ${fmt(totalSurplus, cur)}</span>
+        <span>Deficit: ${fmt(totalDeficit, cur)}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// CFO OUTPUT TAB
+// ═══════════════════════════════════════════════════════
+function renderCFO(R) {
+  const { netBenefit, roi, paybackMonths, annualNetBenefit, interestSaving, totalOpSaving, lcrImprovement, nettingEff, totalSurplus, totalDeficit, p, totalAccounts, consolidatedAccounts } = R;
+  const cur = p.currency;
+
+  const rec = netBenefit > 0 && paybackMonths < 36 ? { label: 'DOPORUČUJEME', cls: 'go', color: '#059669' }
+    : netBenefit > 0 ? { label: 'ZVÁŽIT', cls: 'consider', color: '#d97706' }
+    : { label: 'NEDOPORUČUJEME', cls: 'nogo', color: '#dc2626' };
+
+  document.getElementById('cfoBox').innerHTML = `
+    <div class="rec-box" style="margin-bottom:20px;">
+      <div>
+        <div class="rec-title">Doporučení pro CFO / Board</div>
+        <div class="rec-verdict">Zavedení cashpoolingu</div>
+        <div class="rec-sub">Roční čistý přínos (steady state): <strong style="color:white">${fmt(annualNetBenefit, cur)}</strong> · ROI: ${roi.toFixed(0)}%</div>
+      </div>
+      <div class="rec-badge ${rec.cls}">${rec.label}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;">
+      ${[
+        { icon: '💰', title: 'Snížení finančních nákladů', body: `Přímá úroková úspora ${fmt(interestSaving, cur)} díky eliminaci externího financování deficitů přebytky skupiny. Netting offset ${Math.round(Math.min(totalSurplus, totalDeficit)).toLocaleString()} tis. ${cur}.` },
+        { icon: '🔄', title: 'Optimalizace vnitřního financování', body: `Netting efektivita ${(nettingEff*100).toFixed(0)}%. Skupina interně financuje ${fmt(Math.min(totalSurplus, totalDeficit), cur)} bez nutnosti externího výpůjčky od bank.` },
+        { icon: '🏦', title: 'Konsolidace bankovního vztahu', body: `Počet bankovních účtů snížen z ${totalAccounts} na ${consolidatedAccounts}. Zjednodušená správa, nižší poplatky, silnější vyjednávací pozice vůči bance.` },
+        { icon: '📊', title: 'Likvidita a regulatorní dopad', body: `Centralizovaný pool zlepšuje LCR skupiny odhadovaně o +${lcrImprovement.toFixed(1)} p.b. Real-time viditelnost na cash pozice všech ${entities.length} entit.` },
+      ].map(c => `
+        <div style="padding:14px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--radius-md);">
+          <div style="font-size:15px;margin-bottom:6px;">${c.icon}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--gray-800);margin-bottom:4px;">${c.title}</div>
+          <div style="font-size:11px;color:var(--gray-600);line-height:1.5;">${c.body}</div>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div class="flex-between" style="margin-bottom:8px;">
+        <span class="text-small fw-600" style="color:var(--gray-700)">Payback period — pokrytí implementačních nákladů</span>
+        <span class="text-mono text-small text-blue">${paybackMonths < 120 ? paybackMonths.toFixed(1) + ' měsíců' : 'N/A'}</span>
+      </div>
+      <div class="payback-bar-track">
+        <div class="payback-bar-fill" style="width:${Math.min(100, 100 - Math.min(100, paybackMonths / 48 * 100))}%"></div>
+      </div>
+      <div class="flex-between text-small text-muted" style="margin-top:4px;">
+        <span>Implementace: ${fmt(p.implCost, cur)}</span>
+        <span>Roční úspora: ${fmt(annualNetBenefit, cur)}</span>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('roadmap').innerHTML = [
+    { n: '1', title: 'Analýza & výběr banky', period: 'Měsíc 1–2', desc: 'RFP process, hodnocení nabídek (KB, ČSOB, Erste, Citi, ING, UniCredit), komparace pool sazeb a poplatků. Doporučujeme oslovit min. 3 banky.' },
+    { n: '2', title: 'Právní & daňový rámec', period: 'Měsíc 2–4', desc: 'Intercompany smlouvy, TCA (Treasury Control Agreement), transfer pricing dokumentace (OECD TP Guidelines), analýza withholding tax v jurisdikcích skupiny.' },
+    { n: '3', title: 'Technická implementace', period: 'Měsíc 3–6', desc: 'Napojení ERP (SAP Treasury, Oracle TRM), TMS konfigurace, testovací provoz s pilotní entitou, IT bezpečnost a přístupy.' },
+    { n: '4', title: 'Pilotní provoz & rollout', period: 'Měsíc 6–8', desc: `Pilot s 2–3 hlavními entitami, ladění limitů a sweep pravidel, postupný rollout na všech ${entities.length} entit skupiny.` },
+  ].map(s => `
+    <div class="roadmap-step">
+      <div class="roadmap-num">${s.n}</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">${s.title} <span class="roadmap-period">${s.period}</span></div>
+        <div class="roadmap-desc">${s.desc}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('riskItems').innerHTML = [
+    { cls: 'med', badge: 'badge-med', level: 'STŘEDNÍ', title: 'Transfer pricing & daň', desc: 'Intercompany úroky musí být stanoveny na arm\'s length principu. Doporučujeme TP dokumentaci a případné závazné posouzení (APA) s finančními správami.' },
+    { cls: 'med', badge: 'badge-med', level: 'STŘEDNÍ', title: 'Regulatorní omezení', desc: 'PL, RO, UA: cross-border pool může vyžadovat souhlas centrální banky. CZ, SK: bez restrikce. Doporučujeme právní audit v každé jurisdikci před implementací.' },
+    { cls: 'low', badge: 'badge-low', level: 'NÍZKÉ', title: 'Bankovní counterparty risk', desc: 'Koncentrace celkové likvidity skupiny u jedné banky. Mitigace: split pool mezi 2 banky pro skupiny nad 100 M, FDIR pojištění vkladů.' },
+    { cls: 'info', badge: 'badge-info', level: 'IMPLEMENTAČNÍ', title: 'Systémová integrace', desc: 'ERP napojení (SAP, Oracle) vyžaduje 2–4 měsíce. Doporučujeme fázovaný rollout — nejprve entitu s největším objemem transakcí.' },
+  ].map(r => `
+    <div class="risk-item ${r.cls}">
+      <div style="flex:1;">
+        <div class="risk-title">${r.title} <span class="risk-badge ${r.badge}">${r.level}</span></div>
+        <div class="risk-desc">${r.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// UI: TABS
+// ═══════════════════════════════════════════════════════
+function showTab(name, btn) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const pane = document.getElementById('tab-' + name);
+  if (pane) pane.classList.add('active');
+  // Trigger chart resize
+  if (name === 'cashflow' && cfChartInstance) cfChartInstance.resize();
+  if (name === 'sensitivity' && sensChartInstance) sensChartInstance.resize();
+}
+
+// ═══════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

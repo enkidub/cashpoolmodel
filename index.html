@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoolSimulator — Treasury Cash Pooling Intelligence</title>
+<meta name="description" content="Free cash pooling simulator built by a former ING, Citi and Accenture treasury professional. Model your before/after scenarios, download board-ready PDF reports.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --ink:        #0f1117;
+  --ink-mid:    #374151;
+  --ink-light:  #6b7280;
+  --ink-faint:  #9ca3af;
+  --paper:      #faf9f7;
+  --paper-warm: #f3f0ea;
+  --paper-mid:  #e8e3da;
+  --rule:       #e2ddd5;
+  --navy:       #0e1f3d;
+  --navy-hover: #162d56;
+  --gold:       #b8860b;
+  --gold-light: #f5f0e0;
+  --blue:       #1d4ed8;
+  --blue-pale:  #eff6ff;
+  --green:      #065f46;
+  --green-pale: #ecfdf5;
+  --red:        #991b1b;
+  --red-pale:   #fef2f2;
+
+  --serif:  'Libre Baskerville', Georgia, serif;
+  --sans:   'DM Sans', system-ui, sans-serif;
+  --mono:   'DM Mono', monospace;
+
+  --max: 1120px;
+  --col-gap: clamp(24px, 4vw, 56px);
+  --section-pad: clamp(64px, 10vw, 120px);
+
+  --shadow-card: 0 1px 4px rgba(15,17,23,.06), 0 4px 20px rgba(15,17,23,.06);
+  --shadow-lift: 0 8px 40px rgba(15,17,23,.12);
+  --radius: 6px;
+  --radius-lg: 12px;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer;border:none;background:none}
+
+/* ── UTILITY ── */
+.serif{font-family:var(--serif)}
+.mono{font-family:var(--mono)}
+.container{max-width:var(--max);margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,249,247,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--rule);
+}
+.nav-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:0 clamp(20px,5vw,48px);
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.nav-logo{
+  font-family:var(--serif);
+  font-size:18px;font-weight:700;
+  color:var(--navy);letter-spacing:-.3px;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo-mark{
+  width:30px;height:30px;
+  background:var(--navy);
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-logo-mark svg{width:18px;height:18px}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{
+  padding:6px 14px;border-radius:var(--radius);
+  font-size:13px;font-weight:500;color:var(--ink-mid);
+  transition:background .15s,color .15s;
+}
+.nav-link:hover,.nav-link.active{background:var(--paper-warm);color:var(--navy)}
+.nav-cta{
+  padding:8px 18px;border-radius:var(--radius);
+  background:var(--navy);color:#fff;
+  font-size:13px;font-weight:600;
+  transition:background .15s,transform .1s;
+  box-shadow:0 1px 3px rgba(14,31,61,.25);
+}
+.nav-cta:hover{background:var(--navy-hover);transform:translateY(-1px)}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-cta{padding:7px 14px;font-size:12px}
+}
+
+/* ── HERO ── */
+.hero{
+  padding:clamp(72px,12vw,140px) 0 clamp(56px,8vw,100px);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%, rgba(29,78,216,.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(184,134,11,.04) 0%, transparent 70%);
+  pointer-events:none;
+}
+/* Subtle ruled lines texture */
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(
+    0deg, transparent, transparent 39px, rgba(14,31,61,.025) 39px, rgba(14,31,61,.025) 40px
+  );
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:1;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:24px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--gold);}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(36px,6vw,68px);
+  font-weight:700;line-height:1.08;
+  letter-spacing:-1.5px;
+  color:var(--navy);
+  max-width:14ch;
+  margin-bottom:24px;
+}
+.hero h1 em{
+  font-style:italic;color:var(--gold);
+}
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);
+  color:var(--ink-mid);line-height:1.65;
+  max-width:52ch;margin-bottom:40px;font-weight:300;
+}
+.hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:var(--radius);
+  font-size:14px;font-weight:600;
+  transition:all .18s;
+}
+.btn-hero-primary{
+  background:var(--navy);color:#fff;
+  box-shadow:0 2px 8px rgba(14,31,61,.25);
+}
+.btn-hero-primary:hover{background:var(--navy-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(14,31,61,.3);}
+.btn-hero-ghost{
+  background:transparent;color:var(--navy);
+  border:1.5px solid var(--rule);
+}
+.btn-hero-ghost:hover{border-color:var(--navy);background:var(--paper-warm);}
+.hero-trust{
+  margin-top:48px;padding-top:32px;
+  border-top:1px solid var(--rule);
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+}
+.hero-trust-label{font-size:11px;color:var(--ink-faint);letter-spacing:.5px;text-transform:uppercase;}
+.trust-badges{display:flex;gap:16px;flex-wrap:wrap;}
+.trust-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;
+  border:1px solid var(--rule);border-radius:20px;
+  font-size:11px;font-weight:500;color:var(--ink-mid);
+  background:var(--paper-warm);
+}
+
+/* ── SECTION TITLES ── */
+.sec-label{
+  font-size:10px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--ink-faint);
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+.sec-title{
+  font-family:var(--serif);
+  font-size:clamp(26px,4vw,40px);
+  font-weight:700;letter-spacing:-.8px;
+  line-height:1.15;color:var(--navy);
+  margin-bottom:16px;
+}
+.sec-sub{font-size:16px;color:var(--ink-mid);font-weight:300;line-height:1.6;max-width:56ch;}
+
+/* ── SECTION WRAPPER ── */
+.section{padding:var(--section-pad) 0;}
+.section-alt{background:var(--paper-warm);}
+.section-dark{background:var(--navy);}
+.section-border-top{border-top:1px solid var(--rule);}
+
+/* ── HOW IT WORKS ── */
+.how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  overflow:hidden;margin-top:48px;
+  box-shadow:var(--shadow-card);
+}
+@media(max-width:700px){.how-grid{grid-template-columns:1fr;}}
+.how-step{
+  background:var(--paper);padding:36px 32px;
+  position:relative;
+  transition:background .2s;
+}
+.how-step:hover{background:var(--paper-warm);}
+.how-num{
+  font-family:var(--serif);
+  font-size:48px;font-weight:700;
+  color:var(--rule);line-height:1;
+  margin-bottom:20px;
+  transition:color .2s;
+}
+.how-step:hover .how-num{color:var(--paper-mid);}
+.how-step-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:10px;}
+.how-step-desc{font-size:14px;color:var(--ink-mid);line-height:1.65;}
+
+/* ── FEATURE GRID ── */
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;margin-top:48px;
+}
+@media(max-width:640px){.features-grid{grid-template-columns:1fr;}}
+.feature-card{
+  padding:28px;
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  background:var(--paper);
+  box-shadow:var(--shadow-card);
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+.feature-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);border-color:var(--paper-mid);}
+.feature-icon{
+  width:40px;height:40px;border-radius:8px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:16px;
+}
+.feature-title{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.feature-desc{font-size:13px;color:var(--ink-mid);line-height:1.6;}
+
+/* ── PRICING ── */
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;margin-top:48px;
+}
+@media(max-width:800px){.pricing-grid{grid-template-columns:1fr;max-width:380px;}}
+.pricing-card{
+  border:1.5px solid var(--rule);border-radius:var(--radius-lg);
+  background:var(--paper);padding:32px;
+  position:relative;transition:transform .2s,box-shadow .2s;
+}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);}
+.pricing-card.featured{
+  border-color:var(--navy);background:var(--navy);color:#fff;
+  box-shadow:var(--shadow-lift);
+}
+.pricing-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--gold);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:4px 14px;border-radius:20px;text-transform:uppercase;
+  white-space:nowrap;
+}
+.pricing-tier{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px;}
+.pricing-card.featured .pricing-tier{color:rgba(255,255,255,.5);}
+.pricing-price{
+  font-family:var(--serif);
+  font-size:40px;font-weight:700;line-height:1;
+  color:var(--navy);margin-bottom:4px;letter-spacing:-1px;
+}
+.pricing-card.featured .pricing-price{color:#fff;}
+.pricing-period{font-size:12px;color:var(--ink-light);margin-bottom:24px;}
+.pricing-card.featured .pricing-period{color:rgba(255,255,255,.55);}
+.pricing-divider{height:1px;background:var(--rule);margin:20px 0;}
+.pricing-card.featured .pricing-divider{background:rgba(255,255,255,.12);}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.pricing-features li{
+  font-size:13px;color:var(--ink-mid);
+  display:flex;align-items:flex-start;gap:10px;line-height:1.4;
+}
+.pricing-card.featured .pricing-features li{color:rgba(255,255,255,.8);}
+.pricing-features li::before{
+  content:'✓';font-weight:700;color:var(--green);
+  flex-shrink:0;margin-top:1px;
+}
+.pricing-card.featured .pricing-features li::before{color:#6ee7b7;}
+.pricing-features li.dim{color:var(--ink-faint);}
+.pricing-features li.dim::before{content:'—';color:var(--ink-faint);font-weight:400;}
+.pricing-card.featured .pricing-features li.dim{color:rgba(255,255,255,.3);}
+.pricing-btn{
+  display:block;width:100%;text-align:center;
+  padding:12px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;
+  transition:all .18s;
+}
+.pricing-btn-outline{
+  border:1.5px solid var(--rule);color:var(--navy);
+}
+.pricing-btn-outline:hover{border-color:var(--navy);background:var(--paper-warm);}
+.pricing-btn-solid{
+  background:var(--gold);color:#fff;
+  box-shadow:0 2px 8px rgba(184,134,11,.3);
+}
+.pricing-btn-solid:hover{background:#a07809;transform:translateY(-1px);}
+.pricing-btn-ghost{
+  border:1.5px solid rgba(255,255,255,.25);color:#fff;
+}
+.pricing-btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);}
+
+/* ── BLOG ── */
+.blog-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:48px;
+}
+@media(max-width:840px){.blog-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.blog-grid{grid-template-columns:1fr;}}
+.blog-card{
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  background:var(--paper);overflow:hidden;
+  box-shadow:var(--shadow-card);
+  transition:transform .2s,box-shadow .2s;
+  display:flex;flex-direction:column;
+}
+.blog-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);}
+.blog-card-thumb{
+  height:140px;
+  background:var(--paper-warm);
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  position:relative;overflow:hidden;
+}
+.blog-card-thumb::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg, rgba(14,31,61,.04) 0%, rgba(14,31,61,.10) 100%);
+}
+.blog-card-body{padding:20px 22px 24px;flex:1;display:flex;flex-direction:column;}
+.blog-tag{
+  font-size:10px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:10px;
+}
+.blog-title{
+  font-family:var(--serif);
+  font-size:16px;font-weight:700;line-height:1.35;
+  color:var(--navy);margin-bottom:10px;
+  letter-spacing:-.2px;
+}
+.blog-excerpt{font-size:13px;color:var(--ink-mid);line-height:1.6;flex:1;}
+.blog-meta{
+  margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.blog-date{font-size:11px;color:var(--ink-faint);font-family:var(--mono);}
+.blog-read{
+  font-size:11px;font-weight:600;color:var(--navy);
+  display:flex;align-items:center;gap:4px;
+}
+.blog-read::after{content:'→';transition:transform .15s;}
+.blog-card:hover .blog-read::after{transform:translateX(3px);}
+
+/* ── ABOUT / BIO ── */
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:var(--col-gap);align-items:start;
+  margin-top:48px;
+}
+@media(max-width:820px){.about-grid{grid-template-columns:1fr;}}
+.about-text p{
+  font-size:16px;color:var(--ink-mid);line-height:1.75;font-weight:300;
+  margin-bottom:18px;
+}
+.about-text p strong{color:var(--navy);font-weight:600;}
+.career-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-top:24px;}
+.career-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;
+  border:1px solid var(--rule);border-radius:var(--radius);
+  background:var(--paper);
+  transition:border-color .15s,background .15s;
+}
+.career-item:hover{border-color:var(--paper-mid);background:var(--paper-warm);}
+.career-logo{
+  width:36px;height:36px;border-radius:6px;
+  background:var(--navy);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.85);
+  letter-spacing:.5px;
+}
+.career-info{}
+.career-role{font-size:13px;font-weight:600;color:var(--navy);}
+.career-company{font-size:12px;color:var(--ink-light);margin-top:1px;}
+.career-period{font-size:10px;color:var(--ink-faint);font-family:var(--mono);margin-top:2px;}
+.about-card{
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  background:var(--paper);padding:28px;
+  box-shadow:var(--shadow-card);
+  position:sticky;top:80px;
+}
+.about-avatar{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#1d3a6b,#0e1f3d);
+  margin-bottom:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:28px;font-weight:700;color:rgba(255,255,255,.9);
+  letter-spacing:-1px;
+}
+.about-name{font-size:18px;font-weight:700;color:var(--navy);font-family:var(--serif);letter-spacing:-.3px;}
+.about-headline{font-size:13px;color:var(--ink-mid);margin-top:4px;line-height:1.5;}
+.about-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin:20px 0;padding:20px 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+}
+.about-stat-label{font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px;}
+.about-stat-val{font-size:18px;font-weight:700;color:var(--navy);font-family:var(--serif);}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+.skill-tag{
+  font-size:10px;padding:3px 10px;border-radius:20px;
+  border:1px solid var(--rule);color:var(--ink-mid);
+  background:var(--paper-warm);font-weight:500;
+}
+
+/* ── SIMULATOR CTA SECTION ── */
+.sim-cta{
+  background:var(--navy);
+  border-radius:var(--radius-lg);
+  padding:clamp(40px,6vw,72px) clamp(32px,5vw,64px);
+  display:grid;grid-template-columns:1fr auto;
+  gap:40px;align-items:center;
+  box-shadow:var(--shadow-lift);
+}
+@media(max-width:700px){.sim-cta{grid-template-columns:1fr;}}
+.sim-cta-title{
+  font-family:var(--serif);
+  font-size:clamp(22px,3.5vw,32px);
+  font-weight:700;color:#fff;line-height:1.2;
+  letter-spacing:-.5px;margin-bottom:10px;
+}
+.sim-cta-sub{font-size:15px;color:rgba(255,255,255,.55);font-weight:300;}
+.sim-cta-actions{display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+@media(max-width:700px){.sim-cta-actions{align-items:flex-start;}}
+.btn-cta-gold{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:var(--radius);
+  background:var(--gold);color:#fff;
+  font-size:14px;font-weight:600;
+  box-shadow:0 2px 10px rgba(184,134,11,.4);
+  transition:all .18s;white-space:nowrap;
+}
+.btn-cta-gold:hover{background:#a07809;transform:translateY(-2px);}
+.btn-cta-ghost{
+  font-size:12px;color:rgba(255,255,255,.45);
+  display:flex;align-items:center;gap:4px;
+  transition:color .15s;
+}
+.btn-cta-ghost:hover{color:rgba(255,255,255,.75);}
+
+/* ── REPORT CARDS (monetization) ── */
+.reports-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:20px;margin-top:48px;
+}
+@media(max-width:640px){.reports-grid{grid-template-columns:1fr;}}
+.report-card{
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  background:var(--paper);padding:28px;
+  display:flex;flex-direction:column;
+  box-shadow:var(--shadow-card);
+  transition:transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.report-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);}
+.report-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),#d4a017);
+}
+.report-card-free::before{background:linear-gradient(90deg,var(--blue),#3b82f6);}
+.report-label{
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+}
+.report-card-free .report-label{color:var(--blue);}
+.report-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px;line-height:1.3;}
+.report-desc{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:20px;flex:1;}
+.report-price{
+  font-family:var(--serif);font-size:26px;font-weight:700;
+  color:var(--navy);margin-bottom:16px;
+}
+.report-price span{font-size:14px;color:var(--ink-light);font-family:var(--sans);font-weight:400;}
+.report-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;border-radius:var(--radius);
+  font-size:13px;font-weight:600;
+  transition:all .15s;align-self:flex-start;
+}
+.report-btn-gold{background:var(--gold);color:#fff;}
+.report-btn-gold:hover{background:#a07809;}
+.report-btn-outline{border:1.5px solid var(--rule);color:var(--navy);}
+.report-btn-outline:hover{border-color:var(--navy);background:var(--paper-warm);}
+
+/* ── NEWSLETTER ── */
+.newsletter{
+  background:var(--paper-warm);
+  border:1px solid var(--rule);
+  border-radius:var(--radius-lg);
+  padding:40px;text-align:center;
+  margin-top:48px;
+}
+.newsletter-title{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.newsletter-sub{font-size:14px;color:var(--ink-mid);margin-bottom:24px;}
+.newsletter-form{display:flex;gap:10px;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center;}
+.newsletter-input{
+  flex:1;min-width:200px;
+  padding:10px 16px;border-radius:var(--radius);
+  border:1.5px solid var(--rule);
+  background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:14px;outline:none;
+  transition:border-color .15s;
+}
+.newsletter-input:focus{border-color:var(--navy);}
+.newsletter-btn{
+  padding:10px 22px;border-radius:var(--radius);
+  background:var(--navy);color:#fff;
+  font-size:13px;font-weight:600;
+  white-space:nowrap;transition:background .15s;
+}
+.newsletter-btn:hover{background:var(--navy-hover);}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--ink);color:rgba(255,255,255,.6);
+  padding:48px 0 32px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.footer-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:0 clamp(20px,5vw,48px);
+}
+.footer-top{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:var(--col-gap);margin-bottom:40px;
+}
+@media(max-width:640px){.footer-top{grid-template-columns:1fr;gap:32px;}}
+.footer-brand{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:10px;}
+.footer-tagline{font-size:13px;line-height:1.6;}
+.footer-col-title{font-size:12px;font-weight:600;color:#fff;letter-spacing:.5px;margin-bottom:14px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-links a{font-size:13px;color:rgba(255,255,255,.5);transition:color .15s;}
+.footer-links a:hover{color:rgba(255,255,255,.9);}
+.footer-bottom{
+  padding-top:24px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.footer-copy{font-size:12px;}
+.footer-legal{font-size:12px;display:flex;gap:20px;}
+.footer-legal a{color:rgba(255,255,255,.4);transition:color .15s;}
+.footer-legal a:hover{color:rgba(255,255,255,.7);}
+
+/* ── PAGE VIEWS (SPA) ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── SIMULATOR EMBED ── */
+.sim-embed-wrap{
+  border:1px solid var(--rule);border-radius:var(--radius-lg);
+  overflow:hidden;box-shadow:var(--shadow-lift);
+  margin-top:32px;
+}
+.sim-toolbar{
+  background:var(--paper-warm);
+  border-bottom:1px solid var(--rule);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sim-toolbar-title{font-size:13px;font-weight:600;color:var(--navy);}
+.sim-toolbar-actions{display:flex;gap:8px;}
+.sim-btn{
+  padding:6px 14px;border-radius:var(--radius);
+  font-size:11px;font-weight:600;border:1px solid var(--rule);
+  color:var(--navy);background:var(--paper);
+  transition:all .15s;
+}
+.sim-btn:hover{background:var(--paper-mid);}
+.sim-btn-primary{
+  background:var(--navy);color:#fff;border-color:var(--navy);
+}
+.sim-btn-primary:hover{background:var(--navy-hover);}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(15,17,23,.6);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--paper);border-radius:var(--radius-lg);
+  max-width:480px;width:100%;
+  box-shadow:var(--shadow-lift),0 0 0 1px var(--rule);
+  padding:36px;
+  transform:translateY(16px);transition:transform .25s;
+}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.modal-sub{font-size:14px;color:var(--ink-mid);margin-bottom:24px;line-height:1.5;}
+.modal-field{margin-bottom:14px;}
+.modal-label{font-size:12px;font-weight:500;color:var(--ink-mid);margin-bottom:5px;display:block;}
+.modal-input{
+  width:100%;padding:10px 14px;border-radius:var(--radius);
+  border:1.5px solid var(--rule);
+  background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:14px;outline:none;
+  transition:border-color .15s;
+}
+.modal-input:focus{border-color:var(--navy);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.modal-btn-primary{
+  flex:1;padding:12px;border-radius:var(--radius);
+  background:var(--navy);color:#fff;
+  font-size:14px;font-weight:600;transition:background .15s;
+}
+.modal-btn-primary:hover{background:var(--navy-hover);}
+.modal-btn-cancel{
+  padding:12px 20px;border-radius:var(--radius);
+  border:1.5px solid var(--rule);color:var(--ink-mid);
+  font-size:14px;transition:all .15s;
+}
+.modal-btn-cancel:hover{border-color:var(--ink-mid);}
+.modal-note{font-size:11px;color:var(--ink-faint);margin-top:12px;}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--paper-warm);color:var(--ink-mid);
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.modal-close:hover{background:var(--paper-mid);}
+.modal-box{position:relative;}
+
+/* ── BLOG POST ── */
+.post-header{padding:clamp(48px,8vw,96px) 0 clamp(32px,5vw,56px);}
+.post-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.post-tag{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--gold);text-transform:uppercase;}
+.post-date{font-size:11px;color:var(--ink-faint);font-family:var(--mono);}
+.post-title{
+  font-family:var(--serif);
+  font-size:clamp(28px,5vw,52px);
+  font-weight:700;line-height:1.1;
+  letter-spacing:-1.2px;color:var(--navy);
+  max-width:18ch;margin-bottom:20px;
+}
+.post-lead{font-size:18px;color:var(--ink-mid);line-height:1.7;max-width:60ch;font-weight:300;}
+.post-body{
+  max-width:720px;margin:0 auto;
+  padding:clamp(32px,5vw,64px) 0;
+}
+.post-body h2{
+  font-family:var(--serif);font-size:24px;font-weight:700;
+  color:var(--navy);letter-spacing:-.4px;
+  margin:40px 0 16px;
+}
+.post-body p{font-size:16px;color:var(--ink-mid);line-height:1.8;margin-bottom:20px;font-weight:300;}
+.post-body strong{color:var(--ink);font-weight:600;}
+.post-body ul{padding-left:20px;margin-bottom:20px;}
+.post-body li{font-size:16px;color:var(--ink-mid);line-height:1.8;margin-bottom:8px;font-weight:300;}
+.post-callout{
+  background:var(--gold-light);border-left:3px solid var(--gold);
+  border-radius:0 var(--radius) var(--radius) 0;
+  padding:20px 24px;margin:32px 0;
+}
+.post-callout p{margin-bottom:0;color:var(--ink);}
+
+/* ── BACK LINK ── */
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;color:var(--ink-light);font-weight:500;
+  transition:color .15s;margin-bottom:32px;
+}
+.back-link:hover{color:var(--navy);}
+.back-link::before{content:'←';}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero-inner>*{opacity:0;animation:fadeUp .5s ease forwards;}
+.hero-eyebrow{animation-delay:.05s}
+.hero h1{animation-delay:.12s}
+.hero-sub{animation-delay:.20s}
+.hero-actions{animation-delay:.28s}
+.hero-trust{animation-delay:.36s}
+
+/* ── ACTIVE NAV STATE ── */
+[data-page].active-page .nav-link[data-target]{color:var(--navy);background:var(--paper-warm);}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" onclick="showPage('home')">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="9" width="3" height="8" rx="1" fill="#60a5fa"/><rect x="7" y="5" width="3" height="12" rx="1" fill="#93c5fd"/><rect x="13" y="1" width="3" height="16" rx="1" fill="#bfdbfe"/><path d="M2.5 7l6-3 6-3" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      PoolSimulator
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="#" onclick="showPage('simulator')">Simulator</a>
+      <a class="nav-link" href="#" onclick="showPage('reports')">Reports</a>
+      <a class="nav-link" href="#" onclick="showPage('blog')">Blog</a>
+      <a class="nav-link" href="#" onclick="showPage('about')">About</a>
+    </div>
+    <a class="nav-cta" href="#" onclick="showPage('simulator')">Try Free →</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════ HOME PAGE ══ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-eyebrow">Treasury Intelligence</div>
+      <h1>Model your <em>cashpool</em> before you commit.</h1>
+      <p class="hero-sub">The only free cash pooling simulator built by a practitioner — not a software vendor. See your exact interest savings, netting efficiency, and payback period in minutes.</p>
+      <div class="hero-actions">
+        <a class="btn-hero btn-hero-primary" href="#" onclick="showPage('simulator')">
+          <span>Open Simulator</span>
+          <span>→</span>
+        </a>
+        <a class="btn-hero btn-hero-ghost" href="#" onclick="showPage('reports')">
+          Download PDF Reports
+        </a>
+      </div>
+      <div class="hero-trust">
+        <span class="hero-trust-label">Built by experience from</span>
+        <div class="trust-badges">
+          <span class="trust-badge">🏦 ING Geneva</span>
+          <span class="trust-badge">🏦 Citi CEE</span>
+          <span class="trust-badge">🏦 Accenture</span>
+          <span class="trust-badge">🎓 Masaryk Univ. — Thesis: Cash Pooling</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section section-border-top">
+    <div class="container">
+      <div class="sec-label">How it works</div>
+      <h2 class="sec-title">From data to board decision<br>in three steps.</h2>
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-num">01</div>
+          <div class="how-step-title">Enter your group structure</div>
+          <div class="how-step-desc">Input each entity, its average daily balance, number of accounts, and your current bank rates. Use presets for CZK, EUR, or USD from live central bank rates.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">02</div>
+          <div class="how-step-title">Run the simulation</div>
+          <div class="how-step-desc">The engine models three scenarios — base, optimistic, pessimistic — with daily cash flow volatility, netting efficiency, and full before/after P&L comparison.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">03</div>
+          <div class="how-step-title">Download the PDF report</div>
+          <div class="how-step-desc">Export a structured report ready for your CFO presentation, board paper, or bank RFP. Includes executive summary, sensitivity analysis, and implementation roadmap.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="sec-label">What's inside</div>
+      <h2 class="sec-title">Professional-grade outputs,<br>zero cost to start.</h2>
+      <p class="sec-sub">Every output is designed for what Treasury and CFO actually need — not generic finance dashboards.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚖</div>
+          <div class="feature-title">Before / After P&L Table</div>
+          <div class="feature-desc">Full breakdown of interest costs, netting savings, FX reduction, facility fees, and total net benefit — line by line, period-accurate.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Daily Cash Flow Simulation</div>
+          <div class="feature-desc">90-day simulated cash flow with realistic volatility across all entities, showing the stabilisation effect of pool centralization.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Sensitivity Analysis</div>
+          <div class="feature-desc">5×5 matrix showing net benefit across spread changes and volatility scenarios. Know what happens when rates drop by 1 p.p.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-title">Netting Efficiency Model</div>
+          <div class="feature-desc">Calculates the offset between surplus and deficit entities — the single most important driver of pool ROI — with visual flow diagram.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏦</div>
+          <div class="feature-title">Account Consolidation</div>
+          <div class="feature-desc">Models reduction in number of bank accounts per entity — a savings category most simulators ignore entirely.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <div class="feature-title">CFO-Ready Output</div>
+          <div class="feature-desc">GO / CONSIDER / NO-GO recommendation, payback period, ROI, implementation roadmap, and risk register — formatted for the board.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-label">Pricing</div>
+      <h2 class="sec-title">Start free. Download when<br>you need to share.</h2>
+      <div class="pricing-grid">
+        <!-- Free -->
+        <div class="pricing-card">
+          <div class="pricing-tier">Free</div>
+          <div class="pricing-price">€0</div>
+          <div class="pricing-period">forever, no sign-up</div>
+          <div class="pricing-divider"></div>
+          <ul class="pricing-features">
+            <li>Full simulator access</li>
+            <li>3 scenarios (base/best/worst)</li>
+            <li>Daily cash flow chart</li>
+            <li>Sensitivity analysis</li>
+            <li>Pool structure diagram</li>
+            <li class="dim">PDF export</li>
+            <li class="dim">Branded executive report</li>
+            <li class="dim">Bank comparison tool</li>
+          </ul>
+          <a class="pricing-btn pricing-btn-outline" href="#" onclick="showPage('simulator')">Open Simulator</a>
+        </div>
+        <!-- Report -->
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most popular</div>
+          <div class="pricing-tier">Report</div>
+          <div class="pricing-price">€39</div>
+          <div class="pricing-period">per report, one-time</div>
+          <div class="pricing-divider"></div>
+          <ul class="pricing-features">
+            <li>Everything in Free</li>
+            <li>Board-ready PDF report</li>
+            <li>Executive summary page</li>
+            <li>Full before/after table</li>
+            <li>Sensitivity matrix</li>
+            <li>Implementation roadmap</li>
+            <li>Risk register</li>
+            <li class="dim">Bank comparison tool</li>
+          </ul>
+          <a class="pricing-btn pricing-btn-solid" href="#" onclick="openModal('report')">Buy Report — €39</a>
+        </div>
+        <!-- Pro -->
+        <div class="pricing-card">
+          <div class="pricing-tier">Advisory</div>
+          <div class="pricing-price">€290<span>/hr</span></div>
+          <div class="pricing-period">treasury consulting, bespoke</div>
+          <div class="pricing-divider"></div>
+          <ul class="pricing-features">
+            <li>1:1 expert session</li>
+            <li>Bank RFP preparation</li>
+            <li>Transfer pricing guidance</li>
+            <li>TMS vendor evaluation</li>
+            <li>Intercompany structure review</li>
+            <li>Implementation support</li>
+            <li>CEE market expertise</li>
+          </ul>
+          <a class="pricing-btn pricing-btn-outline" href="mailto:jakub.houser@proton.me">Contact Jakub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG PREVIEW -->
+  <section class="section section-alt section-border-top">
+    <div class="container">
+      <div class="sec-label">Treasury Insights</div>
+      <h2 class="sec-title">Written from the desk,<br>not the textbook.</h2>
+      <div class="blog-grid">
+        <div class="blog-card" onclick="showPost('netting')">
+          <div class="blog-card-thumb">🔄</div>
+          <div class="blog-card-body">
+            <div class="blog-tag">Liquidity</div>
+            <div class="blog-title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
+            <div class="blog-excerpt">Most treasury teams fixate on the interest rate spread. The real driver is how much of your deficit you can offset with internal surplus.</div>
+            <div class="blog-meta">
+              <span class="blog-date">Apr 2025</span>
+              <span class="blog-read">Read</span>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card" onclick="showPost('tp')">
+          <div class="blog-card-thumb">⚖</div>
+          <div class="blog-card-body">
+            <div class="blog-tag">Transfer Pricing</div>
+            <div class="blog-title">Intercompany Interest Rates: What the OECD Actually Says</div>
+            <div class="blog-excerpt">Setting the wrong rate on intragroup loans is the most common compliance mistake in cross-border pool structures. Here's how to get it right.</div>
+            <div class="blog-meta">
+              <span class="blog-date">Mar 2025</span>
+              <span class="blog-read">Read</span>
+            </div>
+          </div>
+        </div>
+        <div class="blog-card" onclick="showPost('cee')">
+          <div class="blog-card-thumb">🗺</div>
+          <div class="blog-card-body">
+            <div class="blog-tag">CEE Markets</div>
+            <div class="blog-title">Cash Pooling in Poland, Czech Republic and Hungary: What's Allowed</div>
+            <div class="blog-excerpt">Regulatory restrictions differ significantly across CEE. A practical overview of what you can and cannot pool across borders in each jurisdiction.</div>
+            <div class="blog-meta">
+              <span class="blog-date">Feb 2025</span>
+              <span class="blog-read">Read</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px;text-align:center;">
+        <a class="btn-hero btn-hero-ghost" href="#" onclick="showPage('blog')" style="display:inline-flex;">All articles →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="section">
+    <div class="container">
+      <div class="newsletter">
+        <div class="newsletter-title">Treasury Notes — Monthly</div>
+        <div class="newsletter-sub">One email per month. Rate updates, regulatory changes in CEE, and practical treasury insights. No fluff.</div>
+        <div class="newsletter-form">
+          <input class="newsletter-input" type="email" placeholder="your@email.com">
+          <button class="newsletter-btn" onclick="handleSubscribe()">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════════════════════ SIMULATOR PAGE ══ -->
+<div class="page" id="page-simulator">
+  <div class="container" style="padding-top:40px;padding-bottom:80px;">
+    <a class="back-link" href="#" onclick="showPage('home')">Back to home</a>
+    <div class="sec-label">Free Tool</div>
+    <h1 class="sec-title" style="margin-bottom:8px;">Cash Pooling Simulator</h1>
+    <p style="font-size:15px;color:var(--ink-mid);margin-bottom:0;max-width:58ch;">Model your exact group structure. Results update in real time. Export to PDF when ready.</p>
+    <div class="sim-embed-wrap">
+      <div class="sim-toolbar">
+        <span class="sim-toolbar-title">⚡ Live Simulation Engine</span>
+        <div class="sim-toolbar-actions">
+          <button class="sim-btn" onclick="openModal('report')">⬇ Export PDF — €39</button>
+        </div>
+      </div>
+      <!-- Full simulator embedded inline -->
+      <iframe
+        srcdoc=""
+        id="simFrame"
+        style="width:100%;height:900px;border:none;display:block;"
+        title="Cash Pooling Simulator">
+      </iframe>
+    </div>
+    <p style="font-size:12px;color:var(--ink-faint);margin-top:12px;text-align:center;">
+      The simulator uses indicative rate presets from ČNB, ECB, and Fed as of Q1 2025. Results are illustrative and do not constitute financial advice.
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════ REPORTS PAGE ══ -->
+<div class="page" id="page-reports">
+  <div class="container" style="padding-top:48px;padding-bottom:80px;">
+    <a class="back-link" href="#" onclick="showPage('home')">Back</a>
+    <div class="sec-label">Downloads</div>
+    <h1 class="sec-title">Reports &amp; Resources</h1>
+    <p class="sec-sub">Board-ready PDF outputs and reference guides — priced for individual use, not enterprise licences.</p>
+    <div class="reports-grid">
+      <div class="report-card report-card-free">
+        <div class="report-label">Free</div>
+        <div class="report-title">Cash Pooling 101 — Concept Guide</div>
+        <div class="report-desc">12-page primer on zero-balancing vs. notional pooling, netting mechanics, and how to read a pool P&L. Ideal for finance teams new to the topic.</div>
+        <div class="report-price">€0 <span>— no sign-up needed</span></div>
+        <a class="report-btn report-btn-outline" href="#" onclick="openModal('free-guide')">⬇ Download Free</a>
+      </div>
+      <div class="report-card">
+        <div class="report-label">PDF Report</div>
+        <div class="report-title">Cashpool Business Case — Board-Ready PDF</div>
+        <div class="report-desc">Export your simulation results as a structured 8-page PDF. Includes executive summary, before/after P&L, sensitivity analysis, payback chart, and implementation roadmap.</div>
+        <div class="report-price">€39 <span>— one-time, per report</span></div>
+        <a class="report-btn report-btn-gold" href="#" onclick="openModal('report')">Buy Report — €39</a>
+      </div>
+      <div class="report-card">
+        <div class="report-label">Reference Guide</div>
+        <div class="report-title">CEE Cashpooling — Regulatory &amp; Tax Guide 2025</div>
+        <div class="report-desc">Country-by-country overview of cashpooling regulations across CZ, SK, PL, HU, RO, AT. Covers cross-border restrictions, withholding tax, and TP safe harbours.</div>
+        <div class="report-price">€59 <span>— PDF, 24 pages</span></div>
+        <a class="report-btn report-btn-gold" href="#" onclick="openModal('cee-guide')">Buy Guide — €59</a>
+      </div>
+      <div class="report-card">
+        <div class="report-label">Template Pack</div>
+        <div class="report-title">Bank RFP Template — Cashpool Tender Package</div>
+        <div class="report-desc">Editable Word + Excel template for running a bank RFP process. Includes evaluation criteria, pricing comparison matrix, and legal checklist. Based on real ING and Citi RFP processes.</div>
+        <div class="report-price">€79 <span>— Word + Excel</span></div>
+        <a class="report-btn report-btn-gold" href="#" onclick="openModal('rfp-pack')">Buy Pack — €79</a>
+      </div>
+    </div>
+    <div class="newsletter" style="margin-top:48px;">
+      <div class="newsletter-title">Get notified when new reports are published</div>
+      <div class="newsletter-sub">New guides quarterly. Rate update reports monthly.</div>
+      <div class="newsletter-form">
+        <input class="newsletter-input" type="email" placeholder="your@email.com">
+        <button class="newsletter-btn" onclick="handleSubscribe()">Notify me</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════ BLOG PAGE ══ -->
+<div class="page" id="page-blog">
+  <div class="container" style="padding-top:48px;padding-bottom:80px;">
+    <a class="back-link" href="#" onclick="showPage('home')">Back</a>
+    <div class="sec-label">Treasury Insights</div>
+    <h1 class="sec-title">Written from practice,<br>not theory.</h1>
+    <p class="sec-sub">Articles on cash management, treasury transformation, and liquidity strategy — based on 10+ years at ING, Citi, Accenture and Erste.</p>
+    <div class="blog-grid" style="margin-top:40px;">
+      <div class="blog-card" onclick="showPost('netting')">
+        <div class="blog-card-thumb">🔄</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">Liquidity</div>
+          <div class="blog-title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
+          <div class="blog-excerpt">Most treasury teams fixate on interest rate spread. The real driver is how much deficit you can offset with internal surplus.</div>
+          <div class="blog-meta"><span class="blog-date">Apr 2025</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" onclick="showPost('tp')">
+        <div class="blog-card-thumb">⚖</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">Transfer Pricing</div>
+          <div class="blog-title">Intercompany Interest Rates: What the OECD Actually Says</div>
+          <div class="blog-excerpt">The most common compliance gap in cross-border pools. Here's how to set rates that survive a tax audit.</div>
+          <div class="blog-meta"><span class="blog-date">Mar 2025</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" onclick="showPost('cee')">
+        <div class="blog-card-thumb">🗺</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">CEE Markets</div>
+          <div class="blog-title">Cash Pooling in Poland, Czech Republic and Hungary: What's Allowed</div>
+          <div class="blog-excerpt">Regulatory restrictions differ significantly across CEE. A practical jurisdiction-by-jurisdiction overview.</div>
+          <div class="blog-meta"><span class="blog-date">Feb 2025</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" onclick="showPost('rfp')">
+        <div class="blog-card-thumb">📋</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">Banking</div>
+          <div class="blog-title">How to Run a Cashpool Bank RFP Without Leaving Money on the Table</div>
+          <div class="blog-excerpt">From Citi and ING experience: what banks actually respond to, and how to structure a tender that gets real pricing.</div>
+          <div class="blog-meta"><span class="blog-date">Jan 2025</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" onclick="showPost('zb-vs-notional')">
+        <div class="blog-card-thumb">🏦</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">Structure</div>
+          <div class="blog-title">Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?</div>
+          <div class="blog-excerpt">The answer depends on your group's legal structure, tax position, and geography — not on what your bank is selling.</div>
+          <div class="blog-meta"><span class="blog-date">Dec 2024</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+      <div class="blog-card" onclick="showPost('tms')">
+        <div class="blog-card-thumb">⚙</div>
+        <div class="blog-card-body">
+          <div class="blog-tag">Technology</div>
+          <div class="blog-title">Kyriba, SAP, or Cobase? Choosing a TMS for a CEE Group</div>
+          <div class="blog-excerpt">A practitioner's comparison of the three most common TMS platforms for mid-market and large corporates in Central Europe.</div>
+          <div class="blog-meta"><span class="blog-date">Nov 2024</span><span class="blog-read">Read</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════ BLOG POST VIEW ══ -->
+<div class="page" id="page-post">
+  <div class="container">
+    <div class="post-header">
+      <a class="back-link" href="#" onclick="showPage('blog')">All articles</a>
+      <div class="post-eyebrow">
+        <span class="post-tag" id="post-tag">Liquidity</span>
+        <span class="post-date" id="post-date">Apr 2025</span>
+      </div>
+      <h1 class="post-title" id="post-title">Post title</h1>
+      <p class="post-lead" id="post-lead">Lead paragraph.</p>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--rule);">
+    <div class="container">
+      <div class="post-body" id="post-body"></div>
+    </div>
+  </div>
+  <div style="background:var(--paper-warm);padding:48px 0;border-top:1px solid var(--rule);">
+    <div class="container">
+      <div class="sim-cta">
+        <div>
+          <div class="sim-cta-title">Ready to run the numbers for your group?</div>
+          <div class="sim-cta-sub">Free simulator — no sign-up, no limits. Export when you need to share.</div>
+        </div>
+        <div class="sim-cta-actions">
+          <a class="btn-cta-gold" href="#" onclick="showPage('simulator')">Open Simulator →</a>
+          <a class="btn-cta-ghost" href="#" onclick="openModal('report')">⬇ Buy PDF Report — €39</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════ ABOUT PAGE ══ -->
+<div class="page" id="page-about">
+  <div class="container" style="padding-top:48px;padding-bottom:80px;">
+    <a class="back-link" href="#" onclick="showPage('home')">Back</a>
+    <div class="sec-label">About</div>
+    <h1 class="sec-title">Treasury expertise,<br>without the agency markup.</h1>
+    <div class="about-grid">
+      <div>
+        <div class="about-text">
+          <p>I'm <strong>Jakub Houser</strong>, a treasury professional with 10+ years across banking, consulting, and corporate treasury. I've spent most of my career helping companies structure, implement, and optimise cash pooling — first as a consultant at Accenture, then as a product manager at Erste Group, a solution sales manager at Citi covering CEE, and most recently as a Senior Transaction Services Account Manager at ING in Geneva.</p>
+          <p>My <strong>master's thesis at Masaryk University</strong> was on cash pooling — specifically the commercial bank and corporate perspectives. That research, combined with hundreds of client conversations and real pool implementations, is what powers this simulator.</p>
+          <p>I built PoolSimulator because I kept seeing the same problem: treasury teams were being sold pooling solutions they didn't fully understand, at rates they couldn't validate, with business cases built on vendor spreadsheets. This tool gives CFOs and treasury managers an independent way to model the decision before committing.</p>
+          <p>Beyond the simulator, I offer <strong>independent treasury advisory</strong> — particularly for groups expanding into CEE, evaluating TMS vendors, or structuring intercompany financing for the first time.</p>
+        </div>
+        <div style="margin-top:32px;">
+          <div class="sec-label" style="font-size:10px;">Career</div>
+          <ul class="career-list">
+            <li class="career-item">
+              <div class="career-logo" style="background:#e05a1f;">ING</div>
+              <div class="career-info">
+                <div class="career-role">Senior Transaction Services Account Manager</div>
+                <div class="career-company">ING Bank NV — Geneva, Switzerland</div>
+                <div class="career-period">Jan 2024 – Jun 2025</div>
+              </div>
+            </li>
+            <li class="career-item">
+              <div class="career-logo" style="background:#003087;">Citi</div>
+              <div class="career-info">
+                <div class="career-role">Global Solution Sales Manager</div>
+                <div class="career-company">Citibank Europe — Prague, CEE Region</div>
+                <div class="career-period">Jun 2022 – Dec 2023</div>
+              </div>
+            </li>
+            <li class="career-item">
+              <div class="career-logo" style="background:#cc0000;">Erste</div>
+              <div class="career-info">
+                <div class="career-role">Product Manager, Cash Management Sales</div>
+                <div class="career-company">Erste Group Bank — Prague</div>
+                <div class="career-period">Mar 2017 – Jun 2022</div>
+              </div>
+            </li>
+            <li class="career-item">
+              <div class="career-logo" style="background:#7400c8;font-size:8px;">Acc.</div>
+              <div class="career-info">
+                <div class="career-role">Consultant, Treasury & Cash Management</div>
+                <div class="career-company">Accenture — Barcelona</div>
+                <div class="career-period">Dec 2014 – Jan 2017</div>
+              </div>
+            </li>
+            <li class="career-item">
+              <div class="career-logo" style="background:#1a4f8a;font-size:8px;">SITA</div>
+              <div class="career-info">
+                <div class="career-role">Senior Treasury Analyst</div>
+                <div class="career-company">SITA — Geneva / Prague</div>
+                <div class="career-period">Jul 2011 – Nov 2014</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="about-card">
+          <div class="about-avatar">JH</div>
+          <div class="about-name">Jakub Houser</div>
+          <div class="about-headline">Treasury Professional · CEE & Switzerland<br>Available for advisory engagements</div>
+          <div class="about-stats">
+            <div><div class="about-stat-label">Experience</div><div class="about-stat-val">10+ yrs</div></div>
+            <div><div class="about-stat-label">Location</div><div class="about-stat-val">🇨🇭 CH</div></div>
+            <div><div class="about-stat-label">Languages</div><div class="about-stat-val">EN/CZ/ES</div></div>
+            <div><div class="about-stat-label">Markets</div><div class="about-stat-val">CEE</div></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Cash Pooling</span>
+            <span class="skill-tag">Kyriba</span>
+            <span class="skill-tag">SAP TRM</span>
+            <span class="skill-tag">SWIFT</span>
+            <span class="skill-tag">FX Risk</span>
+            <span class="skill-tag">TMS</span>
+            <span class="skill-tag">FXAll</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Power BI</span>
+            <span class="skill-tag">SEPA</span>
+            <span class="skill-tag">Liquidity</span>
+            <span class="skill-tag">CEE</span>
+          </div>
+          <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px;">
+            <a class="pricing-btn pricing-btn-outline" style="text-align:center;display:block;" href="mailto:jakub.houser@proton.me">✉ jakub.houser@proton.me</a>
+            <a class="pricing-btn" style="text-align:center;display:block;background:var(--navy);color:white;border-radius:6px;padding:12px;" href="#" onclick="showPage('simulator')">Try the Simulator →</a>
+          </div>
+          <div style="margin-top:16px;padding:12px;background:var(--gold-light);border-radius:6px;border-left:3px solid var(--gold);">
+            <div style="font-size:11px;font-weight:600;color:var(--gold);margin-bottom:3px;">THESIS</div>
+            <div style="font-size:12px;color:var(--ink-mid);line-height:1.5;">"Cash Pooling from the Perspective of the Commercial Bank and Business Corporation" — Masaryk University, 2023</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">PoolSimulator</div>
+        <div class="footer-tagline">Independent treasury intelligence.<br>Built by a practitioner, for practitioners.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Tools</div>
+        <ul class="footer-links">
+          <li><a href="#" onclick="showPage('simulator')">Cash Pooling Simulator</a></li>
+          <li><a href="#" onclick="showPage('reports')">PDF Reports</a></li>
+          <li><a href="#" onclick="showPage('reports')">RFP Template Pack</a></li>
+          <li><a href="#" onclick="showPage('reports')">CEE Regulatory Guide</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#" onclick="showPage('blog')">Treasury Blog</a></li>
+          <li><a href="#" onclick="showPage('about')">About Jakub</a></li>
+          <li><a href="mailto:jakub.houser@proton.me">Contact</a></li>
+          <li><a href="#">Advisory Services</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 PoolSimulator. Results are illustrative — not financial advice.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ── PAGE ROUTER ──
+const PAGES = ['home','simulator','reports','blog','about','post'];
+function showPage(name) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p)?.classList.toggle('active', p === name);
+  });
+  window.scrollTo({top:0,behavior:'instant'});
+  if (name === 'simulator') loadSimulator();
+}
+
+// ── LAZY LOAD SIMULATOR ──
+let simLoaded = false;
+function loadSimulator() {
+  if (simLoaded) return;
+  simLoaded = true;
+  fetch('cashpool-simulator-v3.html')
+    .then(r => r.text())
+    .then(html => {
+      const frame = document.getElementById('simFrame');
+      if (frame) {
+        frame.srcdoc = html;
+      }
+    })
+    .catch(() => {
+      // Fallback: show inline message
+      const frame = document.getElementById('simFrame');
+      if (frame) {
+        frame.srcdoc = `<html><body style="font-family:sans-serif;padding:40px;background:#faf9f7;color:#374151;">
+          <h2 style="color:#0e1f3d;margin-bottom:12px;">Simulator Loading...</h2>
+          <p>In production, the simulator loads here as an embedded iframe.<br>
+          Open <code>cashpool-simulator-v3.html</code> directly to use the full simulator.</p>
+          <a href="cashpool-simulator-v3.html" target="_blank" style="display:inline-block;margin-top:16px;padding:12px 24px;background:#0e1f3d;color:white;border-radius:6px;text-decoration:none;font-weight:600;">Open Simulator →</a>
+        </body></html>`;
+      }
+    });
+}
+
+// ── BLOG POSTS ──
+const POSTS = {
+  netting: {
+    tag: 'Liquidity', date: 'April 2025',
+    title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling',
+    lead: 'Most treasury teams fixate on the interest rate spread between their overdraft and deposit rates. The real driver of cashpool ROI is something most simulators barely mention: netting efficiency.',
+    body: `
+      <h2>What netting efficiency actually measures</h2>
+      <p>Netting efficiency is the ratio of the offset between your group's surplus balances and deficit balances, divided by the larger of the two. A group with €5M in surpluses and €3M in deficits has a netting offset of €3M — meaning that €3M of deficit can be funded internally instead of externally.</p>
+      <p>A group with 80% netting efficiency is getting most of the value from pooling purely from internal funding, regardless of what the bank charges on the pool rate. A group with 20% netting efficiency is essentially just getting a marginally better rate on external borrowing.</p>
+      <div class="post-callout"><p><strong>Rule of thumb:</strong> if your netting efficiency is below 30%, cashpooling will deliver modest returns. If it's above 60%, the business case almost always holds regardless of interest rate environment.</p></div>
+      <h2>What drives netting efficiency</h2>
+      <p>The structure of your group matters more than the rates. Groups where some entities are consistently cash-rich (holding companies, mature markets) and others are consistently cash-poor (manufacturing, fast-growing markets) have naturally high netting efficiency. Groups where all entities move in the same direction — all flush in Q4, all dry in Q2 — see low netting efficiency because there's nothing to offset.</p>
+      <p>The practical implication: before you model pool rates, model the <strong>direction and seasonality of your entities' cash flows</strong>. This is what the PoolSimulator's daily cash flow view is designed to show.</p>
+      <h2>How to improve netting efficiency structurally</h2>
+      <p>Several structural choices increase netting efficiency: broadening pool participation to include more entities, adjusting payment terms to move surplus and deficit peaks out of phase, and — in some groups — restructuring which entity holds which assets. These are changes that a good treasury consultant will identify before the pool is live, not after.</p>
+    `
+  },
+  tp: {
+    tag: 'Transfer Pricing', date: 'March 2025',
+    title: 'Intercompany Interest Rates: What the OECD Actually Says',
+    lead: 'Setting the wrong intercompany interest rate on pooling arrangements is one of the most common — and most expensive — compliance gaps in cross-border treasury structures.',
+    body: `
+      <h2>The arm's length principle applied to pools</h2>
+      <p>The OECD Transfer Pricing Guidelines require that intercompany transactions, including loans and cash pool balances, be priced as if they were between unrelated parties. For a cash pool, this means the rate paid to a surplus entity and charged to a deficit entity must reflect what a bank would offer for comparable standalone transactions.</p>
+      <p>The challenge: the pool rate is almost always better than what each entity could get individually — that's the whole point. So how do you justify the rate?</p>
+      <div class="post-callout"><p><strong>The correct framework:</strong> the pool participant rate should reflect the entity's standalone creditworthiness adjusted for the benefit of group membership, not the group's blended rate or the master account rate alone.</p></div>
+      <h2>Safe harbour rates in CEE jurisdictions</h2>
+      <p>Several CEE countries have introduced safe harbour provisions for intercompany loans that simplify compliance if your rates fall within the defined range. The Czech Republic uses a corridor based on CNB rates. Poland and Hungary have their own regimes with different reference rates and tolerance bands.</p>
+      <p>If your rates fall outside safe harbours, you need comparables analysis — typically a Refinitiv or Bloomberg search for comparable third-party loans or deposits, which should be documented and retained for at least 5 years.</p>
+      <h2>The audit risk is real</h2>
+      <p>Tax authorities in PL, CZ, and HU have significantly increased scrutiny of intercompany financial transactions over the past three years, partly driven by the EU's ATAD II directive and the OECD's Pillar Two rules. The most common finding: group companies in deficit positions being charged below-market rates by the pool leader, effectively subsidising profitable entities in low-tax jurisdictions.</p>
+    `
+  },
+  cee: {
+    tag: 'CEE Markets', date: 'February 2025',
+    title: 'Cash Pooling in Poland, Czech Republic and Hungary: What\'s Actually Allowed',
+    lead: 'Regulatory restrictions on cross-border cash pooling differ significantly across Central and Eastern Europe. What works seamlessly in Western Europe may require central bank approval — or may not be permitted at all — across the border.',
+    body: `
+      <h2>Czech Republic</h2>
+      <p>The Czech Republic has relatively permissive rules for cross-border cash pooling. There are no FX controls and no specific central bank approvals required for standard zero-balancing or notional structures denominated in CZK or EUR. The main consideration is Czech income tax on intercompany interest (15% withholding tax for non-EU recipients, 0% for EU subsidiaries under the EU Interest & Royalties Directive).</p>
+      <h2>Poland</h2>
+      <p>Poland is more complex. Cash pooling structures are subject to Polish thin capitalisation rules (debt-to-equity ratio monitoring), and cross-border interest payments may be subject to 20% withholding tax unless a double tax treaty reduces this. The Polish tax authority has historically challenged cash pool interest deductions where the arrangement was deemed to lack economic substance at the entity level.</p>
+      <div class="post-callout"><p><strong>Key Poland watch point:</strong> Since 2018, the Polish tax authority requires cash pool participants to demonstrate that the pool is economically rational for each entity individually — not just for the group as a whole.</p></div>
+      <h2>Hungary</h2>
+      <p>Hungary allows cross-border cash pooling but requires careful attention to Hungarian CIT rules on interest deductions (EBITDA-based limitation under ATAD). Notional pools may be treated differently from physical sweeps for Hungarian tax purposes. A Hungarian entity in persistent deficit within the pool may face questions from NAV (the tax authority) about the arm's length nature of the arrangement.</p>
+      <h2>Practical recommendation</h2>
+      <p>For any group with CEE participation in a cross-border pool: obtain local legal and tax opinions before going live, and document the economic rationale for each entity's participation. The implementation cost is trivial compared to the reassessment risk on three years of intercompany interest.</p>
+    `
+  },
+  rfp: {
+    tag: 'Banking', date: 'January 2025',
+    title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table',
+    lead: 'Most corporate treasury teams run bank RFPs the same way their predecessors did in 2010. Banks have evolved significantly. The RFP process hasn\'t.',
+    body: `
+      <h2>What banks actually respond to</h2>
+      <p>Banks price cash pooling mandates based on two things: the net interest position of the pool (do they get cheap deposits or must they fund a deficit?) and the ancillary wallet (FX, payments, trade finance) they expect to win. A group with a structural surplus pool and significant FX flows will receive dramatically better pricing than a group with a deficit pool and no ancillary business.</p>
+      <p>The first thing to do before writing your RFP: know your pool's net position and your total banking wallet. Then structure the RFP to make both visible to bidding banks.</p>
+      <div class="post-callout"><p><strong>From real RFP experience at Citi and ING:</strong> groups that shared their current wallet breakdown with bidding banks received pricing 30–50 basis points tighter than groups that kept this information confidential.</p></div>
+      <h2>Structuring the tender</h2>
+      <p>A well-structured cashpool RFP includes: group structure overview, current account count and balances by entity, expected transaction volumes by type, current banking relationships, evaluation criteria and weighting, and a standardised pricing template that forces banks to quote in comparable formats.</p>
+      <p>The pricing template is critical. Banks will quote rates in different formats (spread over EURIBOR, flat rate, tiered) unless you force standardisation. The PoolSimulator RFP Template Pack includes a ready-to-use Excel comparison matrix that normalises quotes to a common basis.</p>
+    `
+  },
+  'zb-vs-notional': {
+    tag: 'Structure', date: 'December 2024',
+    title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?',
+    lead: 'The debate between physical and notional pooling comes up in almost every treasury project. The right answer depends on three factors most advice articles ignore.',
+    body: `
+      <h2>The standard comparison is misleading</h2>
+      <p>Most articles compare zero-balancing and notional pooling on a simple axis: physical movement of funds vs. virtual offset. This misses the real decision criteria, which are legal, tax, and operational — not just structural.</p>
+      <h2>When zero-balancing wins</h2>
+      <p>Zero-balancing (physical sweep) is cleaner from a tax perspective because the intercompany funding is explicit: funds move, loans are created, interest is charged and paid. This makes the arm's length pricing visible and auditable. It also works in more jurisdictions — notional pooling requires banks with offsetting balance capabilities, which not all local banks in CEE provide.</p>
+      <h2>When notional pooling wins</h2>
+      <p>Notional pooling avoids the operational complexity of daily sweep transactions and the associated intercompany loan accounting. For groups where subsidiaries are operationally autonomous and CFOs resist the optics of "their cash" being swept to a holding company, notional pooling preserves the legal ownership of balances while achieving the interest offset. It is also significantly easier to implement in a multi-currency context.</p>
+      <div class="post-callout"><p><strong>Bottom line:</strong> if your group operates primarily in CZ, SK, AT, and DE with EUR or CZK, and has a cooperative legal/tax team, zero-balancing is usually preferable. If you're managing a distributed group across 6+ countries with varying local bank relationships, notional is often more pragmatic.</p></div>
+    `
+  },
+  tms: {
+    tag: 'Technology', date: 'November 2024',
+    title: 'Kyriba, SAP, or Cobase? Choosing a TMS for a CEE Group',
+    lead: 'The TMS market has changed dramatically since 2020. Cloud-native challengers are winning deals that used to go automatically to Kyriba or SAP. Here\'s how to think through the choice.',
+    body: `
+      <h2>What a TMS actually needs to do for a cash pool</h2>
+      <p>For cash pooling specifically, the TMS needs to: receive balance data from pool banks, calculate intercompany interest allocations, post accounting entries to each entity's ledger, and produce the reporting that treasury and finance need. Everything else is secondary.</p>
+      <h2>Kyriba</h2>
+      <p>Kyriba remains the strongest pure-play TMS for treasury, particularly for multi-bank, multi-currency pool structures. Its cash pooling module handles both ZB and notional structures, with strong intercompany accounting capabilities. The weakness is implementation time (typically 4–8 months for full cash management) and pricing, which has increased significantly since Kyriba's growth trajectory.</p>
+      <h2>SAP TRM</h2>
+      <p>If your group runs SAP for ERP, SAP Treasury and Risk Management is the natural choice — the integration is seamless and the intercompany accounting flows directly into the general ledger. For groups already on S/4HANA, SAP TRM has improved substantially. For groups on legacy ECC, it is still powerful but requires significant configuration effort.</p>
+      <h2>Cobase and challengers</h2>
+      <p>Cobase and similar cloud-native platforms (Nomentia, TreasuryXpress) are increasingly viable for mid-market groups — those with 5–20 pool entities and a single primary bank relationship. They implement faster (6–12 weeks is realistic) and cost significantly less. The trade-off is depth: if you need complex multi-currency netting or sophisticated intercompany allocation engines, the challengers are still catching up.</p>
+    `
+  }
+};
+
+function showPost(id) {
+  const post = POSTS[id];
+  if (!post) return;
+  document.getElementById('post-tag').textContent = post.tag;
+  document.getElementById('post-date').textContent = post.date;
+  document.getElementById('post-title').textContent = post.title;
+  document.getElementById('post-lead').textContent = post.lead;
+  document.getElementById('post-body').innerHTML = post.body;
+  showPage('post');
+}
+
+// ── MODAL ──
+const MODAL_CONTENTS = {
+  report: `
+    <div class="modal-title">Download PDF Report</div>
+    <div class="modal-sub">Your simulation results exported as a board-ready 8-page PDF. Includes executive summary, full P&L table, sensitivity matrix, and implementation roadmap.</div>
+    <div class="modal-field"><label class="modal-label">Work email</label><input class="modal-input" type="email" placeholder="you@company.com"></div>
+    <div class="modal-field"><label class="modal-label">Company name</label><input class="modal-input" type="text" placeholder="ACME Group s.r.o."></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="handlePurchase('report')">Pay €39 & Download</button>
+      <button class="modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="modal-note">Secure payment via Stripe. Instant PDF delivery. No subscription.</div>
+  `,
+  'free-guide': `
+    <div class="modal-title">Download Free Guide</div>
+    <div class="modal-sub">Cash Pooling 101 — a 12-page PDF primer on the mechanics, types, and economics of cash pooling. No payment required.</div>
+    <div class="modal-field"><label class="modal-label">Email (to send the PDF)</label><input class="modal-input" type="email" placeholder="you@company.com"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="handleFreeDownload()">Send me the PDF →</button>
+      <button class="modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="modal-note">You'll also receive monthly treasury insights. Unsubscribe any time.</div>
+  `,
+  'cee-guide': `
+    <div class="modal-title">CEE Regulatory Guide</div>
+    <div class="modal-sub">24-page PDF covering cashpooling regulations, withholding tax, and TP safe harbours in CZ, SK, PL, HU, RO, AT. Updated Q1 2025.</div>
+    <div class="modal-field"><label class="modal-label">Work email</label><input class="modal-input" type="email" placeholder="you@company.com"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="handlePurchase('cee-guide')">Pay €59 & Download</button>
+      <button class="modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="modal-note">Secure payment via Stripe. Not legal advice — consult local counsel for binding guidance.</div>
+  `,
+  'rfp-pack': `
+    <div class="modal-title">Bank RFP Template Pack</div>
+    <div class="modal-sub">Word + Excel templates for a cashpool bank tender. Pricing comparison matrix, evaluation scorecard, legal checklist. Based on real ING and Citi RFP processes.</div>
+    <div class="modal-field"><label class="modal-label">Work email</label><input class="modal-input" type="email" placeholder="you@company.com"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="handlePurchase('rfp-pack')">Pay €79 & Download</button>
+      <button class="modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="modal-note">Secure payment via Stripe. Editable Word and Excel files delivered immediately.</div>
+  `,
+};
+
+function openModal(type) {
+  document.getElementById('modal-content').innerHTML = MODAL_CONTENTS[type] || '';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handlePurchase(type) {
+  alert('In production this connects to Stripe Checkout. For now, contact jakub.houser@proton.me to purchase.');
+  closeModal();
+}
+function handleFreeDownload() {
+  alert('Thank you! In production this triggers an email with the PDF. Check your inbox shortly.');
+  closeModal();
+}
+function handleSubscribe() {
+  alert('Subscribed! You\'ll receive Treasury Notes monthly.');
+}
+</script>
+</body>
+</html>

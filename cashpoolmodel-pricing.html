@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CashPoolModel — Pricing & Analysis Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --ink:       #0f1117;
+  --ink-mid:   #374151;
+  --ink-light: #6b7280;
+  --ink-faint: #9ca3af;
+  --paper:     #faf9f7;
+  --paper-w:   #f3f0ea;
+  --paper-m:   #e8e3da;
+  --rule:      #e2ddd5;
+  --navy:      #0e1f3d;
+  --navy-h:    #162d56;
+  --gold:      #a87d0a;
+  --gold-b:    #c49a1a;
+  --gold-pale: #fefce8;
+  --blue:      #1d4ed8;
+  --blue-pale: #eff6ff;
+  --green:     #065f46;
+  --green-m:   #059669;
+  --green-p:   #ecfdf5;
+  --red-m:     #dc2626;
+  --serif:     'Libre Baskerville', Georgia, serif;
+  --sans:      'DM Sans', system-ui, sans-serif;
+  --mono:      'DM Mono', monospace;
+  --max:       1080px;
+  --sh:        0 1px 3px rgba(15,17,23,.07), 0 4px 16px rgba(15,17,23,.06);
+  --sh-lg:     0 8px 48px rgba(15,17,23,.13), 0 2px 8px rgba(15,17,23,.05);
+  --r:         6px;
+  --rl:        14px;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.55; }
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 90;
+  background: rgba(250,249,247,.96); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 1px 0 rgba(15,17,23,.04);
+}
+.nav-i {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 32px; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--serif); font-size: 17px; font-weight: 700;
+  color: var(--navy); letter-spacing: -.3px;
+  display: flex; align-items: center; gap: 9px;
+}
+.nav-mark {
+  width: 28px; height: 28px; border-radius: 4px;
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-mark svg { width: 16px; height: 16px; }
+.nav-back {
+  font-size: 12px; font-weight: 500; color: var(--ink-light);
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--r);
+  border: 1px solid var(--rule);
+  transition: all .15s;
+}
+.nav-back:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ── HERO STRIP ── */
+.hero-strip {
+  background: var(--navy);
+  padding: 52px 32px 48px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero-strip::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 80% at 20% 50%, rgba(184,134,11,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 80% 30%, rgba(29,78,216,.10) 0%, transparent 60%);
+}
+.hero-strip::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent 60%);
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--gold-b); margin-bottom: 16px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; width: 20px; height: 1px; background: var(--gold);
+}
+.hero-strip h1 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 42px);
+  font-weight: 700; color: #fff;
+  letter-spacing: -.8px; line-height: 1.1;
+  max-width: 580px; margin: 0 auto 14px;
+}
+.hero-strip h1 em { font-style: italic; color: var(--gold-b); }
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,.55);
+  max-width: 520px; margin: 0 auto; font-weight: 300; line-height: 1.6;
+}
+
+/* ── CONTAINER ── */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--ink-faint);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+/* ══════════════════════════════════════
+   SIMULATOR RESULT TEASER (post-free use)
+══════════════════════════════════════ */
+.teaser-section {
+  padding: 48px 0 0;
+}
+.teaser-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--rl);
+  overflow: hidden;
+  box-shadow: var(--sh-lg);
+}
+.teaser-header {
+  background: var(--paper-w);
+  border-bottom: 1px solid var(--rule);
+  padding: 18px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+.teaser-header-left {}
+.th-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--green-m); margin-bottom: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.th-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green-m); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.th-title { font-size: 15px; font-weight: 600; color: var(--navy); }
+.th-sub { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
+
+/* Free results — visible */
+.teaser-free-results {
+  padding: 28px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+@media(max-width:700px){ .teaser-free-results { grid-template-columns: repeat(2,1fr); } }
+.tfr-cell {
+  background: var(--paper);
+  padding: 20px 18px;
+}
+.tfr-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+}
+.tfr-value {
+  font-family: var(--serif); font-size: 26px; font-weight: 700;
+  line-height: 1; letter-spacing: -.5px; margin-bottom: 4px;
+}
+.tfr-sub { font-size: 10px; color: var(--ink-faint); font-family: var(--mono); }
+
+/* LOCKED SECTION */
+.teaser-locked {
+  position: relative;
+}
+.locked-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+@media(max-width:640px){ .locked-grid { grid-template-columns: 1fr; } }
+.locked-panel {
+  padding: 28px;
+  border-right: 1px solid var(--rule);
+  position: relative; overflow: hidden;
+  min-height: 220px;
+}
+.locked-panel:last-child { border-right: none; }
+.locked-panel-title {
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.lp-icon {
+  width: 22px; height: 22px; border-radius: 4px;
+  background: var(--navy); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+
+/* BLURRED CONTENT */
+.blurred-content {
+  filter: blur(4px);
+  user-select: none; pointer-events: none;
+  opacity: .6;
+}
+.sens-mini { width: 100%; border-collapse: collapse; font-size: 10px; }
+.sens-mini td {
+  padding: 5px 8px; border: 1px solid var(--rule);
+  text-align: center; font-family: var(--mono);
+}
+.sens-mini td:first-child { text-align: left; font-family: var(--sans); }
+.sm-g { background: #d1fae5; }
+.sm-y { background: #fef3c7; }
+.sm-r { background: #fee2e2; }
+.sm-b { background: var(--blue-pale); font-weight: 700; }
+
+/* CEE matrix blurred */
+.cee-mini { display: flex; flex-direction: column; gap: 6px; }
+.cee-row { display: flex; align-items: center; gap: 10px; }
+.cee-flag { font-size: 16px; flex-shrink: 0; }
+.cee-bar { flex: 1; height: 8px; border-radius: 4px; background: var(--rule); overflow: hidden; }
+.cee-fill { height: 100%; border-radius: 4px; }
+.cee-status { font-size: 10px; font-family: var(--mono); width: 60px; text-align: right; }
+
+/* LOCK OVERLAY */
+.lock-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(250,249,247,.85) 40%, var(--paper-w) 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding: 20px;
+}
+.lock-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: var(--r);
+  background: var(--paper); border: 1px solid var(--rule);
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  box-shadow: var(--sh);
+}
+
+/* UNLOCK BANNER */
+.unlock-banner {
+  background: linear-gradient(135deg, var(--navy), #1a3566);
+  padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.ub-left {}
+.ub-title {
+  font-family: var(--serif); font-size: 18px; font-weight: 700;
+  color: white; margin-bottom: 6px; letter-spacing: -.3px;
+}
+.ub-sub { font-size: 13px; color: rgba(255,255,255,.5); }
+.ub-items {
+  display: flex; gap: 18px; margin-top: 12px; flex-wrap: wrap;
+}
+.ub-item {
+  font-size: 12px; color: rgba(255,255,255,.65);
+  display: flex; align-items: center; gap: 6px;
+}
+.ub-item::before { content: '✓'; color: #34d399; font-weight: 700; }
+.ub-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+
+/* ══════════════════════════════════════
+   PRICING TABLE
+══════════════════════════════════════ */
+.pricing-section { padding: 64px 0 80px; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.12fr 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-top: 32px;
+}
+@media(max-width:820px){ .pricing-grid { grid-template-columns: 1fr; max-width: 420px; } }
+
+.pc {
+  border: 1.5px solid var(--rule);
+  border-radius: var(--rl);
+  background: var(--paper);
+  overflow: hidden;
+  box-shadow: var(--sh);
+  transition: transform .2s, box-shadow .2s;
+  position: relative;
+}
+.pc:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); }
+.pc.featured {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), var(--sh-lg);
+  transform: translateY(-4px);
+}
+.pc.featured:hover { transform: translateY(-8px); }
+
+/* Popular badge */
+.pc-badge {
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: white;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  padding: 5px 16px; border-radius: 0 0 8px 8px;
+  text-transform: uppercase; white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(168,125,10,.35);
+}
+
+/* Card top accent */
+.pc-accent {
+  height: 3px;
+  background: var(--rule);
+}
+.pc.basic .pc-accent { background: var(--ink-faint); }
+.pc.featured .pc-accent { background: linear-gradient(90deg, var(--gold), var(--gold-b)); }
+.pc.advisory .pc-accent { background: var(--navy); }
+
+.pc-body { padding: 28px 24px 24px; }
+
+.pc-tier {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px;
+}
+.pc.featured .pc-tier { color: var(--gold); }
+.pc.advisory .pc-tier { color: var(--navy); }
+
+.pc-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+.pc-price {
+  font-family: var(--serif); font-size: 42px; font-weight: 700;
+  color: var(--navy); letter-spacing: -1.5px; line-height: 1;
+}
+.pc.featured .pc-price { color: var(--gold); }
+.pc-currency { font-size: 22px; font-weight: 400; color: var(--ink-light); align-self: flex-start; margin-top: 6px; }
+.pc-period { font-size: 12px; color: var(--ink-faint); }
+
+.pc-desc {
+  font-size: 13px; color: var(--ink-mid); line-height: 1.55;
+  margin: 14px 0 20px; font-weight: 300;
+  padding: 14px;
+  background: var(--paper-w);
+  border-radius: var(--r);
+  border-left: 3px solid var(--rule);
+}
+.pc.featured .pc-desc { border-left-color: var(--gold); background: var(--gold-pale); }
+.pc.advisory .pc-desc { border-left-color: var(--navy); background: var(--blue-pale); }
+
+.pc-divider { height: 1px; background: var(--rule); margin: 18px 0; }
+
+.pc-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.pc-features li {
+  font-size: 13px; color: var(--ink-mid);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;
+}
+.pc-features li .fi { flex-shrink: 0; margin-top: 1px; font-size: 12px; }
+.fi-check { color: var(--green-m); font-weight: 700; }
+.fi-star  { color: var(--gold); }
+.fi-dash  { color: var(--ink-faint); }
+.pc-features li.dim { color: var(--ink-faint); }
+.pc-features li strong { color: var(--ink); font-weight: 600; }
+
+.pc-cta {
+  display: block; width: 100%; text-align: center;
+  padding: 13px 20px; border-radius: var(--r);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none;
+  font-family: var(--sans);
+  transition: all .18s;
+  letter-spacing: .1px;
+}
+.cta-ghost {
+  border: 1.5px solid var(--rule); color: var(--navy);
+  background: transparent;
+}
+.cta-ghost:hover { border-color: var(--navy); background: var(--paper-w); }
+.cta-gold {
+  background: var(--gold); color: white;
+  box-shadow: 0 2px 12px rgba(168,125,10,.3);
+}
+.cta-gold:hover { background: #8a670a; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(168,125,10,.4); }
+.cta-navy {
+  background: var(--navy); color: white;
+  box-shadow: 0 2px 8px rgba(14,31,61,.2);
+}
+.cta-navy:hover { background: var(--navy-h); transform: translateY(-1px); }
+
+.pc-note {
+  font-size: 10px; color: var(--ink-faint); text-align: center;
+  margin-top: 10px; line-height: 1.5;
+}
+
+/* ── VALUE ANCHOR ── */
+.value-anchor {
+  background: var(--green-p);
+  border: 1px solid #a7f3d0;
+  border-radius: var(--r);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.va-icon { font-size: 18px; flex-shrink: 0; }
+.va-text { font-size: 12px; color: var(--green); line-height: 1.4; }
+.va-text strong { font-weight: 700; }
+
+/* ── COMPARISON TABLE ── */
+.compare-section { padding: 0 0 80px; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-table thead th {
+  padding: 12px 16px;
+  background: var(--paper-w);
+  border-bottom: 2px solid var(--rule);
+  font-size: 11px; font-weight: 600; color: var(--ink-mid);
+  text-align: center;
+}
+.compare-table thead th:first-child { text-align: left; }
+.compare-table thead th.th-featured { background: var(--gold-pale); color: var(--gold); }
+.compare-table thead th.th-navy { background: var(--navy); color: white; }
+.compare-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--rule);
+  text-align: center; color: var(--ink-mid);
+}
+.compare-table td:first-child { text-align: left; font-weight: 500; color: var(--ink); }
+.compare-table td.td-feat { background: rgba(253,252,232,.5); }
+.compare-table td.td-navy { }
+.compare-table tr:hover td { background: var(--paper-w); }
+.compare-table tr.row-section td {
+  background: var(--paper-w);
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--ink-faint); padding: 8px 16px; text-align: left;
+  border-bottom: 1px solid var(--rule);
+}
+.ct-yes { color: var(--green-m); font-weight: 700; font-size: 16px; }
+.ct-no  { color: var(--ink-faint); font-size: 16px; }
+.ct-txt { font-size: 12px; font-weight: 600; color: var(--navy); }
+.ct-gold { font-size: 12px; font-weight: 700; color: var(--gold); }
+
+/* ── TRUST BAR ── */
+.trust-bar {
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  padding: 24px 0; margin-bottom: 64px;
+  background: var(--paper-w);
+}
+.trust-inner {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; flex-wrap: wrap;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--ink-mid);
+}
+.trust-icon { font-size: 18px; }
+
+/* ── FAQ ── */
+.faq-section { padding: 0 0 80px; }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px; }
+@media(max-width:640px){ .faq-grid { grid-template-columns: 1fr; } }
+.faq-item {
+  padding: 20px 22px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: var(--paper);
+}
+.faq-q { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.faq-a { font-size: 13px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
+
+/* ── BOTTOM CTA ── */
+.bottom-cta {
+  background: var(--navy);
+  padding: 64px 32px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.bottom-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 100% at 50% 100%, rgba(29,78,216,.12) 0%, transparent 60%);
+}
+.bc-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,.35); margin-bottom: 14px; font-weight: 600;
+}
+.bc-title {
+  font-family: var(--serif); font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 700; color: white; letter-spacing: -.5px;
+  margin-bottom: 10px; max-width: 560px; margin-left: auto; margin-right: auto;
+}
+.bc-sub { font-size: 14px; color: rgba(255,255,255,.45); margin-bottom: 32px; }
+.bc-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+/* ── BUTTONS shared ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 13px 26px; border-radius: var(--r);
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .18s; letter-spacing: .1px;
+}
+.btn-gold { background: var(--gold); color: white; box-shadow: 0 2px 10px rgba(168,125,10,.3); }
+.btn-gold:hover { background: #8a670a; transform: translateY(-1px); }
+.btn-ghost-w { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.15); }
+.btn-ghost-w:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); }
+.btn-ghost { background: transparent; color: var(--navy); border: 1.5px solid var(--rule); }
+.btn-ghost:hover { border-color: var(--navy); }
+
+/* ── MODAL ── */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(15,17,23,.55); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .22s;
+}
+.modal-bg.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--paper); border-radius: var(--rl);
+  max-width: 480px; width: 100%;
+  box-shadow: var(--sh-lg), 0 0 0 1px var(--rule);
+  padding: 36px; position: relative;
+  transform: translateY(16px); transition: transform .25s;
+}
+.modal-bg.open .modal-box { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--paper-w); border: 1px solid var(--rule);
+  font-size: 14px; color: var(--ink-light); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.modal-close:hover { background: var(--paper-m); }
+.modal-tier {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+.modal-title { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: -.3px; }
+.modal-sub { font-size: 13px; color: var(--ink-mid); margin-bottom: 24px; line-height: 1.55; }
+.modal-price {
+  display: flex; align-items: baseline; gap: 6px;
+  margin-bottom: 20px; padding: 14px; background: var(--paper-w);
+  border-radius: var(--r); border: 1px solid var(--rule);
+}
+.mp-val { font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--navy); letter-spacing: -1px; }
+.mp-label { font-size: 13px; color: var(--ink-light); }
+.mf { margin-bottom: 14px; }
+.mf label { display: block; font-size: 11px; font-weight: 600; color: var(--ink-mid); margin-bottom: 5px; }
+.mf input, .mf select {
+  width: 100%; padding: 10px 13px; border-radius: var(--r);
+  border: 1.5px solid var(--rule); background: var(--paper);
+  font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none;
+  transition: border-color .15s;
+}
+.mf input:focus, .mf select:focus { border-color: var(--navy); }
+.modal-submit {
+  width: 100%; padding: 13px; border-radius: var(--r);
+  background: var(--gold); color: white;
+  font-family: var(--sans); font-size: 14px; font-weight: 700;
+  border: none; cursor: pointer; transition: all .18s; margin-top: 6px;
+}
+.modal-submit:hover { background: #8a670a; }
+.modal-note { font-size: 10px; color: var(--ink-faint); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.pc { animation: fadeUp .4s ease forwards; }
+.pc.basic  { animation-delay: .05s; }
+.pc.featured { animation-delay: .12s; }
+.pc.advisory { animation-delay: .19s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a href="#" class="nav-logo">
+      <div class="nav-mark">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/><rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/><rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/></svg>
+      </div>
+      CashPoolModel
+    </a>
+    <a class="nav-back" href="#">← Return to Simulator</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <div class="hero-eyebrow">Analysis Options</div>
+  <h1>Your simulation is ready.<br>Choose <em>how deep</em> to go.</h1>
+  <p class="hero-sub">The free tool shows your potential. The Professional Report builds the case. The Advisory Bundle validates your strategy with an expert.</p>
+</div>
+
+<!-- ═══════════════════════════════════
+     SIMULATOR RESULT TEASER
+═══════════════════════════════════ -->
+<div class="teaser-section">
+  <div class="wrap">
+    <div class="sec-label">Your Simulation Results — ACME Group, 5 entities, EUR</div>
+    <div class="teaser-card">
+
+      <!-- Header -->
+      <div class="teaser-header">
+        <div class="teaser-header-left">
+          <div class="th-label">Simulation complete</div>
+          <div class="th-title">ACME Group — Cash Pooling Business Case</div>
+          <div class="th-sub">Zero-balancing · EUR · 12-month horizon · Base scenario · ČNB/ECB rates Q1 2025</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="background:var(--green-p);border:1px solid #a7f3d0;color:var(--green);padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;">✓ Positive business case</span>
+        </div>
+      </div>
+
+      <!-- FREE visible results -->
+      <div class="teaser-free-results">
+        <div class="tfr-cell">
+          <div class="tfr-label">Annual Interest Saving</div>
+          <div class="tfr-value" style="color:var(--green-m)">€198K</div>
+          <div class="tfr-sub">vs. standalone accounts</div>
+        </div>
+        <div class="tfr-cell">
+          <div class="tfr-label">Netting Efficiency</div>
+          <div class="tfr-value" style="color:var(--blue)">73%</div>
+          <div class="tfr-sub">surplus/deficit offset</div>
+        </div>
+        <div class="tfr-cell">
+          <div class="tfr-label">Payback Period</div>
+          <div class="tfr-value" style="color:var(--navy)">10.4 mo</div>
+          <div class="tfr-sub">from implementation</div>
+        </div>
+        <div class="tfr-cell">
+          <div class="tfr-label">Net Pool Balance</div>
+          <div class="tfr-value" style="color:var(--gold)">+€1.15M</div>
+          <div class="tfr-sub">group net surplus</div>
+        </div>
+      </div>
+
+      <!-- LOCKED content with blur -->
+      <div class="teaser-locked">
+        <div style="padding:14px 28px;background:var(--paper-w);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:600;color:var(--ink-mid)">Professional Report includes additionally:</span>
+          <span style="font-size:10px;color:var(--ink-faint)">— locked below</span>
+        </div>
+        <div class="locked-grid">
+          <!-- Blurred: Sensitivity matrix -->
+          <div class="locked-panel">
+            <div class="locked-panel-title">
+              <div class="lp-icon">±</div>
+              Sensitivity Analysis — Rate Scenarios
+            </div>
+            <div class="blurred-content">
+              <table class="sens-mini">
+                <tr><td>Spread +1.5pp</td><td class="sm-g">€440K</td><td class="sm-g">€412K</td><td class="sm-g">€371K</td></tr>
+                <tr><td>Spread +0.75pp</td><td class="sm-g">€364K</td><td class="sm-g">€341K</td><td class="sm-y">€307K</td></tr>
+                <tr><td><strong>Base</strong></td><td class="sm-g">€287K</td><td class="sm-b">€287K ★</td><td class="sm-y">€241K</td></tr>
+                <tr><td>Spread −0.75pp</td><td class="sm-y">€214K</td><td class="sm-y">€198K</td><td class="sm-r">€174K</td></tr>
+                <tr><td>Spread −1.5pp</td><td class="sm-y">€134K</td><td class="sm-r">€118K</td><td class="sm-r">€94K</td></tr>
+              </table>
+            </div>
+            <div class="lock-overlay">
+              <div class="lock-badge">🔒 Unlocked in Professional Report</div>
+            </div>
+          </div>
+
+          <!-- Blurred: CEE Regulatory Matrix -->
+          <div class="locked-panel">
+            <div class="locked-panel-title">
+              <div class="lp-icon">🗺</div>
+              CEE Regulatory Compliance Matrix
+            </div>
+            <div class="blurred-content">
+              <div class="cee-mini">
+                <div class="cee-row"><span class="cee-flag">🇨🇿</span><div class="cee-bar"><div class="cee-fill" style="width:90%;background:var(--green-m)"></div></div><span class="cee-status" style="color:var(--green-m)">✓ Clear</span></div>
+                <div class="cee-row"><span class="cee-flag">🇸🇰</span><div class="cee-bar"><div class="cee-fill" style="width:85%;background:var(--green-m)"></div></div><span class="cee-status" style="color:var(--green-m)">✓ Clear</span></div>
+                <div class="cee-row"><span class="cee-flag">🇵🇱</span><div class="cee-bar"><div class="cee-fill" style="width:55%;background:#d97706"></div></div><span class="cee-status" style="color:#d97706">⚠ Review</span></div>
+                <div class="cee-row"><span class="cee-flag">🇭🇺</span><div class="cee-bar"><div class="cee-fill" style="width:60%;background:#d97706"></div></div><span class="cee-status" style="color:#d97706">⚠ Review</span></div>
+                <div class="cee-row"><span class="cee-flag">🇦🇹</span><div class="cee-bar"><div class="cee-fill" style="width:92%;background:var(--green-m)"></div></div><span class="cee-status" style="color:var(--green-m)">✓ Clear</span></div>
+                <div class="cee-row"><span class="cee-flag">🇨🇭</span><div class="cee-bar"><div class="cee-fill" style="width:80%;background:var(--green-m)"></div></div><span class="cee-status" style="color:var(--green-m)">✓ Clear</span></div>
+              </div>
+            </div>
+            <div class="lock-overlay">
+              <div class="lock-badge">🔒 Unlocked in Professional Report</div>
+            </div>
+          </div>
+
+          <!-- Blurred: Pool diagram -->
+          <div class="locked-panel">
+            <div class="locked-panel-title">
+              <div class="lp-icon">🔄</div>
+              Proposed Pool Structure — Visual Diagram
+            </div>
+            <div class="blurred-content">
+              <svg viewBox="0 0 280 140" style="width:100%;max-width:280px;" xmlns="http://www.w3.org/2000/svg">
+                <rect x="95" y="50" width="90" height="40" rx="4" fill="#0e1f3d"/>
+                <text x="140" y="68" text-anchor="middle" fill="white" font-size="9" font-weight="600">MASTER ACCT</text>
+                <text x="140" y="82" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="7">+€1,150K net</text>
+                <g><line x1="40" y1="95" x2="95" y2="70" stroke="#059669" stroke-width="1.5"/><rect x="10" y="85" width="60" height="24" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width="1"/><text x="40" y="97" text-anchor="middle" font-size="7" fill="#065f46" font-weight="600">HoldCo Praha</text><text x="40" y="107" text-anchor="middle" font-size="6" fill="#059669">+€2,500K</text></g>
+                <g><line x1="80" y1="28" x2="118" y2="52" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,2"/><rect x="50" y="10" width="60" height="24" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/><text x="80" y="22" text-anchor="middle" font-size="7" fill="#991b1b" font-weight="600">Manuf. CZ</text><text x="80" y="32" text-anchor="middle" font-size="6" fill="#dc2626">−€1,800K</text></g>
+                <g><line x1="200" y1="28" x2="162" y2="52" stroke="#059669" stroke-width="1.5"/><rect x="170" y="10" width="60" height="24" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width="1"/><text x="200" y="22" text-anchor="middle" font-size="7" fill="#065f46" font-weight="600">Sales SK</text><text x="200" y="32" text-anchor="middle" font-size="6" fill="#059669">+€600K</text></g>
+                <g><line x1="240" y1="95" x2="185" y2="72" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,2"/><rect x="210" y="86" width="60" height="24" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/><text x="240" y="98" text-anchor="middle" font-size="7" fill="#991b1b" font-weight="600">Logistics PL</text><text x="240" y="108" text-anchor="middle" font-size="6" fill="#dc2626">−€300K</text></g>
+              </svg>
+            </div>
+            <div class="lock-overlay">
+              <div class="lock-badge">🔒 Unlocked in Professional Report</div>
+            </div>
+          </div>
+
+          <!-- Blurred: Bank RFP checklist -->
+          <div class="locked-panel">
+            <div class="locked-panel-title">
+              <div class="lp-icon">📋</div>
+              Bank RFP Requirements Checklist
+            </div>
+            <div class="blurred-content" style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--green-m)">✓</span> Pool structure type (ZBA / Notional)
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--green-m)">✓</span> Intercompany interest methodology
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--green-m)">✓</span> Cross-border sweep rules per country
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--green-m)">✓</span> Citi / ING / KB pricing requirements
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--green-m)">✓</span> TMS integration requirements (SAP/Kyriba)
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 10px;background:var(--paper-w);border-radius:4px;">
+                <span style="color:var(--ink-faint)">···</span> <span style="color:var(--ink-faint)">12 more items...</span>
+              </div>
+            </div>
+            <div class="lock-overlay">
+              <div class="lock-badge">🔒 Unlocked in Professional Report</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNLOCK BANNER -->
+        <div class="unlock-banner">
+          <div class="ub-left">
+            <div class="ub-title">Unlock the complete 12-page business case.</div>
+            <div class="ub-sub">Everything your CFO and board need to approve the implementation.</div>
+            <div class="ub-items">
+              <span class="ub-item">Sensitivity matrix</span>
+              <span class="ub-item">CEE regulatory check</span>
+              <span class="ub-item">Pool structure diagram</span>
+              <span class="ub-item">Bank RFP checklist</span>
+              <span class="ub-item">Implementation roadmap</span>
+            </div>
+          </div>
+          <div class="ub-actions">
+            <button class="btn btn-gold" onclick="openModal('professional')">
+              Get the Full Report — €99
+            </button>
+            <button class="btn btn-ghost-w" onclick="openModal('advisory')">
+              Or review with an expert — €249
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PRICING TABLE
+═══════════════════════════════════ -->
+<section class="pricing-section">
+  <div class="wrap">
+    <div class="sec-label">Pricing</div>
+    <h2 style="font-family:var(--serif);font-size:clamp(26px,3.5vw,36px);font-weight:700;color:var(--navy);letter-spacing:-.6px;line-height:1.15;margin-bottom:6px;">
+      Three levels of depth.<br>One decision to make.
+    </h2>
+    <p style="font-size:15px;color:var(--ink-mid);font-weight:300;max-width:52ch;">Built by a practitioner — not a software vendor. Every tier delivers real analytical value, not a sales funnel dressed up as a tool.</p>
+
+    <div class="pricing-grid">
+
+      <!-- TIER 1: BASIC -->
+      <div class="pc basic">
+        <div class="pc-accent"></div>
+        <div class="pc-body">
+          <div class="pc-tier">Basic</div>
+          <div class="pc-price-row">
+            <div class="pc-price">0</div>
+            <div class="pc-currency">€</div>
+          </div>
+          <div class="pc-period">No registration required</div>
+          <div class="pc-desc">
+            Analyze your group liquidity and visualize your optimization potential — immediately, without commitment.
+          </div>
+          <div class="pc-divider"></div>
+          <ul class="pc-features">
+            <li><span class="fi fi-check">✓</span><span>Interactive group simulator — unlimited entities</span></li>
+            <li><span class="fi fi-check">✓</span><span>Real-time netting &amp; interest saving calculation</span></li>
+            <li><span class="fi fi-check">✓</span><span>Three scenarios — base, optimistic, pessimistic</span></li>
+            <li><span class="fi fi-check">✓</span><span>Daily cash flow simulation (90-day view)</span></li>
+            <li><span class="fi fi-check">✓</span><span>Live rate presets — ČNB, ECB, Fed Q1 2025</span></li>
+            <li class="dim"><span class="fi fi-dash">—</span><span>PDF export or downloadable report</span></li>
+            <li class="dim"><span class="fi fi-dash">—</span><span>Sensitivity analysis matrix</span></li>
+            <li class="dim"><span class="fi fi-dash">—</span><span>CEE regulatory compliance matrix</span></li>
+            <li class="dim"><span class="fi fi-dash">—</span><span>Bank RFP checklist</span></li>
+          </ul>
+          <button class="pc-cta cta-ghost" onclick="window.location.href='#'">
+            Evaluate Your Optimization Potential
+          </button>
+          <div class="pc-note">No account. No credit card. Results in under 2 minutes.</div>
+        </div>
+      </div>
+
+      <!-- TIER 2: PROFESSIONAL -->
+      <div class="pc featured">
+        <div class="pc-badge">Most Requested</div>
+        <div class="pc-accent"></div>
+        <div class="pc-body" style="padding-top:38px;">
+          <div class="pc-tier">Professional</div>
+          <div class="pc-price-row">
+            <div class="pc-currency" style="color:var(--gold)">€</div>
+            <div class="pc-price">99</div>
+          </div>
+          <div class="pc-period">Single-use report · Instant delivery</div>
+
+          <div class="value-anchor">
+            <div class="va-icon">💡</div>
+            <div class="va-text">At <strong>€99</strong>, this report costs less than one hour of external treasury consulting — and delivers a complete board-ready business case.</div>
+          </div>
+
+          <div class="pc-desc">
+            A full 12-page PDF business case generated from your data. Professional enough to present to your CFO, board, or banking partners without modification.
+          </div>
+          <div class="pc-divider"></div>
+          <ul class="pc-features">
+            <li><span class="fi fi-check">✓</span><span><strong>Everything in Basic</strong></span></li>
+            <li><span class="fi fi-star">★</span><span><strong>12-page board-ready PDF report</strong> — your data, professional design</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Full sensitivity matrix</strong> — 25 rate/volatility scenarios</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Visual pool structure diagram</strong> — ZBA or Notional hierarchy</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>CEE regulatory matrix</strong> — CZ, SK, PL, HU, AT, CH compliance check</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Bank RFP checklist</strong> — requirements for Citi, ING, KB, Erste</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Implementation roadmap</strong> — 4-phase timeline with milestones</span></li>
+            <li><span class="fi fi-check">✓</span><span>Risk register with mitigation notes</span></li>
+            <li><span class="fi fi-check">✓</span><span>3-year cumulative NPV projection</span></li>
+          </ul>
+          <button class="pc-cta cta-gold" onclick="openModal('professional')">
+            Get the Full Business Case — €99
+          </button>
+          <div class="pc-note">Stripe secure payment · PDF delivered in under 60 seconds · One-time, no subscription</div>
+        </div>
+      </div>
+
+      <!-- TIER 3: ADVISORY -->
+      <div class="pc advisory">
+        <div class="pc-accent"></div>
+        <div class="pc-body">
+          <div class="pc-tier">Advisory Bundle</div>
+          <div class="pc-price-row">
+            <div class="pc-currency">€</div>
+            <div class="pc-price">249</div>
+          </div>
+          <div class="pc-period">Report + Expert session · Best value</div>
+          <div class="pc-desc">
+            Expert validation of your strategy. Review the results live with a treasury professional who has implemented pooling structures at ING, Citi, and Erste across CEE.
+          </div>
+          <div class="pc-divider"></div>
+          <ul class="pc-features">
+            <li><span class="fi fi-check">✓</span><span><strong>Everything in Professional</strong></span></li>
+            <li><span class="fi fi-star">★</span><span><strong>30-minute Zoom consultation</strong> — live review with the founder</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Bank partner recommendation</strong> — tailored to your CEE/CH footprint</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Implementation strategy</strong> — which pool type, which entity first</span></li>
+            <li><span class="fi fi-star">★</span><span><strong>Transfer pricing guidance</strong> — CEE arm's length rate considerations</span></li>
+            <li><span class="fi fi-check">✓</span><span>TMS vendor shortlist for your scale</span></li>
+            <li><span class="fi fi-check">✓</span><span>Written session notes delivered post-call</span></li>
+            <li><span class="fi fi-check">✓</span><span>Priority email Q&amp;A for 2 weeks after session</span></li>
+          </ul>
+          <button class="pc-cta cta-navy" onclick="openModal('advisory')">
+            Review with an Expert — €249
+          </button>
+          <div class="pc-note">Session scheduled within 5 business days · Zoom · Available in EN / CZ / SK</div>
+        </div>
+      </div>
+
+    </div><!-- /pricing-grid -->
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="trust-icon">🔒</span> Stripe secure payments</div>
+    <div class="trust-item"><span class="trust-icon">⚡</span> PDF delivered in &lt;60 seconds</div>
+    <div class="trust-item"><span class="trust-icon">🏦</span> 10+ years at ING, Citi, Accenture</div>
+    <div class="trust-item"><span class="trust-icon">🎓</span> MSc thesis on Cash Pooling</div>
+    <div class="trust-item"><span class="trust-icon">🇪🇺</span> CEE market expertise</div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<section class="compare-section">
+  <div class="wrap">
+    <div class="sec-label">Full Comparison</div>
+    <h2 style="font-family:var(--serif);font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:28px;">Everything, side by side.</h2>
+    <div style="overflow-x:auto;">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="min-width:220px;">Feature</th>
+          <th>Basic<br><span style="font-size:11px;color:var(--ink-faint);font-weight:400">Free</span></th>
+          <th class="th-featured">Professional<br><span style="font-size:11px;font-weight:600">€99</span></th>
+          <th class="th-navy">Advisory Bundle<br><span style="font-size:11px;color:rgba(255,255,255,.6);font-weight:400">€249</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-section"><td colspan="4">Simulator</td></tr>
+        <tr><td>Interactive web simulator</td><td><span class="ct-yes">✓</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Unlimited entities &amp; accounts</td><td><span class="ct-yes">✓</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>3 scenarios (base/best/worst)</td><td><span class="ct-yes">✓</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Live rate presets (ČNB / ECB / Fed)</td><td><span class="ct-yes">✓</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Daily cash flow chart</td><td><span class="ct-yes">✓</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+
+        <tr class="row-section"><td colspan="4">PDF Report</td></tr>
+        <tr><td>Board-ready 12-page PDF</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-gold">★ Included</span></td><td><span class="ct-gold">★ Included</span></td></tr>
+        <tr><td>Full before/after P&amp;L table</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Sensitivity analysis matrix (5×5)</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Pool structure visual diagram</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>CEE regulatory matrix (6 countries)</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Bank RFP checklist</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>3-year NPV projection</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Implementation roadmap</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-yes">✓</span></td><td><span class="ct-yes">✓</span></td></tr>
+
+        <tr class="row-section"><td colspan="4">Expert Advisory</td></tr>
+        <tr><td>30-min Zoom consultation</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-gold">★ Included</span></td></tr>
+        <tr><td>Bank partner recommendation</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Implementation strategy review</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Transfer pricing guidance</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>Post-session written notes</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-yes">✓</span></td></tr>
+        <tr><td>2-week priority email Q&amp;A</td><td><span class="ct-no">—</span></td><td class="td-feat"><span class="ct-no">—</span></td><td><span class="ct-yes">✓</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="wrap">
+    <div class="sec-label">Common Questions</div>
+    <h2 style="font-family:var(--serif);font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:0;">Questions before you decide.</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q">How quickly will I receive my PDF report?</div>
+        <div class="faq-a">Immediately — within 60 seconds of payment. The report is generated from your simulation inputs automatically and delivered to your email. No manual work involved.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I use the report in a board presentation?</div>
+        <div class="faq-a">Yes. That is exactly what it is designed for. The 12-page PDF uses a professional layout with your group's actual data, suitable for presenting to CFOs, boards, or banking partners without modification.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Who conducts the Advisory consultation?</div>
+        <div class="faq-a">Jakub Houser — the founder. 10+ years in treasury at ING Geneva, Citi (CEE), Accenture (Barcelona), and Erste Group. His master's thesis was specifically on cash pooling from the bank and corporate perspective.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this a subscription? Will I be charged again?</div>
+        <div class="faq-a">No. All tiers are one-time payments. Professional Report is a single purchase per report. Advisory Bundle includes one session. There are no recurring charges, no annual contracts.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Does the CEE regulatory matrix constitute legal advice?</div>
+        <div class="faq-a">No. The regulatory matrix provides a high-level compliance overview based on publicly available information. For binding legal guidance, you should consult local legal counsel in each jurisdiction, particularly for Poland and Hungary.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I run multiple scenarios and buy one report?</div>
+        <div class="faq-a">Yes. You can adjust the simulator inputs as many times as you want at no cost. When you are satisfied with your configuration, you purchase the report for that specific scenario. You may purchase additional reports for alternative configurations.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div style="position:relative;z-index:1;">
+    <div class="bc-label">Ready to proceed?</div>
+    <h2 class="bc-title">Your liquidity optimization potential is already calculated.</h2>
+    <p class="bc-sub">The only question is how far you want to take the analysis.</p>
+    <div class="bc-actions">
+      <button class="btn btn-gold" onclick="openModal('professional')">Get the Full Report — €99</button>
+      <button class="btn btn-ghost-w" onclick="openModal('advisory')">Review with an Expert — €249</button>
+      <button class="btn btn-ghost-w" onclick="window.location.href='#'">← Return to Simulator</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODALS
+═══════════════════════════════════ -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const MODALS = {
+  professional: `
+    <div class="modal-tier">Professional Report</div>
+    <div class="modal-title">Get the Full Business Case</div>
+    <div class="modal-sub">Your 12-page board-ready PDF, generated from your simulation data. Includes sensitivity matrix, CEE regulatory check, pool diagram, and bank RFP checklist.</div>
+    <div class="modal-price">
+      <div class="mp-val">€99</div>
+      <div class="mp-label">one-time · instant PDF delivery</div>
+    </div>
+    <div class="mf"><label>Work email (PDF delivery)</label><input type="email" placeholder="treasury@company.com"></div>
+    <div class="mf"><label>Company / Group name</label><input type="text" placeholder="ACME Group s.r.o."></div>
+    <div class="mf"><label>Primary jurisdiction</label>
+      <select>
+        <option>Czech Republic</option><option>Slovakia</option><option>Poland</option>
+        <option>Hungary</option><option>Austria</option><option>Switzerland</option><option>Other CEE</option>
+      </select>
+    </div>
+    <button class="modal-submit" onclick="handlePurchase('Professional Report', 99)">Pay €99 &amp; Generate Report →</button>
+    <div class="modal-note">🔒 Stripe secure checkout · PDF in under 60 seconds · No subscription, ever</div>
+  `,
+  advisory: `
+    <div class="modal-tier">Advisory Bundle</div>
+    <div class="modal-title">Review With an Expert</div>
+    <div class="modal-sub">Professional Report + 30-minute Zoom session with Jakub Houser. Live review of your results, bank recommendation, and implementation strategy for your specific CEE/CH footprint.</div>
+    <div class="modal-price">
+      <div class="mp-val">€249</div>
+      <div class="mp-label">report + expert session · best value</div>
+    </div>
+    <div class="mf"><label>Work email</label><input type="email" placeholder="treasury@company.com"></div>
+    <div class="mf"><label>Your name &amp; title</label><input type="text" placeholder="Jana Nováková, Group Treasury Manager"></div>
+    <div class="mf"><label>Company &amp; countries in scope</label><input type="text" placeholder="ACME Group — CZ, SK, PL, HU"></div>
+    <div class="mf"><label>Preferred consultation language</label>
+      <select><option>English</option><option>Czech</option><option>Slovak</option></select>
+    </div>
+    <button class="modal-submit" onclick="handlePurchase('Advisory Bundle', 249)">Book Session — €249 →</button>
+    <div class="modal-note">🔒 Stripe secure · Session scheduled within 5 business days · Zoom · EN / CZ / SK</div>
+  `
+};
+
+function openModal(type) {
+  document.getElementById('modal-body').innerHTML = MODALS[type] || '';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handlePurchase(product, price) {
+  // In production: redirect to Stripe Checkout URL
+  alert(`In production: Stripe Checkout opens for ${product} at €${price}.\n\nAfter payment, PDF is generated and emailed automatically.\n\nFor now, contact jakub.houser@proton.me`);
+  closeModal();
+}
+</script>
+</body>
+</html>

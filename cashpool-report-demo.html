@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Pooling Business Case — ACME Group — PoolSimulator Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --navy:      #0e1f3d;
+  --navy-mid:  #1a3260;
+  --blue:      #1d4ed8;
+  --blue-pale: #eff6ff;
+  --gold:      #b8860b;
+  --gold-pale: #fefce8;
+  --green:     #065f46;
+  --green-mid: #059669;
+  --green-pale:#ecfdf5;
+  --red:       #991b1b;
+  --red-mid:   #dc2626;
+  --red-pale:  #fef2f2;
+  --amber:     #d97706;
+  --gray-50:   #f9fafb;
+  --gray-100:  #f3f4f6;
+  --gray-200:  #e5e7eb;
+  --gray-300:  #d1d5db;
+  --gray-400:  #9ca3af;
+  --gray-500:  #6b7280;
+  --gray-600:  #4b5563;
+  --gray-700:  #374151;
+  --gray-800:  #1f2937;
+  --gray-900:  #111827;
+  --white:     #ffffff;
+  --paper:     #faf9f7;
+
+  --serif: 'Libre Baskerville', Georgia, serif;
+  --sans:  'DM Sans', system-ui, sans-serif;
+  --mono:  'DM Mono', monospace;
+}
+
+/* ── BASE ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 13px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: var(--sans);
+  background: #e8e4dc;
+  color: var(--gray-800);
+  line-height: 1.5;
+}
+
+/* ── PRINT TOOLBAR ── */
+.toolbar {
+  background: var(--navy);
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.toolbar-brand {
+  font-family: var(--serif);
+  font-size: 14px; color: white; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.toolbar-brand span { color: rgba(255,255,255,.45); font-weight: 400; font-size: 12px; }
+.toolbar-actions { display: flex; gap: 8px; align-items: center; }
+.tb-btn {
+  padding: 7px 16px; border-radius: 4px;
+  font-family: var(--sans); font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .15s;
+}
+.tb-btn-ghost { background: rgba(255,255,255,.1); color: white; }
+.tb-btn-ghost:hover { background: rgba(255,255,255,.2); }
+.tb-btn-primary { background: var(--gold); color: white; }
+.tb-btn-primary:hover { background: #a07809; }
+.tb-tag {
+  font-size: 10px; padding: 3px 10px; border-radius: 20px;
+  background: rgba(255,255,255,.1); color: rgba(255,255,255,.6);
+  font-family: var(--mono); letter-spacing: .5px;
+}
+
+/* ── DOCUMENT WRAPPER ── */
+.doc-wrap {
+  max-width: 900px; margin: 32px auto; padding: 0 24px 80px;
+}
+
+/* ── PAGES ── */
+.page {
+  background: var(--white);
+  box-shadow: 0 4px 32px rgba(0,0,0,.15), 0 1px 4px rgba(0,0,0,.08);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── PAGE 1: COVER ── */
+.cover {
+  min-height: 640px;
+  display: flex; flex-direction: column;
+}
+.cover-top {
+  background: var(--navy);
+  padding: 40px 48px 36px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.cover-top::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(29,78,216,.2) 0%, transparent 70%);
+  transform: translate(80px, -80px);
+}
+.cover-top::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.cover-logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 64px;
+}
+.cover-logo-mark {
+  width: 28px; height: 28px; border-radius: 3px;
+  background: rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+}
+.cover-logo-mark svg { width: 16px; height: 16px; }
+.cover-logo-name {
+  font-family: var(--serif); font-size: 14px; font-weight: 700; color: white;
+}
+.cover-report-type {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px; font-weight: 600;
+}
+.cover-title {
+  font-family: var(--serif);
+  font-size: 36px; font-weight: 700; color: white;
+  line-height: 1.1; letter-spacing: -.8px;
+  max-width: 440px; margin-bottom: 32px;
+}
+.cover-meta {
+  display: grid; grid-template-columns: repeat(3, auto);
+  gap: 32px; width: fit-content;
+}
+.cover-meta-item {}
+.cover-meta-label {
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 4px;
+}
+.cover-meta-val { font-size: 13px; color: white; font-weight: 500; }
+.cover-bottom {
+  padding: 28px 48px;
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cover-client { font-size: 13px; font-weight: 600; color: var(--navy); }
+.cover-client-sub { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.cover-verdict {
+  display: flex; align-items: center; gap: 12px;
+}
+.verdict-label { font-size: 10px; color: var(--gray-400); letter-spacing: .5px; text-transform: uppercase; }
+.verdict-badge {
+  padding: 8px 20px; border-radius: 4px;
+  font-size: 14px; font-weight: 700; letter-spacing: 1px;
+  background: var(--green-mid); color: white;
+}
+.cover-disclaimer {
+  font-size: 9px; color: var(--gray-400); max-width: 260px; line-height: 1.4;
+}
+
+/* ── PAGE HEADER (inner pages) ── */
+.page-header {
+  background: var(--navy);
+  padding: 20px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ph-section {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,.4); font-weight: 600;
+}
+.ph-title { font-size: 14px; font-weight: 600; color: white; margin-top: 3px; }
+.ph-right { text-align: right; }
+.ph-page { font-size: 10px; color: rgba(255,255,255,.35); font-family: var(--mono); }
+.page-body { padding: 36px 40px 40px; }
+
+/* ── PAGE FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--gray-100);
+  padding: 10px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--gray-50);
+}
+.pf-left { font-size: 9px; color: var(--gray-400); }
+.pf-right { font-size: 9px; color: var(--gray-400); font-family: var(--mono); }
+
+/* ── SECTION HEADERS ── */
+.sec-label {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-400); margin-bottom: 6px; font-weight: 600;
+}
+.sec-title {
+  font-family: var(--serif);
+  font-size: 20px; font-weight: 700; color: var(--navy);
+  letter-spacing: -.3px; line-height: 1.2; margin-bottom: 20px;
+}
+
+/* ── KPI ROW ── */
+.kpi-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--gray-200);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 28px;
+}
+.kpi-cell {
+  background: var(--white);
+  padding: 18px 16px;
+  position: relative;
+}
+.kpi-cell::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--kpi-color, var(--blue));
+}
+.kpi-label {
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gray-400); margin-bottom: 8px; font-weight: 600;
+}
+.kpi-value {
+  font-size: 24px; font-weight: 700; line-height: 1;
+  color: var(--kpi-color, var(--navy));
+  font-variant-numeric: tabular-nums; letter-spacing: -.5px;
+  margin-bottom: 6px; font-family: var(--serif);
+}
+.kpi-sub { font-size: 10px; color: var(--gray-400); }
+.kpi-delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 20px; margin-top: 8px;
+}
+.delta-up { background: var(--green-pale); color: var(--green); }
+.delta-down { background: var(--red-pale); color: var(--red); }
+.delta-neutral { background: var(--gray-100); color: var(--gray-600); }
+
+/* ── EXECUTIVE SUMMARY BOX ── */
+.exec-box {
+  background: var(--navy);
+  border-radius: 6px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: start;
+}
+.exec-label {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 10px; font-weight: 600;
+}
+.exec-headline {
+  font-family: var(--serif);
+  font-size: 18px; font-weight: 700; color: white;
+  line-height: 1.3; margin-bottom: 12px;
+}
+.exec-body { font-size: 12px; color: rgba(255,255,255,.65); line-height: 1.7; }
+.exec-body strong { color: rgba(255,255,255,.9); font-weight: 600; }
+.exec-right {}
+.exec-metric { text-align: right; }
+.exec-metric-label {
+  font-size: 9px; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;
+}
+.exec-metric-val {
+  font-family: var(--serif);
+  font-size: 32px; font-weight: 700; color: white; line-height: 1;
+  letter-spacing: -1px;
+}
+.exec-metric-sub { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 4px; }
+.exec-metrics { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── MAIN TABLE ── */
+.report-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 24px; }
+.report-table thead th {
+  padding: 9px 12px;
+  background: var(--gray-800); color: white;
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  font-weight: 600;
+}
+.report-table thead th:first-child { text-align: left; border-radius: 0; }
+.report-table thead th:not(:first-child) { text-align: right; }
+.report-table thead th.th-after { background: var(--blue); }
+.report-table thead th.th-saving { background: var(--green); }
+.report-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  font-family: var(--mono); font-size: 11px;
+}
+.report-table td:first-child {
+  font-family: var(--sans); font-size: 12px; color: var(--gray-700);
+}
+.report-table td:not(:first-child) { text-align: right; }
+.report-table td.td-after { color: var(--blue); background: rgba(239,246,255,.4); }
+.report-table td.td-saving { font-weight: 600; }
+.report-table td.td-saving.pos { color: var(--green-mid); }
+.report-table td.td-saving.neg { color: var(--red-mid); }
+.report-table tr.row-sub td { color: var(--gray-400); }
+.report-table tr.row-sub td:first-child { padding-left: 24px; font-size: 11px; }
+.report-table tr.row-subtotal td {
+  background: var(--gray-50); font-weight: 600;
+  border-top: 1px solid var(--gray-200);
+  color: var(--gray-800);
+}
+.report-table tr.row-subtotal td:first-child { font-family: var(--sans); font-weight: 600; }
+.report-table tr.row-total td {
+  background: var(--navy); color: white;
+  font-weight: 700; border-top: none;
+}
+.report-table tr.row-total td.td-after { background: var(--blue); color: white; }
+.report-table tr.row-total td.td-saving { background: var(--green); color: white; }
+.report-table tr:not(.row-sub):not(.row-subtotal):not(.row-total):hover td {
+  background: var(--blue-pale);
+}
+
+/* ── ENTITY TABLE ── */
+.entity-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 24px; }
+.entity-table thead th {
+  padding: 8px 12px;
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--gray-200);
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gray-400); font-weight: 600;
+}
+.entity-table thead th:first-child { text-align: left; }
+.entity-table thead th:not(:first-child) { text-align: right; }
+.entity-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  font-family: var(--mono); font-size: 11px;
+}
+.entity-table td:first-child { font-family: var(--sans); font-size: 12px; }
+.entity-table td:not(:first-child) { text-align: right; }
+.entity-table tr:hover td { background: var(--gray-50); }
+.ent-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+.tag-s { font-size: 9px; padding: 1px 6px; border-radius: 20px; margin-left: 6px; font-weight: 600; }
+.tag-surplus { background: var(--green-pale); color: var(--green); }
+.tag-deficit { background: var(--red-pale); color: var(--red); }
+
+/* ── TWO COLUMN LAYOUT ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+/* ── MINI CARDS ── */
+.mini-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 16px;
+  background: var(--gray-50);
+}
+.mini-card-title { font-size: 10px; font-weight: 600; color: var(--gray-500); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 8px; }
+.mini-card-val { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.mini-card-sub { font-size: 10px; color: var(--gray-400); }
+
+/* ── NETTING VISUAL ── */
+.netting-visual {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px; overflow: hidden;
+  margin-bottom: 24px;
+}
+.netting-header {
+  background: var(--gray-800); color: white;
+  padding: 10px 16px;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;
+}
+.netting-body { padding: 20px 16px; }
+.netting-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.netting-bar-row:last-child { margin-bottom: 0; }
+.nb-label { font-size: 11px; color: var(--gray-600); width: 150px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nb-track { flex: 1; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+.nb-fill { height: 100%; border-radius: 3px; }
+.nb-val { font-size: 11px; font-family: var(--mono); width: 90px; text-align: right; flex-shrink: 0; }
+.netting-summary {
+  margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid var(--gray-100);
+  display: flex; gap: 24px;
+}
+.ns-item { }
+.ns-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 3px; }
+.ns-val { font-size: 15px; font-weight: 700; font-family: var(--serif); }
+
+/* ── SENSITIVITY TABLE ── */
+.sens-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.sens-table th {
+  padding: 7px 8px; background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  font-size: 9px; font-weight: 600; color: var(--gray-500);
+  letter-spacing: .5px; text-align: center; text-transform: uppercase;
+}
+.sens-table th:first-child { text-align: left; }
+.sens-table td {
+  padding: 6px 8px; border: 1px solid var(--gray-100);
+  text-align: center; font-family: var(--mono); font-size: 10px;
+}
+.sens-table td:first-child { text-align: left; font-family: var(--sans); font-size: 11px; color: var(--gray-700); }
+.sc-high { background: #d1fae5; color: #065f46; font-weight: 600; }
+.sc-med  { background: #fef3c7; color: #92400e; }
+.sc-low  { background: #fee2e2; color: #991b1b; }
+.sc-base { background: var(--blue-pale); color: var(--blue); font-weight: 700; outline: 2px solid var(--blue); outline-offset: -2px; }
+
+/* ── PAYBACK ── */
+.payback-section { margin-bottom: 24px; }
+.payback-bar-wrap { margin: 12px 0 6px; }
+.payback-track {
+  width: 100%; height: 10px;
+  background: var(--gray-100); border-radius: 5px; overflow: hidden;
+}
+.payback-fill {
+  height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--navy), var(--blue));
+}
+.payback-labels {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--gray-400); font-family: var(--mono); margin-top: 4px;
+}
+
+/* ── RISK ITEMS ── */
+.risk-item {
+  padding: 12px 14px;
+  border-left: 3px solid var(--gray-200);
+  border-radius: 0 4px 4px 0;
+  background: var(--gray-50);
+  margin-bottom: 8px;
+}
+.risk-item.med { border-left-color: var(--amber); background: #fffbeb; }
+.risk-item.low { border-left-color: var(--green-mid); background: var(--green-pale); }
+.risk-item.info { border-left-color: var(--blue); background: var(--blue-pale); }
+.risk-title { font-size: 12px; font-weight: 600; color: var(--gray-800); margin-bottom: 3px; display: flex; align-items: center; gap: 8px; }
+.risk-badge { font-size: 9px; font-weight: 600; padding: 1px 7px; border-radius: 20px; }
+.badge-med { background: var(--amber); color: white; }
+.badge-low { background: var(--green-mid); color: white; }
+.badge-info { background: var(--blue); color: white; }
+.risk-desc { font-size: 11px; color: var(--gray-600); line-height: 1.5; }
+
+/* ── ROADMAP ── */
+.roadmap { display: flex; flex-direction: column; gap: 0; }
+.rm-step { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+.rm-step:last-child { border-bottom: none; }
+.rm-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--navy); color: white;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.rm-title { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+.rm-period { font-size: 10px; color: var(--blue); font-family: var(--mono); margin-left: 8px; }
+.rm-desc { font-size: 11px; color: var(--gray-500); line-height: 1.5; margin-top: 3px; }
+
+/* ── FOOTNOTE AREA ── */
+.footnote {
+  font-size: 9px; color: var(--gray-400); line-height: 1.6;
+  padding-top: 16px; border-top: 1px solid var(--gray-100);
+  margin-top: 16px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .toolbar { display: none; }
+  .doc-wrap { padding: 0; margin: 0; max-width: 100%; }
+  body { background: white; }
+  .page { box-shadow: none; margin-bottom: 0; page-break-after: always; }
+  .page:last-child { page-break-after: avoid; }
+  @page { margin: 0; size: A4; }
+}
+
+/* ── CHART PLACEHOLDER (ASCII-style bars) ── */
+.ascii-chart { font-family: var(--mono); font-size: 10px; }
+.ac-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.ac-label { width: 60px; color: var(--gray-400); font-size: 9px; }
+.ac-bar-wrap { flex: 1; height: 14px; background: var(--gray-100); border-radius: 2px; overflow: hidden; position: relative; }
+.ac-bar { height: 100%; border-radius: 2px; }
+.ac-bar-before { background: var(--gray-300); }
+.ac-bar-after { background: var(--blue); }
+.ac-val { font-size: 9px; color: var(--gray-500); width: 70px; text-align: right; }
+.ac-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 9px; color: var(--gray-400); }
+.ac-legend span { display: flex; align-items: center; gap: 4px; }
+.ac-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-brand">
+    PoolSimulator
+    <span>/ Cash Pooling Report</span>
+  </div>
+  <div class="toolbar-actions">
+    <div class="tb-tag">ACME Group · EUR · 12 months</div>
+    <button class="tb-btn tb-btn-ghost" onclick="window.print()">⬇ Save as PDF</button>
+    <button class="tb-btn tb-btn-primary" onclick="alert('In production: links back to simulator to adjust inputs.')">← Edit Inputs</button>
+  </div>
+</div>
+
+<div class="doc-wrap">
+
+<!-- ══════════════ PAGE 1 — COVER ══════════════ -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-logo">
+      <div class="cover-logo-mark">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/><rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/><rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/></svg>
+      </div>
+      <div class="cover-logo-name">PoolSimulator</div>
+    </div>
+    <div class="cover-report-type">Treasury Business Case Report</div>
+    <h1 class="cover-title">Cash Pooling Implementation — Business Case</h1>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Client</div>
+        <div class="cover-meta-val">ACME Group s.r.o.</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Generated</div>
+        <div class="cover-meta-val">22 April 2025</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Scenario</div>
+        <div class="cover-meta-val">Base Case · EUR · 12 months</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <div>
+      <div class="cover-client">ACME Group — 5 entities, 8 accounts</div>
+      <div class="cover-client-sub">Zero-balancing pool · EUR · ČNB/ECB rates Q1 2025</div>
+    </div>
+    <div class="cover-verdict">
+      <div>
+        <div class="verdict-label">Recommendation</div>
+      </div>
+      <div class="verdict-badge">PROCEED ✓</div>
+    </div>
+    <div class="cover-disclaimer">
+      Results are illustrative based on inputs provided. Not financial advice. Consult your treasury advisor and legal counsel before implementation.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 2 — EXECUTIVE SUMMARY ══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="ph-section">Section 01</div>
+      <div class="ph-title">Executive Summary</div>
+    </div>
+    <div class="ph-right">
+      <div class="ph-page">Page 2 of 5</div>
+    </div>
+  </div>
+  <div class="page-body">
+
+    <div class="exec-box">
+      <div>
+        <div class="exec-label">Recommendation</div>
+        <div class="exec-headline">ACME Group should proceed with zero-balancing cash pooling across all 5 CEE entities.</div>
+        <div class="exec-body">
+          The simulation demonstrates a <strong>net annual benefit of EUR 287,400</strong> in steady state, driven primarily by interest cost reduction through netting (EUR 198,000) and elimination of bilateral overdraft facilities (EUR 52,000). Implementation costs of EUR 250,000 are recovered in <strong>10.4 months</strong> — well within the 24-month threshold typically required for treasury transformation sign-off.<br><br>
+          The group's netting efficiency of <strong>73%</strong> is significantly above the median for comparable CEE manufacturing groups (typically 45–55%), making the business case unusually robust even in the pessimistic rate scenario.
+        </div>
+      </div>
+      <div class="exec-metrics">
+        <div class="exec-metric">
+          <div class="exec-metric-label">Annual Net Benefit</div>
+          <div class="exec-metric-val">€287K</div>
+          <div class="exec-metric-sub">steady state p.a.</div>
+        </div>
+        <div class="exec-metric">
+          <div class="exec-metric-label">Payback Period</div>
+          <div class="exec-metric-val">10.4 mo</div>
+          <div class="exec-metric-sub">from go-live</div>
+        </div>
+        <div class="exec-metric">
+          <div class="exec-metric-label">ROI (12 months)</div>
+          <div class="exec-metric-val">+68%</div>
+          <div class="exec-metric-sub">on total investment</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI STRIP -->
+    <div class="kpi-row">
+      <div class="kpi-cell" style="--kpi-color: #059669">
+        <div class="kpi-label">Interest Saving</div>
+        <div class="kpi-value">€198K</div>
+        <div class="kpi-sub">12-month period</div>
+        <div class="kpi-delta delta-up">▲ vs. standalone</div>
+      </div>
+      <div class="kpi-cell" style="--kpi-color: #1d4ed8">
+        <div class="kpi-label">Netting Efficiency</div>
+        <div class="kpi-value">73%</div>
+        <div class="kpi-sub">surplus / deficit offset</div>
+        <div class="kpi-delta delta-up">▲ above median</div>
+      </div>
+      <div class="kpi-cell" style="--kpi-color: #b8860b">
+        <div class="kpi-label">Pool Net Balance</div>
+        <div class="kpi-value">+€1.15M</div>
+        <div class="kpi-sub">group net position</div>
+        <div class="kpi-delta delta-up">▲ net surplus</div>
+      </div>
+      <div class="kpi-cell" style="--kpi-color: #7c3aed">
+        <div class="kpi-label">Accounts Reduced</div>
+        <div class="kpi-value">8 → 5</div>
+        <div class="kpi-sub">bank accounts</div>
+        <div class="kpi-delta delta-neutral">3 consolidated</div>
+      </div>
+    </div>
+
+    <!-- Summary table -->
+    <div class="sec-label">Key Financials — 12-Month Period</div>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th style="text-align:left; min-width:200px">Item</th>
+          <th>Before Pool</th>
+          <th class="th-after">After Pool</th>
+          <th class="th-saving">Saving / Impact</th>
+          <th>% Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Interest expense (debit positions)</td><td>−€362,400</td><td class="td-after">−€164,400</td><td class="td-saving pos">+€198,000</td><td style="text-align:right;font-family:var(--mono)">−54.6%</td></tr>
+        <tr><td>Interest income (credit positions)</td><td>+€67,200</td><td class="td-after">+€96,000</td><td class="td-saving pos">+€28,800</td><td style="text-align:right;font-family:var(--mono)">+42.9%</td></tr>
+        <tr><td>Netting offset saving</td><td>—</td><td class="td-after">+€52,000</td><td class="td-saving pos">+€52,000</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-subtotal"><td>Net interest result</td><td>−€295,200</td><td class="td-after">−€16,400</td><td class="td-saving pos">+€278,800</td><td style="text-align:right;font-family:var(--mono)">−94.4%</td></tr>
+        <tr class="row-sub"><td>FX conversion saving</td><td>—</td><td class="td-after">+€22,500</td><td class="td-saving pos">+€22,500</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-sub"><td>Bank charge reduction</td><td>—</td><td class="td-after">+€17,500</td><td class="td-saving pos">+€17,500</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-sub"><td>Facility fee reduction</td><td>—</td><td class="td-after">+€12,000</td><td class="td-saving pos">+€12,000</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-subtotal"><td>Total operational savings</td><td>—</td><td class="td-after">+€52,000</td><td class="td-saving pos">+€52,000</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-sub"><td>Implementation cost (one-off)</td><td>—</td><td class="td-after">−€250,000</td><td class="td-saving neg">−€250,000</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-sub"><td>Annual bank fees + admin</td><td>—</td><td class="td-after">−€140,000</td><td class="td-saving neg">−€140,000</td><td style="text-align:right;font-family:var(--mono)">—</td></tr>
+        <tr class="row-total"><td>NET BENEFIT — 12 MONTHS</td><td>−€295,200</td><td class="td-after">−€354,400</td><td class="td-saving pos">−€59,200 net cost</td><td style="text-align:right;font-family:var(--mono);color:white">—</td></tr>
+      </tbody>
+    </table>
+    <div class="footnote">Note: Year 1 shows negative net benefit due to one-off implementation cost of €250,000. From Year 2 onwards, annual net benefit is €287,400. Payback achieved at month 10.4 from go-live.</div>
+  </div>
+  <div class="page-footer">
+    <div class="pf-left">ACME Group — Cash Pooling Business Case — Confidential</div>
+    <div class="pf-right">PoolSimulator.com · April 2025</div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 3 — ENTITY ANALYSIS ══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="ph-section">Section 02</div>
+      <div class="ph-title">Entity Analysis &amp; Netting Structure</div>
+    </div>
+    <div class="ph-right"><div class="ph-page">Page 3 of 5</div></div>
+  </div>
+  <div class="page-body">
+
+    <div class="sec-label">Per-Entity Breakdown — Average Daily Balances &amp; Interest Impact</div>
+    <table class="entity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Entity</th>
+          <th>Avg Balance (EUR)</th>
+          <th>Accounts</th>
+          <th>Interest Before</th>
+          <th>Interest After</th>
+          <th>Saving</th>
+          <th>Pool Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ent-dot" style="background:#1d4ed8"></span>HoldCo Praha<span class="tag-s tag-surplus">surplus</span></td>
+          <td style="color:#059669">+2,500,000</td>
+          <td>3</td>
+          <td>+€70,000</td>
+          <td style="color:#1d4ed8">+€100,000</td>
+          <td style="color:#059669;font-weight:600">+€30,000</td>
+          <td>4.00%</td>
+        </tr>
+        <tr>
+          <td><span class="ent-dot" style="background:#059669"></span>Manufacturing CZ<span class="tag-s tag-deficit">deficit</span></td>
+          <td style="color:#dc2626">−1,800,000</td>
+          <td>2</td>
+          <td>−€99,000</td>
+          <td style="color:#1d4ed8">−€57,600</td>
+          <td style="color:#059669;font-weight:600">+€41,400</td>
+          <td>3.20%</td>
+        </tr>
+        <tr>
+          <td><span class="ent-dot" style="background:#d97706"></span>Sales SK<span class="tag-s tag-surplus">surplus</span></td>
+          <td style="color:#059669">+600,000</td>
+          <td>1</td>
+          <td>+€16,800</td>
+          <td style="color:#1d4ed8">+€24,000</td>
+          <td style="color:#059669;font-weight:600">+€7,200</td>
+          <td>4.00%</td>
+        </tr>
+        <tr>
+          <td><span class="ent-dot" style="background:#dc2626"></span>Logistics PL<span class="tag-s tag-deficit">deficit</span></td>
+          <td style="color:#dc2626">−300,000</td>
+          <td>1</td>
+          <td>−€16,500</td>
+          <td style="color:#1d4ed8">−€9,600</td>
+          <td style="color:#059669;font-weight:600">+€6,900</td>
+          <td>3.20%</td>
+        </tr>
+        <tr>
+          <td><span class="ent-dot" style="background:#7c3aed"></span>Services AT<span class="tag-s tag-surplus">surplus</span></td>
+          <td style="color:#059669">+150,000</td>
+          <td>1</td>
+          <td>+€4,200</td>
+          <td style="color:#1d4ed8">+€6,000</td>
+          <td style="color:#059669;font-weight:600">+€1,800</td>
+          <td>4.00%</td>
+        </tr>
+        <tr style="background:#f9fafb;font-weight:600;">
+          <td style="font-family:var(--sans);font-weight:700;color:var(--navy)">GROUP TOTAL</td>
+          <td style="color:#059669;font-weight:700">+1,150,000</td>
+          <td style="font-weight:700">8 → 5</td>
+          <td style="font-weight:700">−€24,500</td>
+          <td style="color:#1d4ed8;font-weight:700">+€62,800</td>
+          <td style="color:#059669;font-weight:700">+€87,300</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- NETTING VISUAL -->
+    <div class="netting-visual">
+      <div class="netting-header">Netting Efficiency — Surplus vs. Deficit Offset</div>
+      <div class="netting-body">
+        <div class="netting-bar-row">
+          <div class="nb-label">HoldCo Praha</div>
+          <div class="nb-track"><div class="nb-fill" style="width:100%;background:#1d4ed8;opacity:.7"></div></div>
+          <div class="nb-val" style="color:#059669">+€2,500K</div>
+        </div>
+        <div class="netting-bar-row">
+          <div class="nb-label">Sales SK</div>
+          <div class="nb-track"><div class="nb-fill" style="width:24%;background:#d97706;opacity:.7"></div></div>
+          <div class="nb-val" style="color:#059669">+€600K</div>
+        </div>
+        <div class="netting-bar-row">
+          <div class="nb-label">Services AT</div>
+          <div class="nb-track"><div class="nb-fill" style="width:6%;background:#7c3aed;opacity:.7"></div></div>
+          <div class="nb-val" style="color:#059669">+€150K</div>
+        </div>
+        <div class="netting-bar-row" style="margin-top:12px;padding-top:12px;border-top:1px dashed #e5e7eb">
+          <div class="nb-label">Manufacturing CZ</div>
+          <div class="nb-track"><div class="nb-fill" style="width:72%;background:#dc2626;opacity:.6"></div></div>
+          <div class="nb-val" style="color:#dc2626">−€1,800K</div>
+        </div>
+        <div class="netting-bar-row">
+          <div class="nb-label">Logistics PL</div>
+          <div class="nb-track"><div class="nb-fill" style="width:12%;background:#ef4444;opacity:.6"></div></div>
+          <div class="nb-val" style="color:#dc2626">−€300K</div>
+        </div>
+        <div class="netting-summary">
+          <div class="ns-item">
+            <div class="ns-label">Total Surplus</div>
+            <div class="ns-val" style="color:#059669">+€3,250K</div>
+          </div>
+          <div class="ns-item">
+            <div class="ns-label">Total Deficit</div>
+            <div class="ns-val" style="color:#dc2626">−€2,100K</div>
+          </div>
+          <div class="ns-item">
+            <div class="ns-label">Netting Offset</div>
+            <div class="ns-val" style="color:#1d4ed8">€2,100K</div>
+          </div>
+          <div class="ns-item">
+            <div class="ns-label">Netting Efficiency</div>
+            <div class="ns-val" style="color:#0e1f3d">73%</div>
+          </div>
+          <div class="ns-item">
+            <div class="ns-label">Pool Net Balance</div>
+            <div class="ns-val" style="color:#059669">+€1,150K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interest comparison bars -->
+    <div class="sec-label">Interest Cost Comparison — Before vs. After (EUR p.a.)</div>
+    <div class="ascii-chart">
+      <div class="ac-row">
+        <div class="ac-label">Before</div>
+        <div class="ac-bar-wrap"><div class="ac-bar ac-bar-before" style="width:100%"></div></div>
+        <div class="ac-val" style="color:#6b7280">€362,400</div>
+      </div>
+      <div class="ac-row">
+        <div class="ac-label">After</div>
+        <div class="ac-bar-wrap"><div class="ac-bar ac-bar-after" style="width:45%"></div></div>
+        <div class="ac-val" style="color:#1d4ed8">€164,400</div>
+      </div>
+      <div class="ac-legend">
+        <span><span class="ac-swatch" style="background:#d1d5db"></span>Before pooling</span>
+        <span><span class="ac-swatch" style="background:#1d4ed8"></span>After pooling</span>
+        <span style="color:#059669;font-weight:600">⟶ −54.6% reduction in interest expense</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="pf-left">ACME Group — Cash Pooling Business Case — Confidential</div>
+    <div class="pf-right">PoolSimulator.com · April 2025</div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 4 — SENSITIVITY & PAYBACK ══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="ph-section">Section 03</div>
+      <div class="ph-title">Sensitivity Analysis &amp; Payback</div>
+    </div>
+    <div class="ph-right"><div class="ph-page">Page 4 of 5</div></div>
+  </div>
+  <div class="page-body">
+
+    <div class="two-col" style="margin-bottom:28px;">
+      <div>
+        <div class="sec-label">Payback Analysis</div>
+        <div class="three-col" style="margin-bottom:16px;">
+          <div class="mini-card">
+            <div class="mini-card-title">Implementation</div>
+            <div class="mini-card-val">€250K</div>
+            <div class="mini-card-sub">one-off cost</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">Annual Benefit</div>
+            <div class="mini-card-val" style="color:#059669">€427K</div>
+            <div class="mini-card-sub">gross p.a.</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-title">Annual Cost</div>
+            <div class="mini-card-val" style="color:#dc2626">€140K</div>
+            <div class="mini-card-sub">fees + admin</div>
+          </div>
+        </div>
+        <div class="payback-section">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <div style="font-size:12px;font-weight:600;color:var(--navy)">Payback progress over 24 months</div>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:600">10.4 months</div>
+          </div>
+          <div class="payback-bar-wrap">
+            <div class="payback-track">
+              <div class="payback-fill" style="width:43%"></div>
+            </div>
+          </div>
+          <div class="payback-labels">
+            <span>Month 0</span>
+            <span>↑ Payback (M10.4)</span>
+            <span>Month 24</span>
+          </div>
+        </div>
+        <div style="background:var(--green-pale);border:1px solid #a7f3d0;border-radius:4px;padding:12px 14px;margin-top:16px;">
+          <div style="font-size:10px;font-weight:600;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Assessment</div>
+          <div style="font-size:11px;color:#065f46;line-height:1.5;">Payback of 10.4 months is <strong>well below the 24-month threshold</strong> typically required for treasury transformation approval. Even in the pessimistic scenario (spread compressed by 1.5 p.p.), payback remains at 16.2 months.</div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label">3-Year Cumulative Benefit</div>
+        <div class="ascii-chart" style="margin-top:8px;">
+          <div class="ac-row">
+            <div class="ac-label">Year 1</div>
+            <div class="ac-bar-wrap"><div class="ac-bar ac-bar-after" style="width:15%;opacity:.5"></div></div>
+            <div class="ac-val" style="color:#6b7280">−€59K</div>
+          </div>
+          <div class="ac-row">
+            <div class="ac-label">Year 2</div>
+            <div class="ac-bar-wrap"><div class="ac-bar ac-bar-after" style="width:58%"></div></div>
+            <div class="ac-val" style="color:#1d4ed8">+€228K</div>
+          </div>
+          <div class="ac-row">
+            <div class="ac-label">Year 3</div>
+            <div class="ac-bar-wrap"><div class="ac-bar ac-bar-after" style="width:100%"></div></div>
+            <div class="ac-val" style="color:#059669;font-weight:700">+€516K</div>
+          </div>
+          <div class="ac-legend" style="margin-top:12px;">
+            <span style="color:#059669;font-weight:600">3-year cumulative NPV: +€516K</span>
+          </div>
+        </div>
+        <div style="margin-top:20px;">
+          <div class="mini-card" style="background:var(--navy);border-color:var(--navy);">
+            <div class="mini-card-title" style="color:rgba(255,255,255,.4)">12-Month ROI</div>
+            <div class="mini-card-val" style="color:white;font-size:28px;">+68%</div>
+            <div class="mini-card-sub" style="color:rgba(255,255,255,.4)">on total investment incl. implementation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SENSITIVITY TABLE -->
+    <div class="sec-label">Sensitivity Analysis — Net Benefit (EUR, 12 months) vs. Spread &amp; Volatility</div>
+    <table class="sens-table" style="margin-bottom:12px;">
+      <thead>
+        <tr>
+          <th>Spread Change ↓ / Volatility →</th>
+          <th>Vol ×0.70</th>
+          <th>Vol ×0.85</th>
+          <th>Vol ×1.00 (Base)</th>
+          <th>Vol ×1.20</th>
+          <th>Vol ×1.50</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Spread +1.50 p.p.</td>
+          <td class="sc-high">€482K</td>
+          <td class="sc-high">€461K</td>
+          <td class="sc-high">€440K</td>
+          <td class="sc-high">€412K</td>
+          <td class="sc-high">€371K</td>
+        </tr>
+        <tr>
+          <td>Spread +0.75 p.p.</td>
+          <td class="sc-high">€398K</td>
+          <td class="sc-high">€381K</td>
+          <td class="sc-high">€364K</td>
+          <td class="sc-med">€341K</td>
+          <td class="sc-med">€307K</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Base spread (2.30 p.p.)</td>
+          <td class="sc-high">€334K</td>
+          <td class="sc-high">€316K</td>
+          <td class="sc-base">€287K ★</td>
+          <td class="sc-med">€268K</td>
+          <td class="sc-med">€241K</td>
+        </tr>
+        <tr>
+          <td>Spread −0.75 p.p.</td>
+          <td class="sc-med">€241K</td>
+          <td class="sc-med">€228K</td>
+          <td class="sc-med">€214K</td>
+          <td class="sc-med">€198K</td>
+          <td class="sc-low">€174K</td>
+        </tr>
+        <tr>
+          <td>Spread −1.50 p.p.</td>
+          <td class="sc-med">€162K</td>
+          <td class="sc-med">€148K</td>
+          <td class="sc-low">€134K</td>
+          <td class="sc-low">€118K</td>
+          <td class="sc-low">€94K</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:16px;font-size:9px;color:var(--gray-400);margin-bottom:16px;flex-wrap:wrap;">
+      <span style="display:flex;align-items:center;gap:5px;"><span style="background:#d1fae5;width:12px;height:12px;border-radius:2px;display:inline-block"></span> &gt;€300K — Strong business case</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="background:#fef3c7;width:12px;height:12px;border-radius:2px;display:inline-block"></span> €100–300K — Viable</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="background:#fee2e2;width:12px;height:12px;border-radius:2px;display:inline-block"></span> &lt;€100K — Marginal</span>
+      <span style="display:flex;align-items:center;gap:5px;"><span style="background:var(--blue-pale);width:12px;height:12px;border-radius:2px;border:2px solid var(--blue);display:inline-block"></span> Base scenario</span>
+    </div>
+
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:12px 14px;">
+      <div style="font-size:10px;font-weight:600;color:#92400e;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;">Key Sensitivity Finding</div>
+      <div style="font-size:11px;color:#78350f;line-height:1.5;">The business case remains positive across <strong>all 25 scenarios tested</strong>. Even in the worst case (spread compressed 1.5 p.p. + high volatility), the net benefit is €94K p.a. — still exceeding annual pool operating costs of €140K in Year 2 onwards. The primary sensitivity driver is spread, not volatility, confirming that netting structure is the dominant value lever.</div>
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="pf-left">ACME Group — Cash Pooling Business Case — Confidential</div>
+    <div class="pf-right">PoolSimulator.com · April 2025</div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 5 — RISKS & ROADMAP ══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="ph-section">Section 04</div>
+      <div class="ph-title">Implementation Roadmap &amp; Risk Register</div>
+    </div>
+    <div class="ph-right"><div class="ph-page">Page 5 of 5</div></div>
+  </div>
+  <div class="page-body">
+
+    <div class="two-col">
+      <div>
+        <div class="sec-label">Implementation Roadmap</div>
+        <div class="roadmap">
+          <div class="rm-step">
+            <div class="rm-num">1</div>
+            <div>
+              <div class="rm-title">Bank Selection &amp; RFP <span class="rm-period">Month 1–2</span></div>
+              <div class="rm-desc">Issue RFP to minimum 3 banks (recommended: KB, ČSOB, Citi or ING). Standardise pricing comparison. Evaluate pool rate, implementation timeline, and ancillary wallet.</div>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-num">2</div>
+            <div>
+              <div class="rm-title">Legal &amp; Tax Framework <span class="rm-period">Month 2–4</span></div>
+              <div class="rm-desc">Intercompany agreements, Treasury Control Agreement (TCA), transfer pricing documentation per OECD guidelines. Local counsel review in PL and CZ.</div>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-num">3</div>
+            <div>
+              <div class="rm-title">Technical Implementation <span class="rm-period">Month 3–6</span></div>
+              <div class="rm-desc">ERP integration (SAP TRM or Kyriba), SWIFT/H2H connectivity to pool bank, user acceptance testing with treasury team.</div>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-num">4</div>
+            <div>
+              <div class="rm-title">Pilot &amp; Full Rollout <span class="rm-period">Month 6–8</span></div>
+              <div class="rm-desc">Pilot with HoldCo Praha + Manufacturing CZ (largest positions). Parallel run 4 weeks. Full rollout to all 5 entities.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label">Risk Register</div>
+        <div class="risk-item med">
+          <div class="risk-title">Transfer Pricing Compliance <span class="risk-badge badge-med">MEDIUM</span></div>
+          <div class="risk-desc">Intercompany pool rates must be documented at arm's length. Poland and Czech Republic tax authorities have increased scrutiny since 2022. Recommend TP documentation before go-live.</div>
+        </div>
+        <div class="risk-item med">
+          <div class="risk-title">Cross-border Restrictions (PL) <span class="risk-badge badge-med">MEDIUM</span></div>
+          <div class="risk-desc">Polish thin capitalisation rules and WHT on interest may require structural adjustments. Local legal opinion required before including Logistics PL in the pool.</div>
+        </div>
+        <div class="risk-item low">
+          <div class="risk-title">Counterparty Concentration <span class="risk-badge badge-low">LOW</span></div>
+          <div class="risk-desc">Pool concentrates group liquidity with one bank. Mitigate by maintaining backup credit facility with a second bank and monitoring FDIR coverage limits.</div>
+        </div>
+        <div class="risk-item info">
+          <div class="risk-title">ERP Integration Timeline <span class="risk-badge badge-info">OPERATIONAL</span></div>
+          <div class="risk-desc">SAP TRM integration typically requires 10–14 weeks. Recommend parallel manual reconciliation in Month 1 of live operation to catch posting errors.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL RECOMMENDATION -->
+    <div style="background:var(--navy);border-radius:6px;padding:24px 28px;margin-top:8px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;">
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;font-weight:600;">Final Recommendation</div>
+        <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:white;line-height:1.3;margin-bottom:8px;">Proceed with zero-balancing pool implementation across all 5 entities.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.6;">Annual net benefit of €287K, payback in 10.4 months, and positive outcome across all sensitivity scenarios make this a strong business case. Priority next step: issue bank RFP within 30 days.</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="background:#059669;color:white;padding:14px 24px;border-radius:4px;font-size:16px;font-weight:700;letter-spacing:1px;margin-bottom:8px;">PROCEED ✓</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);">68% ROI · 10.4 mo payback</div>
+      </div>
+    </div>
+
+    <div class="footnote" style="margin-top:20px;">
+      <strong>Disclaimer:</strong> This report was generated by PoolSimulator.com based on inputs provided by the user. Results are illustrative and based on average daily balance assumptions and indicative market rates as of Q1 2025. This report does not constitute financial, legal, or tax advice. ACME Group should obtain independent professional advice before implementing any cash pooling structure. PoolSimulator is operated by Jakub Houser, treasury professional with 10+ years of experience at ING, Citi, Accenture and Erste. For advisory services: jakub.houser@proton.me
+    </div>
+
+  </div>
+  <div class="page-footer">
+    <div class="pf-left">ACME Group — Cash Pooling Business Case — Confidential</div>
+    <div class="pf-right">PoolSimulator.com · April 2025</div>
+  </div>
+</div>
+
+</div><!-- /doc-wrap -->
+</body>
+</html>
