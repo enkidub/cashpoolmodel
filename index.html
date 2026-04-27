@@ -425,6 +425,13 @@ footer {
   .footer-copy { text-align: center; }
 }
 
+/* ── LANG SWITCHER ── */
+.lang-sw { display: flex; align-items: center; gap: 1px; margin-right: 4px; }
+.lang-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-fnt); padding: 5px 6px; border-radius: 3px; transition: color .14s; }
+.lang-btn:hover { color: var(--navy); }
+.lang-btn.active { color: var(--navy); }
+.lang-sep { color: var(--rule); font-size: 11px; line-height: 1; user-select: none; }
+
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
@@ -465,46 +472,53 @@ h1              { animation-delay: .11s; }
       </div>
     </div>
     <div class="nav-links">
-      <a class="nav-link" href="/blog.html">Blog</a>
-      <a class="nav-link" href="/contact.html">Contact</a>
+      <a class="nav-link" href="/blog.html" data-i18n="nav.blog">Blog</a>
+      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Contact</a>
     </div>
-    <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access</button>
+    <div class="lang-sw">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta">Get Early Access</button>
     <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="nav-mobile" id="navMobile">
-    <a href="/blog.html">Blog</a>
-    <a href="/contact.html">Contact</a>
-    <button class="nav-mobile-cta" onclick="toggleMobileNav(); document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access →</button>
+    <a href="/blog.html" data-i18n="nav.blog">Blog</a>
+    <a href="/contact.html" data-i18n="nav.contact">Contact</a>
+    <button class="nav-mobile-cta" onclick="toggleMobileNav(); document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta_mobile">Get Early Access →</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <div class="eyebrow">Independent Treasury Intelligence</div>
-    <h1>Model your cash pool before you commit.</h1>
-    <p class="hero-sub">The first independent cash pooling simulator. Built by treasury practitioners, not software vendors.</p>
+    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Treasury Intelligence</div>
+    <h1 data-i18n="hero.h1">Model your cash pool before you commit.</h1>
+    <p class="hero-sub" data-i18n="hero.sub">The first independent cash pooling simulator. Built by treasury practitioners, not software vendors.</p>
     <ul class="hero-bullets">
-      <li class="hero-bullet">Know your savings before the bank pitch — not after.</li>
-      <li class="hero-bullet">Full P&amp;L impact, sensitivity analysis, and regulatory matrix.</li>
-      <li class="hero-bullet">Board-ready PDF report. No spreadsheets, no consultants.</li>
+      <li class="hero-bullet" data-i18n="hero.b1">Know your savings before the bank pitch — not after.</li>
+      <li class="hero-bullet" data-i18n="hero.b2">Full P&amp;L impact, sensitivity analysis, and regulatory matrix.</li>
+      <li class="hero-bullet" data-i18n="hero.b3">Board-ready PDF report. No spreadsheets, no consultants.</li>
     </ul>
     <div class="actions">
-      <button class="btn btn-navy" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access →</button>
-      <a class="btn btn-outline" href="#how">See How It Works</a>
+      <button class="btn btn-navy" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta1">Get Early Access →</button>
+      <a class="btn btn-outline" href="#how" data-i18n="hero.cta2">See How It Works</a>
     </div>
-    <p class="trust-line">Free to join. First report on us when we launch.</p>
+    <p class="trust-line" data-i18n="hero.trust">Free to join. First report on us when we launch.</p>
   </div>
 </section>
 
 <!-- REPORT PREVIEW -->
 <section class="section section-bt">
   <div class="wrap">
-    <div class="sec-eyebrow">Sample Output</div>
-    <h2>What lands in your inbox.</h2>
-    <p class="sec-sub">A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.</p>
+    <div class="sec-eyebrow" data-i18n="preview.eyebrow">Sample Output</div>
+    <h2 data-i18n="preview.h2">What lands in your inbox.</h2>
+    <p class="sec-sub" data-i18n="preview.sub">A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.</p>
 
     <div class="preview-wrap">
 
@@ -515,57 +529,57 @@ h1              { animation-delay: .11s; }
         <div class="preview-report-top">
           <div>
             <div class="preview-report-brand">CashPoolModel</div>
-            <div class="preview-report-date">Generated April 2025</div>
+            <div class="preview-report-date" data-i18n="preview.generated">Generated April 2025</div>
           </div>
-          <div class="preview-report-badge">Illustrative</div>
+          <div class="preview-report-badge" data-i18n="preview.badge">Illustrative</div>
         </div>
         <div class="preview-rule"></div>
-        <div class="preview-report-title">Executive Summary</div>
-        <div class="preview-report-sub">Acme Manufacturing Group · 8 entities · 6 currencies</div>
+        <div class="preview-report-title" data-i18n="preview.title">Executive Summary</div>
+        <div class="preview-report-sub" data-i18n="preview.client">Acme Manufacturing Group · 8 entities · 6 currencies</div>
 
         <!-- KPIs -->
         <div class="preview-kpis">
           <div class="preview-kpi">
             <div class="preview-kpi-val" style="color:var(--gold)">€842k</div>
-            <div class="preview-kpi-label">Annual net savings</div>
+            <div class="preview-kpi-label" data-i18n="preview.kpi1">Annual net savings</div>
           </div>
           <div class="preview-kpi">
             <div class="preview-kpi-val">73%</div>
-            <div class="preview-kpi-label">Netting efficiency</div>
+            <div class="preview-kpi-label" data-i18n="preview.kpi2">Netting efficiency</div>
           </div>
           <div class="preview-kpi">
             <div class="preview-kpi-val">39%</div>
-            <div class="preview-kpi-label">Gross interest reduction</div>
+            <div class="preview-kpi-label" data-i18n="preview.kpi3">Gross interest reduction</div>
           </div>
           <div class="preview-kpi">
             <div class="preview-kpi-val">€1.2M</div>
-            <div class="preview-kpi-label">Freed-up liquidity</div>
+            <div class="preview-kpi-label" data-i18n="preview.kpi4">Freed-up liquidity</div>
           </div>
         </div>
 
         <!-- Before / After chart -->
-        <div class="preview-section-label">Before / After Interest Cost Comparison</div>
+        <div class="preview-section-label" data-i18n="preview.chart_label">Before / After Interest Cost Comparison</div>
         <svg class="preview-chart-svg" viewBox="0 0 560 96" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Before row -->
           <rect x="0" y="11" width="7" height="7" rx="1.5" fill="#ebe8e0"/>
-          <text x="12" y="20" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">Before pool</text>
+          <text id="svg-before" x="12" y="20" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">Before pool</text>
           <rect x="64" y="7" width="334" height="20" rx="3" fill="#ebe8e0"/>
           <text x="404" y="20" font-size="10" fill="#6b7d96" font-family="DM Sans, sans-serif">€2.14M / year</text>
           <!-- After row — outlined bar -->
           <rect x="0" y="46" width="7" height="7" rx="1.5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
-          <text x="12" y="55" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After pool</text>
+          <text id="svg-after" x="12" y="55" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After pool</text>
           <rect x="64" y="42" width="196" height="20" rx="3" fill="rgba(30,58,95,0.09)" stroke="#1e3a5f" stroke-width="1.2"/>
           <text x="162" y="57" font-size="9" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600" text-anchor="middle">−39%</text>
           <text x="266" y="55" font-size="10" fill="#3d4f6a" font-family="DM Sans, sans-serif">€1.30M / year</text>
           <!-- Dashed divider -->
           <line x1="260" y1="4" x2="260" y2="66" stroke="#e8e5df" stroke-width="1" stroke-dasharray="3,3"/>
           <!-- Savings callout -->
-          <text x="64" y="84" font-size="10" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
+          <text id="svg-savings" x="64" y="84" font-size="10" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
         </svg>
 
         <!-- Sensitivity matrix -->
         <div class="preview-matrix-wrap">
-          <div class="preview-section-label" style="margin-top:18px">Sensitivity Matrix — Net Benefit (rate × volatility)</div>
+          <div class="preview-section-label" style="margin-top:18px" data-i18n="preview.matrix_label">Sensitivity Matrix — Net Benefit (rate × volatility)</div>
           <div class="preview-matrix-labels">
             <div class="pm-lbl">−50bp</div>
             <div class="pm-lbl">Base</div>
@@ -593,52 +607,52 @@ h1              { animation-delay: .11s; }
       </div>
       <div class="preview-fade"></div>
     </div>
-    <div class="preview-note">Illustrative data. Actual report generated from your inputs.</div>
+    <div class="preview-note" data-i18n="preview.note">Illustrative data. Actual report generated from your inputs.</div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section class="section section-alt" id="how">
   <div class="wrap">
-    <div class="sec-eyebrow">How it works</div>
-    <h2>From data to board decision<br>in three steps.</h2>
+    <div class="sec-eyebrow" data-i18n="how.eyebrow">How it works</div>
+    <h2 data-i18n="how.h2">From data to board decision<br>in three steps.</h2>
     <div class="how">
       <div class="how-step">
         <div class="how-n">01</div>
-        <div class="how-t">Enter your group structure</div>
-        <div class="how-d">Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.</div>
+        <div class="how-t" data-i18n="how.s1t">Enter your group structure</div>
+        <div class="how-d" data-i18n="how.s1d">Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.</div>
       </div>
       <div class="how-step">
         <div class="how-n">02</div>
-        <div class="how-t">Run the simulation</div>
-        <div class="how-d">The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&amp;L comparison.</div>
+        <div class="how-t" data-i18n="how.s2t">Run the simulation</div>
+        <div class="how-d" data-i18n="how.s2d">The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&amp;L comparison.</div>
       </div>
       <div class="how-step">
         <div class="how-n">03</div>
-        <div class="how-t">Download the report</div>
-        <div class="how-d">Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.</div>
+        <div class="how-t" data-i18n="how.s3t">Download the report</div>
+        <div class="how-d" data-i18n="how.s3d">Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- EARLY ACCESS BENEFITS -->
-<section class="section section-bt">
+<section class="section section-bt" id="early-access">
   <div class="wrap">
-    <div class="sec-eyebrow">Early Access</div>
-    <h2>Secure your priority access.</h2>
-    <p class="sec-sub">Join the waitlist to be the first to model your cash pool when we go live.</p>
+    <div class="sec-eyebrow" data-i18n="ea.eyebrow">Early Access</div>
+    <h2 data-i18n="ea.h2">Secure your priority access.</h2>
+    <p class="sec-sub" data-i18n="ea.sub">Join the waitlist to be the first to model your cash pool when we go live.</p>
     <div class="ea-grid">
 
       <div class="ea-card">
         <svg class="ea-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="16,4 20,12 29,13.5 22.5,20 24,29 16,25 8,29 9.5,20 3,13.5 12,12"/>
         </svg>
-        <div class="ea-card-title">Automated Simulation</div>
+        <div class="ea-card-title" data-i18n="ea.c1t">Automated Simulation</div>
         <ul class="ea-list">
-          <li>Instant visibility into interest savings before any bank conversation</li>
-          <li>Complimentary basic report for early access members</li>
-          <li>Precision multi-currency netting across all group entities</li>
+          <li data-i18n="ea.c1b1">Instant visibility into interest savings before any bank conversation</li>
+          <li data-i18n="ea.c1b2">Complimentary basic report for early access members</li>
+          <li data-i18n="ea.c1b3">Precision multi-currency netting across all group entities</li>
         </ul>
       </div>
 
@@ -649,21 +663,21 @@ h1              { animation-delay: .11s; }
           <line x1="10" y1="16" x2="22" y2="16"/>
           <line x1="10" y1="21" x2="17" y2="21"/>
         </svg>
-        <div class="ea-card-title">Premium Intelligence</div>
+        <div class="ea-card-title" data-i18n="ea.c2t">Premium Intelligence</div>
         <ul class="ea-list">
-          <li>Detailed PDF reports structured for CFO and board presentation</li>
-          <li>Sensitivity and risk modelling across rate and volatility scenarios</li>
-          <li>Expert consultations with independent treasury specialists</li>
+          <li data-i18n="ea.c2b1">Detailed PDF reports structured for CFO and board presentation</li>
+          <li data-i18n="ea.c2b2">Sensitivity and risk modelling across rate and volatility scenarios</li>
+          <li data-i18n="ea.c2b3">Expert consultations with independent treasury specialists</li>
         </ul>
       </div>
 
     </div>
     <div class="ea-form-wrap">
       <div class="ea-form">
-        <input class="ea-input" type="email" id="eaEmail" placeholder="treasury@yourcompany.com">
-        <button class="ea-btn" onclick="handleEarlyAccess()">Join Waitlist →</button>
+        <input class="ea-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="treasury@yourcompany.com">
+        <button class="ea-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Join Waitlist →</button>
       </div>
-      <div class="ea-micro">No spam. Only professional treasury updates.</div>
+      <div class="ea-micro" data-i18n="ea.micro">No spam. Only professional treasury updates.</div>
     </div>
   </div>
 </section>
@@ -674,21 +688,189 @@ h1              { animation-delay: .11s; }
     <div class="footer-i">
       <div>
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-sub">Independent treasury intelligence · Geneva, Switzerland</div>
+        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence · Geneva, Switzerland</div>
       </div>
       <div class="footer-links">
-        <a href="/blog.html">Blog</a>
-        <a href="/contact.html">Contact</a>
+        <a href="/blog.html" data-i18n="nav.blog">Blog</a>
+        <a href="/contact.html" data-i18n="nav.contact">Contact</a>
         <a href="mailto:info@cashpoolmodel.com">info@cashpoolmodel.com</a>
       </div>
     </div>
-    <div class="footer-copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.</div>
+    <div class="footer-copy" data-i18n="footer.copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.</div>
   </div>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
+const translations = {
+  en: {
+    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Get Early Access', 'nav.cta_mobile': 'Get Early Access →',
+    'hero.eyebrow': 'Independent Treasury Intelligence',
+    'hero.h1': 'Model your cash pool before you commit.',
+    'hero.sub': 'The first independent cash pooling simulator. Built by treasury practitioners, not software vendors.',
+    'hero.b1': 'Know your savings before the bank pitch — not after.',
+    'hero.b2': 'Full P&L impact, sensitivity analysis, and regulatory matrix.',
+    'hero.b3': 'Board-ready PDF report. No spreadsheets, no consultants.',
+    'hero.cta1': 'Get Early Access →', 'hero.cta2': 'See How It Works',
+    'hero.trust': 'Free to join. First report on us when we launch.',
+    'preview.eyebrow': 'Sample Output', 'preview.h2': 'What lands in your inbox.',
+    'preview.sub': 'A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.',
+    'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
+    'preview.title': 'Executive Summary', 'preview.client': 'Acme Manufacturing Group · 8 entities · 6 currencies',
+    'preview.kpi1': 'Annual net savings', 'preview.kpi2': 'Netting efficiency',
+    'preview.kpi3': 'Gross interest reduction', 'preview.kpi4': 'Freed-up liquidity',
+    'preview.chart_label': 'Before / After Interest Cost Comparison',
+    'preview.svg_before': 'Before pool', 'preview.svg_after': 'After pool',
+    'preview.svg_savings': '↓ €842k annual savings',
+    'preview.matrix_label': 'Sensitivity Matrix — Net Benefit (rate × volatility)',
+    'preview.note': 'Illustrative data. Actual report generated from your inputs.',
+    'how.eyebrow': 'How it works', 'how.h2': 'From data to board decision<br>in three steps.',
+    'how.s1t': 'Enter your group structure',
+    'how.s1d': 'Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.',
+    'how.s2t': 'Run the simulation',
+    'how.s2d': 'The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&L comparison.',
+    'how.s3t': 'Download the report',
+    'how.s3d': 'Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.',
+    'ea.eyebrow': 'Early Access', 'ea.h2': 'Secure your priority access.',
+    'ea.sub': 'Join the waitlist to be the first to model your cash pool when we go live.',
+    'ea.c1t': 'Automated Simulation',
+    'ea.c1b1': 'Instant visibility into interest savings before any bank conversation',
+    'ea.c1b2': 'Complimentary basic report for early access members',
+    'ea.c1b3': 'Precision multi-currency netting across all group entities',
+    'ea.c2t': 'Premium Intelligence',
+    'ea.c2b1': 'Detailed PDF reports structured for CFO and board presentation',
+    'ea.c2b2': 'Sensitivity and risk modelling across rate and volatility scenarios',
+    'ea.c2b3': 'Expert consultations with independent treasury specialists',
+    'ea.placeholder': 'treasury@yourcompany.com', 'ea.btn': 'Join Waitlist →',
+    'ea.micro': 'No spam. Only professional treasury updates.',
+    'footer.sub': 'Independent treasury intelligence · Geneva, Switzerland',
+    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.',
+    'toast.success': 'You are on the list. We will notify you when the simulator launches.',
+    'toast.invalid': 'Please enter a valid email address.',
+  },
+  de: {
+    'nav.blog': 'Blog', 'nav.contact': 'Kontakt', 'nav.cta': 'Früher Zugang', 'nav.cta_mobile': 'Früher Zugang →',
+    'hero.eyebrow': 'Unabhängige Treasury-Intelligence',
+    'hero.h1': 'Modellieren Sie Ihren Cash Pool — bevor Sie sich entscheiden.',
+    'hero.sub': 'Der erste unabhängige Cash-Pool-Simulator. Entwickelt von Treasury-Experten, nicht von Software-Anbietern.',
+    'hero.b1': 'Kennen Sie Ihre Einsparungen vor dem Bankgespräch — nicht danach.',
+    'hero.b2': 'Vollständige P&L-Auswirkung, Sensitivitätsanalyse und Compliance-Matrix.',
+    'hero.b3': 'Board-fähiger PDF-Bericht. Keine Tabellen, keine Berater.',
+    'hero.cta1': 'Früher Zugang →', 'hero.cta2': 'So funktioniert es',
+    'hero.trust': 'Kostenlose Anmeldung. Erster Bericht gratis bei Launch.',
+    'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Was in Ihrem Posteingang landet.',
+    'preview.sub': 'Ein strukturiertes PDF für CFOs und Verwaltungsräte — kein Tabellendump. Jeder Abschnitt entspricht einer echten Entscheidung.',
+    'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
+    'preview.title': 'Management Summary', 'preview.client': 'Acme Manufacturing Group · 8 Einheiten · 6 Währungen',
+    'preview.kpi1': 'Jährl. Nettoeinsparungen', 'preview.kpi2': 'Netting-Effizienz',
+    'preview.kpi3': 'Brutto-Zinsreduktion', 'preview.kpi4': 'Freigesetzte Liquidität',
+    'preview.chart_label': 'Zinskosten Vorher / Nachher',
+    'preview.svg_before': 'Vor Pool', 'preview.svg_after': 'Nach Pool',
+    'preview.svg_savings': '↓ €842k jährl. Einsparungen',
+    'preview.matrix_label': 'Sensitivitätsmatrix — Nettonutzen (Zinssatz × Volatilität)',
+    'preview.note': 'Illustrative Daten. Der tatsächliche Bericht wird aus Ihren Eingaben erstellt.',
+    'how.eyebrow': 'So funktioniert es', 'how.h2': 'Von den Daten zur Entscheidung —<br>in drei Schritten.',
+    'how.s1t': 'Konzernstruktur eingeben',
+    'how.s1d': 'Geben Sie jede Einheit, ihr durchschnittliches Tagesguthaben, die Anzahl der Konten und Ihre aktuellen Bankkonditionen ein. Live-Zinssätze der wichtigsten Zentralbanken.',
+    'how.s2t': 'Simulation ausführen',
+    'how.s2d': 'Das System berechnet die Netting-Effizienz, modelliert drei Szenarien mit täglicher Cashflow-Volatilität und erstellt einen vollständigen Vorher/Nachher-P&L-Vergleich.',
+    'how.s3t': 'Bericht herunterladen',
+    'how.s3d': 'Exportieren Sie ein strukturiertes PDF für Ihren CFO, Verwaltungsrat oder Bank-Ausschreibungen. Mit Management Summary, Sensitivitätsanalyse und Umsetzungsplan.',
+    'ea.eyebrow': 'Früher Zugang', 'ea.h2': 'Sichern Sie sich Ihren Vorrangzugang.',
+    'ea.sub': 'Registrieren Sie sich auf der Warteliste, um als Erster Ihren Cash Pool zu modellieren.',
+    'ea.c1t': 'Automatisierte Simulation',
+    'ea.c1b1': 'Sofortige Übersicht über Zinseinsparungen vor jedem Bankgespräch',
+    'ea.c1b2': 'Kostenloser Basisbericht für Früh-Zugangs-Mitglieder',
+    'ea.c1b3': 'Präzises Multi-Währungs-Netting für alle Konzerneinheiten',
+    'ea.c2t': 'Premium-Intelligence',
+    'ea.c2b1': 'Detaillierte PDF-Berichte für CFO und Verwaltungsrat',
+    'ea.c2b2': 'Sensitivitäts- und Risikomodellierung für verschiedene Zinsszenarien',
+    'ea.c2b3': 'Expertenberatung mit unabhängigen Treasury-Spezialisten',
+    'ea.placeholder': 'treasury@ihrefirma.com', 'ea.btn': 'Zur Warteliste →',
+    'ea.micro': 'Kein Spam. Nur professionelle Treasury-Updates.',
+    'footer.sub': 'Unabhängige Treasury-Intelligence · Genf, Schweiz',
+    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Ergebnisse sind illustrativ — keine Finanzberatung.',
+    'toast.success': 'Sie stehen auf der Liste. Wir benachrichtigen Sie beim Launch.',
+    'toast.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+  },
+  fr: {
+    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Accès anticipé', 'nav.cta_mobile': 'Accès anticipé →',
+    'hero.eyebrow': 'Intelligence trésorerie indépendante',
+    'hero.h1': 'Modélisez votre cash pool avant de vous engager.',
+    'hero.sub': 'Le premier simulateur de cash pooling indépendant. Conçu par des professionnels de la trésorerie, non par des éditeurs de logiciels.',
+    'hero.b1': 'Connaissez vos économies avant la négociation bancaire — pas après.',
+    'hero.b2': 'Impact P&L complet, analyse de sensibilité et matrice réglementaire.',
+    'hero.b3': 'Rapport PDF prêt pour le conseil. Sans tableurs, sans consultants.',
+    'hero.cta1': 'Accès anticipé →', 'hero.cta2': 'Voir comment ça fonctionne',
+    'hero.trust': 'Inscription gratuite. Premier rapport offert au lancement.',
+    'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Ce qui arrive dans votre boîte mail.',
+    'preview.sub': 'Un PDF structuré pour les CFO et les conseils d\'administration — pas un export de tableur. Chaque section correspond à une décision concrète.',
+    'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
+    'preview.title': 'Résumé exécutif', 'preview.client': 'Acme Manufacturing Group · 8 entités · 6 devises',
+    'preview.kpi1': 'Économies nettes annuelles', 'preview.kpi2': 'Efficacité de netting',
+    'preview.kpi3': 'Réduction brute des intérêts', 'preview.kpi4': 'Liquidités libérées',
+    'preview.chart_label': 'Comparaison des coûts d\'intérêts avant / après',
+    'preview.svg_before': 'Avant pool', 'preview.svg_after': 'Après pool',
+    'preview.svg_savings': '↓ €842k d\'économies annuelles',
+    'preview.matrix_label': 'Matrice de sensibilité — Bénéfice net (taux × volatilité)',
+    'preview.note': 'Données illustratives. Le rapport réel est généré à partir de vos données.',
+    'how.eyebrow': 'Comment ça fonctionne', 'how.h2': 'Des données à la décision du conseil —<br>en trois étapes.',
+    'how.s1t': 'Saisir la structure du groupe',
+    'how.s1d': 'Renseignez chaque entité, son solde journalier moyen, le nombre de comptes et vos taux bancaires actuels. Taux en temps réel des principales banques centrales.',
+    'how.s2t': 'Lancer la simulation',
+    'how.s2d': 'Le moteur calcule l\'efficacité de netting, modélise trois scénarios avec la volatilité des flux journaliers et produit une comparaison P&L complète avant/après.',
+    'how.s3t': 'Télécharger le rapport',
+    'how.s3d': 'Exportez un PDF structuré prêt pour votre CFO, votre conseil ou un appel d\'offres bancaire. Résumé exécutif, analyse de sensibilité et feuille de route inclus.',
+    'ea.eyebrow': 'Accès anticipé', 'ea.h2': 'Sécurisez votre accès prioritaire.',
+    'ea.sub': 'Rejoignez la liste d\'attente pour être le premier à modéliser votre cash pool à notre lancement.',
+    'ea.c1t': 'Simulation automatisée',
+    'ea.c1b1': 'Visibilité immédiate sur les économies d\'intérêts avant toute négociation bancaire',
+    'ea.c1b2': 'Rapport de base offert pour les membres en accès anticipé',
+    'ea.c1b3': 'Netting multi-devises précis pour toutes les entités du groupe',
+    'ea.c2t': 'Intelligence premium',
+    'ea.c2b1': 'Rapports PDF détaillés structurés pour le CFO et le conseil d\'administration',
+    'ea.c2b2': 'Modélisation de la sensibilité et des risques pour différents scénarios de taux',
+    'ea.c2b3': 'Consultations d\'experts avec des spécialistes indépendants en trésorerie',
+    'ea.placeholder': 'tresorerie@votreentreprise.com', 'ea.btn': 'Rejoindre la liste →',
+    'ea.micro': 'Pas de spam. Uniquement des actualités professionnelles en trésorerie.',
+    'footer.sub': 'Intelligence trésorerie indépendante · Genève, Suisse',
+    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Les résultats sont illustratifs — pas de conseil financier.',
+    'toast.success': 'Vous êtes sur la liste. Nous vous notifierons au lancement.',
+    'toast.invalid': 'Veuillez saisir une adresse e-mail valide.',
+  }
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = translations[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.dataset.i18nPh;
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+  const svgMap = { 'svg-before': 'preview.svg_before', 'svg-after': 'preview.svg_after', 'svg-savings': 'preview.svg_savings' };
+  Object.entries(svgMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && t[key]) el.textContent = t[key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+  });
+  localStorage.setItem('cpm_lang', lang);
+}
+
+(function() {
+  const saved = localStorage.getItem('cpm_lang');
+  if (saved && translations[saved]) setLang(saved);
+})();
+
 function toggleMobileNav() {
   document.getElementById('navBurger').classList.toggle('open');
   document.getElementById('navMobile').classList.toggle('open');
@@ -706,9 +888,10 @@ async function addToBrevo(email) {
 
 async function handleEarlyAccess() {
   const e = document.getElementById('eaEmail').value;
-  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  const t = translations[currentLang];
+  if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
   await addToBrevo(e);
-  showToast('You are on the list. We will notify you when the simulator launches.');
+  showToast(t['toast.success']);
   document.getElementById('eaEmail').value = '';
 }
 
