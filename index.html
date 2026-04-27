@@ -180,64 +180,61 @@ h2 {
 /* ── REPORT PREVIEW ── */
 .preview-wrap {
   position: relative; margin-top: 40px;
-  border-radius: 14px; overflow: hidden;
+  border-radius: 6px; overflow: hidden;
+  background: var(--white);
+  border: 1px solid rgba(11,25,41,.08);
   box-shadow:
-    0 0 0 1px rgba(11,25,41,.05),
-    0 4px 8px rgba(11,25,41,.04),
-    0 24px 64px rgba(11,25,41,.09);
-  border: 1px solid rgba(11,25,41,.07);
-}
-.preview-chrome {
-  background: var(--paper-w); border-bottom: 1px solid var(--rule);
-  padding: 10px 16px; display: flex; align-items: center; gap: 12px;
-}
-.preview-dots { display: flex; gap: 6px; flex-shrink: 0; }
-.preview-dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--rule); }
-.preview-dots span:nth-child(1) { background: #fc5f57; }
-.preview-dots span:nth-child(2) { background: #febc2e; }
-.preview-dots span:nth-child(3) { background: #28c840; }
-.preview-url {
-  flex: 1; font-size: 11px; color: var(--ink-fnt);
-  background: var(--white); border: 1px solid var(--rule);
-  border-radius: 4px; padding: 3px 10px; font-family: var(--mono);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.preview-badge {
-  font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--gold); background: var(--gold-p);
-  border: 1px solid rgba(154,110,16,.2); padding: 2px 8px; border-radius: 3px; flex-shrink: 0;
+    0 2px 4px rgba(11,25,41,.04),
+    0 12px 40px rgba(11,25,41,.08),
+    0 40px 80px rgba(11,25,41,.06);
 }
 .preview-doc {
-  background: var(--white); padding: clamp(16px, 3vw, 28px) clamp(16px, 3vw, 28px) 48px;
+  padding: clamp(20px, 3vw, 32px) clamp(20px, 3vw, 32px) 52px;
 }
-.preview-doc-hd {
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
-  padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule);
+
+/* PDF document header */
+.preview-report-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 10px;
 }
-.preview-doc-title {
-  font-family: var(--serif); font-size: clamp(15px, 2vw, 19px);
-  font-weight: 600; color: var(--navy); margin-bottom: 3px;
+.preview-report-brand {
+  font-family: var(--serif); font-size: 12px; font-weight: 600;
+  color: var(--ink-lt); letter-spacing: -.1px;
 }
-.preview-doc-sub { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
-.preview-verdict {
-  font-size: 11px; font-weight: 700; color: #fff; background: #16a34a;
-  padding: 5px 11px; border-radius: 4px; letter-spacing: .5px; white-space: nowrap; flex-shrink: 0;
+.preview-report-date {
+  font-size: 9px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 2px;
 }
+.preview-report-badge {
+  font-size: 8px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-p);
+  border: 1px solid rgba(154,110,16,.2); padding: 3px 9px; border-radius: 3px;
+  white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+}
+.preview-rule { height: 1px; background: var(--rule); margin: 12px 0 14px; }
+.preview-report-title {
+  font-family: var(--serif); font-size: clamp(16px, 2.2vw, 21px);
+  font-weight: 600; color: var(--navy); letter-spacing: -.3px;
+  margin-bottom: 4px; line-height: 1.15;
+}
+.preview-report-sub {
+  font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-bottom: 20px;
+}
+
 .preview-kpis {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px;
 }
 @media (max-width: 560px) { .preview-kpis { grid-template-columns: repeat(2, 1fr); } }
 .preview-kpi {
-  padding: 11px 13px; border: 1px solid var(--rule);
+  padding: 12px 14px; border: 1px solid var(--rule);
   border-radius: var(--r); background: var(--paper);
 }
 .preview-kpi-val {
-  font-family: var(--mono); font-size: clamp(16px, 2.2vw, 20px);
-  font-weight: 400; color: var(--navy); margin-bottom: 2px; line-height: 1.2;
+  font-family: var(--serif); font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 600; color: var(--navy); margin-bottom: 3px; line-height: 1.1;
 }
-.preview-kpi-label { font-size: 10px; color: var(--ink-fnt); font-weight: 500; line-height: 1.3; }
+.preview-kpi-label { font-size: 10px; color: var(--ink-fnt); font-weight: 400; line-height: 1.35; }
 .preview-section-label {
-  font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 8px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase;
   color: var(--ink-fnt); margin-bottom: 10px;
 }
 .preview-chart-svg { width: 100%; max-width: 560px; display: block; overflow: visible; }
@@ -251,23 +248,23 @@ h2 {
   display: flex; align-items: center; justify-content: center;
   font-size: 9px; font-family: var(--mono);
 }
-.pm-g2 { background: #15803d; color: rgba(255,255,255,.9); }
-.pm-g1 { background: #4ade80; color: #14532d; }
-.pm-am { background: #fbbf24; color: #78350f; }
-.pm-rd { background: #fca5a5; color: #7f1d1d; }
+.pm-g2 { background: #2d6348; color: rgba(255,255,255,.9); }
+.pm-g1 { background: #7aaa92; color: #1a3d2b; }
+.pm-am { background: #e8d4a0; color: #6b4a0e; }
+.pm-rd { background: #c4826a; color: rgba(255,255,255,.92); }
 .preview-matrix-labels {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 3px; max-width: 260px; margin-bottom: 4px;
 }
 .pm-lbl { font-size: 8px; color: var(--ink-fnt); font-family: var(--mono); text-align: center; }
 .preview-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 72px;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
   background: linear-gradient(to bottom, transparent, var(--white));
   pointer-events: none;
 }
 .preview-note {
   text-align: center; font-size: 11px; color: var(--ink-fnt);
-  margin-top: 14px; font-style: italic;
+  margin-top: 16px; font-style: italic;
 }
 
 /* ── HOW IT WORKS ── */
@@ -483,26 +480,21 @@ h1              { animation-delay: .11s; }
     <p class="sec-sub">A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.</p>
 
     <div class="preview-wrap">
-      <!-- Browser chrome -->
-      <div class="preview-chrome">
-        <div class="preview-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="preview-url">cashpoolmodel.com · Group Analysis Report · PDF</div>
-        <div class="preview-badge">Illustrative</div>
-      </div>
 
       <!-- Document body -->
       <div class="preview-doc">
 
-        <!-- Report header -->
-        <div class="preview-doc-hd">
+        <!-- PDF document header -->
+        <div class="preview-report-top">
           <div>
-            <div class="preview-doc-title">Cash Pooling Analysis Report</div>
-            <div class="preview-doc-sub">Acme Manufacturing Group · 8 entities · 6 currencies · January 2025</div>
+            <div class="preview-report-brand">CashPoolModel</div>
+            <div class="preview-report-date">Generated April 2025</div>
           </div>
-          <div class="preview-verdict">✓ GO</div>
+          <div class="preview-report-badge">Illustrative</div>
         </div>
+        <div class="preview-rule"></div>
+        <div class="preview-report-title">Executive Summary</div>
+        <div class="preview-report-sub">Acme Manufacturing Group · 8 entities · 6 currencies</div>
 
         <!-- KPIs -->
         <div class="preview-kpis">
@@ -515,12 +507,12 @@ h1              { animation-delay: .11s; }
             <div class="preview-kpi-label">Netting efficiency</div>
           </div>
           <div class="preview-kpi">
-            <div class="preview-kpi-val">14 mo</div>
-            <div class="preview-kpi-label">Payback period</div>
+            <div class="preview-kpi-val">39%</div>
+            <div class="preview-kpi-label">Gross interest reduction</div>
           </div>
           <div class="preview-kpi">
-            <div class="preview-kpi-val">281%</div>
-            <div class="preview-kpi-label">3-year ROI</div>
+            <div class="preview-kpi-val">€1.2M</div>
+            <div class="preview-kpi-label">Freed-up liquidity</div>
           </div>
         </div>
 
@@ -538,7 +530,7 @@ h1              { animation-delay: .11s; }
           <!-- Dashed divider -->
           <line x1="260" y1="4" x2="260" y2="66" stroke="#ddd9d0" stroke-width="1" stroke-dasharray="3,3"/>
           <!-- Savings callout -->
-          <text x="58" y="84" font-size="10" fill="#16a34a" font-family="DM Sans, sans-serif" font-weight="600">↓ 39% reduction  ·  €842k annual savings</text>
+          <text x="58" y="84" font-size="10" fill="#2d6348" font-family="DM Sans, sans-serif" font-weight="600">↓ 39% reduction  ·  €842k annual savings</text>
         </svg>
 
         <!-- Sensitivity matrix -->
