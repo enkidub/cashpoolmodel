@@ -316,11 +316,13 @@ h2 {
 }
 @media (max-width: 560px) { .ea-form { flex-direction: column; } }
 @media (max-width: 560px) { .ea-btn { width: 100%; } }
+@media (max-width: 560px) { .ea-input { width: 100%; font-size: 16px; } }
 .ea-input {
-  flex: 1; height: 46px; padding: 0 16px;
+  flex: 1; height: 46px; min-height: 46px; padding: 0 16px;
   border: 1px solid var(--rule); border-radius: 6px;
   font-family: var(--sans); font-size: 13px; color: var(--ink);
-  background: var(--white); outline: none;
+  background: var(--white); outline: none; box-sizing: border-box;
+  -webkit-appearance: none; appearance: none;
   transition: border-color .18s;
 }
 .ea-input:focus { border-color: var(--navy); }
