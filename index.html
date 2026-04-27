@@ -508,22 +508,12 @@ h1           { animation-delay: .11s; }
 <div class="toast" id="toast"></div>
 
 <script>
-const BREVO_KEY = 'YOUR_BREVO_API_KEY';
-
 async function addToBrevo(email, listId) {
   try {
-    await fetch('https://api.brevo.com/v3/contacts', {
+    await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
       method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'content-type': 'application/json',
-        'api-key': BREVO_KEY
-      },
-      body: JSON.stringify({
-        email: email,
-        listIds: [listId],
-        updateEnabled: true
-      })
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email })
     });
   } catch(e) { console.error(e); }
 }
