@@ -32,8 +32,7 @@ Cal("ui",{styles:{branding:{brandColor:"#0b1929"}},hideEventTypeDetails:false});
   --mono:    'DM Mono', monospace;
   --max:     1000px;
   --pad:     clamp(20px,4vw,44px);
-  --sh:      0 1px 3px rgba(11,25,41,.06),0 4px 16px rgba(11,25,41,.06);
-  --sh-lg:   0 8px 40px rgba(11,25,41,.11),0 2px 8px rgba(11,25,41,.04);
+  --sh:      0 1px 3px rgba(11,25,41,.05),0 4px 16px rgba(11,25,41,.05);
   --r:       5px;
   --rl:      10px;
 }
@@ -59,45 +58,59 @@ a{color:inherit;text-decoration:none}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
 
 /* PAGE HEADER */
-.page-header{padding:clamp(44px,7vw,80px) 0 clamp(32px,5vw,52px);border-bottom:1px solid var(--rule)}
+.page-header{padding:clamp(44px,7vw,80px) 0 clamp(32px,5vw,52px)}
 .ph-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
 .ph-eyebrow::before{content:'';width:18px;height:1px;background:var(--gold)}
 .ph-title{font-family:var(--serif);font-size:clamp(32px,5vw,52px);font-weight:600;letter-spacing:-1.2px;color:var(--navy);line-height:1.08;margin-bottom:14px}
 .ph-sub{font-size:15px;color:var(--ink-mid);font-weight:300;max-width:46ch;line-height:1.65}
 
 /* MAIN GRID */
-.contact-grid{display:grid;grid-template-columns:1fr 300px;gap:clamp(32px,5vw,52px);padding:clamp(36px,5vw,60px) 0;align-items:start}
+.contact-grid{display:grid;grid-template-columns:1fr 290px;gap:clamp(28px,4vw,48px);padding:clamp(32px,5vw,52px) 0 clamp(48px,7vw,80px);align-items:start}
 @media(max-width:720px){.contact-grid{grid-template-columns:1fr}}
 
-/* ADVISORY CARD */
-.advisory-card{border:1px solid var(--rule);border-radius:var(--rl);background:var(--white);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
-.ac-top{background:var(--navy);padding:24px 26px}
-.ac-eyebrow{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px}
-.ac-title{font-family:var(--serif);font-size:20px;font-weight:600;color:#fff;letter-spacing:-.3px;margin-bottom:6px}
-.ac-desc{font-size:13px;color:rgba(255,255,255,.45);font-weight:300;line-height:1.55}
-.ac-bottom{padding:18px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.ac-meta{display:flex;gap:16px}
-.ac-meta-item{font-size:12px;color:var(--ink-mid);display:flex;align-items:center;gap:5px}
-.ac-meta-item::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
-.ac-price{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--navy)}
+/* ── ADVISORY CARD ── */
+.advisory-card{
+  border:1px solid rgba(11,25,41,.09);
+  border-radius:var(--rl);
+  background:var(--white);
+  box-shadow:0 1px 3px rgba(11,25,41,.04),0 8px 28px rgba(11,25,41,.07);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.ac-body{padding:24px 26px 0}
+.ac-label{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:10px}
+.ac-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);letter-spacing:-.3px;margin-bottom:10px;line-height:1.15}
+.ac-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.ac-badge{
+  font-size:11px;font-weight:500;color:var(--ink-lt);
+  background:var(--paper-w);border:1px solid var(--rule);
+  padding:3px 10px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.ac-desc{font-size:13px;color:var(--ink-mid);font-weight:300;line-height:1.6;padding-bottom:20px}
+.ac-includes{
+  padding:16px 26px;
+  border-top:1px solid var(--rule);
+  display:flex;flex-direction:column;gap:9px;
+}
+.inc-item{font-size:12px;color:var(--ink-mid);display:flex;align-items:baseline;gap:9px;line-height:1.5}
+.inc-item::before{content:'✓';color:var(--gold);font-weight:700;font-size:11px;flex-shrink:0}
+.ac-action{padding:18px 26px}
 .cal-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:11px 22px;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px 22px;border-radius:var(--r);
   background:var(--navy);color:#fff;
   font-size:13px;font-weight:600;
   cursor:pointer;border:none;font-family:var(--sans);
-  transition:all .15s;width:100%;justify-content:center;margin-top:14px;
+  transition:all .15s;
 }
 .cal-btn:hover{background:var(--navy-h);transform:translateY(-1px)}
-
-/* INCLUDES */
-.includes{padding:16px 26px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:8px}
-.inc-item{font-size:12px;color:var(--ink-mid);display:flex;align-items:center;gap:9px}
-.inc-item::before{content:'✓';color:var(--gold);font-weight:700;font-size:11px;flex-shrink:0}
+.cal-btn-price{font-family:var(--mono);opacity:.65;font-size:13px;font-weight:300}
+.cal-btn-sep{opacity:.3;font-weight:300}
 
 /* FORM */
-.form-card{border:1px solid var(--rule);border-radius:var(--rl);background:var(--white);box-shadow:var(--sh);padding:22px 24px}
-.form-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--navy);letter-spacing:-.3px;margin-bottom:5px}
+.form-card{border:1px solid rgba(11,25,41,.09);border-radius:var(--rl);background:var(--white);box-shadow:0 1px 3px rgba(11,25,41,.04),0 8px 28px rgba(11,25,41,.07);padding:22px 24px}
+.form-title{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--navy);letter-spacing:-.3px;margin-bottom:4px}
 .form-sub{font-size:12px;color:var(--ink-lt);margin-bottom:18px;font-weight:300}
 .fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
 .fg:last-of-type{margin-bottom:0}
@@ -110,20 +123,31 @@ a{color:inherit;text-decoration:none}
 .form-success{display:none;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:var(--r);padding:12px 14px;font-size:12px;color:#065f46;margin-top:12px;line-height:1.5}
 .form-success.show{display:block}
 
-/* SIDEBAR */
+/* ── SIDEBAR INFO CARD ── */
 .sidebar{display:flex;flex-direction:column;gap:14px}
-.info-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);padding:20px;box-shadow:var(--sh)}
-.ic-logo{width:36px;height:36px;border-radius:var(--r);background:var(--navy);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
+.info-card{
+  background:var(--white);
+  border:1px solid rgba(11,25,41,.09);
+  border-radius:var(--rl);
+  padding:22px;
+  box-shadow:0 1px 3px rgba(11,25,41,.04),0 8px 28px rgba(11,25,41,.07);
+}
+.ic-logo{
+  width:34px;height:34px;border-radius:var(--r);background:var(--navy);
+  margin-bottom:12px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:11px;font-weight:700;color:rgba(255,255,255,.85);
+  letter-spacing:.5px;
+}
 .ic-name{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--navy);letter-spacing:-.2px}
-.ic-sub{font-size:11px;color:var(--ink-lt);margin-top:2px;line-height:1.4;margin-bottom:14px}
-.ic-divider{height:1px;background:var(--rule);margin:14px 0}
-.ic-row{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:var(--ink-mid);margin-bottom:10px;line-height:1.5}
-.ic-row:last-of-type{margin-bottom:0}
-.ic-icon{font-size:13px;flex-shrink:0;margin-top:1px;width:16px}
-.ic-label{font-size:9px;color:var(--ink-fnt);letter-spacing:.6px;text-transform:uppercase;margin-bottom:1px}
+.ic-sub{font-size:11px;color:var(--ink-lt);margin-top:2px;line-height:1.45;margin-bottom:16px;font-weight:300}
+.ic-divider{height:1px;background:var(--rule);margin:0 0 16px}
+.ic-row{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--ink-mid);margin-bottom:13px;line-height:1.55}
+.ic-row:last-child{margin-bottom:0}
+.ic-icon{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--ink-fnt)}
+.ic-label{font-size:9px;color:var(--ink-fnt);letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px;font-weight:500}
 
 /* FOOTER */
-footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px;border-top:1px solid rgba(255,255,255,.06)}
+footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px}
 .footer-i{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .footer-brand{font-family:var(--serif);font-size:16px;font-weight:600;color:#fff;margin-bottom:3px}
 .footer-sub{font-size:11px;line-height:1.6}
@@ -133,7 +157,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px;bor
 .footer-copy{font-size:11px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
 
 /* TOAST */
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:var(--sh-lg);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:300;white-space:nowrap}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:0 8px 40px rgba(11,25,41,.18);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:300;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -185,32 +209,43 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px;bor
 
       <!-- Advisory booking card -->
       <div class="advisory-card">
-        <div class="ac-top">
-          <div class="ac-eyebrow">Advisory Session · 30 min · Zoom</div>
+        <div class="ac-body">
+          <div class="ac-label">Advisory Session</div>
           <div class="ac-title">Treasury Advisory Session</div>
-          <div class="ac-desc">Review your cashpool model, discuss bank selection, pool structure, and implementation strategy.</div>
+          <div class="ac-badges">
+            <span class="ac-badge">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0">
+                <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/>
+              </svg>
+              30 min
+            </span>
+            <span class="ac-badge">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0">
+                <rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="m2 7 6 4 6-4"/>
+              </svg>
+              Google Meet
+            </span>
+            <span class="ac-badge">Confirmation by email</span>
+          </div>
+          <div class="ac-desc">Review your cashpool model, discuss bank selection, pool structure, and implementation strategy with an independent practitioner.</div>
         </div>
-        <div class="includes">
+
+        <div class="ac-includes">
           <div class="inc-item">Review of your cashpool model and business case</div>
           <div class="inc-item">Bank and structure recommendation for your situation</div>
           <div class="inc-item">Written notes + two weeks of email follow-up</div>
         </div>
-        <div class="ac-bottom">
-          <div class="ac-meta">
-            <span class="ac-meta-item">30 minutes</span>
-            <span class="ac-meta-item">Zoom</span>
-            <span class="ac-meta-item">Confirmation by email</span>
-          </div>
-          <div class="ac-price">€249</div>
-        </div>
-        <!-- Cal.com popup trigger -->
-        <div style="padding:0 26px 22px;">
+
+        <div class="ac-action">
           <button
             class="cal-btn"
             data-cal-link="intercompany.io/30min"
             data-cal-config='{"layout":"month_view"}'
           >
-            Book a Session →
+            Book a Session
+            <span class="cal-btn-sep">·</span>
+            <span class="cal-btn-price">€249</span>
+            →
           </button>
         </div>
       </div>
@@ -242,34 +277,50 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px;bor
         <div class="ic-name">Intercompany.io</div>
         <div class="ic-sub">Independent Treasury Advisory<br>Geneva, Switzerland</div>
         <div class="ic-divider"></div>
+
         <div class="ic-row">
-          <div class="ic-icon">📍</div>
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="6.5" r="2.5"/>
+            <path d="M8 2a4.5 4.5 0 0 1 4.5 4.5c0 3.5-4.5 7.5-4.5 7.5S3.5 10 3.5 6.5A4.5 4.5 0 0 1 8 2z"/>
+          </svg>
           <div>
             <div class="ic-label">Address</div>
             Rue François-Perréard 19<br>1225 Chêne-Bourg, Switzerland
           </div>
         </div>
+
         <div class="ic-row">
-          <div class="ic-icon">📞</div>
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 2h2l1 3-1.5 1.5a9 9 0 0 0 3 3L11 8l3 1v2a2 2 0 0 1-2 2A13 13 0 0 1 2 4a2 2 0 0 1 2-2z"/>
+          </svg>
           <div>
             <div class="ic-label">Phone</div>
             <a href="tel:+41767763463" style="color:var(--gold)">+41 76 776 34 63</a>
           </div>
         </div>
+
         <div class="ic-row">
-          <div class="ic-icon">✉</div>
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="14" height="9" rx="1.5"/>
+            <path d="m1.5 4.5 6.5 4.5 6.5-4.5"/>
+          </svg>
           <div>
             <div class="ic-label">Email</div>
             <a href="mailto:info@cashpoolmodel.com" style="color:var(--gold)">info@cashpoolmodel.com</a>
           </div>
         </div>
+
         <div class="ic-row">
-          <div class="ic-icon">🕐</div>
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M8 5v3l2 2"/>
+          </svg>
           <div>
             <div class="ic-label">Availability</div>
             Mon–Fri, CET timezone
           </div>
         </div>
+
       </div>
     </div>
 
