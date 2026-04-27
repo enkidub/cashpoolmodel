@@ -189,7 +189,7 @@ h2 {
     0 40px 80px rgba(11,25,41,.06);
 }
 .preview-doc {
-  padding: clamp(20px, 3vw, 32px) clamp(20px, 3vw, 32px) 52px;
+  padding: clamp(28px, 4vw, 48px) clamp(28px, 4vw, 48px) 60px;
 }
 
 /* PDF document header */
@@ -225,17 +225,17 @@ h2 {
 }
 @media (max-width: 560px) { .preview-kpis { grid-template-columns: repeat(2, 1fr); } }
 .preview-kpi {
-  padding: 14px 16px; border: 1px solid var(--rule);
-  border-radius: var(--r); background: var(--paper);
+  padding: 14px 16px; border: 1px solid rgba(11,25,41,.07);
+  border-radius: var(--r); background: var(--white);
 }
 .preview-kpi-val {
   font-family: var(--serif); font-size: clamp(18px, 2.4vw, 24px);
-  font-weight: 600; color: var(--navy); margin-bottom: 4px; line-height: 1.1;
+  font-weight: 400; color: var(--navy); margin-bottom: 4px; line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 .preview-kpi-label {
   font-size: 9px; color: var(--ink-fnt); font-weight: 500;
-  line-height: 1.4; letter-spacing: .7px; text-transform: uppercase;
+  line-height: 1.4; letter-spacing: .8px; text-transform: uppercase;
 }
 .preview-section-label {
   font-size: 8px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase;
@@ -252,10 +252,10 @@ h2 {
   display: flex; align-items: center; justify-content: center;
   font-size: 9px; font-family: var(--mono);
 }
-.pm-g2 { background: #2d6348; color: rgba(255,255,255,.9); }
-.pm-g1 { background: #7aaa92; color: #1a3d2b; }
-.pm-am { background: #e8d4a0; color: #6b4a0e; }
-.pm-rd { background: #c4826a; color: rgba(255,255,255,.92); }
+.pm-g2 { background: #b8e4ca; color: #1a4d32; }
+.pm-g1 { background: #d8f0e2; color: #2a6040; }
+.pm-am { background: #f2e8cc; color: #5a4414; }
+.pm-rd { background: #f8ddd0; color: #7a3a20; }
 .preview-matrix-labels {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 3px; max-width: 260px; margin-bottom: 4px;
@@ -523,26 +523,21 @@ h1              { animation-delay: .11s; }
         <!-- Before / After chart -->
         <div class="preview-section-label">Before / After Interest Cost Comparison</div>
         <svg class="preview-chart-svg" viewBox="0 0 560 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="after-grad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#0f172a"/>
-              <stop offset="100%" stop-color="#334155"/>
-            </linearGradient>
-          </defs>
           <!-- Before row -->
-          <rect x="0" y="11" width="7" height="7" rx="1.5" fill="#dedad4"/>
+          <rect x="0" y="11" width="7" height="7" rx="1.5" fill="#ebe8e0"/>
           <text x="12" y="20" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">Before pool</text>
-          <rect x="64" y="7" width="334" height="20" rx="3" fill="#dedad4"/>
+          <rect x="64" y="7" width="334" height="20" rx="3" fill="#ebe8e0"/>
           <text x="404" y="20" font-size="10" fill="#6b7d96" font-family="DM Sans, sans-serif">€2.14M / year</text>
-          <!-- After row -->
-          <rect x="0" y="46" width="7" height="7" rx="1.5" fill="url(#after-grad)"/>
+          <!-- After row — outlined bar -->
+          <rect x="0" y="46" width="7" height="7" rx="1.5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
           <text x="12" y="55" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After pool</text>
-          <rect x="64" y="42" width="196" height="20" rx="3" fill="url(#after-grad)"/>
+          <rect x="64" y="42" width="196" height="20" rx="3" fill="white" stroke="#1e3a5f" stroke-width="1.5"/>
+          <text x="162" y="57" font-size="9" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600" text-anchor="middle">−39%</text>
           <text x="266" y="55" font-size="10" fill="#3d4f6a" font-family="DM Sans, sans-serif">€1.30M / year</text>
           <!-- Dashed divider -->
-          <line x1="260" y1="4" x2="260" y2="66" stroke="#ddd9d0" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="260" y1="4" x2="260" y2="66" stroke="#e8e5df" stroke-width="1" stroke-dasharray="3,3"/>
           <!-- Savings callout -->
-          <text x="64" y="84" font-size="10" fill="#2d6348" font-family="DM Sans, sans-serif" font-weight="600">↓ 39% reduction  ·  €842k annual savings</text>
+          <text x="64" y="84" font-size="10" fill="#2d6348" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
         </svg>
 
         <!-- Sensitivity matrix -->
