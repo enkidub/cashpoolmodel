@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasury Insights — CashPoolModel</title>
+<meta name="description" content="Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not vendors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #0b1929;
+  --navy-h:  #132540;
+  --ink:     #1a2233;
+  --ink-mid: #3d4f6a;
+  --ink-lt:  #6b7d96;
+  --ink-fnt: #9babbe;
+  --paper:   #f9f8f5;
+  --paper-w: #f2f0eb;
+  --rule:    #ddd9d0;
+  --gold:    #9a6e10;
+  --gold-h:  #7d5808;
+  --white:   #ffffff;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --mono:    'DM Mono', monospace;
+  --max:     1000px;
+  --pad:     clamp(20px, 4vw, 44px);
+  --sh:      0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
+  --sh-lg:   0 8px 40px rgba(11,25,41,.11), 0 2px 8px rgba(11,25,41,.04);
+  --r:       5px;
+  --rl:      10px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-i {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
+  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.logo {
+  display: flex; align-items: center; gap: 9px;
+  font-family: var(--serif); font-size: 18px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.2px;
+}
+.logo-mark {
+  width: 28px; height: 28px; border-radius: 4px; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.logo-sub { font-size: 9px; color: var(--ink-fnt); font-weight: 400; letter-spacing: .3px; font-family: var(--sans); margin-top: 1px; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link { padding: 6px 12px; border-radius: var(--r); font-size: 13px; font-weight: 500; color: var(--ink-mid); transition: all .14s; }
+.nav-link:hover { background: var(--paper-w); color: var(--navy); }
+.nav-link.active { color: var(--navy); font-weight: 600; }
+.nav-cta {
+  padding: 8px 17px; border-radius: var(--r); background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--sans);
+  transition: all .14s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
+@media (max-width: 580px) { .nav-links { display: none; } }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  padding: clamp(44px, 7vw, 80px) 0 clamp(32px, 5vw, 52px);
+  border-bottom: 1px solid var(--rule);
+}
+.ph-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+}
+.ph-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
+.ph-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 600; letter-spacing: -1.2px; color: var(--navy);
+  line-height: 1.08; margin-bottom: 14px;
+}
+.ph-sub {
+  font-size: 15px; color: var(--ink-mid); font-weight: 300;
+  max-width: 46ch; line-height: 1.65;
+}
+
+/* ── BLOG LIST VIEW ── */
+.blog-list { padding: clamp(36px, 5vw, 60px) 0; }
+
+/* Featured article — top */
+.featured-article {
+  display: grid; grid-template-columns: 1fr 420px;
+  gap: 0; border: 1px solid var(--rule); border-radius: var(--rl);
+  overflow: hidden; background: var(--white); box-shadow: var(--sh);
+  cursor: pointer; transition: box-shadow .18s, transform .18s;
+  margin-bottom: 28px;
+}
+.featured-article:hover { box-shadow: var(--sh-lg); transform: translateY(-2px); }
+@media (max-width: 720px) { .featured-article { grid-template-columns: 1fr; } }
+
+.fa-visual {
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 280px; padding: 40px;
+  position: relative; overflow: hidden;
+}
+.fa-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 30% 40%, rgba(29,78,216,.18) 0%, transparent 65%);
+}
+.fa-body { padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; justify-content: center; }
+.fa-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.fa-title {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 600; color: var(--navy); line-height: 1.25;
+  letter-spacing: -.4px; margin-bottom: 12px;
+}
+.fa-excerpt { font-size: 14px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; margin-bottom: 20px; flex: 1; }
+.fa-meta { display: flex; align-items: center; justify-content: space-between; }
+.fa-date { font-size: 11px; color: var(--ink-fnt); font-family: var(--mono); }
+.fa-read {
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border: 1.5px solid var(--rule); border-radius: var(--r);
+  transition: all .14s;
+}
+.featured-article:hover .fa-read { border-color: var(--navy); background: var(--paper-w); }
+.fa-read::after { content: '→'; transition: transform .14s; }
+.featured-article:hover .fa-read::after { transform: translateX(3px); }
+
+/* Article grid */
+.articles-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 740px) { .articles-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .articles-grid { grid-template-columns: 1fr; } }
+
+.article-card {
+  border: 1px solid var(--rule); border-radius: var(--rl);
+  background: var(--white); overflow: hidden;
+  box-shadow: var(--sh); cursor: pointer;
+  display: flex; flex-direction: column;
+  transition: box-shadow .18s, transform .18s;
+}
+.article-card:hover { box-shadow: var(--sh-lg); transform: translateY(-3px); }
+
+.ac-visual {
+  height: 140px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.ac-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
+.ac-tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.ac-title {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  color: var(--navy); line-height: 1.3; margin-bottom: 8px; letter-spacing: -.1px;
+  flex: 1;
+}
+.ac-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.ac-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
+.ac-read { font-size: 11px; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 3px; }
+.ac-read::after { content: '→'; transition: transform .14s; }
+.article-card:hover .ac-read::after { transform: translateX(3px); }
+
+/* ── SVG THUMBNAILS ── */
+
+/* Netting — two overlapping circles */
+.thumb-netting {
+  background: linear-gradient(135deg, #0b1929 0%, #1a3a6b 100%);
+}
+.thumb-netting svg { width: 100px; height: 100px; opacity: .85; }
+
+/* Transfer pricing — scales */
+.thumb-tp {
+  background: linear-gradient(135deg, #1a2a1a 0%, #1f4a2a 100%);
+}
+.thumb-tp svg { width: 100px; height: 100px; opacity: .85; }
+
+/* CEE / regulatory — shield/map */
+.thumb-reg {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d1f4a 100%);
+}
+.thumb-reg svg { width: 100px; height: 100px; opacity: .85; }
+
+/* RFP — document stack */
+.thumb-rfp {
+  background: linear-gradient(135deg, #1a2a1a 0%, #0d3a3a 100%);
+}
+.thumb-rfp svg { width: 100px; height: 100px; opacity: .85; }
+
+/* ZB vs Notional — branching flow */
+.thumb-zb {
+  background: linear-gradient(135deg, #1a1a0d 0%, #2d2a0a 100%);
+}
+.thumb-zb svg { width: 100px; height: 100px; opacity: .85; }
+
+/* TMS — system nodes */
+.thumb-tms {
+  background: linear-gradient(135deg, #0d1a2a 0%, #0a2a3a 100%);
+}
+.thumb-tms svg { width: 100px; height: 100px; opacity: .85; }
+
+/* Featured article visual */
+.thumb-featured {
+  background: linear-gradient(135deg, #0b1929 0%, #1a3a6b 100%);
+  width: 100%; height: 100%; min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb-featured svg { width: 140px; height: 140px; opacity: .9; }
+
+/* ── POST VIEW ── */
+.post-view { display: none; }
+.post-view.open { display: block; }
+.list-view.hidden { display: none; }
+
+.post-header-wrap { padding: clamp(48px, 8vw, 88px) 0 clamp(28px, 4vw, 44px); border-bottom: 1px solid var(--rule); }
+.post-wrap { max-width: 680px; margin: 0 auto; padding: 0 var(--pad); }
+
+.post-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.post-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; color: var(--gold); text-transform: uppercase; }
+.post-date { font-size: 11px; color: var(--ink-fnt); font-family: var(--mono); }
+.post-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4.5vw, 50px);
+  font-weight: 600; line-height: 1.1; letter-spacing: -.8px;
+  color: var(--navy); max-width: 18ch; margin-bottom: 16px;
+}
+.post-lead { font-size: 16px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
+
+.post-body { padding: clamp(28px, 5vw, 52px) 0; }
+.post-body h2 { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--navy); letter-spacing: -.3px; margin: 34px 0 12px; }
+.post-body p { font-size: 15px; color: var(--ink-mid); line-height: 1.82; margin-bottom: 18px; font-weight: 300; }
+.post-body strong { color: var(--ink); font-weight: 600; }
+.post-body ul { padding-left: 20px; margin-bottom: 18px; }
+.post-body li { font-size: 15px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 7px; font-weight: 300; }
+.post-callout {
+  background: #fdf8ec; border-left: 3px solid var(--gold);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 16px 20px; margin: 26px 0;
+}
+.post-callout p { margin-bottom: 0; color: var(--ink); }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ink-lt); font-weight: 500;
+  cursor: pointer; transition: color .14s; margin-bottom: 24px;
+}
+.back-btn:hover { color: var(--navy); }
+.back-btn::before { content: '←'; }
+
+/* Post footer CTA */
+.post-cta {
+  background: var(--paper-w); border-top: 1px solid var(--rule);
+  padding: 40px 0;
+}
+.post-cta-inner {
+  max-width: 680px; margin: 0 auto; padding: 0 var(--pad);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.pci-t { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 4px; letter-spacing: -.3px; }
+.pci-s { font-size: 13px; color: var(--ink-lt); font-weight: 300; }
+
+/* More articles */
+.more-articles { padding: clamp(36px, 5vw, 56px) 0; border-top: 1px solid var(--rule); }
+.more-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 20px; }
+.more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 640px) { .more-grid { grid-template-columns: 1fr; } }
+.more-card {
+  padding: 16px; border: 1px solid var(--rule); border-radius: var(--rl);
+  background: var(--white); cursor: pointer; transition: all .15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.more-card:hover { border-color: #c8c3ba; background: var(--paper-w); transform: translateY(-2px); }
+.more-tag { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
+.more-title { font-family: var(--serif); font-size: 14px; font-weight: 600; color: var(--navy); line-height: 1.3; letter-spacing: -.1px; }
+.more-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 4px; }
+
+/* Newsletter strip */
+.nl-strip {
+  background: var(--navy); padding: clamp(32px, 5vw, 52px) 0;
+}
+.nl-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+}
+.nl-text {}
+.nl-title { font-family: var(--serif); font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 5px; letter-spacing: -.3px; }
+.nl-sub { font-size: 13px; color: rgba(255,255,255,.42); font-weight: 300; max-width: 38ch; line-height: 1.55; }
+.nl-form { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.nl-input {
+  padding: 10px 14px; border-radius: var(--r);
+  border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.07);
+  color: #fff; font-family: var(--sans); font-size: 13px; outline: none;
+  min-width: 200px; transition: border-color .14s;
+}
+.nl-input::placeholder { color: rgba(255,255,255,.3); }
+.nl-input:focus { border-color: rgba(255,255,255,.3); }
+.nl-btn {
+  padding: 10px 20px; border-radius: var(--r); background: var(--gold); color: #fff;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); transition: background .14s; white-space: nowrap;
+}
+.nl-btn:hover { background: var(--gold-h); }
+
+/* Footer */
+footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 22px; border-top: 1px solid rgba(255,255,255,.06); }
+.footer-i { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.footer-brand { font-family: var(--serif); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 3px; }
+.footer-sub { font-size: 11px; line-height: 1.6; }
+.footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+.footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
+.footer-links a:hover { color: rgba(255,255,255,.8); }
+.footer-copy { font-size: 11px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.06); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 22px; border-radius: var(--r);
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .16s;
+}
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-h); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--rule); }
+.btn-outline:hover { border-color: var(--navy); background: var(--paper-w); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
+  background: var(--navy); color: #fff; padding: 11px 22px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500; box-shadow: var(--sh-lg);
+  transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.page-header { animation: fadeUp .4s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a href="/index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
+          <rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/>
+          <rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/>
+          <path d="M2 6.5l5.5-2.5 5.5-2.5" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div>CashPoolModel</div>
+        <div class="logo-sub">by Intercompany.io</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="/blog.html">Insights</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
+    </div>
+    <a class="nav-cta" href="/index.html#waitlist">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- ═══════════ LIST VIEW ═══════════ -->
+<div class="list-view" id="listView">
+
+  <div class="wrap">
+    <div class="page-header">
+      <div class="ph-eyebrow">Treasury Insights</div>
+      <h1 class="ph-title">Written from practice,<br>not the textbook.</h1>
+      <p class="ph-sub">Practical articles on cash pooling, liquidity strategy, and treasury transformation. No vendor agenda.</p>
+    </div>
+  </div>
+
+  <div class="blog-list">
+    <div class="wrap">
+
+      <!-- FEATURED -->
+      <div class="featured-article" onclick="showPost('netting')">
+        <div class="fa-visual thumb-featured">
+          <!-- Netting: two overlapping circles with flow arrows -->
+          <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="52" cy="70" r="36" stroke="rgba(147,197,253,.5)" stroke-width="1.5" fill="rgba(29,78,216,.08)"/>
+            <circle cx="88" cy="70" r="36" stroke="rgba(147,197,253,.5)" stroke-width="1.5" fill="rgba(29,78,216,.08)"/>
+            <path d="M70 48 C76 56 76 84 70 92" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+            <path d="M70 48 C64 56 64 84 70 92" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+            <circle cx="70" cy="70" r="3" fill="#60a5fa"/>
+            <text x="36" y="74" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-family="DM Mono, monospace">SURPLUS</text>
+            <text x="104" y="74" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-family="DM Mono, monospace">DEFICIT</text>
+            <path d="M58 70 L82 70" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M77 66 L82 70 L77 74" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="fa-body">
+          <div class="fa-tag">Liquidity · Featured</div>
+          <div class="fa-title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
+          <div class="fa-excerpt">Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is something different — and most simulators barely mention it.</div>
+          <div class="fa-meta">
+            <span class="fa-date">Apr 2025</span>
+            <span class="fa-read">Read article</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div class="articles-grid">
+
+        <!-- Transfer Pricing -->
+        <div class="article-card" onclick="showPost('tp')">
+          <div class="ac-visual thumb-tp">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="50" y1="20" x2="50" y2="80" stroke="rgba(134,239,172,.4)" stroke-width="1.5"/>
+              <line x1="20" y1="50" x2="80" y2="50" stroke="rgba(134,239,172,.4)" stroke-width="1.5"/>
+              <rect x="28" y="28" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
+              <rect x="52" y="28" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
+              <rect x="28" y="52" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
+              <rect x="52" y="52" width="20" height="20" rx="2" stroke="rgba(134,239,172,.3)" stroke-width="1.2" fill="none"/>
+              <text x="38" y="40" text-anchor="middle" fill="rgba(134,239,172,.7)" font-size="7" font-family="DM Mono, monospace">arm's</text>
+              <text x="38" y="49" text-anchor="middle" fill="rgba(134,239,172,.7)" font-size="7" font-family="DM Mono, monospace">length</text>
+            </svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag">Transfer Pricing</div>
+            <div class="ac-title">Intercompany Interest Rates: What the OECD Actually Says</div>
+            <div class="ac-meta"><span class="ac-date">Mar 2025</span><span class="ac-read">Read</span></div>
+          </div>
+        </div>
+
+        <!-- Regulatory -->
+        <div class="article-card" onclick="showPost('reg')">
+          <div class="ac-visual thumb-reg">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M50 15 L75 25 L75 50 C75 65 63 78 50 82 C37 78 25 65 25 50 L25 25 Z" stroke="rgba(196,181,253,.5)" stroke-width="1.5" fill="rgba(124,58,237,.08)"/>
+              <polyline points="38,50 45,57 62,42" stroke="rgba(196,181,253,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <text x="50" y="93" text-anchor="middle" fill="rgba(196,181,253,.4)" font-size="6.5" font-family="DM Mono, monospace">COMPLIANCE</text>
+            </svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag">Regulatory</div>
+            <div class="ac-title">Cash Pooling Across Borders: What's Actually Allowed</div>
+            <div class="ac-meta"><span class="ac-date">Feb 2025</span><span class="ac-read">Read</span></div>
+          </div>
+        </div>
+
+        <!-- RFP -->
+        <div class="article-card" onclick="showPost('rfp')">
+          <div class="ac-visual thumb-rfp">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="22" y="18" width="36" height="46" rx="2" stroke="rgba(94,234,212,.4)" stroke-width="1.2" fill="rgba(20,184,166,.06)"/>
+              <rect x="30" y="26" width="36" height="46" rx="2" stroke="rgba(94,234,212,.5)" stroke-width="1.2" fill="rgba(20,184,166,.08)"/>
+              <line x1="36" y1="38" x2="56" y2="38" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
+              <line x1="36" y1="44" x2="56" y2="44" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
+              <line x1="36" y1="50" x2="48" y2="50" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
+              <text x="50" y="86" text-anchor="middle" fill="rgba(94,234,212,.35)" font-size="6.5" font-family="DM Mono, monospace">BANK RFP</text>
+            </svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag">Banking</div>
+            <div class="ac-title">How to Run a Cashpool Bank RFP Without Leaving Money on the Table</div>
+            <div class="ac-meta"><span class="ac-date">Jan 2025</span><span class="ac-read">Read</span></div>
+          </div>
+        </div>
+
+        <!-- ZB vs Notional -->
+        <div class="article-card" onclick="showPost('zb')">
+          <div class="ac-visual thumb-zb">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="32" r="8" stroke="rgba(253,224,71,.5)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
+              <line x1="50" y1="40" x2="32" y2="58" stroke="rgba(253,224,71,.4)" stroke-width="1.2"/>
+              <line x1="50" y1="40" x2="68" y2="58" stroke="rgba(253,224,71,.4)" stroke-width="1.2"/>
+              <rect x="22" y="58" width="20" height="14" rx="2" stroke="rgba(253,224,71,.55)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
+              <rect x="58" y="58" width="20" height="14" rx="2" stroke="rgba(253,224,71,.55)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
+              <text x="32" y="68" text-anchor="middle" fill="rgba(253,224,71,.55)" font-size="5.5" font-family="DM Mono, monospace">ZBA</text>
+              <text x="68" y="68" text-anchor="middle" fill="rgba(253,224,71,.55)" font-size="5.5" font-family="DM Mono, monospace">NOT.</text>
+            </svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag">Structure</div>
+            <div class="ac-title">Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?</div>
+            <div class="ac-meta"><span class="ac-date">Dec 2024</span><span class="ac-read">Read</span></div>
+          </div>
+        </div>
+
+        <!-- TMS -->
+        <div class="article-card" onclick="showPost('tms')">
+          <div class="ac-visual thumb-tms">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="10" stroke="rgba(125,211,252,.6)" stroke-width="1.3" fill="rgba(14,165,233,.08)"/>
+              <circle cx="22" cy="35" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
+              <circle cx="78" cy="35" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
+              <circle cx="22" cy="65" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
+              <circle cx="78" cy="65" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
+              <line x1="29" y1="38" x2="41" y2="45" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
+              <line x1="71" y1="38" x2="59" y2="45" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
+              <line x1="29" y1="62" x2="41" y2="55" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
+              <line x1="71" y1="62" x2="59" y2="55" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
+              <text x="50" y="54" text-anchor="middle" fill="rgba(125,211,252,.7)" font-size="6" font-family="DM Mono, monospace">TMS</text>
+            </svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag">Technology</div>
+            <div class="ac-title">Kyriba, SAP, or Cobase? Choosing a TMS for Your Group</div>
+            <div class="ac-meta"><span class="ac-date">Nov 2024</span><span class="ac-read">Read</span></div>
+          </div>
+        </div>
+
+        <!-- Placeholder — coming soon -->
+        <div class="article-card" style="opacity:.5;cursor:default;pointer-events:none;">
+          <div class="ac-visual" style="background:var(--paper-w);height:140px;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--rule)" stroke-width="1.5"><circle cx="20" cy="20" r="14"/><line x1="20" y1="12" x2="20" y2="20"/><line x1="20" y1="20" x2="26" y2="20"/></svg>
+          </div>
+          <div class="ac-body">
+            <div class="ac-tag" style="color:var(--ink-fnt)">Coming soon</div>
+            <div class="ac-title" style="color:var(--ink-fnt)">New article in preparation</div>
+            <div class="ac-meta"><span class="ac-date">—</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter strip -->
+  <div class="nl-strip">
+    <div class="wrap">
+      <div class="nl-inner">
+        <div class="nl-text">
+          <div class="nl-title">Treasury Notes</div>
+          <div class="nl-sub">When something worth reading happens in treasury — we write about it.</div>
+        </div>
+        <div class="nl-form">
+          <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
+          <button class="nl-btn" onclick="handleNewsletter()">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /list-view -->
+
+<!-- ═══════════ POST VIEW ═══════════ -->
+<div class="post-view" id="postView">
+
+  <div class="post-header-wrap">
+    <div class="post-wrap">
+      <span class="back-btn" onclick="showList()">All articles</span>
+      <div class="post-eyebrow">
+        <span class="post-tag" id="postTag"></span>
+        <span class="post-date" id="postDate"></span>
+      </div>
+      <h1 class="post-title" id="postTitle"></h1>
+      <p class="post-lead" id="postLead"></p>
+    </div>
+  </div>
+
+  <div class="post-wrap">
+    <div class="post-body" id="postBody"></div>
+  </div>
+
+  <!-- More articles -->
+  <div class="wrap">
+    <div class="more-articles">
+      <div class="more-label">More articles</div>
+      <div class="more-grid" id="moreGrid"></div>
+    </div>
+  </div>
+
+  <!-- Post CTA -->
+  <div class="post-cta">
+    <div class="post-cta-inner">
+      <div>
+        <div class="pci-t">Stay informed on treasury developments.</div>
+        <div class="pci-s">When something worth reading happens — we write about it.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input class="nl-input" type="email" id="pfEmail" placeholder="your@email.com" style="background:var(--paper-w);border:1.5px solid var(--rule);color:var(--ink);min-width:180px;padding:10px 13px;border-radius:var(--r);font-family:var(--sans);font-size:13px;outline:none;">
+        <button onclick="handlePostNewsletter()" style="padding:10px 18px;border-radius:var(--r);background:var(--navy);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:var(--sans);">Subscribe</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /post-view -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-i">
+      <div>
+        <div class="footer-brand">CashPoolModel</div>
+        <div class="footer-sub">Independent treasury intelligence by Intercompany.io · Geneva, Switzerland</div>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html">Home</a>
+        <a href="/blog.html">Insights</a>
+        <a href="/contact.html">Contact</a>
+        <a href="mailto:info@cashpoolmodel.com">info@cashpoolmodel.com</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 2025 Intercompany.io · CashPoolModel. Not financial advice.</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const POSTS = {
+  netting: {
+    tag: 'Liquidity', date: 'April 2025',
+    title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling',
+    lead: 'Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is netting efficiency — and most simulators barely mention it.',
+    body: `<h2>What netting efficiency actually measures</h2>
+<p>Netting efficiency is the ratio of the offset between your group's surplus and deficit balances. A group with €5M in surpluses and €3M in deficits has a netting offset of €3M — meaning €3M of deficit is funded internally instead of through external borrowing.</p>
+<p>A group with 80% netting efficiency gets most of its pool value from internal funding, regardless of what the bank charges. A group with 20% efficiency is essentially just getting a marginally better rate on external borrowing.</p>
+<div class="post-callout"><p><strong>Rule of thumb:</strong> below 30% netting efficiency, cashpooling delivers modest returns. Above 60%, the business case holds across almost all rate environments.</p></div>
+<h2>What drives netting efficiency</h2>
+<p>Group structure matters more than rates. Groups where some entities are consistently cash-rich and others consistently cash-poor have naturally high netting efficiency. Groups where all entities move in the same direction — all flush in Q4, all dry in Q2 — see low netting efficiency because there is nothing to offset.</p>
+<p>The practical implication: before modelling pool rates, model the <strong>direction and seasonality of your entities' cash flows</strong>.</p>
+<h2>How to improve netting efficiency structurally</h2>
+<p>Several choices increase netting efficiency: broadening pool participation to include more entities, adjusting payment terms to move surplus and deficit peaks out of phase, and restructuring which entity holds which assets. These are changes identified before the pool is live — not after.</p>`
+  },
+  tp: {
+    tag: 'Transfer Pricing', date: 'March 2025',
+    title: 'Intercompany Interest Rates: What the OECD Actually Says',
+    lead: 'Setting the wrong intercompany interest rate on pooling arrangements is one of the most common and most expensive compliance gaps in cross-border treasury structures.',
+    body: `<h2>The arm's length principle applied to pools</h2>
+<p>The OECD Transfer Pricing Guidelines require that intercompany transactions — including cash pool balances — be priced as if between unrelated parties. The rate paid to a surplus entity and charged to a deficit entity must reflect what a bank would offer for comparable standalone transactions.</p>
+<div class="post-callout"><p><strong>The correct framework:</strong> the pool participant rate should reflect the entity's standalone creditworthiness adjusted for the benefit of group membership — not the group's blended rate alone.</p></div>
+<h2>Safe harbour rates across jurisdictions</h2>
+<p>Several countries have safe harbour provisions for intercompany loans. Outside safe harbours, you need comparables analysis — a Refinitiv or Bloomberg search for comparable third-party loans, documented and retained for at least five years.</p>
+<h2>The audit risk is real</h2>
+<p>Tax authorities have significantly increased scrutiny of intercompany financial transactions, driven by ATAD II and OECD Pillar Two. The most common finding: group companies in deficit positions being charged below-market rates by the pool leader, effectively subsidising profitable entities in low-tax jurisdictions.</p>`
+  },
+  reg: {
+    tag: 'Regulatory', date: 'February 2025',
+    title: "Cash Pooling Across Borders: What's Actually Allowed",
+    lead: 'Regulatory restrictions on cross-border cash pooling differ significantly by jurisdiction. What works seamlessly in one market may require central bank approval — or may not be permitted — across the border.',
+    body: `<h2>The core question: physical or notional?</h2>
+<p>Most regulatory restrictions target the physical movement of cash across borders — zero-balancing structures — rather than notional pooling, where balances stay in place and only the interest calculation is centralised. This distinction is critical when evaluating feasibility in restrictive markets.</p>
+<h2>Common restriction patterns</h2>
+<p>Several markets impose <strong>thin capitalisation rules</strong> that limit the deductibility of intercompany interest, effectively increasing the cost of cross-border pool participation. Others require documentation of economic substance — the arrangement must be demonstrably rational for each participating entity, not just for the group as a whole.</p>
+<div class="post-callout"><p><strong>Key point:</strong> "The group benefits" is not a sufficient justification in most jurisdictions. Each entity's participation must stand on its own economic merits.</p></div>
+<h2>Withholding tax on intercompany interest</h2>
+<p>Interest payments between group entities — which are the mechanism through which a cash pool allocates costs and benefits — are typically treated as taxable income in the recipient's jurisdiction. Withholding tax rates vary significantly, and double tax treaties may reduce or eliminate them. This analysis must be completed before the pool structure is finalised.</p>
+<h2>Practical recommendation</h2>
+<p>Obtain local legal and tax opinions before going live in any jurisdiction where you have doubts. The implementation cost of proper advice is trivial compared to the reassessment risk on several years of intercompany interest. The regulatory compliance matrix in the CashPoolModel report provides a structured starting point for this analysis.</p>`
+  },
+  rfp: {
+    tag: 'Banking', date: 'January 2025',
+    title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table',
+    lead: 'Most corporate treasury teams run bank RFPs the same way their predecessors did a decade ago. The process needs to evolve.',
+    body: `<h2>What banks actually respond to</h2>
+<p>Banks price cash pooling mandates based on two things: the net interest position of the pool and the ancillary wallet — FX, payments, trade finance — they expect to win. A group with a structural surplus pool and significant FX flows receives dramatically better pricing than a group with a deficit pool and no ancillary business.</p>
+<div class="post-callout"><p><strong>Practical insight:</strong> groups that share their current wallet breakdown with bidding banks typically receive pricing 30 to 50 basis points tighter than groups that keep this information confidential.</p></div>
+<h2>Structuring the tender</h2>
+<p>A well-structured cashpool RFP includes: group structure overview, current account count and balances by entity, expected transaction volumes by type, current banking relationships, evaluation criteria and weighting, and a standardised pricing template that forces banks to quote in comparable formats.</p>
+<p>The pricing template is critical. Banks will quote rates in different formats — spread over benchmark, flat rate, tiered — unless you force standardisation. A good RFP template normalises quotes to a common basis, making real comparison possible.</p>
+<h2>What to evaluate beyond price</h2>
+<p>Implementation timeline, quality of the connectivity to your ERP or TMS, the bank's footprint in the jurisdictions you need, and the quality of the local relationship teams in each market. Price is the starting point, not the finish line.</p>`
+  },
+  zb: {
+    tag: 'Structure', date: 'December 2024',
+    title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?',
+    lead: 'The debate between physical and notional pooling comes up in almost every treasury project. The right answer depends on factors most advice articles ignore.',
+    body: `<h2>The standard comparison is misleading</h2>
+<p>Most articles compare zero-balancing and notional pooling on a simple axis: physical movement of funds versus virtual offset. This misses the real decision criteria, which are legal, tax, and operational.</p>
+<h2>When zero-balancing wins</h2>
+<p>Zero-balancing (physical sweep) is cleaner from a tax perspective because the intercompany funding is explicit: funds move, loans are created, interest is charged and paid. This makes arm's length pricing visible and auditable. It also works in more jurisdictions — notional pooling requires banks with offsetting balance capabilities, which not all local banks provide.</p>
+<h2>When notional pooling wins</h2>
+<p>Notional pooling avoids the operational complexity of daily sweep transactions and the associated intercompany loan accounting. For groups where subsidiaries are operationally autonomous and local management resists the optics of cash being swept to a holding company, notional preserves the legal ownership of balances while achieving the interest offset.</p>
+<div class="post-callout"><p><strong>Bottom line:</strong> if your group operates in markets where zero-balancing is well-supported by local banks, and you have a cooperative legal and tax team, zero-balancing usually delivers cleaner outcomes. For distributed groups across many markets with varying local bank relationships, notional is often more pragmatic.</p></div>`
+  },
+  tms: {
+    tag: 'Technology', date: 'November 2024',
+    title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group',
+    lead: 'The TMS market has changed significantly over the past few years. Cloud-native challengers are winning deals that used to go automatically to established names.',
+    body: `<h2>What a TMS needs to do for a cash pool</h2>
+<p>For cash pooling specifically, the TMS needs to: receive balance data from pool banks, calculate intercompany interest allocations, post accounting entries to each entity's ledger, and produce reporting for treasury and finance. Everything else is secondary.</p>
+<h2>Kyriba</h2>
+<p>Kyriba remains a strong choice for complex multi-bank, multi-currency pool structures. Its cash pooling module handles both zero-balancing and notional structures with solid intercompany accounting capabilities. The weakness is implementation time — typically four to eight months for full cash management — and pricing, which has increased significantly in recent years.</p>
+<h2>SAP TRM</h2>
+<p>If your group runs SAP for ERP, SAP Treasury and Risk Management is the natural choice. The integration is seamless and intercompany accounting flows directly into the general ledger. For groups on S/4HANA, the module has improved substantially and is worth serious evaluation.</p>
+<h2>Cloud-native challengers</h2>
+<p>Platforms such as Cobase, Nomentia, and TreasuryXpress are increasingly viable for groups with five to twenty pool entities and a single primary bank relationship. They implement faster — six to twelve weeks is realistic — and cost significantly less. The trade-off is depth: complex multi-currency netting engines and sophisticated intercompany allocation logic are still maturing on these platforms.</p>`
+  }
+};
+
+const ALL_POSTS = [
+  { id: 'netting', tag: 'Liquidity',         date: 'Apr 2025', title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling' },
+  { id: 'tp',      tag: 'Transfer Pricing',   date: 'Mar 2025', title: 'Intercompany Interest Rates: What the OECD Actually Says' },
+  { id: 'reg',     tag: 'Regulatory',         date: 'Feb 2025', title: 'Cash Pooling Across Borders: What\'s Actually Allowed' },
+  { id: 'rfp',     tag: 'Banking',            date: 'Jan 2025', title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table' },
+  { id: 'zb',      tag: 'Structure',          date: 'Dec 2024', title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?' },
+  { id: 'tms',     tag: 'Technology',         date: 'Nov 2024', title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group' },
+];
+
+function showPost(id) {
+  const p = POSTS[id];
+  if (!p) return;
+  document.getElementById('postTag').textContent = p.tag;
+  document.getElementById('postDate').textContent = p.date;
+  document.getElementById('postTitle').textContent = p.title;
+  document.getElementById('postLead').textContent = p.lead;
+  document.getElementById('postBody').innerHTML = p.body;
+
+  // More articles — show 3 others
+  const others = ALL_POSTS.filter(a => a.id !== id).slice(0, 3);
+  document.getElementById('moreGrid').innerHTML = others.map(a => `
+    <div class="more-card" onclick="showPost('${a.id}')">
+      <div class="more-tag">${a.tag}</div>
+      <div class="more-title">${a.title}</div>
+      <div class="more-date">${a.date}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('listView').classList.add('hidden');
+  document.getElementById('postView').classList.add('open');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.title = p.title + ' — CashPoolModel';
+}
+
+function showList() {
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('postView').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.title = 'Treasury Insights — CashPoolModel';
+}
+
+function handleNewsletter() {
+  const e = document.getElementById('nlEmail').value;
+  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  showToast('Subscribed. When something worth reading happens — you will hear from us.');
+  document.getElementById('nlEmail').value = '';
+}
+function handlePostNewsletter() {
+  const e = document.getElementById('pfEmail').value;
+  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  showToast('Subscribed. When something worth reading happens — you will hear from us.');
+  document.getElementById('pfEmail').value = '';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Handle direct URL with hash e.g. blog.html#netting
+const hash = window.location.hash.slice(1);
+if (hash && POSTS[hash]) showPost(hash);
+</script>
+</body>
+</html>
