@@ -252,10 +252,10 @@ h2 {
   display: flex; align-items: center; justify-content: center;
   font-size: 9px; font-family: var(--mono);
 }
-.pm-g2 { background: #b8e4ca; color: #1a4d32; }
-.pm-g1 { background: #d8f0e2; color: #2a6040; }
-.pm-am { background: #f2e8cc; color: #5a4414; }
-.pm-rd { background: #f8ddd0; color: #7a3a20; }
+.pm-g2 { background: #1e3a5f; color: #fff; }
+.pm-g1 { background: #99b2d0; color: #fff; }
+.pm-am { background: #d4dcec; color: #4a607f; }
+.pm-rd { background: #eef1f6; color: #8a9ab0; }
 .preview-matrix-labels {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 3px; max-width: 260px; margin-bottom: 4px;
@@ -526,7 +526,7 @@ h1              { animation-delay: .11s; }
         <!-- KPIs -->
         <div class="preview-kpis">
           <div class="preview-kpi">
-            <div class="preview-kpi-val">€842k</div>
+            <div class="preview-kpi-val" style="color:var(--gold)">€842k</div>
             <div class="preview-kpi-label">Annual net savings</div>
           </div>
           <div class="preview-kpi">
@@ -554,13 +554,13 @@ h1              { animation-delay: .11s; }
           <!-- After row — outlined bar -->
           <rect x="0" y="46" width="7" height="7" rx="1.5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
           <text x="12" y="55" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After pool</text>
-          <rect x="64" y="42" width="196" height="20" rx="3" fill="white" stroke="#1e3a5f" stroke-width="1.5"/>
+          <rect x="64" y="42" width="196" height="20" rx="3" fill="rgba(30,58,95,0.09)" stroke="#1e3a5f" stroke-width="1.2"/>
           <text x="162" y="57" font-size="9" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600" text-anchor="middle">−39%</text>
           <text x="266" y="55" font-size="10" fill="#3d4f6a" font-family="DM Sans, sans-serif">€1.30M / year</text>
           <!-- Dashed divider -->
           <line x1="260" y1="4" x2="260" y2="66" stroke="#e8e5df" stroke-width="1" stroke-dasharray="3,3"/>
           <!-- Savings callout -->
-          <text x="64" y="84" font-size="10" fill="#2d6348" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
+          <text x="64" y="84" font-size="10" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
         </svg>
 
         <!-- Sensitivity matrix -->
