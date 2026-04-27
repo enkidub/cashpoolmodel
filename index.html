@@ -508,16 +508,39 @@ h1           { animation-delay: .11s; }
 <div class="toast" id="toast"></div>
 
 <script>
-function handleWaitlist() {
+const BREVO_KEY = 'YOUR_BREVO_API_KEY';
+
+async function addToBrevo(email, listId) {
+  try {
+    await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'api-key': BREVO_KEY
+      },
+      body: JSON.stringify({
+        email: email,
+        listIds: [listId],
+        updateEnabled: true
+      })
+    });
+  } catch(e) { console.error(e); }
+}
+
+async function handleWaitlist() {
   const e = document.getElementById('wlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  await addToBrevo(e, 2);
   showToast('You are on the list. We will notify you when the simulator launches.');
   document.getElementById('wlEmail').value = '';
 }
-function handleNewsletter() {
+
+async function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  showToast('Subscribed. You will receive Treasury Notes monthly.');
+  await addToBrevo(e, 2);
+  showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }
 function showToast(msg) {

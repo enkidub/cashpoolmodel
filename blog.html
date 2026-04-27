@@ -733,14 +733,29 @@ function showList() {
 function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  addToBrevo(e);
   showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }
 function handlePostNewsletter() {
   const e = document.getElementById('pfEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
+  addToBrevo(e);
   showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('pfEmail').value = '';
+}
+async function addToBrevo(email) {
+  try {
+    await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'api-key': 'YOUR_BREVO_API_KEY'
+      },
+      body: JSON.stringify({ email: email, listIds: [2], updateEnabled: true })
+    });
+  } catch(e) { console.error(e); }
 }
 function showToast(msg) {
   const t = document.getElementById('toast');
