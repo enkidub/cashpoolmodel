@@ -195,104 +195,108 @@ function BarChart() {
       </div>
 
       {/* Chart area */}
-      <div style={{ display:'flex', alignItems:'flex-start', gap:0 }}>
+      <div style={{ display:'flex', gap:0 }}>
 
-        {/* Y axis */}
-        <div style={{ position:'relative', width:40, height:CH, flexShrink:0 }}>
+        {/* Y axis — height = bars + x-label row */}
+        <div style={{ position:'relative', width:40, height: CH + 28, flexShrink:0 }}>
           {[0,100,200,300].map(v => (
-            <span key={v} className="text-slate-400"
-              style={{
-                position:'absolute', right:8,
-                bottom:`calc(${(v/CMAX)*CH}px - 6px)`,
-                fontSize:9, fontFamily:'DM Mono, monospace', lineHeight:1
-              }}>
+            <span key={v} style={{
+              position:'absolute', right:8,
+              bottom:`calc(28px + ${(v/CMAX)*CH}px - 6px)`,
+              fontSize:9, fontFamily:'DM Mono, monospace', lineHeight:1, color:'#94a3b8'
+            }}>
               {v}k
             </span>
           ))}
         </div>
 
-        {/* Bars + grid */}
-        <div style={{ flex:1, position:'relative', height:CH, borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
+        {/* Bars + grid + X labels stacked */}
+        <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
 
-          {/* Grid lines */}
-          {[100,200,300].map(v => (
-            <div key={v} style={{
-              position:'absolute', left:0, right:0,
-              bottom:`${(v/CMAX)*CH}px`,
-              borderTop:'1px dashed #f1f5f9', pointerEvents:'none'
-            }} />
-          ))}
+          {/* Bars + grid */}
+          <div style={{ position:'relative', height:CH, borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
 
-          {/* Bar groups */}
-          <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'flex-end', justifyContent:'space-around', padding:'0 32px' }}>
-            {CHART.map((d, gi) => (
-              <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:6 }}>
+            {/* Grid lines */}
+            {[100,200,300].map(v => (
+              <div key={v} style={{
+                position:'absolute', left:0, right:0,
+                bottom:`${(v/CMAX)*CH}px`,
+                borderTop:'1px dashed #f1f5f9', pointerEvents:'none'
+              }} />
+            ))}
 
-                {/* Without bar */}
-                <div
-                  onMouseEnter={() => setHov({gi, which:'without'})}
-                  onMouseLeave={() => setHov(null)}
-                  style={{ position:'relative', cursor:'default' }}>
-                  <div style={{
-                    width:36, borderRadius:'3px 3px 0 0',
-                    height: ph(d.without),
-                    background:'#e2e8f0',
-                    opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.5 : 1,
-                    transition:'opacity 0.1s'
-                  }} />
-                  {hov?.gi===gi && hov?.which==='without' && (
+            {/* Bar groups */}
+            <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'flex-end', justifyContent:'space-around', padding:'0 32px' }}>
+              {CHART.map((d, gi) => (
+                <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:6 }}>
+
+                  {/* Without bar */}
+                  <div
+                    onMouseEnter={() => setHov({gi, which:'without'})}
+                    onMouseLeave={() => setHov(null)}
+                    style={{ position:'relative', cursor:'default' }}>
                     <div style={{
-                      position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)',
-                      background:'#1e293b', color:'#fff',
-                      fontSize:10, fontFamily:'DM Mono, monospace',
-                      padding:'3px 7px', borderRadius:4,
-                      whiteSpace:'nowrap', zIndex:10,
-                      boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                    }}>
-                      €{d.without}k
-                    </div>
-                  )}
-                </div>
+                      width:36, borderRadius:'3px 3px 0 0',
+                      height: ph(d.without),
+                      background:'#e2e8f0',
+                      opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.5 : 1,
+                      transition:'opacity 0.1s'
+                    }} />
+                    {hov?.gi===gi && hov?.which==='without' && (
+                      <div style={{
+                        position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
+                        left:'50%', transform:'translateX(-50%)',
+                        background:'#1e293b', color:'#fff',
+                        fontSize:10, fontFamily:'DM Mono, monospace',
+                        padding:'3px 7px', borderRadius:4,
+                        whiteSpace:'nowrap', zIndex:10,
+                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
+                      }}>
+                        €{d.without}k
+                      </div>
+                    )}
+                  </div>
 
-                {/* Pooled bar */}
-                <div
-                  onMouseEnter={() => setHov({gi, which:'pooled'})}
-                  onMouseLeave={() => setHov(null)}
-                  style={{ position:'relative', cursor:'default' }}>
-                  <div style={{
-                    width:36, borderRadius:'3px 3px 0 0',
-                    height: ph(d.pooled),
-                    background:'#4f46e5',
-                    opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.5 : 1,
-                    transition:'opacity 0.1s'
-                  }} />
-                  {hov?.gi===gi && hov?.which==='pooled' && (
+                  {/* Pooled bar */}
+                  <div
+                    onMouseEnter={() => setHov({gi, which:'pooled'})}
+                    onMouseLeave={() => setHov(null)}
+                    style={{ position:'relative', cursor:'default' }}>
                     <div style={{
-                      position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)',
-                      background:'#4338ca', color:'#fff',
-                      fontSize:10, fontFamily:'DM Mono, monospace',
-                      padding:'3px 7px', borderRadius:4,
-                      whiteSpace:'nowrap', zIndex:10,
-                      boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                    }}>
-                      €{d.pooled}k · save €{d.without - d.pooled}k
-                    </div>
-                  )}
-                </div>
+                      width:36, borderRadius:'3px 3px 0 0',
+                      height: ph(d.pooled),
+                      background:'#4f46e5',
+                      opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.5 : 1,
+                      transition:'opacity 0.1s'
+                    }} />
+                    {hov?.gi===gi && hov?.which==='pooled' && (
+                      <div style={{
+                        position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
+                        left:'50%', transform:'translateX(-50%)',
+                        background:'#4338ca', color:'#fff',
+                        fontSize:10, fontFamily:'DM Mono, monospace',
+                        padding:'3px 7px', borderRadius:4,
+                        whiteSpace:'nowrap', zIndex:10,
+                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
+                      }}>
+                        €{d.pooled}k · save €{d.without - d.pooled}k
+                      </div>
+                    )}
+                  </div>
 
-              </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* X-axis labels — same padding as bar groups so they align exactly */}
+          <div style={{ display:'flex', justifyContent:'space-around', padding:'7px 32px 0', borderLeft:'1px solid #e2e8f0' }}>
+            {CHART.map((d, i) => (
+              <span key={i} style={{ fontSize:11, color:'#475569', fontFamily:'DM Mono, monospace', fontWeight:500, textAlign:'center' }}>{d.period}</span>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* X-axis */}
-      <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:40, marginTop:8 }}>
-        {CHART.map((d, i) => (
-          <span key={i} style={{ fontSize:11, color:'#64748b', fontFamily:'DM Mono, monospace', fontWeight:500 }}>{d.period}</span>
-        ))}
+        </div>
       </div>
 
       {/* Summary strip */}
