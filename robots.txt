@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard-preview.html
+Disallow: /simulator-input.html
+Disallow: /cashpool-simulator-v3.html
+Disallow: /cashpool-report-demo.html
+Disallow: /cashpoolmodel-pricing.html
 
 Sitemap: https://cashpoolmodel.com/sitemap.xml

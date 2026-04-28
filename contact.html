@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Treasury Advisory & Cash Pool Consulting — CashPoolModel</title>
 <meta name="description" content="Book a treasury advisory session or send a message. Independent cash pooling advisory by Intercompany.io, Geneva.">
 <link rel="canonical" href="https://cashpoolmodel.com/contact.html">
@@ -365,6 +366,19 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:36px 0 24px}
           </div>
         </div>
 
+        <div class="ic-row">
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6"/>
+            <circle cx="8" cy="8" r="2.5" fill="currentColor" stroke="none"/>
+          </svg>
+          <div>
+            <div class="ic-label" data-i18n="ic.label.avail">Availability</div>
+            <div style="display:flex;align-items:center;gap:7px;margin-top:1px">
+              <span id="availDot" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;display:inline-block"></span>
+              <span id="availText" style="font-size:13px;color:var(--ink-mid)" data-i18n="ic.offline">Responds within 24h</span>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -433,6 +447,8 @@ const T = {
     'ic.label.email': 'Email',
     'ic.label.avail': 'Availability',
     'ic.avail': 'Mon–Fri, CET timezone',
+    'ic.online': 'Available now',
+    'ic.offline': 'Responds within 24h',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
     'footer.home': 'Home',
@@ -471,6 +487,8 @@ const T = {
     'ic.label.email': 'E-Mail',
     'ic.label.avail': 'Verfügbarkeit',
     'ic.avail': 'Mo–Fr, MEZ-Zeitzone',
+    'ic.online': 'Jetzt verfügbar',
+    'ic.offline': 'Antwortet innerhalb 24h',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
     'footer.home': 'Startseite',
@@ -509,6 +527,8 @@ const T = {
     'ic.label.email': 'E-mail',
     'ic.label.avail': 'Disponibilité',
     'ic.avail': 'Lun–Ven, fuseau horaire CET',
+    'ic.online': 'Disponible maintenant',
+    'ic.offline': 'Répond sous 24h',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
     'footer.home': 'Accueil',
@@ -564,6 +584,19 @@ function toggleMobileNav() {
   document.getElementById('navBurger').classList.toggle('open');
   document.getElementById('navMobile').classList.toggle('open');
 }
+
+(function updateAvailability() {
+  const cet = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Zurich' }));
+  const online = cet.getDay() >= 1 && cet.getDay() <= 5 && cet.getHours() >= 9 && cet.getHours() < 18;
+  const dot = document.getElementById('availDot');
+  const txt = document.getElementById('availText');
+  if (!dot || !txt) return;
+  if (online) {
+    dot.style.background = '#22c55e';
+    txt.dataset.i18n = 'ic.online';
+    txt.textContent = T[currentLang]['ic.online'] || 'Available now';
+  }
+})();
 </script>
 </body>
 </html>
