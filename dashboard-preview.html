@@ -413,7 +413,8 @@ function Sidebar({ active, onNav, groupName, totalEnt, ctaVisible }) {
 
       {/* Logo */}
       <div style={{ padding:'18px 16px 14px', borderBottom:'1px solid #f1f5f9' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:9, cursor:'pointer' }}
+          onClick={() => window.parent.location.href = '/'}>
           <div style={{ width:30, height:30, borderRadius:7, background:'#0f172a',
             display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
