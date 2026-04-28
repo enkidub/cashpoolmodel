@@ -500,6 +500,14 @@ h1              { animation-delay: .11s; }
 .actions        { animation-delay: .28s; }
 .trust-line     { animation-delay: .33s; }
 </style>
+<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
 </head>
 <body>
 
@@ -905,6 +913,7 @@ async function handleEarlyAccess() {
   const t = translations[currentLang];
   if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
   await addToBrevo(e);
+  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
   showToast(t['toast.success']);
   document.getElementById('eaEmail').value = '';
 }
@@ -913,6 +922,7 @@ async function handleWaitlist() {
   const e = document.getElementById('wlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
   await addToBrevo(e);
+  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
   showToast('You are on the list. We will notify you when the simulator launches.');
   document.getElementById('wlEmail').value = '';
 }
@@ -921,6 +931,7 @@ async function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
   await addToBrevo(e);
+  if (typeof gtag !== 'undefined') gtag('event', 'newsletter_signup');
   showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }

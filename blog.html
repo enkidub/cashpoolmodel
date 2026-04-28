@@ -394,6 +394,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
 .lang-btn.active { color: var(--navy); }
 .lang-sep { color: var(--rule); font-size: 11px; line-height: 1; user-select: none; }
 </style>
+<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
 </head>
 <body>
 
@@ -819,6 +827,7 @@ function showPost(id) {
   document.getElementById('postView').classList.add('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
   document.title = p.title + ' — CashPoolModel';
+  if (typeof gtag !== 'undefined') gtag('event', 'article_view', { article_id: id });
 }
 
 function showList() {
@@ -834,6 +843,7 @@ function handleNewsletter() {
   const t = UI[currentLang];
   if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
   addToBrevo(e);
+  if (typeof gtag !== 'undefined') gtag('event', 'newsletter_signup');
   showToast(t['toast.sub']);
   document.getElementById('nlEmail').value = '';
 }

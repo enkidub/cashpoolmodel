@@ -206,6 +206,14 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:36px 0 24px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .page-header{animation:fadeUp .4s ease forwards}
 </style>
+<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
 </head>
 <body>
 
@@ -568,6 +576,7 @@ function handleForm() {
   if (!message || message.length < 10) { showToast(T[currentLang]['form.err.message']); return; }
   const subject = encodeURIComponent('Enquiry — CashPoolModel');
   const body = encodeURIComponent(message);
+  if (typeof gtag !== 'undefined') gtag('event', 'contact_form_submit');
   window.location.href = `mailto:info@cashpoolmodel.com?subject=${subject}&body=${body}`;
   const el = document.getElementById('formSuccess');
   el.textContent = T[currentLang]['form.success'];
