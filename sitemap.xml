@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://cashpoolmodel.com/</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/?lang=fr"/>
+  </url>
+
+  <url>
+    <loc>https://cashpoolmodel.com/blog.html</loc>
+    <lastmod>2025-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/blog.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/blog.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/blog.html?lang=fr"/>
+  </url>
+
+  <url>
+    <loc>https://cashpoolmodel.com/contact.html</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/contact.html"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/contact.html?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/contact.html?lang=fr"/>
+  </url>
+
+</urlset>

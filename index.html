@@ -3,8 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CashPoolModel — Independent Cash Pooling Intelligence</title>
+<title>Cash Pooling Simulator — Model Your Pool Before Any Bank Conversation | CashPoolModel</title>
 <meta name="description" content="Free cash pooling simulator for CFOs and treasury teams. Model your interest savings, netting efficiency, and payback period before any bank conversation.">
+<link rel="canonical" href="https://cashpoolmodel.com/">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cashpoolmodel.com/">
+<meta property="og:title" content="Cash Pooling Simulator — Model Your Pool Before Any Bank Conversation">
+<meta property="og:description" content="Free cash pooling simulator for CFOs and treasury teams. Model interest savings, netting efficiency, and payback period before any bank conversation.">
+<meta property="og:image" content="https://cashpoolmodel.com/og-image.png">
+<meta property="og:site_name" content="CashPoolModel">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cash Pooling Simulator — CashPoolModel">
+<meta name="twitter:description" content="Model your cash pool before any bank conversation. Free simulator for CFOs and treasury teams.">
+<meta name="twitter:image" content="https://cashpoolmodel.com/og-image.png">
+<!-- Hreflang -->
+<link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/">
+<link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/?lang=de">
+<link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/?lang=fr">
+<link rel="alternate" hreflang="x-default" href="https://cashpoolmodel.com/">
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cashpoolmodel.com/#organization",
+      "name": "Intercompany.io",
+      "url": "https://cashpoolmodel.com",
+      "logo": "https://cashpoolmodel.com/og-image.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Rue François-Perréard 19",
+        "addressLocality": "Chêne-Bourg",
+        "postalCode": "1225",
+        "addressCountry": "CH"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "info@cashpoolmodel.com",
+        "telephone": "+41767763463",
+        "contactType": "customer service"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "CashPoolModel",
+      "url": "https://cashpoolmodel.com",
+      "description": "Cash pooling simulator for CFOs and treasury teams. Model interest savings, netting efficiency, and payback period.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "provider": { "@id": "https://cashpoolmodel.com/#organization" }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://cashpoolmodel.com/#website",
+      "url": "https://cashpoolmodel.com",
+      "name": "CashPoolModel",
+      "publisher": { "@id": "https://cashpoolmodel.com/#organization" }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://cashpoolmodel.com/#person",
+  "name": "Jakub Houser",
+  "jobTitle": "Independent Treasury Practitioner",
+  "url": "https://cashpoolmodel.com",
+  "sameAs": ["https://www.linkedin.com/in/houserjakub/"],
+  "worksFor": { "@id": "https://cashpoolmodel.com/#organization" },
+  "alumniOf": [
+    { "@type": "CollegeOrUniversity", "name": "Masaryk University", "url": "https://www.muni.cz" }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -426,6 +504,16 @@ footer {
 }
 .footer-swiss { font-size: 9px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: 5px; }
 .footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
+/* ── METHODOLOGY ── */
+.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 36px; }
+@media (max-width: 680px) { .meth-grid { grid-template-columns: 1fr; gap: 24px; } }
+.meth-item { background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl); padding: 28px 28px 24px; }
+.meth-num { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 6px; }
+.meth-inst { font-size: 11px; color: var(--ink-fnt); letter-spacing: .3px; margin-bottom: 10px; }
+.meth-title { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 10px; line-height: 1.3; }
+.meth-link { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); transition: text-decoration-color .15s; }
+.meth-link:hover { text-decoration-color: var(--gold); }
+.meth-desc { font-size: 13px; color: var(--ink-lt); line-height: 1.65; font-weight: 300; }
 .ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
 
 /* ── LANG SWITCHER ── */
@@ -685,6 +773,29 @@ h1              { animation-delay: .11s; }
   </div>
 </section>
 
+<!-- METHODOLOGY -->
+<section class="section" id="methodology">
+  <div class="wrap">
+    <div class="sec-eyebrow">Research Foundation</div>
+    <h2>Built on independent research,<br>not vendor claims.</h2>
+    <p class="sec-sub">The simulation methodology behind CashPoolModel is grounded in peer-reviewed academic work and independent treasury practice — not marketing benchmarks.</p>
+    <div class="meth-grid">
+      <div class="meth-item">
+        <div class="meth-num">2023</div>
+        <div class="meth-inst">Masaryk University · Faculty of Economics and Administration</div>
+        <div class="meth-title"><a href="/blog.html" onclick="event.preventDefault();window.location='/blog.html';" class="meth-link">Research on Cash Pooling Efficiency from Masaryk University</a></div>
+        <div class="meth-desc">Jakub Houser's 2023 research examined the structural conflict between bank and corporate interests in cash pooling, quantified the FTE cost of manual pool management, and analysed the impact of intercompany loan structures on group liquidity efficiency.</div>
+      </div>
+      <div class="meth-item">
+        <div class="meth-num">2016</div>
+        <div class="meth-inst">Corvinus University · Centre for Economic and Regional Studies</div>
+        <div class="meth-title"><a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank" class="meth-link">Liquidity Management Study by Corvinus University</a></div>
+        <div class="meth-desc">Applied Monte Carlo simulation to model cash flow volatility in corporate treasury structures, demonstrating that static average-balance models systematically overstate netting efficiency under realistic daily volatility conditions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
@@ -753,7 +864,7 @@ const translations = {
     'ea.placeholder': 'treasury@yourcompany.com', 'ea.btn': 'Join Waitlist →',
     'ea.micro': 'No spam. Only professional treasury updates.',
     'footer.swiss': 'Swiss-based advisory',
-    'footer.sub': 'Independent Swiss treasury intelligence',
+    'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.',
     'toast.success': 'You are on the list. We will notify you when the simulator launches.',
@@ -800,7 +911,7 @@ const translations = {
     'ea.placeholder': 'treasury@ihrefirma.com', 'ea.btn': 'Zur Warteliste →',
     'ea.micro': 'Kein Spam. Nur professionelle Treasury-Updates.',
     'footer.swiss': 'Schweizer Treasury-Beratung',
-    'footer.sub': 'Unabhängige Schweizer Treasury-Intelligence',
+    'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Ergebnisse sind illustrativ — keine Finanzberatung.',
     'toast.success': 'Sie stehen auf der Liste. Wir benachrichtigen Sie beim Launch.',
@@ -847,7 +958,7 @@ const translations = {
     'ea.placeholder': 'tresorerie@votreentreprise.com', 'ea.btn': 'Rejoindre la liste →',
     'ea.micro': 'Pas de spam. Uniquement des actualités professionnelles en trésorerie.',
     'footer.swiss': 'Conseil suisse en trésorerie',
-    'footer.sub': 'Intelligence suisse en trésorerie indépendante',
+    'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Les résultats sont illustratifs — pas de conseil financier.',
     'toast.success': 'Vous êtes sur la liste. Nous vous notifierons au lancement.',
