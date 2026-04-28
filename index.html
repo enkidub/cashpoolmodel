@@ -258,90 +258,43 @@ h2 {
 /* ── REPORT PREVIEW ── */
 .preview-wrap {
   position: relative; margin-top: 40px;
-  border-radius: 6px; overflow: hidden;
-  background: var(--white);
-  border: 1px solid rgba(11,25,41,.08);
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(11,25,41,.1);
   box-shadow:
     0 2px 4px rgba(11,25,41,.04),
-    0 12px 40px rgba(11,25,41,.08),
-    0 40px 80px rgba(11,25,41,.06);
+    0 16px 48px rgba(11,25,41,.10),
+    0 48px 96px rgba(11,25,41,.07);
 }
-.preview-doc {
-  padding: clamp(28px, 4vw, 48px) clamp(28px, 4vw, 48px) 60px;
+.preview-chrome {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  background: #f1f5f9;
+  border-bottom: 1px solid rgba(11,25,41,.08);
 }
-
-/* PDF document header */
-.preview-report-top {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 10px;
+.preview-chrome-dots {
+  display: flex; gap: 6px; flex-shrink: 0;
 }
-.preview-report-brand {
-  font-family: var(--serif); font-size: 12px; font-weight: 600;
-  color: var(--ink-lt); letter-spacing: -.1px;
+.preview-chrome-dots span {
+  width: 11px; height: 11px; border-radius: 50%;
 }
-.preview-report-date {
-  font-size: 9px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 2px;
+.preview-chrome-dots span:nth-child(1) { background: #ef4444; }
+.preview-chrome-dots span:nth-child(2) { background: #f59e0b; }
+.preview-chrome-dots span:nth-child(3) { background: #22c55e; }
+.preview-chrome-bar {
+  flex: 1; background: var(--white);
+  border: 1px solid rgba(11,25,41,.1); border-radius: 5px;
+  padding: 4px 12px; font-size: 11px; color: var(--ink-lt);
+  font-family: var(--mono); white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis;
 }
-.preview-report-badge {
-  font-size: 8px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
-  color: var(--gold); background: var(--gold-p);
-  border: 1px solid rgba(154,110,16,.2); padding: 3px 9px; border-radius: 3px;
-  white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+.preview-iframe {
+  width: 100%; height: 660px; border: none; display: block;
+  background: #f8fafc;
 }
-.preview-rule { height: 1px; background: var(--rule); margin: 12px 0 14px; }
-.preview-report-title {
-  font-family: var(--serif); font-size: clamp(16px, 2.2vw, 21px);
-  font-weight: 600; color: var(--navy); letter-spacing: -.3px;
-  margin-bottom: 4px; line-height: 1.15;
-}
-.preview-report-sub {
-  font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-bottom: 20px;
-}
-
-.preview-kpis {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px;
-}
-@media (max-width: 560px) { .preview-kpis { grid-template-columns: repeat(2, 1fr); } }
-.preview-kpi {
-  padding: 14px 16px; border: 1px solid rgba(11,25,41,.07);
-  border-radius: var(--r); background: var(--white);
-}
-.preview-kpi-val {
-  font-family: var(--serif); font-size: clamp(18px, 2.4vw, 24px);
-  font-weight: 400; color: var(--navy); margin-bottom: 4px; line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-.preview-kpi-label {
-  font-size: 9px; color: var(--ink-fnt); font-weight: 500;
-  line-height: 1.4; letter-spacing: .8px; text-transform: uppercase;
-}
-.preview-section-label {
-  font-size: 8px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase;
-  color: var(--ink-fnt); margin-bottom: 10px;
-}
-.preview-chart-svg { width: 100%; max-width: 560px; display: block; overflow: visible; }
-.preview-matrix-wrap { margin-top: 20px; }
-.preview-matrix {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 3px; max-width: 260px;
-}
-.pm-cell {
-  height: 22px; border-radius: 2px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-family: var(--mono);
-}
-.pm-g2 { background: #1e3a5f; color: #fff; }
-.pm-g1 { background: #99b2d0; color: #fff; }
-.pm-am { background: #d4dcec; color: #4a607f; }
-.pm-rd { background: #eef1f6; color: #8a9ab0; }
-.preview-matrix-labels {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 3px; max-width: 260px; margin-bottom: 4px;
-}
-.pm-lbl { font-size: 8px; color: var(--ink-fnt); font-family: var(--mono); text-align: center; }
+@media (max-width: 700px) { .preview-iframe { height: 520px; } }
 .preview-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
-  background: linear-gradient(to bottom, transparent, var(--white));
+  position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+  background: linear-gradient(to bottom, transparent, #f9f8f5);
   pointer-events: none;
 }
 .preview-note {
@@ -608,94 +561,25 @@ h1              { animation-delay: .11s; }
 <section class="section section-bt">
   <div class="wrap">
     <div class="sec-eyebrow" data-i18n="preview.eyebrow">Sample Output</div>
-    <h2 data-i18n="preview.h2">What lands in your inbox.</h2>
-    <p class="sec-sub" data-i18n="preview.sub">A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.</p>
+    <h2 data-i18n="preview.h2">Your simulation dashboard, live.</h2>
+    <p class="sec-sub" data-i18n="preview.sub">KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.</p>
 
     <div class="preview-wrap">
-
-      <!-- Document body -->
-      <div class="preview-doc">
-
-        <!-- PDF document header -->
-        <div class="preview-report-top">
-          <div>
-            <div class="preview-report-brand">CashPoolModel</div>
-            <div class="preview-report-date" data-i18n="preview.generated">Generated April 2025</div>
-          </div>
-          <div class="preview-report-badge" data-i18n="preview.badge">Illustrative</div>
+      <!-- Browser chrome bar -->
+      <div class="preview-chrome">
+        <div class="preview-chrome-dots">
+          <span></span><span></span><span></span>
         </div>
-        <div class="preview-rule"></div>
-        <div class="preview-report-title" data-i18n="preview.title">Executive Summary</div>
-        <div class="preview-report-sub" data-i18n="preview.client">Acme Manufacturing Group · 8 entities · 6 currencies</div>
-
-        <!-- KPIs -->
-        <div class="preview-kpis">
-          <div class="preview-kpi">
-            <div class="preview-kpi-val" style="color:var(--gold)">€842k</div>
-            <div class="preview-kpi-label" data-i18n="preview.kpi1">Annual net savings</div>
-          </div>
-          <div class="preview-kpi">
-            <div class="preview-kpi-val">73%</div>
-            <div class="preview-kpi-label" data-i18n="preview.kpi2">Netting efficiency</div>
-          </div>
-          <div class="preview-kpi">
-            <div class="preview-kpi-val">39%</div>
-            <div class="preview-kpi-label" data-i18n="preview.kpi3">Gross interest reduction</div>
-          </div>
-          <div class="preview-kpi">
-            <div class="preview-kpi-val">€1.2M</div>
-            <div class="preview-kpi-label" data-i18n="preview.kpi4">Freed-up liquidity</div>
-          </div>
-        </div>
-
-        <!-- Before / After chart -->
-        <div class="preview-section-label" data-i18n="preview.chart_label">Before / After Interest Cost Comparison</div>
-        <svg class="preview-chart-svg" viewBox="0 0 560 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Before row -->
-          <rect x="0" y="11" width="7" height="7" rx="1.5" fill="#ebe8e0"/>
-          <text id="svg-before" x="12" y="20" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">Before pool</text>
-          <rect x="64" y="7" width="334" height="20" rx="3" fill="#ebe8e0"/>
-          <text x="404" y="20" font-size="10" fill="#6b7d96" font-family="DM Sans, sans-serif">€2.14M / year</text>
-          <!-- After row — outlined bar -->
-          <rect x="0" y="46" width="7" height="7" rx="1.5" fill="none" stroke="#1e3a5f" stroke-width="1.5"/>
-          <text id="svg-after" x="12" y="55" font-size="9.5" fill="#9babbe" font-family="DM Sans, sans-serif" font-weight="500">After pool</text>
-          <rect x="64" y="42" width="196" height="20" rx="3" fill="rgba(30,58,95,0.09)" stroke="#1e3a5f" stroke-width="1.2"/>
-          <text x="162" y="57" font-size="9" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600" text-anchor="middle">−39%</text>
-          <text x="266" y="55" font-size="10" fill="#3d4f6a" font-family="DM Sans, sans-serif">€1.30M / year</text>
-          <!-- Dashed divider -->
-          <line x1="260" y1="4" x2="260" y2="66" stroke="#e8e5df" stroke-width="1" stroke-dasharray="3,3"/>
-          <!-- Savings callout -->
-          <text id="svg-savings" x="64" y="84" font-size="10" fill="#1e3a5f" font-family="DM Sans, sans-serif" font-weight="600">↓ €842k annual savings</text>
-        </svg>
-
-        <!-- Sensitivity matrix -->
-        <div class="preview-matrix-wrap">
-          <div class="preview-section-label" style="margin-top:18px" data-i18n="preview.matrix_label">Sensitivity Matrix — Net Benefit (rate × volatility)</div>
-          <div class="preview-matrix-labels">
-            <div class="pm-lbl">−50bp</div>
-            <div class="pm-lbl">Base</div>
-            <div class="pm-lbl">+100bp</div>
-            <div class="pm-lbl">+200bp</div>
-          </div>
-          <div class="preview-matrix">
-            <div class="pm-cell pm-am">312k</div>
-            <div class="pm-cell pm-g1">571k</div>
-            <div class="pm-cell pm-g2">842k</div>
-            <div class="pm-cell pm-g2">1.1M</div>
-
-            <div class="pm-cell pm-am">218k</div>
-            <div class="pm-cell pm-g1">486k</div>
-            <div class="pm-cell pm-g1">751k</div>
-            <div class="pm-cell pm-g2">1.0M</div>
-
-            <div class="pm-cell pm-rd">94k</div>
-            <div class="pm-cell pm-am">381k</div>
-            <div class="pm-cell pm-g1">647k</div>
-            <div class="pm-cell pm-g2">901k</div>
-          </div>
-        </div>
-
+        <div class="preview-chrome-bar">cashpoolmodel.com/dashboard · Executive Summary</div>
       </div>
+      <!-- Dashboard iframe -->
+      <iframe
+        src="/dashboard-preview.html"
+        class="preview-iframe"
+        title="CashPoolModel Simulation Dashboard"
+        loading="lazy"
+        scrolling="no"
+      ></iframe>
       <div class="preview-fade"></div>
     </div>
     <div class="preview-note" data-i18n="preview.note">Illustrative data. Actual report generated from your inputs.</div>
@@ -831,8 +715,8 @@ const translations = {
     'hero.b3': 'Board-ready PDF report. No spreadsheets, no consultants.',
     'hero.cta1': 'Get Early Access →', 'hero.cta2': 'See How It Works',
     'hero.trust': 'Free to join. First report on us when we launch.',
-    'preview.eyebrow': 'Sample Output', 'preview.h2': 'What lands in your inbox.',
-    'preview.sub': 'A structured PDF built for CFOs and boards — not a spreadsheet dump. Every section maps to a real decision.',
+    'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
+    'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
     'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
     'preview.title': 'Executive Summary', 'preview.client': 'Acme Manufacturing Group · 8 entities · 6 currencies',
     'preview.kpi1': 'Annual net savings', 'preview.kpi2': 'Netting efficiency',
@@ -878,8 +762,8 @@ const translations = {
     'hero.b3': 'Board-fähiger PDF-Bericht. Keine Tabellen, keine Berater.',
     'hero.cta1': 'Früher Zugang →', 'hero.cta2': 'So funktioniert es',
     'hero.trust': 'Kostenlose Anmeldung. Erster Bericht gratis bei Launch.',
-    'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Was in Ihrem Posteingang landet.',
-    'preview.sub': 'Ein strukturiertes PDF für CFOs und Verwaltungsräte — kein Tabellendump. Jeder Abschnitt entspricht einer echten Entscheidung.',
+    'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
+    'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
     'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
     'preview.title': 'Management Summary', 'preview.client': 'Acme Manufacturing Group · 8 Einheiten · 6 Währungen',
     'preview.kpi1': 'Jährl. Nettoeinsparungen', 'preview.kpi2': 'Netting-Effizienz',
@@ -925,8 +809,8 @@ const translations = {
     'hero.b3': 'Rapport PDF prêt pour le conseil. Sans tableurs, sans consultants.',
     'hero.cta1': 'Accès anticipé →', 'hero.cta2': 'Voir comment ça fonctionne',
     'hero.trust': 'Inscription gratuite. Premier rapport offert au lancement.',
-    'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Ce qui arrive dans votre boîte mail.',
-    'preview.sub': 'Un PDF structuré pour les CFO et les conseils d\'administration — pas un export de tableur. Chaque section correspond à une décision concrète.',
+    'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
+    'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
     'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
     'preview.title': 'Résumé exécutif', 'preview.client': 'Acme Manufacturing Group · 8 entités · 6 devises',
     'preview.kpi1': 'Économies nettes annuelles', 'preview.kpi2': 'Efficacité de netting',
