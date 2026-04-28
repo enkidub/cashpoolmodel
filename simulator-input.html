@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Pool Simulator — CashPoolModel</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1929;--navy-h:#132540;--ink:#0f172a;--ink-mid:#334155;
+  --ink-lt:#64748b;--ink-fnt:#94a3b8;--paper:#f8fafc;--paper-w:#f1f5f9;
+  --rule:#e2e8f0;--white:#ffffff;--gold:#9a6e10;
+  --emerald:#059669;--emerald-lt:#d1fae5;--emerald-dk:#065f46;
+  --red:#dc2626;--red-lt:#fee2e2;--blue:#2563eb;--blue-lt:#dbeafe;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --max:860px;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);--r:6px;--rl:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5}
+.nav{background:var(--white);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50}
+.nav-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--navy);text-decoration:none}
+.logo-mark{width:24px;height:24px;border-radius:4px;background:var(--navy);display:flex;align-items:center;justify-content:center}
+.logo-sub{font-size:9px;color:var(--ink-fnt);font-weight:400;letter-spacing:.3px;font-family:var(--sans);margin-top:1px}
+.nav-pill{font-size:10px;font-weight:600;color:var(--gold);background:#fef3c7;border:1px solid #fde68a;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.hero{padding:28px 0 20px;border-bottom:1px solid var(--rule);margin-bottom:24px}
+.hero-ey{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.hero-ey::before{content:'';width:14px;height:1px;background:var(--ink-fnt)}
+.hero h1{font-family:var(--serif);font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:6px}
+.hero-sub{font-size:13px;color:var(--ink-lt);font-weight:300;line-height:1.65}
+.sec{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+.sec-hd{padding:13px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px}
+.sec-icon{width:26px;height:26px;border-radius:5px;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.sec-title{font-size:13px;font-weight:600;color:var(--navy)}
+.sec-sub{font-size:10px;color:var(--ink-fnt);margin-top:1px}
+.sec-body{padding:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.row.three{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:540px){.row,.row.three{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:600;color:var(--ink-mid);display:flex;align-items:center;gap:5px}
+.fg input,.fg select{padding:8px 11px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .13s;width:100%}
+.fg input:focus,.fg select:focus{border-color:var(--navy);background:var(--white)}
+
+/* Autocomplete dropdown */
+.ac-wrap{position:relative}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--navy);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:200px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 24px rgba(15,23,42,.12)}
+.ac-list.open{display:block}
+.ac-item{padding:7px 11px;font-size:13px;color:var(--ink-mid);cursor:pointer;border-bottom:1px solid var(--paper-w)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.selected{background:var(--paper-w);color:var(--navy)}
+.ac-item strong{color:var(--navy)}
+
+.cc-pills{display:flex;gap:6px;flex-wrap:wrap}
+.cc-pill{padding:5px 12px;border-radius:20px;border:1.5px solid var(--rule);background:var(--paper);font-size:12px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .13s;font-family:var(--sans)}
+.cc-pill.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.preset-btn{padding:5px 11px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--ink-lt);font-size:11px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
+.preset-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
+.et-wrap{overflow-x:auto;margin-bottom:10px}
+table.et{width:100%;border-collapse:collapse;font-size:12px}
+table.et th{padding:7px 10px;background:var(--paper-w);border-bottom:2px solid var(--rule);font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap}
+table.et th:nth-child(n+3){text-align:right}
+table.et td{padding:5px 6px;border-bottom:1px solid var(--paper-w);vertical-align:middle}
+table.et td:nth-child(n+3){text-align:right}
+table.et tr:hover td{background:var(--paper)}
+.et-inp{width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid transparent;background:transparent;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none}
+.et-inp:focus{border-color:var(--navy);background:var(--white)}
+.et-inp.num{font-family:var(--mono);text-align:right}
+.et-inp.pos{color:var(--emerald)}
+.et-inp.neg{color:var(--red)}
+.add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1.5px dashed var(--rule);background:transparent;color:var(--ink-lt);font-size:11px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
+.add-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
+.del-btn{padding:2px 7px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;transition:all .13s}
+.del-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+.note{background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 13px;font-size:11px;color:#1e40af;line-height:1.55;margin-bottom:14px}
+.rate-group-label{font-size:10px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+.tt{position:relative;display:inline-flex;cursor:help}
+.tt-icon{width:13px;height:13px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt)}
+.tt span{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:4px;pointer-events:none;opacity:0;transition:opacity .14s;z-index:200;font-weight:400;max-width:200px;white-space:normal;text-align:center;line-height:1.4;min-width:160px}
+.tt:hover span{opacity:1}
+
+/* AI Upload section */
+.upload-zone{border:2px dashed var(--rule);border-radius:var(--rl);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--navy);background:var(--paper-w)}
+.upload-zone input{display:none}
+.upload-icon{font-size:28px;margin-bottom:8px}
+.upload-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.upload-sub{font-size:11px;color:var(--ink-fnt)}
+.ai-processing{display:none;background:var(--paper-w);border:1px solid var(--rule);border-radius:var(--rl);padding:16px 20px}
+.ai-processing.show{display:flex;align-items:center;gap:12px}
+.ai-spinner{width:20px;height:20px;border:2px solid var(--rule);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-result{display:none;background:var(--emerald-lt);border:1px solid #a7f3d0;border-radius:var(--rl);padding:14px 18px}
+.ai-result.show{display:block}
+.mode-toggle{display:flex;gap:8px;margin-bottom:18px}
+.mode-btn{flex:1;padding:10px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .14s;text-align:center}
+.mode-btn.on{border-color:var(--navy);background:var(--navy);color:#fff}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-h)}
+.btn-ghost{background:transparent;color:var(--ink-mid);border:1.5px solid var(--rule)}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.prog-bar{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin-bottom:20px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--blue));border-radius:2px;transition:width .4s ease}
+
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-i">
+    <a href="/index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
+          <rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/>
+          <rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/>
+          <path d="M2 6.5l5.5-2.5 5.5-2.5" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div><div>CashPoolModel</div><div class="logo-sub">by Intercompany.io</div></div>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="nav-pill">Simulator — Beta</div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-ey">Cash Pool Simulator</div>
+    <h1>Configure your group structure.</h1>
+    <p class="hero-sub">Enter your data manually, upload bank statements for AI extraction, or combine both. Results update in real time.</p>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+  <!-- AI UPLOAD -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-icon">✦</div>
+      <div><div class="sec-title">AI Data Extraction</div><div class="sec-sub">Upload bank statements — AI fills in entity data automatically</div></div>
+    </div>
+    <div class="sec-body">
+      <div class="mode-toggle">
+        <button class="mode-btn on" id="modeManual" onclick="setMode('manual')">✎ Enter manually</button>
+        <button class="mode-btn" id="modeAI" onclick="setMode('ai')">✦ Upload statements</button>
+      </div>
+
+      <div id="aiSection" style="display:none">
+        <div class="note">Upload PDF or CSV bank statements. AI will extract entity names, currencies, average balances, and account counts. You can review and edit everything before proceeding.</div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)">
+          <input type="file" id="fileInput" accept=".pdf,.csv,.xlsx" multiple onchange="handleFileSelect(this.files)">
+          <div class="upload-icon">📄</div>
+          <div class="upload-title">Drop bank statements here or click to browse</div>
+          <div class="upload-sub">PDF, CSV or Excel · Multiple files supported · Data stays in your browser</div>
+        </div>
+
+        <div class="ai-processing" id="aiProcessing">
+          <div class="ai-spinner"></div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--navy)">Extracting data…</div>
+            <div style="font-size:11px;color:var(--ink-fnt)" id="aiStatus">Reading file structure</div>
+          </div>
+        </div>
+
+        <div class="ai-result" id="aiResult">
+          <div style="font-size:12px;font-weight:600;color:var(--emerald-dk);margin-bottom:4px">✓ Extraction complete</div>
+          <div style="font-size:11px;color:var(--emerald-dk)" id="aiResultText"></div>
+          <button onclick="setMode('manual')" style="margin-top:10px;padding:5px 12px;border-radius:var(--r);border:1px solid #059669;background:transparent;color:var(--emerald);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans)">Review & edit extracted data →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUP INFO -->
+  <div class="sec" id="manualSection">
+    <div class="sec-hd">
+      <div class="sec-icon">🏢</div>
+      <div><div class="sec-title">Group Information</div><div class="sec-sub">Name, pool type, base currency</div></div>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <div class="fg">
+          <label>Group name</label>
+          <input type="text" id="groupName" placeholder="Acme Manufacturing Group" oninput="recalc()">
+        </div>
+        <div class="fg">
+          <label>Pool type</label>
+          <select id="poolType" onchange="recalc()">
+            <option value="zba">Zero-Balancing (Physical ZBA)</option>
+            <option value="notional">Notional Pooling</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="fg">
+          <label>Base currency</label>
+          <div class="ac-wrap">
+            <input type="text" id="currencyInput" placeholder="EUR — Euro" oninput="filterCurrencies(this.value)" autocomplete="off" value="EUR — Euro">
+            <div class="ac-list" id="currencyList"></div>
+          </div>
+          <input type="hidden" id="selectedCurrency" value="EUR">
+        </div>
+        <div class="fg">
+          <label>Pool bank</label>
+          <div class="ac-wrap">
+            <input type="text" id="poolBankInput" placeholder="Start typing bank name…" oninput="filterBanks(this.value)" autocomplete="off">
+            <div class="ac-list" id="bankList"></div>
+          </div>
+          <input type="hidden" id="poolBank" value="ING Bank">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTITIES -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-icon">🏦</div>
+      <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Each subsidiary with average daily balance</div></div>
+    </div>
+    <div class="sec-body">
+      <div class="note">Positive balance = surplus (sweeps to pool) · Negative = deficit (funded by pool) · Enter EUR equivalent for non-EUR entities</div>
+      <div class="et-wrap">
+        <table class="et">
+          <thead>
+            <tr>
+              <th style="text-align:left;min-width:140px">Entity name</th>
+              <th style="text-align:left;min-width:80px">Country</th>
+              <th style="min-width:100px">Currency</th>
+              <th style="min-width:150px">Avg. daily balance (EUR)</th>
+              <th style="min-width:70px">Accounts</th>
+              <th style="width:30px"></th>
+            </tr>
+          </thead>
+          <tbody id="entityBody"></tbody>
+        </table>
+      </div>
+      <button class="add-btn" onclick="addEntity()">+ Add entity</button>
+      <div class="preset-btns">
+        <button class="preset-btn" onclick="loadTemplate('western')">🌍 Western Europe</button>
+        <button class="preset-btn" onclick="loadTemplate('cee')">🌐 CEE template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATES -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-icon">%</div>
+      <div><div class="sec-title">Interest Rates</div><div class="sec-sub">Current bilateral rates vs. proposed pool rates</div></div>
+    </div>
+    <div class="sec-body">
+      <div class="rate-group-label">Without pool — current bilateral</div>
+      <div class="row">
+        <div class="fg">
+          <label>Debit rate (overdraft) % p.a. <div class="tt"><div class="tt-icon">?</div><span>What your bank charges entities in overdraft without a pool.</span></div></label>
+          <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="20" oninput="recalc()">
+        </div>
+        <div class="fg">
+          <label>Credit rate (deposit) % p.a.</label>
+          <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" oninput="recalc()">
+        </div>
+      </div>
+      <div class="rate-group-label" style="margin-top:16px">With pool — bank offer</div>
+      <div class="row">
+        <div class="fg">
+          <label>Pool debit rate % p.a.</label>
+          <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="15" oninput="recalc()">
+        </div>
+        <div class="fg">
+          <label>Pool credit rate % p.a.</label>
+          <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" oninput="recalc()">
+        </div>
+      </div>
+      <div class="preset-btns">
+        <button class="preset-btn" onclick="setPreset('eur')">ECB / EUR</button>
+        <button class="preset-btn" onclick="setPreset('czk')">ČNB / CZK</button>
+        <button class="preset-btn" onclick="setPreset('usd')">Fed / USD</button>
+        <button class="preset-btn" onclick="setPreset('gbp')">BoE / GBP</button>
+        <button class="preset-btn" onclick="setPreset('chf')">SNB / CHF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COSTS -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-icon">💼</div>
+      <div><div class="sec-title">Costs</div><div class="sec-sub">Implementation and annual operating costs</div></div>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <div class="fg">
+          <label>Implementation cost (EUR, one-off) <div class="tt"><div class="tt-icon">?</div><span>Legal setup, TMS integration, bank onboarding. Typically €100k–€400k.</span></div></label>
+          <input type="number" id="implCost" value="150000" step="5000" oninput="recalc()">
+        </div>
+        <div class="fg">
+          <label>Annual bank fees (EUR/year)</label>
+          <input type="number" id="bankFees" value="30000" step="1000" oninput="recalc()">
+        </div>
+      </div>
+      <div class="row">
+        <div class="fg">
+          <label>Annual admin cost (EUR/year)</label>
+          <input type="number" id="adminCost" value="40000" step="1000" oninput="recalc()">
+        </div>
+        <div class="fg">
+          <label>Annual FX volume (EUR M) <div class="tt"><div class="tt-icon">?</div><span>Total group payment volume per year. Used for FX saving estimate.</span></div></label>
+          <input type="number" id="fxVolume" value="500" step="10" oninput="recalc()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW REPORT BUTTON -->
+  <div style="padding:24px 0 48px;text-align:center">
+    <button class="btn btn-navy" style="padding:13px 36px;font-size:14px;border-radius:8px" onclick="viewReport()">
+      View Full Report →
+    </button>
+    <div style="margin-top:10px;font-size:11px;color:var(--ink-fnt)">Results update automatically as you enter data</div>
+  </div>
+
+</div>
+
+<!-- DATALISTS -->
+<datalist id="countryList">
+  <option value="AT">🇦🇹 Austria</option><option value="BE">🇧🇪 Belgium</option>
+  <option value="CZ">🇨🇿 Czech Republic</option><option value="DE">🇩🇪 Germany</option>
+  <option value="ES">🇪🇸 Spain</option><option value="FR">🇫🇷 France</option>
+  <option value="GB">🇬🇧 United Kingdom</option><option value="HU">🇭🇺 Hungary</option>
+  <option value="IT">🇮🇹 Italy</option><option value="NL">🇳🇱 Netherlands</option>
+  <option value="PL">🇵🇱 Poland</option><option value="RO">🇷🇴 Romania</option>
+  <option value="SE">🇸🇪 Sweden</option><option value="SK">🇸🇰 Slovakia</option>
+  <option value="CH">🇨🇭 Switzerland</option><option value="US">🇺🇸 United States</option>
+  <option value="SG">🇸🇬 Singapore</option><option value="HK">🇭🇰 Hong Kong</option>
+</datalist>
+
+<script>
+// ── WORLD CURRENCIES (ISO 4217) ──
+const CURRENCIES = [
+  {code:'EUR',name:'Euro'},
+  {code:'USD',name:'US Dollar'},
+  {code:'GBP',name:'British Pound'},
+  {code:'CHF',name:'Swiss Franc'},
+  {code:'CZK',name:'Czech Koruna'},
+  {code:'PLN',name:'Polish Zloty'},
+  {code:'HUF',name:'Hungarian Forint'},
+  {code:'SEK',name:'Swedish Krona'},
+  {code:'NOK',name:'Norwegian Krone'},
+  {code:'DKK',name:'Danish Krone'},
+  {code:'RON',name:'Romanian Leu'},
+  {code:'BGN',name:'Bulgarian Lev'},
+  {code:'HRK',name:'Croatian Kuna'},
+  {code:'RSD',name:'Serbian Dinar'},
+  {code:'JPY',name:'Japanese Yen'},
+  {code:'CNY',name:'Chinese Yuan'},
+  {code:'AUD',name:'Australian Dollar'},
+  {code:'CAD',name:'Canadian Dollar'},
+  {code:'NZD',name:'New Zealand Dollar'},
+  {code:'SGD',name:'Singapore Dollar'},
+  {code:'HKD',name:'Hong Kong Dollar'},
+  {code:'INR',name:'Indian Rupee'},
+  {code:'BRL',name:'Brazilian Real'},
+  {code:'MXN',name:'Mexican Peso'},
+  {code:'ZAR',name:'South African Rand'},
+  {code:'TRY',name:'Turkish Lira'},
+  {code:'AED',name:'UAE Dirham'},
+  {code:'SAR',name:'Saudi Riyal'},
+  {code:'THB',name:'Thai Baht'},
+  {code:'MYR',name:'Malaysian Ringgit'},
+  {code:'IDR',name:'Indonesian Rupiah'},
+  {code:'PHP',name:'Philippine Peso'},
+  {code:'KRW',name:'South Korean Won'},
+  {code:'TWD',name:'Taiwan Dollar'},
+  {code:'UAH',name:'Ukrainian Hryvnia'},
+  {code:'RUB',name:'Russian Ruble'},
+  {code:'ILS',name:'Israeli Shekel'},
+  {code:'EGP',name:'Egyptian Pound'},
+  {code:'NGN',name:'Nigerian Naira'},
+  {code:'KES',name:'Kenyan Shilling'},
+  {code:'GHS',name:'Ghanaian Cedi'},
+  {code:'PKR',name:'Pakistani Rupee'},
+  {code:'BDT',name:'Bangladeshi Taka'},
+  {code:'CLP',name:'Chilean Peso'},
+  {code:'COP',name:'Colombian Peso'},
+  {code:'PEN',name:'Peruvian Sol'},
+  {code:'ARS',name:'Argentine Peso'},
+  {code:'VND',name:'Vietnamese Dong'},
+  {code:'QAR',name:'Qatari Riyal'},
+  {code:'KWD',name:'Kuwaiti Dinar'},
+];
+
+// ── WORLD BANKS ──
+const BANKS = [
+  'ING Bank','Citi','Deutsche Bank','BNP Paribas','HSBC','Barclays',
+  'Société Générale','UniCredit','Santander','Erste Group','Raiffeisen Bank International',
+  'Komerční banka','ČSOB','Česká spořitelna','OTP Bank','PKO Bank Polski',
+  'Bank Pekao','mBank','ING Bank Śląski','Tatra banka','VÚB banka',
+  'Slovenská sporiteľňa','Volksbank','Oberbank','BAWAG','Bank Austria',
+  'ABN AMRO','Rabobank','KBC','Belfius','Credit Suisse','UBS','PostFinance',
+  'Zürich Cantonal Bank','J.P. Morgan','Bank of America','Wells Fargo',
+  'Goldman Sachs','Morgan Stanley','Standard Chartered','DBS Bank',
+  'OCBC Bank','UOB','Bank of China','ICBC','CCB','Agricultural Bank of China',
+  'Mizuho','MUFG','SMBC','Nordea','SEB','Swedbank','Handelsbanken',
+  'DNB','Danske Bank','Nykredit','Intesa Sanpaolo','Mediobanca',
+  'BBVA','CaixaBank','Sabadell','Crédit Agricole','Natixis','La Banque Postale',
+  'Commerzbank','DZ Bank','Landesbank Baden-Württemberg','Helaba',
+  'NBG','Piraeus Bank','Alpha Bank','Eurobank','Other',
+];
+
+// ── CURRENCY AUTOCOMPLETE ──
+function filterCurrencies(val) {
+  const list = document.getElementById('currencyList');
+  if (!val || val.length < 1) { list.classList.remove('open'); return; }
+  const q = val.toLowerCase();
+  const matches = CURRENCIES.filter(c =>
+    c.code.toLowerCase().startsWith(q) || c.name.toLowerCase().includes(q)
+  ).slice(0, 8);
+  if (!matches.length) { list.classList.remove('open'); return; }
+  list.innerHTML = matches.map(c =>
+    `<div class="ac-item" onclick="selectCurrency('${c.code}','${c.name}')"><strong>${c.code}</strong> — ${c.name}</div>`
+  ).join('');
+  list.classList.add('open');
+}
+function selectCurrency(code, name) {
+  document.getElementById('currencyInput').value = code + ' — ' + name;
+  document.getElementById('selectedCurrency').value = code;
+  currency = code;
+  document.getElementById('currencyList').classList.remove('open');
+  recalc();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#currencyList') && !e.target.closest('#currencyInput'))
+    document.getElementById('currencyList').classList.remove('open');
+});
+function filterBanks(val) {
+  const list = document.getElementById('bankList');
+  if (!val || val.length < 1) { list.classList.remove('open'); return; }
+  const matches = BANKS.filter(b => b.toLowerCase().includes(val.toLowerCase())).slice(0, 8);
+  if (!matches.length) { list.classList.remove('open'); return; }
+  list.innerHTML = matches.map(b =>
+    `<div class="ac-item" onclick="selectBank('${b}')">${b.replace(new RegExp(val,'gi'), m => '<strong>'+m+'</strong>')}</div>`
+  ).join('');
+  list.classList.add('open');
+}
+function selectBank(name) {
+  document.getElementById('poolBankInput').value = name;
+  document.getElementById('poolBank').value = name;
+  document.getElementById('bankList').classList.remove('open');
+  recalc();
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ac-wrap')) document.getElementById('bankList').classList.remove('open');
+});
+
+// ── CURRENCY AUTOCOMPLETE in entity rows ──
+function makeCurrencySelect(selected) {
+  return `<select class="et-inp" style="min-width:90px;font-family:var(--mono)" onchange="updateEntityField(this)">
+    ${CURRENCIES.map(c => `<option value="${c.code}" ${c.code===selected?'selected':''}>${c.code} — ${c.name}</option>`).join('')}
+  </select>`;
+}
+
+// ── FLAGS / COUNTRIES ──
+const FLAGS={DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸',RO:'🇷🇴',SG:'🇸🇬',HK:'🇭🇰',NO:'🇳🇴',DK:'🇩🇰'};
+const COUNTRIES = Object.entries(FLAGS).map(([k,v])=>({code:k,flag:v}));
+
+const PRESETS={
+  eur:{debit:4.15,credit:2.40,poolDebit:2.65,poolCredit:3.50},
+  czk:{debit:5.50,credit:2.80,poolDebit:3.20,poolCredit:4.00},
+  usd:{debit:6.50,credit:3.80,poolDebit:4.50,poolCredit:5.20},
+  gbp:{debit:5.75,credit:3.20,poolDebit:4.00,poolCredit:4.80},
+  chf:{debit:2.20,credit:0.80,poolDebit:1.00,poolCredit:1.30},
+};
+const TEMPLATES={
+  western:[
+    {name:'Germany GmbH',  country:'DE',cc:'EUR',balance:4200000,accounts:3},
+    {name:'France SAS',    country:'FR',cc:'EUR',balance:3800000,accounts:2},
+    {name:'UK Ltd',        country:'GB',cc:'GBP',balance:2100000,accounts:2},
+    {name:'Netherlands BV',country:'NL',cc:'EUR',balance:1900000,accounts:1},
+    {name:'Switzerland AG',country:'CH',cc:'CHF',balance:-400000,accounts:1},
+    {name:'Austria GmbH',  country:'AT',cc:'EUR',balance:800000, accounts:1},
+  ],
+  cee:[
+    {name:'HoldCo Prague', country:'CZ',cc:'CZK',balance:2500000,accounts:2},
+    {name:'OpCo Slovakia', country:'SK',cc:'EUR',balance:-450000, accounts:1},
+    {name:'Sales Poland',  country:'PL',cc:'PLN',balance:800000,  accounts:1},
+    {name:'Logistics HU',  country:'HU',cc:'HUF',balance:-300000, accounts:1},
+    {name:'Services AT',   country:'AT',cc:'EUR',balance:600000,  accounts:1},
+  ],
+};
+
+let currency='EUR';
+let entities=[];
+
+function g(id){return document.getElementById(id)}
+function setPreset(k){const p=PRESETS[k];g('debitRate').value=p.debit;g('creditRate').value=p.credit;g('poolDebit').value=p.poolDebit;g('poolCredit').value=p.poolCredit;recalc()}
+function setCurrency(cc,btn){currency=cc;document.querySelectorAll('.cc-pill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');recalc()}
+function loadTemplate(k){entities=TEMPLATES[k].map(e=>({...e}));renderEntities();recalc()}
+function addEntity(){entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1});renderEntities();recalc()}
+function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
+
+function updateEntityField(el) {
+  const row = el.closest('tr');
+  const rows = Array.from(document.querySelectorAll('#entityBody tr'));
+  const i = rows.indexOf(row);
+  if (i < 0) return;
+  const cells = row.querySelectorAll('td');
+  entities[i].name     = cells[0].querySelector('input')?.value ?? entities[i].name;
+  entities[i].country  = cells[1].querySelector('select')?.value ?? entities[i].country;
+  entities[i].cc       = cells[2].querySelector('select')?.value ?? entities[i].cc;
+  const balInp = cells[3].querySelector('input');
+  if (balInp) { entities[i].balance = parseFloat(balInp.value)||0; }
+  const accInp = cells[4].querySelector('input');
+  if (accInp) { entities[i].accounts = parseInt(accInp.value)||1; }
+  recalc();
+}
+
+function renderEntities(){
+  g('entityBody').innerHTML = entities.map((e,i) => `
+    <tr>
+      <td><input class="et-inp" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()" style="text-align:left;min-width:130px"></td>
+      <td>
+        <select class="et-inp" onchange="entities[${i}].country=this.value;recalc()" style="text-align:left;min-width:80px">
+          ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select class="et-inp" style="min-width:100px;font-family:var(--mono);font-size:11px" onchange="entities[${i}].cc=this.value;recalc()">
+          ${CURRENCIES.map(c=>`<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="et-inp num ${e.balance>=0?'pos':'neg'}" type="number" value="${e.balance}" step="50000"
+        onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='et-inp num '+(entities[${i}].balance>=0?'pos':'neg');recalc()"
+        style="min-width:130px"></td>
+      <td><input class="et-inp num" type="number" value="${e.accounts}" min="1" max="20"
+        onchange="entities[${i}].accounts=parseInt(this.value)||1;recalc()" style="min-width:55px"></td>
+      <td><button class="del-btn" onclick="removeEntity(${i})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+// ── MODE TOGGLE ──
+function setMode(mode) {
+  g('modeManual').classList.toggle('on', mode==='manual');
+  g('modeAI').classList.toggle('on', mode==='ai');
+  g('aiSection').style.display = mode==='ai' ? 'block' : 'none';
+}
+
+// ── AI FILE UPLOAD ──
+function handleDrop(e) {
+  e.preventDefault();
+  g('uploadZone').classList.remove('drag');
+  processFiles(e.dataTransfer.files);
+}
+function handleFileSelect(files) { processFiles(files); }
+
+async function processFiles(files) {
+  if (!files.length) return;
+  g('aiProcessing').classList.add('show');
+  g('aiResult').classList.remove('show');
+
+  const statuses = ['Reading file structure…','Identifying entities…','Extracting balances…','Detecting currencies…','Finalising data…'];
+  let si = 0;
+  const ticker = setInterval(() => { if(si<statuses.length-1){g('aiStatus').textContent=statuses[++si];} }, 700);
+
+  try {
+    // Read file as base64
+    const file = files[0];
+    const base64 = await fileToBase64(file);
+    const isCSV = file.name.endsWith('.csv');
+
+    const prompt = isCSV
+      ? `This is a bank statement CSV. Extract: entity/company names, currencies, average daily balances (or closing balances), number of accounts. Return ONLY valid JSON array: [{"name":"...","country":"XX","cc":"XXX","balance":number,"accounts":number}]. Country = 2-letter ISO. Balance positive=surplus negative=deficit in EUR equivalent. No explanation, just JSON.`
+      : `This is a bank statement document. Extract treasury data: entity/subsidiary names, account currencies (ISO codes), average daily balances or account totals (convert to EUR equivalent if needed), number of accounts per entity. Return ONLY a valid JSON array: [{"name":"string","country":"XX","cc":"XXX","balance":number,"accounts":number}]. country=2-letter ISO code. balance=positive for surplus, negative for deficit. No markdown, no explanation, just the JSON array.`;
+
+    const body = isCSV
+      ? { model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[{type:'text',text:base64},{type:'text',text:prompt}]}] }
+      : { model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]}] };
+
+    const res  = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data = await res.json();
+    const text = data.content?.find(b=>b.type==='text')?.text||'[]';
+    const clean= text.replace(/```[a-z]*\n?/g,'').replace(/```/g,'').trim();
+    const extracted = JSON.parse(clean);
+
+    clearInterval(ticker);
+    g('aiProcessing').classList.remove('show');
+
+    if (extracted.length) {
+      entities = extracted.map(e=>({
+        name: e.name||'Entity',
+        country: e.country||'DE',
+        cc: e.cc||'EUR',
+        balance: typeof e.balance==='number'?e.balance:0,
+        accounts: e.accounts||1,
+      }));
+      renderEntities();
+      recalc();
+      g('aiResultText').textContent = `${extracted.length} entities extracted from ${file.name}. Review and edit below.`;
+      g('aiResult').classList.add('show');
+    } else {
+      g('aiResultText').textContent = 'Could not extract structured data. Please enter manually.';
+      g('aiResult').classList.add('show');
+    }
+  } catch(err) {
+    clearInterval(ticker);
+    g('aiProcessing').classList.remove('show');
+    g('aiResultText').textContent = 'Extraction failed. Please enter data manually.';
+    g('aiResult').classList.add('show');
+    console.error(err);
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ── CALCULATION ──
+function recalc(){
+  const dr  = parseFloat(g('debitRate').value)/100  || 0.055;
+  const cr  = parseFloat(g('creditRate').value)/100 || 0.028;
+  const pdr = parseFloat(g('poolDebit').value)/100  || 0.032;
+  const pcr = parseFloat(g('poolCredit').value)/100 || 0.040;
+  const impl= parseFloat(g('implCost').value)        || 150000;
+  const fees= parseFloat(g('bankFees').value)        || 30000;
+  const adm = parseFloat(g('adminCost').value)       || 40000;
+  const fxv = parseFloat(g('fxVolume').value)        || 500;
+
+  let surplus=0, deficit=0, intCostBef=0, intIncBef=0, intCostAft=0, intIncAft=0;
+  entities.forEach(e=>{
+    const b=e.balance;
+    if(b>0){surplus+=b;intIncBef+=b*cr;intIncAft+=b*pcr}
+    else if(b<0){deficit+=Math.abs(b);intCostBef+=Math.abs(b)*dr;intCostAft+=Math.abs(b)*pdr}
+  });
+
+  const netting     = Math.min(surplus,deficit);
+  const nettingEff  = (surplus+deficit)>0 ? netting/Math.max(surplus,deficit)*100 : 0;
+  const nettingSave = netting*(dr-pdr)*0.85;
+  const interestSaving = (intCostBef-intCostAft)+(intIncAft-intIncBef)+nettingSave;
+  const fxSaving    = fxv*1e6*0.0008;
+  const opSaving    = fxSaving+fxv*1e6*0.0003;
+  const annualCosts = fees+adm;
+  const netBenefit  = interestSaving+opSaving-annualCosts;
+  const poolBalance = entities.reduce((s,e)=>s+e.balance,0);
+  const paybackMo   = netBenefit>0 ? impl/netBenefit*12 : 999;
+  const groupName   = g('groupName').value || 'Sample Group';
+  const poolBank    = g('poolBank').value  || 'ING Bank';
+  const currencyVal = g('selectedCurrency')?.value || currency;
+
+  const checks=[groupName.length>2,entities.length>=2,surplus>0,deficit>0,dr>0];
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  if(g('progFill')) g('progFill').style.width=pct+'%';
+
+  try {
+    localStorage.setItem('cpm_sim', JSON.stringify({
+      groupName, poolBank, currency: currencyVal,
+      poolType: g('poolType').value,
+      totalEntities: entities.length,
+      totalAccounts: entities.reduce((s,e)=>s+e.accounts,0),
+      surplus, deficit, netting,
+      nettingEff: Math.round(nettingEff*10)/10,
+      interestSaving: Math.round(interestSaving),
+      opSaving: Math.round(opSaving),
+      netBenefit: Math.round(netBenefit),
+      poolBalance: Math.round(poolBalance),
+      paybackMo: Math.round(paybackMo*10)/10,
+      debitRate:dr, creditRate:cr, poolDebit:pdr, poolCredit:pcr,
+      implCost:impl, bankFees:fees, adminCost:adm, fxVolume:fxv,
+      entities: entities.map(e=>({...e})),
+      nettingPct: Math.round(nettingEff),
+      spreadBps: Math.round((pcr-pdr)*10000),
+      yieldSpread: ((pcr-cr)*100).toFixed(2),
+      intCostBef:Math.round(intCostBef), intIncBef:Math.round(intIncBef),
+      intCostAft:Math.round(intCostAft), intIncAft:Math.round(intIncAft),
+      nettingSave:Math.round(nettingSave), fxSaving:Math.round(fxSaving),
+      annualCosts, ts:Date.now(),
+    }));
+  } catch(e){}
+}
+
+function viewReport(){ recalc(); window.location.href='/dashboard-preview.html'; }
+
+// Init
+g('poolBankInput').value = 'ING Bank';
+loadTemplate('western');
+g('groupName').value = 'Acme Manufacturing Group';
+recalc();
+</script>
+</body>
+</html>

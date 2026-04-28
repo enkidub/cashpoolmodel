@@ -23,10 +23,20 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: #f8fafc; }
   :root { --indigo: #4f46e5; --indigo-h: #4338ca; --slate-bar: #e2e8f0; }
-
-  /* Tooltip helpers */
   .bar-group:hover .tooltip { display: block; }
   .tooltip { display: none; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  @media print {
+    body { background: white; }
+    aside { display: none !important; }
+    nav { display: none !important; }
+    button { display: none !important; }
+    [data-print-hide] { display: none !important; }
+    #root > div { min-height: auto; }
+    .bg-white { break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
@@ -53,6 +63,7 @@ const PATHS = {
   check:    <polyline points="20 6 9 17 4 12"/>,
   file:     <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></>,
   star:     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>,
+  robot:    <><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><circle cx="8" cy="15" r="1" fill="currentColor"/><circle cx="16" cy="15" r="1" fill="currentColor"/><line x1="9" y1="19" x2="9" y2="21"/><line x1="15" y1="19" x2="15" y2="21"/></>,
 };
 
 const Ico = ({ name, size = 15, color = 'currentColor' }) => (
@@ -87,12 +98,13 @@ const NAV = [
   { id:'pnl',         label:'P&L & Savings',       icon:'trending' },
   { id:'sensitivity', label:'Sensitivity Matrix',  icon:'grid'     },
   { id:'export',      label:'Export / RFP Data',   icon:'download' },
+  { id:'analysis',    label:'AI Scenarios',        icon:'robot'    },
 ];
 
 const KPIS = [
   { label:'Net Interest Savings', value:'€842k',  badge:'↑ 18.3%', sub:'vs. standalone arrangement',  ring:null },
   { label:'Netting Efficiency',   value:'73%',    badge:'↑ 12pp',  sub:'above sector benchmark',       ring:73   },
-  { label:'Freed-up Liquidity',   value:'€1.2M',  badge:'Released',sub:'from idle entity buffers',     ring:null },
+  { label:'Operational Savings',  value:'€230k',  badge:'Additional',sub:'FX, facility fees, accounts', ring:null },
   { label:'Avg. Yield Spread',    value:'+1.2%',  badge:'+120 bp', sub:'over pool benchmark rate',     ring:null },
 ];
 
@@ -304,14 +316,21 @@ function BarChart() {
 
 // ─── Table ────────────────────────────────────────────────────────────────
 
-function SubsidiaryTable() {
-  const maxPct = Math.max(...SUBS.map(s => s.pct));
+function SubsidiaryTable({ entities: ents }) {
+  const subs = ents ? ents.map(e => ({
+    name: e.name,
+    cc: e.cc,
+    balance: e.balance,
+    savings: e.annual || '—',
+    pct: 0,
+  })) : SUBS;
+  const maxPct = Math.max(...subs.map((s,i) => i===0?25.9:s.pct||25.9/(i+1)));
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <div>
           <div className="font-semibold text-slate-800" style={{ fontSize:13 }}>Top Contributing Subsidiaries</div>
-          <div className="text-slate-400" style={{ fontSize:11, marginTop:2 }}>Ranked by projected annual savings · 6 of 8 entities shown</div>
+          <div className="text-slate-400" style={{ fontSize:11, marginTop:2 }}>Ranked by projected annual savings · {subs.length} entities shown</div>
         </div>
         <button className="text-indigo-600 font-medium" style={{ fontSize:11, display:'flex', alignItems:'center', gap:4, background:'none', border:'none', cursor:'pointer' }}>
           View all <Ico name="chevron" size={11} color="#4f46e5"/>
@@ -326,10 +345,10 @@ function SubsidiaryTable() {
         ))}
       </div>
 
-      {SUBS.map((s, i) => (
+      {subs.map((s, i) => (
         <div key={i}
           style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'13px 24px',
-            borderBottom: i < SUBS.length-1 ? '1px solid #f8fafc' : 'none',
+            borderBottom: i < subs.length-1 ? '1px solid #f8fafc' : 'none',
             alignItems:'center', transition:'background 0.1s' }}
           onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
           onMouseLeave={e => e.currentTarget.style.background='transparent'}>
@@ -383,15 +402,15 @@ function SubsidiaryTable() {
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────
 
-function Sidebar({ active, onNav }) {
+function Sidebar({ active, onNav, groupName, totalEnt, ctaVisible }) {
   return (
-    <aside style={{ width:256, background:'#fff', borderRight:'1px solid #e2e8f0',
-      display:'flex', flexDirection:'column', flexShrink:0 }}>
+    <aside style={{ width:240, background:'#fff', borderRight:'1px solid #e2e8f0',
+      display:'flex', flexDirection:'column', flexShrink:0, position:'sticky', top:0, height:'100vh', overflowY:'auto' }}>
 
       {/* Logo */}
-      <div style={{ padding:'20px 20px 16px', borderBottom:'1px solid #f1f5f9' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <div style={{ width:32, height:32, borderRadius:8, background:'#0f172a',
+      <div style={{ padding:'18px 16px 14px', borderBottom:'1px solid #f1f5f9' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:9 }}>
+          <div style={{ width:30, height:30, borderRadius:7, background:'#0f172a',
             display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
@@ -401,7 +420,7 @@ function Sidebar({ active, onNav }) {
             </svg>
           </div>
           <div>
-            <div style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:16, fontWeight:600, color:'#0f172a', lineHeight:1 }}>
+            <div style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:15, fontWeight:600, color:'#0f172a', lineHeight:1 }}>
               CashPoolModel
             </div>
             <div style={{ fontSize:9, color:'#94a3b8', marginTop:3, letterSpacing:'0.04em' }}>
@@ -412,18 +431,18 @@ function Sidebar({ active, onNav }) {
       </div>
 
       {/* Report meta */}
-      <div style={{ margin:'12px 12px 4px', borderRadius:10, background:'#f8fafc', border:'1px solid #e2e8f0', padding:'10px 12px' }}>
+      <div style={{ margin:'10px 10px 4px', borderRadius:8, background:'#f8fafc', border:'1px solid #e2e8f0', padding:'9px 11px' }}>
         <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:4 }}>
           Active Simulation
         </div>
-        <div style={{ fontSize:12, fontWeight:600, color:'#1e293b' }}>Acme Manufacturing Group</div>
-        <div style={{ fontSize:10, color:'#94a3b8', marginTop:3 }}>8 entities · 6 currencies · Apr 2025</div>
+        <div style={{ fontSize:12, fontWeight:600, color:'#1e293b', marginBottom:2 }}>{groupName}</div>
+        <div style={{ fontSize:10, color:'#94a3b8' }}>{totalEnt} entities · Apr 2025</div>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex:1, padding:'8px 12px', display:'flex', flexDirection:'column', gap:2 }}>
+      <nav style={{ flex:1, padding:'6px 10px', display:'flex', flexDirection:'column', gap:2 }}>
         <div style={{ fontSize:9, fontWeight:700, color:'#cbd5e1', textTransform:'uppercase',
-          letterSpacing:'0.1em', padding:'8px 12px 4px' }}>
+          letterSpacing:'0.1em', padding:'8px 10px 4px' }}>
           Report sections
         </div>
         {NAV.map(item => {
@@ -432,7 +451,7 @@ function Sidebar({ active, onNav }) {
             <button key={item.id} onClick={() => onNav(item.id)}
               style={{
                 width:'100%', display:'flex', alignItems:'center', gap:10,
-                padding:'8px 12px', borderRadius:8, border:'none', cursor:'pointer', textAlign:'left',
+                padding:'8px 10px', borderRadius:7, border:'none', cursor:'pointer', textAlign:'left',
                 background: isActive ? '#f1f5f9' : 'transparent',
                 color: isActive ? '#0f172a' : '#64748b',
                 transition:'all 0.1s',
@@ -442,27 +461,31 @@ function Sidebar({ active, onNav }) {
               onMouseLeave={e => { if(!isActive) { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#64748b'; }}}>
               <Ico name={item.icon} size={13} color={isActive ? '#0f172a' : '#94a3b8'} />
               <span style={{ fontSize:12, fontWeight: isActive ? 600 : 500, flex:1 }}>{item.label}</span>
-              {isActive && <div style={{ width:6, height:6, borderRadius:'50%', background:'#4f46e5' }} />}
+              {isActive && <div style={{ width:6, height:6, borderRadius:'50%', background:'#0b1929' }} />}
             </button>
           );
         })}
       </nav>
 
-      {/* CTA */}
-      <div style={{ padding:'0 12px 16px' }}>
-        <div style={{ borderRadius:12, border:'1px solid #e0e7ff', background:'#eef2ff', padding:'14px 16px' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6 }}>
-            <Ico name="star" size={11} color="#6366f1"/>
-            <span style={{ fontSize:11, fontWeight:600, color:'#4338ca' }}>Expert Advisory</span>
-          </div>
-          <p style={{ fontSize:10, color:'#6366f1', lineHeight:1.55, marginBottom:12, fontWeight:300 }}>
-            Discuss this simulation with a senior treasury practitioner before your bank meeting.
+      {/* CTA — navy card, fades in after 45s or 2nd tab */}
+      <div style={{ padding:'0 10px 14px',
+        opacity: ctaVisible ? 1 : 0,
+        transform: ctaVisible ? 'translateY(0)' : 'translateY(8px)',
+        transition: 'opacity .6s ease, transform .6s ease',
+        pointerEvents: ctaVisible ? 'all' : 'none' }}>
+        <div style={{ borderRadius:10, background:'#0b1929', padding:'14px 16px' }}>
+          <div style={{ fontSize:10, fontWeight:700, color:'#9a6e10', letterSpacing:'.5px',
+            textTransform:'uppercase', marginBottom:6 }}>Advisory Session</div>
+          <p style={{ fontSize:11, color:'rgba(255,255,255,.55)', lineHeight:1.55, marginBottom:12, fontWeight:300 }}>
+            Review this simulation with an independent treasury practitioner before your bank meeting.
           </p>
-          <button style={{ width:'100%', fontSize:11, fontWeight:600, background:'#4f46e5', color:'#fff',
-            borderRadius:8, padding:'8px', border:'none', cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
-            onMouseEnter={e => e.currentTarget.style.background='#4338ca'}
-            onMouseLeave={e => e.currentTarget.style.background='#4f46e5'}>
-            Book Strategy Call →
+          <button style={{ width:'100%', fontSize:11, fontWeight:600, background:'#9a6e10', color:'#fff',
+            borderRadius:6, padding:'8px', border:'none', cursor:'pointer', fontFamily:'DM Sans, sans-serif',
+            transition:'background .14s' }}
+            onClick={() => window.location.href='/contact.html'}
+            onMouseEnter={e => e.currentTarget.style.background='#7d5808'}
+            onMouseLeave={e => e.currentTarget.style.background='#9a6e10'}>
+            Book Advisory Session →
           </button>
         </div>
       </div>
@@ -470,9 +493,588 @@ function Sidebar({ active, onNav }) {
   );
 }
 
+// ─── Section titles data ──────────────────────────────────────────────────
+const SECTION_TITLES = {
+  summary:     'Executive Summary',
+  structure:   'Pool Structure',
+  pnl:         'P&L & Savings',
+  sensitivity: 'Sensitivity Matrix',
+  export:      'Export / RFP Data',
+  analysis:    'AI Scenarios',
+};
+
+// ─── Pool Structure data ─────────────────────────────────────────────────
+const ENTITIES = [
+  { name:'Acme Germany GmbH',   flag:'🇩🇪', domicile:'DE', cc:'EUR', balance:'+€4.20M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€168k' },
+  { name:'Acme France SAS',     flag:'🇫🇷', domicile:'FR', cc:'EUR', balance:'+€3.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€152k' },
+  { name:'Acme UK Ltd',         flag:'🇬🇧', domicile:'GB', cc:'GBP', balance:'+£2.10M', surplus:true,  sweep:'17:30 BST', resident:false, interestRate:'4.00%', annual:'+€84k'  },
+  { name:'Acme Netherlands BV', flag:'🇳🇱', domicile:'NL', cc:'EUR', balance:'+€1.90M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€76k'  },
+  { name:'Acme Switzerland AG', flag:'🇨🇭', domicile:'CH', cc:'CHF', balance:'−CHF0.4M',surplus:false, sweep:'17:00 CET', resident:false, interestRate:'3.20%', annual:'−€13k'  },
+  { name:'Acme Austria GmbH',   flag:'🇦🇹', domicile:'AT', cc:'EUR', balance:'+€0.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€32k'  },
+];
+
+// ─── P&L data ─────────────────────────────────────────────────────────────
+const PNL_ROWS = [
+  { label:'Interest Income',            standalone:'€42,000',  pooled:'€158,000', delta:'+€116,000', pct:'+276%',  pos:true  },
+  { label:'Interest Expense',           standalone:'−€85,000', pooled:'−€12,000', delta:'+€73,000',  pct:'−85.9%', pos:true  },
+  { label:'Netting Offset Saving',      standalone:'—',        pooled:'+€430,000',delta:'+€430,000', pct:'New',    pos:true  },
+  { label:'WHT Leakage',                standalone:'—',        pooled:'€0.00',    delta:'Optimised', pct:'—',      pos:true, zero:true },
+  { label:'FX Conversion Saving',       standalone:'—',        pooled:'+€98,000', delta:'+€98,000',  pct:'New',    pos:true  },
+  { label:'Facility Fee Reduction',     standalone:'—',        pooled:'+€75,000', delta:'+€75,000',  pct:'New',    pos:true  },
+  { label:'Pool Operating Costs',       standalone:'—',        pooled:'−€140,000',delta:'−€140,000', pct:'New',    pos:false },
+];
+
+// ─── Sensitivity data — consistent with €842k base ────────────────────────
+const RATE_SHIFTS  = ['−1.0%','−0.5%','Base','＋0.5%','＋1.0%'];
+const BAL_SHIFTS   = ['+20%','+10%','Base','−10%','−20%'];
+const SENS_VALS = [
+  [1010,1140,1260,1390,1510],
+  [ 890,1010,1120,1230,1350],
+  [ 630, 730, 842, 960,1070],
+  [ 510, 600, 700, 800, 900],
+  [ 390, 470, 560, 650, 740],
+];
+function sensColor(v) {
+  if (v >= 2000) return { bg:'#047857', fg:'#fff' };
+  if (v >= 1600) return { bg:'#059669', fg:'#fff' };
+  if (v >= 1300) return { bg:'#10b981', fg:'#fff' };
+  if (v >= 1100) return { bg:'#34d399', fg:'#065f46' };
+  if (v >= 900)  return { bg:'#6ee7b7', fg:'#065f46' };
+  if (v >= 700)  return { bg:'#a7f3d0', fg:'#065f46' };
+  return               { bg:'#ecfdf5', fg:'#065f46' };
+}
+
+// ─── Live rates state ─────────────────────────────────────────────────────
+const RATES = [
+  { name:'€STR',        val:'3.91%', chg:'−0.02%', pos:false, src:'ECB' },
+  { name:'SOFR',        val:'5.32%', chg:'+0.01%', pos:true,  src:'NY Fed' },
+  { name:'SONIA',       val:'5.19%', chg:'0.00%',  pos:null,  src:'Bank of England' },
+  { name:'PRIBOR 3M',   val:'3.74%', chg:'−0.05%', pos:false, src:'ČNB' },
+  { name:'SARON',       val:'1.48%', chg:'+0.02%', pos:true,  src:'SIX Swiss Exchange' },
+];
+
+function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
+  const entityList = ents || ENTITIES;
+  const surplusTotal = entityList.filter(e=>e.surplus).reduce((s,e)=>{
+    const n=parseFloat(e.balance.replace(/[^0-9.-]/g,''));return s+(n||0);},0);
+  const deficitTotal = entityList.filter(e=>!e.surplus).reduce((s,e)=>{
+    const n=parseFloat(e.balance.replace(/[^0-9.-]/g,''));return s+(n||0);},0);
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+          <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
+            Pool Hierarchy — Daily Sweep Structure
+          </div>
+          <div style={{ display:'flex', gap:6 }}>
+            {[
+              { label:'ZBA Efficiency', val: nettingEff||'73%' },
+              { label:'Net Balance',    val: poolBalance||'+€12.3M' },
+            ].map(m => (
+              <div key={m.label} style={{ display:'flex', alignItems:'center', gap:5,
+                background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px' }}>
+                <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>{m.label}</span>
+                <span style={{ fontSize:11, fontWeight:700, color:'#1e293b', fontFamily:'DM Mono,monospace' }}>{m.val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Master node */}
+        <div style={{ display:'flex', justifyContent:'center', marginBottom:0 }}>
+          <div style={{ borderRadius:8, padding:'11px 20px', minWidth:260, background:'#fff',
+            border:'2px solid #1e3a5f', position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background:'#1e3a5f' }}/>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8, marginTop:2 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                <span style={{ fontSize:15 }}>🏛</span>
+                <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account (EUR)</span>
+              </div>
+              <div style={{ fontSize:9, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff', padding:'2px 7px', borderRadius:99 }}>
+                ⬆↓ Pool Header
+              </div>
+            </div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700, color:'#059669', letterSpacing:'-.3px', marginBottom:6 }}>
+              {poolBalance||'+€12.3M'}
+            </div>
+            <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+              <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em',
+                background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>EUR</span>
+              <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe',
+                padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
+              <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:9, fontWeight:600, color:'#059669' }}>
+                <div style={{ width:5,height:5,borderRadius:'50%',background:'#059669', animation:'pulse 2s infinite' }}/>
+                ZBA · Auto-sweep
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Connector */}
+        <div style={{ display:'flex', justifyContent:'center', position:'relative', height:36 }}>
+          <div style={{ width:2, height:'100%',
+            background:'repeating-linear-gradient(to bottom,#cbd5e1 0,#cbd5e1 5px,transparent 5px,transparent 10px)' }}/>
+        </div>
+
+        {/* Entity cards */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:14 }}>
+          {entityList.map((e,i) => {
+            const accentColor = e.surplus ? '#059669' : '#dc2626';
+            const accentBg    = e.surplus ? '#ecfdf5' : '#fee2e2';
+            const accentBdr   = e.surplus ? '#a7f3d0' : '#fca5a5';
+            const isNonEUR    = e.cc !== 'EUR';
+            return (
+              <div key={i} style={{ borderRadius:8, padding:'11px 13px', background:'#fff',
+                border:`1.5px solid ${e.surplus ? '#d1fae5' : '#fee2e2'}`,
+                position:'relative', overflow:'hidden', transition:'transform .15s', cursor:'default' }}
+                onMouseEnter={ev => ev.currentTarget.style.transform='translateY(-2px)'}
+                onMouseLeave={ev => ev.currentTarget.style.transform=''}>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5,
+                  background: e.surplus ? '#059669' : '#dc2626' }}/>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8, marginTop:2 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                    <span style={{ fontSize:15 }}>{e.flag}</span>
+                    <span style={{ fontSize:11, fontWeight:600, color:'#1e293b', lineHeight:1.2 }}>{e.name}</span>
+                  </div>
+                  <div style={{ fontSize:9, fontWeight:700, color: accentColor, background: accentBg,
+                    padding:'2px 7px', borderRadius:99, flexShrink:0 }}>
+                    {e.surplus ? '↑ Surplus' : '↓ Deficit'}
+                  </div>
+                </div>
+                <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700,
+                  color: accentColor, letterSpacing:'-.3px', marginBottom:6 }}>
+                  {e.balance}
+                </div>
+                <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                  <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em',
+                    background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>
+                    {e.cc}
+                  </span>
+                  {isNonEUR && (
+                    <span style={{ fontSize:9, fontWeight:700, color:'#92400e',
+                      background:'#fef3c7', border:'1px solid #fde68a', padding:'1px 5px', borderRadius:3 }}>
+                      FX
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
+          display:'flex', gap:24, justifyContent:'center', flexWrap:'wrap' }}>
+          {[
+            { col:'#059669', label:'Surplus — sweeps to master daily' },
+            { col:'#dc2626', label:'Deficit — funded from master daily' },
+          ].map(l => (
+            <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+              <div style={{ width:20, height:6, borderRadius:3, background:l.col, flexShrink:0 }}/>
+              {l.label}
+            </div>
+          ))}
+          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+            <span style={{ background:'#fef3c7', color:'#92400e', fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:3 }}>FX</span>
+            Non-base currency · FX conversion on sweep
+          </div>
+        </div>
+      </div>
+
+      {/* Intercompany matrix */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9' }}>
+          <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Intercompany Funding Matrix</div>
+          <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>Net daily intercompany positions via master account · EUR equivalent</div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
+          {['Entity','Position','Pool Rate p.a.','Est. Annual Interest'].map(h => (
+            <span key={h} style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em' }}>{h}</span>
+          ))}
+        </div>
+        {entityList.map((e,i) => (
+          <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr', padding:'12px 24px',
+            borderBottom: i<entityList.length-1 ? '1px solid #f8fafc' : 'none', alignItems:'center' }}
+            onMouseEnter={ev => ev.currentTarget.style.background='#f8fafc'}
+            onMouseLeave={ev => ev.currentTarget.style.background='transparent'}>
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+              <span style={{ fontSize:16 }}>{e.flag}</span>
+              <div>
+                <div style={{ fontSize:12, fontWeight:500, color:'#334155' }}>{e.name}</div>
+                <div style={{ fontSize:10, color:'#94a3b8', marginTop:1 }}>
+                  {e.cc}{e.cc !== 'EUR' ? ' → EUR (FX)' : ''} ·
+                  <span style={{ color: e.resident?'#2563eb':'#7c3aed', marginLeft:4, fontWeight:600 }}>
+                    {e.resident ? 'Resident' : 'Non-resident'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, fontWeight:700,
+              color: e.surplus ? '#059669' : '#dc2626' }}>
+              {e.balance}
+            </div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#475569' }}>
+              {e.interestRate}
+            </div>
+            <div style={{ fontFamily:'Cormorant Garamond,serif', fontSize:16, fontWeight:600,
+              color: e.surplus ? '#059669' : '#475569' }}>
+              {e.annual}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── P&L Section ─────────────────────────────────────────────────────────
+function PnL() {
+  const [hov, setHov] = React.useState(null);
+  const PL_CH = 160, PL_MAX = 200;
+  const ph = v => `${(v/PL_MAX)*PL_CH}px`;
+  const bars = [
+    { label:'Interest Expense', before:85,  after:12  },
+    { label:'Interest Income',  before:42,  after:158 },
+    { label:'FX Saving',        before:0,   after:98  },
+    { label:'Facility Fees',    before:0,   after:75  },
+  ];
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      {/* Summary KPIs */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
+        {[
+          { label:'Total Interest Saving',   value:'€842k',  badge:'↑ 18.3%', sub:'vs standalone',          ring:null },
+          { label:'Netting Offset',          value:'€430k',  badge:'New',    sub:'internal funding offset', ring:null },
+          { label:'WHT Leakage',             value:'€0.00',  badge:'✓ Clear',sub:'fully optimised',         ring:null },
+          { label:'Operational Savings',     value:'€230k',  badge:'Additional',  sub:'FX, facility, accounts', ring:null },
+        ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
+      </div>
+
+      {/* P&L Table */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div>
+            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Before vs. After Pooling — Detailed P&L</div>
+            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>12-month horizon · EUR · base scenario</div>
+          </div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
+          {['Line Item','Standalone','Pooled','Delta','% Change'].map((h,i) => (
+            <span key={h} style={{ fontSize:10, fontWeight:700, color: i===2?'#4f46e5':i===3?'#059669':'#94a3b8',
+              textTransform:'uppercase', letterSpacing:'0.07em', textAlign: i>0?'right':'left' }}>{h}</span>
+          ))}
+        </div>
+        {PNL_ROWS.map((r,i) => (
+          <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',
+            padding:'12px 24px', borderBottom: i<PNL_ROWS.length-1?'1px solid #f8fafc':'none', alignItems:'center' }}
+            onMouseEnter={ev => ev.currentTarget.style.background='#f8fafc'}
+            onMouseLeave={ev => ev.currentTarget.style.background='transparent'}>
+            <div style={{ fontSize:12, color:'#334155', fontWeight: r.label.includes('Net')?600:400 }}>{r.label}</div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#94a3b8', textAlign:'right' }}>{r.standalone}</div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#4f46e5', fontWeight:600, textAlign:'right' }}>{r.pooled}</div>
+            <div style={{ fontFamily: r.zero?'DM Sans,sans-serif':'DM Mono,monospace', fontSize: r.zero?11:12,
+              fontWeight:700, color: r.zero?'#059669': r.pos?'#059669':'#dc2626', textAlign:'right' }}>{r.delta}</div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color: r.pos?'#059669':'#dc2626', textAlign:'right' }}>{r.pct}</div>
+          </div>
+        ))}
+        {/* Total row */}
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',
+          padding:'14px 24px', background:'#0f172a', alignItems:'center' }}>
+          <div style={{ fontSize:12, fontWeight:700, color:'#fff' }}>NET ANNUAL BENEFIT</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'rgba(255,255,255,.4)', textAlign:'right' }}>−€43,000</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#818cf8', fontWeight:700, textAlign:'right' }}>+€885,000</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, color:'#4ade80', fontWeight:700, textAlign:'right' }}>+€842k</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color:'#4ade80', textAlign:'right' }}>+1,958%</div>
+        </div>
+      </div>
+
+      {/* Bar chart */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:24 }}>
+        <div style={{ fontSize:13, fontWeight:600, color:'#1e293b', marginBottom:4 }}>Cost of Debt — Standalone vs. Pooled</div>
+        <div style={{ fontSize:11, color:'#94a3b8', marginBottom:20 }}>EUR thousands · annual · key line items</div>
+        <div style={{ display:'flex', alignItems:'flex-end', gap:32, height:PL_CH, paddingLeft:8 }}>
+          {bars.map((b,gi) => (
+            <div key={gi} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:0, flex:1 }}>
+              <div style={{ display:'flex', alignItems:'flex-end', gap:6, height:PL_CH }}>
+                {b.before > 0 && (
+                  <div onMouseEnter={() => setHov({gi,w:'before'})} onMouseLeave={() => setHov(null)}
+                    style={{ position:'relative', width:28, borderRadius:'3px 3px 0 0',
+                      height: ph(b.before), background:'#e2e8f0', cursor:'default',
+                      opacity: hov&&(hov.gi!==gi||hov.w!=='before')?0.4:1, transition:'opacity .1s' }}>
+                    {hov?.gi===gi&&hov?.w==='before'&&(
+                      <div style={{ position:'absolute', bottom:`calc(${ph(b.before)} + 6px)`, left:'50%', transform:'translateX(-50%)',
+                        background:'#1e293b', color:'#fff', fontSize:10, padding:'3px 7px', borderRadius:4,
+                        fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.before}k</div>
+                    )}
+                  </div>
+                )}
+                <div onMouseEnter={() => setHov({gi,w:'after'})} onMouseLeave={() => setHov(null)}
+                  style={{ position:'relative', width:28, borderRadius:'3px 3px 0 0',
+                    height: ph(Math.max(b.after,2)), background:'#4f46e5', cursor:'default',
+                    opacity: hov&&(hov.gi!==gi||hov.w!=='after')?0.4:1, transition:'opacity .1s' }}>
+                  {hov?.gi===gi&&hov?.w==='after'&&(
+                    <div style={{ position:'absolute', bottom:`calc(${ph(b.after)} + 6px)`, left:'50%', transform:'translateX(-50%)',
+                      background:'#4338ca', color:'#fff', fontSize:10, padding:'3px 7px', borderRadius:4,
+                      fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.after}k</div>
+                  )}
+                </div>
+              </div>
+              <div style={{ fontSize:10, color:'#94a3b8', marginTop:8, textAlign:'center', lineHeight:1.3 }}>{b.label}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display:'flex', gap:20, marginTop:16, justifyContent:'center' }}>
+          {[{bg:'#e2e8f0',label:'Standalone'},{bg:'#4f46e5',label:'Pooled'}].map(l => (
+            <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+              <div style={{ width:12,height:12,borderRadius:3,background:l.bg }}/>
+              {l.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Sensitivity Section ──────────────────────────────────────────────────
+function Sensitivity() {
+  const [hov, setHov] = React.useState(null);
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
+        {[
+          { label:'Base Case Saving',  value:'€842k',  badge:'12-month',      sub:'at current rates & balances',      ring:null },
+          { label:'Best Case',         value:'€1,510k', badge:'+79.3%',       sub:'+1.0% rates, +20% balance',        ring:null },
+          { label:'Worst Case',        value:'€390k',  badge:'Still positive', sub:'−1.0% rates, −20% balance',        ring:null },
+          { label:'Break-even',        value:'€140k',  badge:'Pool costs',    sub:'minimum to cover operating costs',  ring:null },
+        ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
+        <div style={{ fontSize:13, fontWeight:600, color:'#1e293b', marginBottom:4 }}>
+          Sensitivity Heatmap — Projected Annual Savings (EUR thousands)
+        </div>
+        <div style={{ fontSize:11, color:'#94a3b8', marginBottom:20 }}>
+          X-axis: interest rate shift from current level · Y-axis: total pool balance shift · Base case highlighted
+        </div>
+
+        <div style={{ overflowX:'auto' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse', fontFamily:'DM Mono,monospace' }}>
+            <thead>
+              <tr>
+                <th style={{ padding:'10px 14px', fontSize:10, fontWeight:700, color:'#94a3b8',
+                  textTransform:'uppercase', letterSpacing:'0.07em', textAlign:'left',
+                  background:'#f8fafc', border:'1px solid #e2e8f0', minWidth:120 }}>
+                  Balance ↓ / Rate →
+                </th>
+                {RATE_SHIFTS.map(r => (
+                  <th key={r} style={{ padding:'10px 14px', fontSize:11, fontWeight:700, color:'#475569',
+                    textAlign:'center', background:'#f8fafc', border:'1px solid #e2e8f0', minWidth:90 }}>
+                    {r}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {BAL_SHIFTS.map((b,ri) => (
+                <tr key={b}>
+                  <td style={{ padding:'10px 14px', fontSize:11, fontWeight:600, color:'#475569',
+                    background:'#f8fafc', border:'1px solid #e2e8f0' }}>{b}</td>
+                  {SENS_VALS[ri].map((v,ci) => {
+                    const { bg, fg } = sensColor(v);
+                    const isBase = ri===2 && ci===2;
+                    const isHov = hov?.r===ri && hov?.c===ci;
+                    return (
+                      <td key={ci}
+                        onMouseEnter={() => setHov({r:ri,c:ci})}
+                        onMouseLeave={() => setHov(null)}
+                        style={{
+                          padding:'12px 14px', textAlign:'center', fontSize:12, fontWeight:700,
+                          background: isHov ? '#0f172a' : bg,
+                          color: isHov ? '#fff' : fg,
+                          border: isBase ? '2px solid #0f172a' : '1px solid #e2e8f0',
+                          cursor:'default', transition:'all .1s'
+                        }}>
+                        €{v}k
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Legend */}
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginTop:16, justifyContent:'center' }}>
+          <span style={{ fontSize:11, color:'#94a3b8' }}>Lower</span>
+          {['#ecfdf5','#a7f3d0','#6ee7b7','#34d399','#10b981','#059669','#047857'].map(c => (
+            <div key={c} style={{ width:20, height:10, borderRadius:2, background:c }}/>
+          ))}
+          <span style={{ fontSize:11, color:'#94a3b8' }}>Higher</span>
+          <span style={{ fontSize:11, color:'#94a3b8', marginLeft:12 }}>· Base case outlined in navy</span>
+        </div>
+      </div>
+
+      {/* Key insight */}
+      <div style={{ background:'#ecfdf5', border:'1px solid #a7f3d0', borderRadius:12, padding:'16px 20px' }}>
+        <div style={{ fontSize:11, fontWeight:700, color:'#065f46', marginBottom:4 }}>Key Finding</div>
+        <div style={{ fontSize:13, color:'#065f46', lineHeight:1.6, fontWeight:300 }}>
+          The pool remains profitable across <strong>all 25 scenarios tested</strong>. Even in the worst case (rates −1.0%, balances −20%), the annual saving of <strong>€390k</strong> exceeds pool operating costs of €140k by a factor of 2.8×. The base case saving of <strong>€842k</strong> is consistent with the Executive Summary — the sensitivity matrix shows the range around this figure as rates and balances shift.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Export Section ───────────────────────────────────────────────────────
+function ExportSection() {
+  const [loaded, setLoaded] = React.useState(false);
+  const [rates, setRates] = React.useState([]);
+  const [syncTime, setSyncTime] = React.useState('');
+
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      setRates(RATES);
+      const now = new Date();
+      setSyncTime(`Last sync: ${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`);
+      setLoaded(true);
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
+  const RFP_ITEMS = [
+    'Transaction Volume Report',
+    'Intercompany Loan Matrix',
+    'KYC Entity Profiles',
+    'Account Structure Overview',
+    'Pricing Comparison Matrix (3 banks)',
+    'TP Documentation Summary',
+  ];
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      {/* Status KPIs */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
+        {[
+          { label:'Report Status',    value:'Complete',  badge:'✓ Ready',     sub:'all sections generated' },
+          { label:'Net Annual Saving',value:'€842k',     badge:'Base case',   sub:'interest + operational' },
+          { label:'Live Rate Feeds',  value:'5 Active',  badge:'↺ Live',      sub:'€STR, SOFR, SONIA, PRIBOR, SARON' },
+          { label:'PDF Pages',        value:'12 pages',  badge:'Board-ready', sub:'incl. executive summary' },
+        ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
+
+        {/* RFP Package */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>RFP Package</div>
+            <div style={{ fontSize:10, fontWeight:600, color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
+              Ready for Bank
+            </div>
+          </div>
+          {RFP_ITEMS.map((item, i) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+              padding:'11px 20px', borderBottom: i<RFP_ITEMS.length-1 ? '1px solid #f8fafc' : 'none' }}
+              onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
+              onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                <div style={{ width:22, height:22, borderRadius:5, background:'#f1f5f9', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  <Ico name="file" size={11} color="#64748b"/>
+                </div>
+                <span style={{ fontSize:12, color:'#334155' }}>{item}</span>
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
+                color:'#059669', background:'#ecfdf5', padding:'2px 9px', borderRadius:99 }}>
+                <Ico name="check" size={9} color="#059669"/> Ready
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Live Rates */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Live Market Rates</div>
+            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
+              color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
+              <div style={{ width:6,height:6,borderRadius:'50%',background:'#059669',animation:'pulse 2s infinite' }}/>
+              Live
+            </div>
+          </div>
+          <div style={{ padding:'12px 20px' }}>
+            {!loaded ? (
+              // Skeleton loader
+              [1,2,3,4,5].map(i => (
+                <div key={i} style={{ height:14, background:'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)',
+                  backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite',
+                  borderRadius:4, marginBottom:14 }}/>
+              ))
+            ) : (
+              rates.map((r,i) => (
+                <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                  paddingBottom: i<rates.length-1 ? 14 : 0, marginBottom: i<rates.length-1 ? 14 : 0,
+                  borderBottom: i<rates.length-1 ? '1px solid #f8fafc' : 'none' }}>
+                  <div>
+                    <div style={{ fontSize:12, fontWeight:600, color:'#334155' }}>{r.name}</div>
+                    <div style={{ fontSize:10, color:'#94a3b8' }}>{r.src}</div>
+                  </div>
+                  <div style={{ textAlign:'right' }}>
+                    <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700, color:'#0f172a' }}>{r.val}</div>
+                    <div style={{ fontSize:10, fontWeight:600, padding:'1px 6px', borderRadius:3,
+                      background: r.pos===true?'#ecfdf5':r.pos===false?'#fee2e2':'#f1f5f9',
+                      color: r.pos===true?'#059669':r.pos===false?'#dc2626':'#64748b' }}>
+                      {r.chg}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+            {loaded && <div style={{ fontSize:10, color:'#94a3b8', marginTop:12, fontFamily:'DM Mono,monospace' }}>{syncTime}</div>}
+          </div>
+        </div>
+      </div>
+
+      {/* Download CTA */}
+      <button style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'20px 24px', borderRadius:12, background:'#0f172a', border:'none', cursor:'pointer',
+        width:'100%', fontFamily:'DM Sans,sans-serif', transition:'background .14s' }}
+        onMouseEnter={e => e.currentTarget.style.background='#1e293b'}
+        onMouseLeave={e => e.currentTarget.style.background='#0f172a'}>
+        <div style={{ textAlign:'left' }}>
+          <div style={{ fontSize:15, fontWeight:700, color:'#fff', marginBottom:4 }}>
+            Download Board-Ready PDF Report
+          </div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,.45)' }}>
+            12 pages · Executive summary · Full P&L · Sensitivity matrix · Pool diagram · RFP package
+          </div>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
+          <div style={{ fontFamily:'Cormorant Garamond,serif', fontSize:22, fontWeight:700, color:'rgba(255,255,255,.7)' }}>
+            PDF
+          </div>
+          <Ico name="download" size={20} color="rgba(255,255,255,.8)"/>
+        </div>
+      </button>
+    </div>
+  );
+}
+
 // ─── Main Content ──────────────────────────────────────────────────────────
 
-function MainContent() {
+function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBenefit,
+  interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities, poolBank, fmtK, fmtM, sim }) {
+  const title = SECTION_TITLES[active] || 'Executive Summary';
+  const currencies = [...new Set((dynEntities||ENTITIES).map(e=>e.cc))];
+  const nettingLabel = nettingEff+'%';
+  const netLabel = fmtK ? fmtK(netBenefit) : '€842k';
+  const poolLabel = fmtM ? fmtM(poolBalance) : '+€12.3M';
+
   return (
     <div style={{ flex:1, overflowY:'auto', padding:32, display:'flex', flexDirection:'column', gap:20,
       fontFamily:'DM Sans, system-ui, sans-serif' }}>
@@ -486,7 +1088,7 @@ function MainContent() {
           </div>
           <h1 style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:30, fontWeight:600,
             color:'#0f172a', margin:0, lineHeight:1.1 }}>
-            Executive Summary
+            {title}
           </h1>
         </div>
 
@@ -499,13 +1101,15 @@ function MainContent() {
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:500,
             color:'#475569', background:'#fff', border:'1px solid #e2e8f0', padding:'7px 14px',
             borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
+            onClick={() => { navigator.clipboard.writeText(window.location.href); }}
             onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
             onMouseLeave={e => e.currentTarget.style.background='#fff'}>
-            <Ico name="file" size={13} color="#64748b"/> Share
+            <Ico name="file" size={13} color="#64748b"/> Copy link
           </button>
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600,
             color:'#fff', background:'#0f172a', border:'none', padding:'8px 16px',
             borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
+            onClick={() => window.print()}
             onMouseEnter={e => e.currentTarget.style.background='#1e293b'}
             onMouseLeave={e => e.currentTarget.style.background='#0f172a'}>
             <Ico name="download" size={13} color="white"/> Export to PDF
@@ -515,41 +1119,435 @@ function MainContent() {
 
       {/* Subheader */}
       <div style={{ display:'flex', alignItems:'center', gap:8, marginTop:-8 }}>
-        {['Acme Manufacturing Group','8 entities','6 currencies','ZBA structure'].map((t, i, arr) => (
-          <React.Fragment key={t}>
-            <span style={{ fontSize:12, color:'#64748b' }}>{t}</span>
-            {i < arr.length-1 && <span style={{ color:'#cbd5e1', fontSize:11 }}>·</span>}
-          </React.Fragment>
-        ))}
+        <span style={{ fontSize:12, color:'#64748b' }}>{groupName}</span>
+        <span style={{ color:'#cbd5e1', fontSize:11 }}>·</span>
+        <span style={{ fontSize:12, color:'#64748b' }}>{totalEnt} entities · {currencies.length} currencies</span>
         <span style={{ marginLeft:4, display:'flex', alignItems:'center', gap:4, fontSize:10, fontWeight:600,
           color:'#059669', background:'#ecfdf5', padding:'2px 8px', borderRadius:99 }}>
           <Ico name="check" size={9} color="#059669"/> Simulation complete
         </span>
       </div>
 
-      {/* KPI grid */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:16 }}>
-        {KPIS.map((k, i) => <KPICard key={i} {...k}/>)}
-      </div>
-
-      {/* Chart */}
-      <BarChart />
-
-      {/* Table */}
-      <SubsidiaryTable />
+      {/* Section content */}
+      {active === 'summary' && (
+        <>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:16 }}>
+            {(dynKPIS||KPIS).map((k, i) => <KPICard key={i} {...k}/>)}
+          </div>
+          <BarChart />
+          <SubsidiaryTable entities={dynEntities} />
+        </>
+      )}
+      {active === 'structure'   && <PoolStructure entities={dynEntities} poolBank={poolBank} poolBalance={poolLabel} nettingEff={nettingLabel} />}
+      {active === 'pnl'         && <PnL sim={sim} fmtK={fmtK} netBenefit={netBenefit} interestSave={interestSave} opSave={opSave} />}
+      {active === 'sensitivity' && <Sensitivity netBenefit={netBenefit} fmtK={fmtK} />}
+      {active === 'export'      && <ExportSection poolBank={poolBank} />}
+      {active === 'analysis'    && <Analysis sim={sim} fmtK={fmtK} netBenefit={netBenefit}
+        interestSave={interestSave} paybackMo={paybackMo} nettingEff={nettingEff} poolBank={poolBank} />}
 
     </div>
   );
+}
+
+// ─── AI Worker URL ────────────────────────────────────────────────────────
+const AI_WORKER = 'https://cpm-ai.kuba-houser.workers.dev';
+
+// ─── Analysis Section ─────────────────────────────────────────────────────
+function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, poolBank }) {
+  const [aiInput, setAiInput]     = React.useState('');
+  const [aiAnswer, setAiAnswer]   = React.useState(null);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const [listening, setListening] = React.useState(false);
+  const [tab, setTab]             = React.useState('rate');
+
+  const base = {
+    interest:  Math.round((interestSave || 842000) / 1000),
+    payback:   paybackMo || 8.4,
+    netting:   nettingEff || 73,
+    breakeven: 140,
+  };
+
+  const poolBankName = poolBank || 'ING Bank';
+  const debitRate    = sim?.debitRate  || 0.055;
+  const creditRate   = sim?.creditRate || 0.028;
+  const poolDebit    = sim?.poolDebit  || 0.032;
+  const poolCredit   = sim?.poolCredit || 0.040;
+  const surplus      = sim?.surplus    || 6200000;
+  const deficit      = sim?.deficit    || 2100000;
+  const implCost     = sim?.implCost   || 150000;
+  const annualCosts  = sim?.annualCosts|| 70000;
+
+  const ccy     = sim?.currency || 'EUR';
+  const rateRef = ccy==='USD'?'SOFR':ccy==='GBP'?'SONIA':ccy==='CHF'?'SARON':'€STR';
+  const rateBase= ccy==='USD'?5.32:ccy==='GBP'?5.19:ccy==='CHF'?1.48:3.91;
+
+  const [rateShift, setRateShift] = React.useState(0);
+  const [balShift,  setBalShift]  = React.useState(0);
+  const [entCount,  setEntCount]  = React.useState((sim?.entities||[]).length||6);
+
+  const SUGGESTED = [
+    `What if ${rateRef} drops by 100bp?`,
+    `Which entity contributes most?`,
+    `When do we break even?`,
+    `ZBA vs notional — which suits us?`,
+    `What if we add a new entity with €1M surplus?`,
+  ];
+
+  function computeWhatIf() {
+    let interest = base.interest;
+    if (tab==='rate') {
+      interest = Math.round(base.interest + rateShift * surplus/1e5 * 0.8 + rateShift * deficit/1e5 * 0.6);
+    } else if (tab==='balance') {
+      interest = Math.round(base.interest * (1 + balShift/100));
+    } else {
+      interest = Math.round(base.interest * Math.min(entCount / Math.max((sim?.entities||[]).length||6,1) * 0.85+0.15, 1.4));
+    }
+    const netBen = interest - Math.round(annualCosts/1000);
+    const pb = netBen>0 ? Math.round(implCost/1000/netBen*12*10)/10 : 999;
+    const above = interest - base.breakeven;
+    const verdict = interest > base.breakeven*4 ? 'GO' : interest > base.breakeven ? 'CONSIDER' : 'NO-GO';
+    return { interest, pb, above, verdict };
+  }
+  const wi = computeWhatIf();
+
+  async function runAnalysis(question) {
+    if (!question.trim()) return;
+    setAiLoading(true); setAiAnswer(null);
+    const context = `Group: ${sim?.groupName||'Sample Group'} | Bank: ${poolBankName} | Currency: ${ccy} | Entities: ${(sim?.entities||[]).map(e=>e.name).join(', ')||'6 entities'} | Pool balance: ${fmtK?fmtK(sim?.poolBalance||12300000):'+€12.3M'} | Interest saving: ${fmtK?fmtK(interestSave||842000):'€842k'} | Netting efficiency: ${nettingEff||73}% | Payback: ${paybackMo||8.4} months | ${rateRef}: ${rateBase}% | Pool debit: ${(poolDebit*100).toFixed(2)}% | Pool credit: ${(poolCredit*100).toFixed(2)}% | Bilateral debit: ${(debitRate*100).toFixed(2)}% | Bilateral credit: ${(creditRate*100).toFixed(2)}% | Implementation cost: €${Math.round(implCost/1000)}k | Annual pool costs: €${Math.round(annualCosts/1000)}k`;
+    try {
+      const res = await fetch(AI_WORKER, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ question, context }),
+      });
+      const data = await res.json();
+      setAiAnswer(data.answer || 'No response received.');
+    } catch(e) {
+      setAiAnswer('AI analysis unavailable. Please check your connection or contact info@cashpoolmodel.com.');
+    }
+    setAiLoading(false);
+  }
+
+  function startVoice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Voice input requires Chrome or Edge.'); return; }
+    const r = new SR(); r.lang='en-US'; r.interimResults=false;
+    r.onstart=()=>setListening(true); r.onend=()=>setListening(false); r.onerror=()=>setListening(false);
+    r.onresult=(e)=>{ const t=e.results[0][0].transcript; setAiInput(t); runAnalysis(t); };
+    r.start();
+  }
+
+  const whtExposure  = Math.round(deficit*0.015/1000);
+  const notionalSave = Math.round(base.interest*0.92);
+  const notionalNet  = notionalSave - whtExposure - Math.round(annualCosts/1000);
+  const zbaNet       = base.interest - Math.round(annualCosts/1000);
+
+  const cardStyle = { background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:'20px 24px', boxShadow:'0 1px 3px rgba(15,23,42,.06)' };
+  const labelStyle = { fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:8, display:'flex', alignItems:'center', gap:6 };
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      {/* ── AI ASK ── */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>
+          <Ico name="robot" size={13} color="#94a3b8"/>
+          AI Analysis
+        </div>
+
+        {/* Input row */}
+        <div style={{ display:'flex', gap:8, marginBottom:12 }}>
+          <input
+            value={aiInput}
+            onChange={e=>setAiInput(e.target.value)}
+            onKeyDown={e=>e.key==='Enter'&&runAnalysis(aiInput)}
+            placeholder={`Ask about your pool — e.g. "What if ${rateRef} drops by 100bp?"`}
+            style={{ flex:1, padding:'9px 13px', borderRadius:7, border:'1.5px solid #e2e8f0',
+              background:'#f8fafc', fontFamily:'DM Sans,sans-serif', fontSize:13, color:'#0f172a', outline:'none' }}
+          />
+          <button onClick={startVoice} title="Voice input"
+            style={{ width:38, height:38, borderRadius:7, border:'1.5px solid #e2e8f0',
+              background:listening?'#fee2e2':'#f8fafc', cursor:'pointer', display:'flex',
+              alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke={listening?'#dc2626':'#64748b'} strokeWidth="1.8" strokeLinecap="round">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/>
+              <line x1="9" y1="22" x2="15" y2="22"/>
+            </svg>
+          </button>
+          <button onClick={()=>runAnalysis(aiInput)}
+            style={{ padding:'9px 18px', borderRadius:7, background:'#0b1929', color:'#fff',
+              fontFamily:'DM Sans,sans-serif', fontSize:13, fontWeight:600, border:'none', cursor:'pointer' }}>
+            Analyze →
+          </button>
+        </div>
+
+        {/* Suggested questions */}
+        <div style={{ display:'flex', flexWrap:'wrap', gap:5, marginBottom: (aiLoading||aiAnswer) ? 16 : 0 }}>
+          {SUGGESTED.map((q,i)=>(
+            <button key={i} onClick={()=>{setAiInput(q);runAnalysis(q);}}
+              style={{ padding:'4px 11px', borderRadius:20, border:'1px solid #e2e8f0',
+                background:'transparent', color:'#64748b', fontSize:11, fontWeight:500,
+                cursor:'pointer', fontFamily:'DM Sans,sans-serif', transition:'all .13s' }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor='#0b1929';e.currentTarget.style.color='#0b1929';}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor='#e2e8f0';e.currentTarget.style.color='#64748b';}}>
+              {q}
+            </button>
+          ))}
+        </div>
+
+        {/* Answer */}
+        {aiLoading && (
+          <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:14, display:'flex', flexDirection:'column', gap:7 }}>
+            {[100,82,65].map((w,i)=>(
+              <div key={i} style={{ height:13, width:w+'%', background:'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)',
+                backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite', borderRadius:4 }}/>
+            ))}
+          </div>
+        )}
+        {aiAnswer && (
+          <div style={{ borderTop:'1px solid #f1f5f9', paddingTop:14 }}>
+            <div style={{ fontSize:14, color:'#334155', lineHeight:1.8, whiteSpace:'pre-line', fontWeight:300, marginBottom:12 }}>
+              {aiAnswer}
+            </div>
+            <div style={{ display:'flex', gap:8 }}>
+              <button onClick={()=>window.location.href='/contact.html'}
+                style={{ padding:'6px 14px', borderRadius:6, background:'#0b1929', color:'#fff',
+                  fontSize:11, fontWeight:600, border:'none', cursor:'pointer', fontFamily:'DM Sans,sans-serif' }}>
+                Book advisory session →
+              </button>
+              <button onClick={()=>{setAiAnswer(null);setAiInput('');}}
+                style={{ padding:'6px 14px', borderRadius:6, background:'transparent', color:'#64748b',
+                  fontSize:11, fontWeight:500, border:'1px solid #e2e8f0', cursor:'pointer', fontFamily:'DM Sans,sans-serif' }}>
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── WHAT-IF EXPLORER ── */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          What-If Explorer
+        </div>
+
+        {/* Tab switcher */}
+        <div style={{ display:'inline-flex', background:'#f8fafc', borderRadius:8, padding:3, gap:2, marginBottom:18 }}>
+          {[{id:'rate',label:`${rateRef} shift`},{id:'balance',label:'Balance'},{id:'entities',label:'Entities'}].map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)}
+              style={{ padding:'5px 13px', borderRadius:6, border:'none', cursor:'pointer',
+                fontFamily:'DM Sans,sans-serif', fontSize:12, fontWeight:600,
+                background:tab===t.id?'#fff':'transparent', color:tab===t.id?'#0f172a':'#64748b',
+                boxShadow:tab===t.id?'0 1px 3px rgba(15,23,42,.08)':'none', transition:'all .13s' }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Slider */}
+        <div style={{ marginBottom:18 }}>
+          {tab==='rate' && (
+            <div>
+              <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:6 }}>
+                <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>{rateRef} shift from {rateBase}%</span>
+                <input type="range" min="-200" max="200" step="10" value={rateShift}
+                  onChange={e=>setRateShift(parseInt(e.target.value))} style={{ flex:1 }}/>
+                <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
+                  color:rateShift===0?'#64748b':rateShift>0?'#059669':'#dc2626' }}>
+                  {rateShift>=0?'+':''}{rateShift}bp
+                </span>
+              </div>
+              <div style={{ fontSize:11, color:'#94a3b8' }}>
+                Pool bank: <strong style={{color:'#334155'}}>{poolBankName}</strong> ·
+                Pool credit: <strong style={{color:'#334155'}}>{(poolCredit*100).toFixed(2)}%</strong>
+                {rateShift!==0 && <> → <strong style={{color:rateShift>0?'#059669':'#dc2626'}}>{((poolCredit+rateShift/10000)*100).toFixed(2)}%</strong></>}
+              </div>
+            </div>
+          )}
+          {tab==='balance' && (
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Pool balance change</span>
+              <input type="range" min="-50" max="50" step="5" value={balShift}
+                onChange={e=>setBalShift(parseInt(e.target.value))} style={{ flex:1 }}/>
+              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
+                color:balShift===0?'#64748b':balShift>0?'#059669':'#dc2626' }}>
+                {balShift>=0?'+':''}{balShift}%
+              </span>
+            </div>
+          )}
+          {tab==='entities' && (
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Entities in pool</span>
+              <input type="range" min="2" max="12" step="1" value={entCount}
+                onChange={e=>setEntCount(parseInt(e.target.value))} style={{ flex:1 }}/>
+              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right', color:'#0f172a' }}>
+                {entCount}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Results — inline, compact */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
+          {[
+            { label:'Interest saving', from:'€'+base.interest+'k', to:'€'+wi.interest+'k', pos:wi.interest>=base.interest },
+            { label:'Payback period',  from:base.payback.toFixed(1)+' mo', to:wi.pb<999?wi.pb.toFixed(1)+' mo':'N/A', pos:wi.pb<=base.payback },
+            { label:'Above break-even',from:'€'+(base.interest-base.breakeven)+'k', to:wi.above>0?'€'+wi.above+'k':'Below', pos:wi.above>0 },
+            { label:'Verdict',         from:'GO', to:wi.verdict, pos:wi.verdict==='GO' },
+          ].map((m,i)=>(
+            <div key={i} style={{ background:'#f8fafc', borderRadius:8, padding:'12px 14px', border:'1px solid #e2e8f0' }}>
+              <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:7 }}>{m.label}</div>
+              <div style={{ fontSize:11, color:'#94a3b8', fontFamily:'DM Mono,monospace', textDecoration:'line-through', marginBottom:2 }}>{m.from}</div>
+              <div style={{ fontSize:14, fontWeight:700, fontFamily:'DM Mono,monospace', color:m.pos?'#059669':'#dc2626' }}>{m.to}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── ZBA vs NOTIONAL ── */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
+          Structure Comparison
+          <span style={{ marginLeft:'auto', fontSize:10, fontWeight:500, color:'#059669',
+            background:'#ecfdf5', padding:'2px 9px', borderRadius:20 }}>
+            Calculated from your inputs
+          </span>
+        </div>
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign:'left', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Metric</th>
+              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#059669', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>ZBA</th>
+              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Notional</th>
+              <th style={{ textAlign:'right', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Win</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              {m:'Interest saving p.a.',  zba:'€'+base.interest+'k',   not:'€'+notionalSave+'k',  zbaW:true },
+              {m:'WHT exposure',          zba:'€0',                    not:'€'+whtExposure+'k',    zbaW:true },
+              {m:'TP documentation',      zba:'Full',                  not:'Simplified',           zbaW:false},
+              {m:'Non-EU jurisdictions',  zba:'Supported',             not:'Limited',              zbaW:true },
+              {m:'Implementation',        zba:'12–16 wks',             not:'8–10 wks',             zbaW:false},
+              {m:'Net annual benefit',    zba:'€'+zbaNet+'k',          not:'€'+notionalNet+'k',    zbaW:true, bold:true},
+            ].map((r,i)=>(
+              <tr key={i} style={{ borderBottom:'1px solid #f8fafc' }}
+                onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'}
+                onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <td style={{ padding:'9px 0', color:'#475569', fontWeight:r.bold?600:400 }}>{r.m}</td>
+                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:r.zbaW?700:400, color:r.zbaW?'#059669':'#94a3b8' }}>{r.zba}</td>
+                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:!r.zbaW?700:400, color:!r.zbaW?'#059669':'#94a3b8' }}>{r.not}</td>
+                <td style={{ padding:'9px 0', textAlign:'right', fontSize:11, fontWeight:600, color:r.zbaW?'#059669':'#475569' }}>{r.zbaW?'ZBA ✓':'Notional ✓'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div style={{ marginTop:14, padding:'12px 14px', background:'#f8fafc', borderRadius:8,
+          fontSize:12, color:'#334155', lineHeight:1.6 }}>
+          <strong>Recommendation:</strong> ZBA generates
+          <strong style={{ color:'#059669' }}> €{Math.max(0,zbaNet-notionalNet)}k more annually</strong> than
+          notional pooling for your structure, primarily through eliminated WHT exposure.
+          Proceed with zero-balancing.
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+// ─── CTA fade-in after 45s or 2nd tab ─────────────────────────────────────
+let _ctaShown = false;
+let _tabCount = 0;
+function trackTabForCTA(setCtaVisible) {
+  _tabCount++;
+  if (!_ctaShown && _tabCount >= 2) { _ctaShown = true; setCtaVisible(true); }
+}
+function loadSimData() {
+  try {
+    const raw = localStorage.getItem('cpm_sim');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
 }
 
 // ─── App root ─────────────────────────────────────────────────────────────
 
 function App() {
   const [activeNav, setActiveNav] = useState('summary');
+  const [ctaVisible, setCtaVisible] = useState(false);
+  const sim = loadSimData();
+
+  // CTA: show after 45s OR after 2nd tab click
+  React.useEffect(() => {
+    const t = setTimeout(() => { if(!_ctaShown){ _ctaShown=true; setCtaVisible(true); }}, 45000);
+    return () => clearTimeout(t);
+  }, []);
+
+  function handleNav(id) {
+    setActiveNav(id);
+    trackTabForCTA(setCtaVisible);
+  }
+
+  // Override sample data with simulator input if available
+  const groupName    = sim?.groupName    || 'Acme Manufacturing Group';
+  const poolBank     = sim?.poolBank     || 'ING Bank';
+  const totalEnt     = sim?.totalEntities|| 8;
+  const totalAcc     = sim?.totalAccounts|| 12;
+  const nettingEff   = sim?.nettingEff   || 73;
+  const netBenefit   = sim?.netBenefit   || 842000;
+  const interestSave = sim?.interestSaving|| 612000;
+  const opSave       = sim?.opSaving     || 230000;
+  const poolBalance  = sim?.poolBalance  || 12300000;
+  const paybackMo    = sim?.paybackMo    || 8.4;
+  const yieldSpread  = sim?.yieldSpread  || '1.20';
+  const simEntities  = sim?.entities     || null;
+
+  // Format helpers
+  const fmtK = (n) => {
+    const a = Math.abs(n);
+    if (a >= 1000000) return (n<0?'−':''+'€') + (a/1000000).toFixed(2) + 'M';
+    return (n<0?'−':'') + '€' + Math.round(a/1000) + 'k';
+  };
+  const fmtM = (n) => {
+    const a = Math.abs(n);
+    return (n>=0?'+':'−') + '€' + (a/1000000).toFixed(1) + 'M';
+  };
+
+  // Dynamic KPIs
+  const dynKPIS = [
+    { label:'Net Interest Savings', value:fmtK(interestSave),  badge:'↑ '+(sim?((interestSave/612000-1)*100).toFixed(0)+'%':'18.3%'), sub:'vs. standalone arrangement',  ring:null },
+    { label:'Netting Efficiency',   value:nettingEff+'%',      badge:'↑ 12pp',  sub:'above sector benchmark', ring:nettingEff },
+    { label:'Operational Savings',  value:fmtK(opSave),        badge:'Additional',sub:'FX, facility fees, accounts', ring:null },
+    { label:'Avg. Yield Spread',    value:'+'+yieldSpread+'%', badge:'+'+(yieldSpread*100|0)+' bp', sub:'over pool benchmark rate', ring:null },
+  ];
+
+  // Dynamic entities for pool structure
+  const dynEntities = simEntities ? simEntities.map(e => ({
+    name: e.name,
+    flag: ({DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸'})[e.country] || '🏢',
+    domicile: e.country,
+    cc: e.cc,
+    balance: (e.balance>=0?'+':'') + (e.cc==='EUR'?'€':'') + (Math.abs(e.balance)>=1e6?(Math.abs(e.balance)/1e6).toFixed(2)+'M':Math.round(Math.abs(e.balance)/1000)+'k'),
+    surplus: e.balance >= 0,
+    sweep: '18:00 CET',
+    resident: ['DE','FR','NL','AT','BE','IT','ES','CZ','SK','PL','HU'].includes(e.country),
+    interestRate: e.balance>=0?((sim?.poolCredit||0.04)*100).toFixed(2)+'%':((sim?.poolDebit||0.032)*100).toFixed(2)+'%',
+    annual: (e.balance>=0?'+':'−')+'€'+Math.round(Math.abs(e.balance)*(e.balance>=0?(sim?.poolCredit||0.04):(sim?.poolDebit||0.032))/1000)+'k',
+  })) : ENTITIES;
+
+  const dynPoolBalance = poolBalance;
+
   return (
     <div style={{ display:'flex', width:'100%', minHeight:'100vh', background:'#f8fafc' }}>
-      <Sidebar active={activeNav} onNav={setActiveNav} />
-      <MainContent />
+      <Sidebar active={activeNav} onNav={handleNav} groupName={groupName} totalEnt={totalEnt} ctaVisible={ctaVisible} />
+      <MainContent active={activeNav} groupName={groupName} totalEnt={totalEnt} totalAcc={totalAcc}
+        nettingEff={nettingEff} netBenefit={netBenefit} interestSave={interestSave}
+        opSave={opSave} poolBalance={dynPoolBalance} paybackMo={paybackMo}
+        yieldSpread={yieldSpread} dynKPIS={dynKPIS} dynEntities={dynEntities}
+        poolBank={poolBank} fmtK={fmtK} fmtM={fmtM} sim={sim}/>
     </div>
   );
 }
