@@ -291,7 +291,7 @@ function BarChart() {
       {/* X-axis */}
       <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:40, marginTop:8 }}>
         {CHART.map((d, i) => (
-          <span key={i} className="text-slate-400 font-medium" style={{ fontSize:10 }}>{d.period}</span>
+          <span key={i} style={{ fontSize:11, color:'#64748b', fontFamily:'DM Mono, monospace', fontWeight:500 }}>{d.period}</span>
         ))}
       </div>
 
@@ -1095,7 +1095,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         <div style={{ display:'flex', alignItems:'center', gap:8, paddingTop:4 }}>
           <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:11, color:'#94a3b8', marginRight:4 }}>
             <Ico name="clock" size={12} color="#94a3b8"/>
-            Generated April 2025
+            Generated April 2026
           </div>
           <div style={{ width:1, height:16, background:'#e2e8f0' }} />
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600,
@@ -1114,7 +1114,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         <span style={{ fontSize:12, color:'#64748b' }}>{groupName}</span>
         <span style={{ color:'#cbd5e1', fontSize:11 }}>·</span>
         <span style={{ fontSize:12, color:'#64748b' }}>{totalEnt} entities · {currencies.length} currencies</span>
-        <span style={{ marginLeft:4, display:'flex', alignItems:'center', gap:4, fontSize:10, fontWeight:600,
+        <span style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4, fontSize:10, fontWeight:600,
           color:'#059669', background:'#ecfdf5', padding:'2px 8px', borderRadius:99 }}>
           <Ico name="check" size={9} color="#059669"/> Simulation complete
         </span>
