@@ -3,87 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="index, follow">
-<title>Cash Pooling Simulator — Model Your Pool Before Any Bank Conversation | CashPoolModel</title>
+<title>CashPoolModel — Independent Cash Pooling Intelligence</title>
 <meta name="description" content="Free cash pooling simulator for CFOs and treasury teams. Model your interest savings, netting efficiency, and payback period before any bank conversation.">
-<link rel="canonical" href="https://cashpoolmodel.com/">
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://cashpoolmodel.com/">
-<meta property="og:title" content="Cash Pooling Simulator — Model Your Pool Before Any Bank Conversation">
-<meta property="og:description" content="Free cash pooling simulator for CFOs and treasury teams. Model interest savings, netting efficiency, and payback period before any bank conversation.">
-<meta property="og:image" content="https://cashpoolmodel.com/og-image.png">
-<meta property="og:site_name" content="CashPoolModel">
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Cash Pooling Simulator — CashPoolModel">
-<meta name="twitter:description" content="Model your cash pool before any bank conversation. Free simulator for CFOs and treasury teams.">
-<meta name="twitter:image" content="https://cashpoolmodel.com/og-image.png">
-<!-- Hreflang -->
-<link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/">
-<link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/?lang=de">
-<link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/?lang=fr">
-<link rel="alternate" hreflang="x-default" href="https://cashpoolmodel.com/">
-<!-- JSON-LD -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://cashpoolmodel.com/#organization",
-      "name": "Intercompany.io",
-      "url": "https://cashpoolmodel.com",
-      "logo": "https://cashpoolmodel.com/og-image.png",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Rue François-Perréard 19",
-        "addressLocality": "Chêne-Bourg",
-        "postalCode": "1225",
-        "addressCountry": "CH"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "info@cashpoolmodel.com",
-        "telephone": "+41767763463",
-        "contactType": "customer service"
-      }
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "CashPoolModel",
-      "url": "https://cashpoolmodel.com",
-      "description": "Cash pooling simulator for CFOs and treasury teams. Model interest savings, netting efficiency, and payback period.",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Web",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-      "provider": { "@id": "https://cashpoolmodel.com/#organization" }
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://cashpoolmodel.com/#website",
-      "url": "https://cashpoolmodel.com",
-      "name": "CashPoolModel",
-      "publisher": { "@id": "https://cashpoolmodel.com/#organization" }
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "@id": "https://cashpoolmodel.com/#person",
-  "name": "Jakub Houser",
-  "jobTitle": "Independent Treasury Practitioner",
-  "url": "https://cashpoolmodel.com",
-  "sameAs": ["https://www.linkedin.com/in/houserjakub/"],
-  "worksFor": { "@id": "https://cashpoolmodel.com/#organization" },
-  "alumniOf": [
-    { "@type": "CollegeOrUniversity", "name": "Masaryk University", "url": "https://www.muni.cz" }
-  ]
-}
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -146,43 +67,25 @@ a { color: inherit; text-decoration: none; }
   transition: all .14s; white-space: nowrap;
 }
 .nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
-.nav-burger {
-  display: none; flex-direction: column; justify-content: center; gap: 5px;
-  width: 36px; height: 36px; cursor: pointer; border: none; background: none; padding: 4px; border-radius: var(--r);
-}
-.nav-burger span { display: block; height: 2px; background: var(--navy); border-radius: 2px; transition: all .2s; }
-.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.nav-burger.open span:nth-child(2) { opacity: 0; }
-.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-.nav-mobile {
-  display: none; flex-direction: column;
-  background: rgba(249,248,245,.98); border-top: 1px solid var(--rule);
-  padding: 8px 0 12px;
-}
-.nav-mobile.open { display: flex; }
-.nav-mobile a { padding: 11px var(--pad); font-size: 15px; font-weight: 500; color: var(--ink-mid); }
-.nav-mobile a:hover { color: var(--navy); }
-@media (max-width: 580px) {
-  .nav-links { display: none; }
-  .nav-cta { display: none; }
-  .nav-burger { display: flex; }
-}
-.nav-mobile-cta {
-  margin: 6px var(--pad) 4px;
-  display: block; width: calc(100% - 2 * var(--pad));
-  padding: 13px; border-radius: var(--r);
-  background: var(--navy); color: #fff;
-  font-size: 14px; font-weight: 600; border: none; cursor: pointer;
-  font-family: var(--sans); text-align: center; transition: background .14s;
-}
-.nav-mobile-cta:hover { background: var(--navy-h); }
+@media (max-width: 580px) { .nav-links { display: none; } }
 
 /* ── WRAP ── */
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
 
 /* ── HERO ── */
 .hero {
-  padding: clamp(52px, 8vw, 88px) 0 clamp(40px, 5.5vw, 68px);
+  padding: clamp(56px, 9vw, 100px) 0 clamp(44px, 6vw, 76px);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 65% at 78% 18%, rgba(29,78,216,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 38% 50% at 8% 88%, rgba(154,110,16,.04) 0%, transparent 55%);
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(11,25,41,.014) 47px, rgba(11,25,41,.014) 48px);
 }
 .hero-inner { position: relative; z-index: 1; }
 
@@ -200,25 +103,12 @@ h1 {
   letter-spacing: -2px; color: var(--navy);
   max-width: 14ch; margin-bottom: 22px;
 }
-h1 em { font-style: normal; color: var(--gold); }
+h1 em { font-style: italic; color: var(--gold); }
 
 .hero-sub {
   font-size: clamp(15px, 1.8vw, 17px);
   color: var(--ink-mid); line-height: 1.72;
   max-width: 46ch; margin-bottom: 36px; font-weight: 300;
-}
-
-.hero-bullets {
-  list-style: none; display: flex; flex-direction: column; gap: 13px;
-  margin-bottom: 36px;
-}
-.hero-bullet {
-  display: flex; align-items: baseline; gap: 11px;
-  font-size: clamp(14px, 1.5vw, 15px); color: var(--ink-mid);
-  font-weight: 400; line-height: 1.55;
-}
-.hero-bullet::before {
-  content: '✓'; color: var(--gold); font-weight: 700; font-size: 11px; flex-shrink: 0;
 }
 
 .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -233,21 +123,17 @@ h1 em { font-style: normal; color: var(--gold); }
 .btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--rule); }
 .btn-outline:hover { border-color: var(--navy); background: var(--paper-w); }
 
-.trust-line {
-  margin-top: 28px;
-  font-size: 12px; color: var(--ink-lt); font-weight: 400; letter-spacing: .1px;
-}
-
 /* ── SECTION ── */
-.section { padding: clamp(44px, 5.5vw, 72px) 0; }
+.section { padding: clamp(40px, 5vw, 72px) 0; }
 .section-alt { background: var(--paper-w); }
-.section-bt { border-top: none; }
+.section-bt { border-top: 1px solid var(--rule); }
 
 .sec-eyebrow {
   font-size: 10px; font-weight: 600; letter-spacing: 2px;
   text-transform: uppercase; color: var(--ink-fnt);
-  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
 }
+.sec-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 h2 {
   font-family: var(--serif);
   font-size: clamp(26px, 3.5vw, 40px);
@@ -255,122 +141,6 @@ h2 {
   line-height: 1.12; margin-bottom: 10px;
 }
 .sec-sub { font-size: 15px; color: var(--ink-mid); font-weight: 300; max-width: 50ch; line-height: 1.65; }
-
-/* ── REPORT PREVIEW ── */
-.preview-wrap {
-  position: relative; margin-top: 40px;
-  border-radius: 12px; overflow: hidden;
-  border: 1px solid rgba(11,25,41,.1);
-  box-shadow:
-    0 2px 4px rgba(11,25,41,.04),
-    0 16px 48px rgba(11,25,41,.10),
-    0 48px 96px rgba(11,25,41,.07);
-}
-.preview-chrome {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 16px;
-  background: #f1f5f9;
-  border-bottom: 1px solid rgba(11,25,41,.08);
-}
-.preview-chrome-dots {
-  display: flex; gap: 6px; flex-shrink: 0;
-}
-.preview-chrome-dots span {
-  width: 11px; height: 11px; border-radius: 50%;
-}
-.preview-chrome-dots span:nth-child(1) { background: #ef4444; }
-.preview-chrome-dots span:nth-child(2) { background: #f59e0b; }
-.preview-chrome-dots span:nth-child(3) { background: #22c55e; }
-.preview-chrome-bar {
-  flex: 1; background: var(--white);
-  border: 1px solid rgba(11,25,41,.1); border-radius: 5px;
-  padding: 4px 12px; font-size: 11px; color: var(--ink-lt);
-  font-family: var(--mono); white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis;
-}
-.preview-iframe-wrap {
-  position: relative; overflow: hidden;
-}
-.preview-iframe {
-  width: 1100px; height: 780px;
-  border: none; display: block;
-  background: #f8fafc;
-  transform-origin: 0 0;
-}
-.preview-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
-  background: linear-gradient(to bottom, transparent, #f9f8f5);
-  pointer-events: none;
-}
-.preview-note {
-  text-align: center; font-size: 11px; color: var(--ink-fnt);
-  margin-top: 16px; font-style: italic;
-}
-
-/* ── HOW IT WORKS ── */
-.how {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--rule);
-  border: 1px solid var(--rule); border-radius: var(--rl);
-  overflow: hidden; box-shadow: var(--sh); margin-top: 36px;
-}
-@media (max-width: 640px) { .how { grid-template-columns: 1fr; } }
-.how-step { background: var(--white); padding: 32px 26px; transition: background .15s; }
-.how-step:hover { background: var(--paper-w); }
-.how-n {
-  font-family: var(--serif); font-size: 54px; font-weight: 600;
-  color: var(--paper-w); line-height: 1; margin-bottom: 16px; transition: color .15s;
-  border: 1px solid var(--rule); border-radius: var(--r);
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 56px; height: 56px; font-size: 22px; color: var(--ink-fnt);
-  background: var(--paper-w);
-}
-.how-step:hover .how-n { background: var(--navy); color: #fff; border-color: var(--navy); }
-.how-t { font-size: 14px; font-weight: 600; color: var(--navy); margin: 14px 0 8px; }
-.how-d { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; }
-
-/* ── EARLY ACCESS ── */
-.ea-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 18px; margin-top: 36px;
-}
-@media (max-width: 600px) { .ea-grid { grid-template-columns: 1fr; } }
-.ea-card {
-  padding: 28px 26px; border: 1px solid var(--rule); border-radius: var(--rl);
-  background: var(--white); box-shadow: var(--sh);
-}
-.ea-icon { width: 32px; height: 32px; margin-bottom: 16px; color: var(--navy); }
-.ea-card-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 14px; }
-.ea-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
-.ea-list li { font-size: 12.5px; color: var(--ink-mid); line-height: 1.5; font-weight: 300; padding-left: 18px; position: relative; }
-.ea-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); font-weight: 500; }
-.ea-form-wrap {
-  margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 11px;
-}
-.ea-form {
-  display: flex; gap: 10px; width: 100%; max-width: 480px;
-}
-@media (max-width: 560px) { .ea-form { flex-direction: column; } }
-@media (max-width: 560px) { .ea-btn { width: 100%; } }
-@media (max-width: 560px) { .ea-input { width: 100%; font-size: 16px; } }
-.ea-input {
-  flex: 1; height: 46px; min-height: 46px; padding: 0 16px;
-  border: 1px solid var(--rule); border-radius: 6px;
-  font-family: var(--sans); font-size: 13px; color: var(--ink);
-  background: var(--white); outline: none; box-sizing: border-box;
-  -webkit-appearance: none; appearance: none;
-  transition: border-color .18s;
-}
-.ea-input:focus { border-color: var(--navy); }
-.ea-input::placeholder { color: var(--ink-fnt); }
-.ea-btn {
-  height: 46px; padding: 0 24px; white-space: nowrap;
-  background: var(--navy); color: #fff; border: none; border-radius: 6px;
-  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
-  transition: background .18s, transform .18s;
-}
-.ea-btn:hover { background: #162e4a; transform: translateY(-1px); }
-.ea-micro { font-size: 11px; color: var(--ink-fnt); }
 
 /* ── WAITLIST ── */
 .wl {
@@ -394,7 +164,7 @@ h2 {
   font-weight: 600; color: #fff; letter-spacing: -.4px; line-height: 1.2;
   max-width: 440px; margin-bottom: 9px;
 }
-.wl-sub { font-size: 14px; color: rgba(255,255,255,.55); max-width: 420px; margin-bottom: 26px; font-weight: 300; line-height: 1.65; }
+.wl-sub { font-size: 14px; color: rgba(255,255,255,.42); max-width: 420px; margin-bottom: 26px; font-weight: 300; line-height: 1.65; }
 .wl-form { display: flex; gap: 8px; max-width: 420px; flex-wrap: wrap; }
 .wl-input {
   flex: 1; min-width: 190px;
@@ -412,15 +182,61 @@ h2 {
   font-family: var(--sans); transition: all .16s; white-space: nowrap;
 }
 .wl-btn:hover { background: var(--gold-h); transform: translateY(-1px); }
-.wl-pricing {
-  margin-top: 14px; font-size: 11px; color: rgba(255,255,255,.28);
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+.wl-note { font-size: 11px; color: rgba(255,255,255,.22); margin-top: 10px; }
+.wl-perks {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.07);
 }
+.wl-perk { font-size: 12px; color: rgba(255,255,255,.42); display: flex; align-items: center; gap: 6px; }
+.wl-perk::before { content: '✓'; color: #4ade80; font-weight: 700; font-size: 11px; }
 
-/* ── NEWSLETTER (blog only) ── */
+/* ── HOW IT WORKS ── */
+.how {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); border-radius: var(--rl);
+  overflow: hidden; box-shadow: var(--sh); margin-top: 36px;
+}
+@media (max-width: 640px) { .how { grid-template-columns: 1fr; } }
+.how-step { background: var(--white); padding: 32px 26px; transition: background .15s; }
+.how-step:hover { background: var(--paper-w); }
+.how-n {
+  font-family: var(--serif); font-size: 54px; font-weight: 600;
+  color: var(--paper-w); line-height: 1; margin-bottom: 16px; transition: color .15s;
+  border: 1px solid var(--rule); border-radius: var(--r);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; font-size: 22px; color: var(--ink-fnt);
+  background: var(--paper-w);
+}
+.how-step:hover .how-n { background: var(--navy); color: #fff; border-color: var(--navy); }
+.how-t { font-size: 14px; font-weight: 600; color: var(--navy); margin: 14px 0 8px; }
+.how-d { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; }
+
+/* ── FEATURES ── */
+.features {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; margin-top: 36px;
+}
+@media (max-width: 740px) { .features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .features { grid-template-columns: 1fr; } }
+.fc {
+  padding: 22px; border: 1px solid var(--rule); border-radius: var(--rl);
+  background: var(--white); box-shadow: var(--sh);
+  transition: transform .18s, box-shadow .18s, border-color .18s;
+}
+.fc:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); border-color: #c8c3ba; }
+.fc-icon {
+  width: 38px; height: 38px; margin-bottom: 14px;
+  color: var(--navy);
+}
+.fc-t { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 7px; }
+.fc-d { font-size: 12px; color: var(--ink-mid); line-height: 1.6; font-weight: 300; }
+
+/* ── NEWSLETTER ── */
 .nl {
   background: var(--paper-w); border: 1px solid var(--rule);
-  border-radius: var(--rl); padding: 32px; text-align: center; margin-top: 40px;
+  border-radius: var(--rl); padding: 32px; text-align: center;
+  margin-top: 40px;
 }
 .nl-title { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
 .nl-sub { font-size: 13px; color: var(--ink-mid); margin-bottom: 18px; font-weight: 300; }
@@ -455,31 +271,6 @@ footer {
 .footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
 .footer-links a:hover { color: rgba(255,255,255,.8); }
 .footer-copy { font-size: 11px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.06); }
-@media (max-width: 600px) {
-  .footer-i { flex-direction: column; align-items: center; text-align: center; }
-  .footer-links { justify-content: center; }
-  .footer-copy { text-align: center; }
-}
-.footer-swiss { font-size: 10px; font-weight: 400; letter-spacing: 0.2px; color: rgba(255,255,255,.32); margin-bottom: 5px; }
-.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
-/* ── METHODOLOGY ── */
-.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 36px; }
-@media (max-width: 680px) { .meth-grid { grid-template-columns: 1fr; gap: 24px; } }
-.meth-item { background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl); padding: 28px 28px 24px; }
-.meth-num { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 6px; }
-.meth-inst { font-size: 11px; color: var(--ink-fnt); letter-spacing: .3px; margin-bottom: 10px; }
-.meth-title { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 10px; line-height: 1.3; }
-.meth-link { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); transition: text-decoration-color .15s; }
-.meth-link:hover { text-decoration-color: var(--gold); }
-.meth-desc { font-size: 13px; color: var(--ink-lt); line-height: 1.65; font-weight: 300; }
-.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
-
-/* ── LANG SWITCHER ── */
-.lang-sw { display: flex; align-items: center; gap: 1px; margin-right: 4px; }
-.lang-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-fnt); padding: 5px 6px; border-radius: 3px; transition: color .14s; }
-.lang-btn:hover { color: var(--navy); }
-.lang-btn.active { color: var(--navy); }
-.lang-sep { color: var(--rule); font-size: 11px; line-height: 1; user-select: none; }
 
 /* ── TOAST ── */
 .toast {
@@ -493,20 +284,18 @@ footer {
 /* ── ANIMATIONS ── */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .hero-inner > * { opacity: 0; animation: fadeUp .45s ease forwards; }
-.eyebrow        { animation-delay: .05s; }
-h1              { animation-delay: .11s; }
-.hero-sub       { animation-delay: .17s; }
-.hero-bullets   { animation-delay: .22s; }
-.actions        { animation-delay: .28s; }
-.trust-line     { animation-delay: .33s; }
+.eyebrow     { animation-delay: .05s; }
+h1           { animation-delay: .11s; }
+.hero-sub    { animation-delay: .18s; }
+.actions     { animation-delay: .24s; }
 </style>
-<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', 'G-5SX745CBEE');
 </script>
 </head>
 <body>
@@ -529,166 +318,179 @@ h1              { animation-delay: .11s; }
       </div>
     </div>
     <div class="nav-links">
-      <a class="nav-link" href="/blog.html" data-i18n="nav.blog">Blog</a>
-      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Contact</a>
+      <a class="nav-link" href="/blog.html">Blog</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
     </div>
-    <div class="lang-sw">
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
-      <span class="lang-sep">·</span>
-      <button class="lang-btn" onclick="setLang('de')">DE</button>
-      <span class="lang-sep">·</span>
-      <button class="lang-btn" onclick="setLang('fr')">FR</button>
-    </div>
-    <button class="nav-cta" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta">Get Early Access</button>
-    <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-  <div class="nav-mobile" id="navMobile">
-    <a href="/blog.html" data-i18n="nav.blog">Blog</a>
-    <a href="/contact.html" data-i18n="nav.contact">Contact</a>
-    <button class="nav-mobile-cta" onclick="toggleMobileNav(); document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta_mobile">Get Early Access →</button>
+    <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access</button>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Swiss Treasury Intelligence</div>
-    <h1 data-i18n="hero.h1">Model your cash pool before you commit.</h1>
-    <p class="hero-sub" data-i18n="hero.sub">The first independent cash pooling simulator. Built by treasury practitioners, not software vendors or banks.</p>
-    <ul class="hero-bullets">
-      <li class="hero-bullet" data-i18n="hero.b1">Know your savings before the bank pitch — not after.</li>
-      <li class="hero-bullet" data-i18n="hero.b2">Full P&amp;L impact, sensitivity analysis, and regulatory matrix.</li>
-      <li class="hero-bullet" data-i18n="hero.b3">Board-ready PDF report. No spreadsheets, no consultants.</li>
-    </ul>
+    <div class="eyebrow">Independent Treasury Intelligence</div>
+    <h1>Model your <em>cashpool</em> before you commit.</h1>
+    <p class="hero-sub">The first independent cash pooling simulator — built by practitioners, not vendors. Quantify your interest savings, netting efficiency, and payback period before any bank conversation.</p>
     <div class="actions">
-      <button class="btn btn-navy" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta1">Get Early Access →</button>
-      <a class="btn btn-outline" href="#how" data-i18n="hero.cta2">See How It Works</a>
+      <button class="btn btn-navy" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get Early Access →</button>
+      <a class="btn btn-outline" href="#how">See How It Works</a>
     </div>
-    <p class="trust-line" data-i18n="hero.trust">Free to join. First report on us when we launch.</p>
   </div>
 </section>
 
-<!-- REPORT PREVIEW -->
-<section class="section section-bt">
+<!-- WAITLIST -->
+<section class="section section-bt" id="waitlist">
   <div class="wrap">
-    <div class="sec-eyebrow" data-i18n="preview.eyebrow">Sample Output</div>
-    <h2 data-i18n="preview.h2">Your simulation dashboard, live.</h2>
-    <p class="sec-sub" data-i18n="preview.sub">KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.</p>
-
-    <div class="preview-wrap">
-      <!-- Browser chrome bar -->
-      <div class="preview-chrome">
-        <div class="preview-chrome-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="preview-chrome-bar">cashpoolmodel.com/dashboard · Executive Summary</div>
+    <div class="sec-eyebrow">Simulator</div>
+    <h2>Launching soon.<br>Be first in line.</h2>
+    <p class="sec-sub">Join the waitlist — you will be notified when the simulator goes live. Early access users receive their first PDF report at no charge.</p>
+    <div class="wl">
+      <div class="wl-label">Early Access · Free</div>
+      <div class="wl-title">Model your group's cashpooling potential — before any bank conversation.</div>
+      <div class="wl-sub">One email when we launch. No marketing, no spam.</div>
+      <div class="wl-form">
+        <input class="wl-input" type="email" id="wlEmail" placeholder="treasury@yourcompany.com">
+        <button class="wl-btn" onclick="handleWaitlist()">Join Waitlist →</button>
       </div>
-      <!-- Dashboard iframe -->
-      <div class="preview-iframe-wrap">
-        <iframe
-          src="/dashboard-preview.html"
-          class="preview-iframe"
-          title="CashPoolModel Simulation Dashboard"
-          loading="lazy"
-          scrolling="no"
-        ></iframe>
+      <div class="wl-note">No commitment. Unsubscribe any time.</div>
+      <div class="wl-perks">
+        <span class="wl-perk">Before/after P&amp;L</span>
+        <span class="wl-perk">Netting efficiency model</span>
+        <span class="wl-perk">3 scenarios</span>
+        <span class="wl-perk">Regulatory matrix</span>
+        <span class="wl-perk">Board-ready PDF</span>
       </div>
-      <div class="preview-fade"></div>
     </div>
-    <div class="preview-note" data-i18n="preview.note">Illustrative data. Actual report generated from your inputs.</div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
 <section class="section section-alt" id="how">
   <div class="wrap">
-    <div class="sec-eyebrow" data-i18n="how.eyebrow">How it works</div>
-    <h2 data-i18n="how.h2">From data to board decision<br>in three steps.</h2>
+    <div class="sec-eyebrow">How it works</div>
+    <h2>From data to board decision<br>in three steps.</h2>
     <div class="how">
       <div class="how-step">
         <div class="how-n">01</div>
-        <div class="how-t" data-i18n="how.s1t">Enter your group structure</div>
-        <div class="how-d" data-i18n="how.s1d">Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.</div>
+        <div class="how-t">Enter your group structure</div>
+        <div class="how-d">Upload your bank statements and AI extracts entity names, balances, and currencies in seconds. Or enter data manually and adjust anything. CFOs typically complete setup in under five minutes.</div>
       </div>
       <div class="how-step">
         <div class="how-n">02</div>
-        <div class="how-t" data-i18n="how.s2t">Run the simulation</div>
-        <div class="how-d" data-i18n="how.s2d">The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&amp;L comparison.</div>
+        <div class="how-t">Run the simulation</div>
+        <div class="how-d">The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.</div>
       </div>
       <div class="how-step">
         <div class="how-n">03</div>
-        <div class="how-t" data-i18n="how.s3t">Download the report</div>
-        <div class="how-d" data-i18n="how.s3d">Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.</div>
+        <div class="how-t">Download the report</div>
+        <div class="how-d">Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&amp;L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- EARLY ACCESS BENEFITS -->
-<section class="section section-bt" id="early-access">
+<!-- FEATURES -->
+<section class="section section-bt">
   <div class="wrap">
-    <div class="sec-eyebrow" data-i18n="ea.eyebrow">Early Access</div>
-    <h2 data-i18n="ea.h2">Secure your priority access.</h2>
-    <p class="sec-sub" data-i18n="ea.sub">Join the waitlist to be the first to model your cash pool when we go live.</p>
-    <div class="ea-grid">
+    <div class="sec-eyebrow">What's included</div>
+    <h2>Professional outputs.<br>Zero cost to start.</h2>
+    <p class="sec-sub">Every output is designed for what treasury teams and CFOs actually need — not generic finance dashboards.</p>
+    <div class="features">
 
-      <div class="ea-card">
-        <svg class="ea-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="16,4 20,12 29,13.5 22.5,20 24,29 16,25 8,29 9.5,20 3,13.5 12,12"/>
+      <!-- Before/After -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="8" width="13" height="22" rx="2"/>
+          <rect x="21" y="8" width="13" height="22" rx="2"/>
+          <line x1="10.5" y1="14" x2="10.5" y2="14.01"/>
+          <line x1="8" y1="19" x2="13" y2="19"/>
+          <line x1="8" y1="23" x2="13" y2="23"/>
+          <line x1="25" y1="14" x2="31" y2="14"/>
+          <line x1="25" y1="19" x2="31" y2="19"/>
+          <line x1="25" y1="23" x2="31" y2="23"/>
         </svg>
-        <div class="ea-card-title" data-i18n="ea.c1t">Automated Simulation</div>
-        <ul class="ea-list">
-          <li data-i18n="ea.c1b1">Instant visibility into interest savings before any bank conversation</li>
-          <li data-i18n="ea.c1b2">Complimentary basic report for early access members</li>
-          <li data-i18n="ea.c1b3">Precision multi-currency netting across all group entities</li>
-        </ul>
+        <div class="fc-t">Before / After P&amp;L</div>
+        <div class="fc-d">Full breakdown of interest costs, netting savings, FX reduction, facility fees, and total net benefit — line by line, period-accurate.</div>
       </div>
 
-      <div class="ea-card">
-        <svg class="ea-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="6" y="3" width="20" height="26" rx="2"/>
-          <line x1="10" y1="11" x2="22" y2="11"/>
-          <line x1="10" y1="16" x2="22" y2="16"/>
-          <line x1="10" y1="21" x2="17" y2="21"/>
+      <!-- Daily cashflow -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4,28 11,18 17,22 23,12 29,16 34,8"/>
+          <line x1="4" y1="32" x2="34" y2="32"/>
         </svg>
-        <div class="ea-card-title" data-i18n="ea.c2t">Premium Intelligence</div>
-        <ul class="ea-list">
-          <li data-i18n="ea.c2b1">Detailed PDF reports structured for CFO and board presentation</li>
-          <li data-i18n="ea.c2b2">Sensitivity and risk modelling across rate and volatility scenarios</li>
-          <li data-i18n="ea.c2b3">Expert consultations with independent treasury specialists</li>
-        </ul>
+        <div class="fc-t">Daily Cash Flow Simulation</div>
+        <div class="fc-d">90-day simulated cash flow with realistic volatility, showing the stabilisation effect of pool centralization across all entities.</div>
       </div>
 
-    </div>
-    <div class="ea-form-wrap">
-      <div class="ea-form">
-        <input class="ea-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="treasury@yourcompany.com">
-        <button class="ea-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Join Waitlist →</button>
+      <!-- Sensitivity -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="10" height="10" rx="1.5"/>
+          <rect x="16" y="4" width="10" height="10" rx="1.5"/>
+          <rect x="28" y="4" width="6" height="10" rx="1.5" fill="currentColor" fill-opacity=".12"/>
+          <rect x="4" y="16" width="10" height="10" rx="1.5" fill="currentColor" fill-opacity=".12"/>
+          <rect x="16" y="16" width="10" height="10" rx="1.5"/>
+          <rect x="28" y="16" width="6" height="10" rx="1.5"/>
+          <rect x="4" y="28" width="10" height="6" rx="1.5"/>
+          <rect x="16" y="28" width="10" height="6" rx="1.5"/>
+          <rect x="28" y="28" width="6" height="6" rx="1.5" fill="currentColor" fill-opacity=".12"/>
+        </svg>
+        <div class="fc-t">Sensitivity Analysis</div>
+        <div class="fc-d">5×5 matrix showing net benefit across rate and volatility scenarios. Know what happens when rates shift by 1 percentage point.</div>
       </div>
-      <div class="ea-micro" data-i18n="ea.micro">No spam. Only professional treasury updates.</div>
+
+      <!-- Netting -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13" cy="19" r="9"/>
+          <circle cx="25" cy="19" r="9"/>
+          <path d="M19 12.5 C21.5 14.5 21.5 23.5 19 25.5" fill="none"/>
+          <path d="M19 12.5 C16.5 14.5 16.5 23.5 19 25.5" fill="none"/>
+        </svg>
+        <div class="fc-t">Netting Efficiency Model</div>
+        <div class="fc-d">Calculates the offset between surplus and deficit entities — the most important driver of cashpool ROI — with a visual flow diagram.</div>
+      </div>
+
+      <!-- Regulatory -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 4 L33 10 L33 20 C33 27 26 33 19 35 C12 33 5 27 5 20 L5 10 Z"/>
+          <polyline points="13,19 17,23 25,15"/>
+        </svg>
+        <div class="fc-t">Regulatory Compliance Matrix</div>
+        <div class="fc-d">Country-by-country overview of withholding taxes, cross-border restrictions, and transfer pricing safe harbour guidance.</div>
+      </div>
+
+      <!-- CFO output -->
+      <div class="fc">
+        <svg class="fc-icon" viewBox="0 0 38 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="4" width="26" height="30" rx="2"/>
+          <line x1="12" y1="13" x2="26" y2="13"/>
+          <line x1="12" y1="19" x2="26" y2="19"/>
+          <line x1="12" y1="25" x2="20" y2="25"/>
+          <circle cx="27" cy="28" r="5" fill="var(--paper-w)" stroke="currentColor"/>
+          <polyline points="24.5,28 26.5,30 29.5,26"/>
+        </svg>
+        <div class="fc-t">CFO-Ready Output</div>
+        <div class="fc-d">GO / CONSIDER / NO-GO verdict, payback period, ROI, implementation roadmap, and risk register — formatted for the board.</div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- METHODOLOGY -->
-<section class="section" id="methodology">
+<!-- NEWSLETTER -->
+<section class="section section-alt section-bt">
   <div class="wrap">
-    <div class="sec-eyebrow">Research Foundation</div>
-    <h2>Built on independent research,<br>not vendor claims.</h2>
-    <p class="sec-sub">The simulation methodology behind CashPoolModel is grounded in peer-reviewed academic work and independent treasury practice — not marketing benchmarks.</p>
-    <div class="meth-grid">
-      <div class="meth-item">
-        <div class="meth-inst">Masaryk University · Faculty of Economics and Administration</div>
-        <div class="meth-title"><a href="/blog.html" onclick="event.preventDefault();window.location='/blog.html';" class="meth-link">Research on Cash Pooling Efficiency from Masaryk University</a></div>
-        <div class="meth-desc">Jakub Houser's 2023 research examined the structural conflict between bank and corporate interests in cash pooling, quantified the FTE cost of manual pool management, and analysed the impact of intercompany loan structures on group liquidity efficiency.</div>
+    <div class="nl">
+      <div class="nl-title">Treasury Notes</div>
+      <div class="nl-sub">When something worth reading happens in treasury — we write about it.</div>
+      <div class="nl-form">
+        <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
+        <button class="nl-btn" onclick="handleNewsletter()">Subscribe</button>
       </div>
-      <div class="meth-item">
-        <div class="meth-inst">Corvinus University · Centre for Economic and Regional Studies</div>
-        <div class="meth-title"><a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank" class="meth-link">Liquidity Management Study by Corvinus University</a></div>
-        <div class="meth-desc">Applied Monte Carlo simulation to model cash flow volatility in corporate treasury structures, demonstrating that static average-balance models systematically overstate netting efficiency under realistic daily volatility conditions.</div>
-      </div>
+      <div class="nl-note">No spam. Unsubscribe any time.</div>
     </div>
   </div>
 </section>
@@ -699,230 +501,37 @@ h1              { animation-delay: .11s; }
     <div class="footer-i">
       <div>
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-swiss">by Intercompany.io</div>
-        <div class="footer-sub" data-i18n="footer.sub">Independent Swiss treasury intelligence</div>
-        <div class="footer-loc">
-          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
-          <span data-i18n="footer.location">Geneva, Switzerland</span>
-        </div>
+        <div class="footer-sub">Independent treasury intelligence by Intercompany.io<br>Geneva, Switzerland · info@cashpoolmodel.com</div>
       </div>
       <div class="footer-links">
-        <a href="/blog.html" data-i18n="nav.blog">Blog</a>
-        <a href="/contact.html" data-i18n="nav.contact">Contact</a>
-        <a href="/simulator-input.html">Simulator</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+        <a href="mailto:info@cashpoolmodel.com">Email us</a>
       </div>
     </div>
-    <div class="footer-copy" data-i18n="footer.copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.</div>
+    <div class="footer-copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice. <a href="/simulator-input.html" style="color:rgba(255,255,255,.18);margin-left:12px">Simulator</a> <a href="/dashboard-preview.html" style="color:rgba(255,255,255,.18);margin-left:8px">Report</a></div>
   </div>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const translations = {
-  en: {
-    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Get Early Access', 'nav.cta_mobile': 'Get Early Access →',
-    'hero.eyebrow': 'Independent Swiss Treasury Intelligence',
-    'hero.h1': 'Model your cash pool before you commit.',
-    'hero.sub': 'The first independent cash pooling simulator. Built by treasury practitioners, not software vendors or banks.',
-    'hero.b1': 'Know your savings before the bank pitch — not after.',
-    'hero.b2': 'Full P&L impact, sensitivity analysis, and regulatory matrix.',
-    'hero.b3': 'Board-ready PDF report. No spreadsheets, no consultants.',
-    'hero.cta1': 'Get Early Access →', 'hero.cta2': 'See How It Works',
-    'hero.trust': 'Free to join. First report on us when we launch.',
-    'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
-    'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
-    'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
-    'preview.title': 'Executive Summary', 'preview.client': 'Acme Manufacturing Group · 8 entities · 6 currencies',
-    'preview.kpi1': 'Annual net savings', 'preview.kpi2': 'Netting efficiency',
-    'preview.kpi3': 'Gross interest reduction', 'preview.kpi4': 'Freed-up liquidity',
-    'preview.chart_label': 'Before / After Interest Cost Comparison',
-    'preview.svg_before': 'Before pool', 'preview.svg_after': 'After pool',
-    'preview.svg_savings': '↓ €842k annual savings',
-    'preview.matrix_label': 'Sensitivity Matrix — Net Benefit (rate × volatility)',
-    'preview.note': 'Illustrative data. Actual report generated from your inputs.',
-    'how.eyebrow': 'How it works', 'how.h2': 'From data to board decision<br>in three steps.',
-    'how.s1t': 'Enter your group structure',
-    'how.s1d': 'Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.',
-    'how.s2t': 'Run the simulation',
-    'how.s2d': 'The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&L comparison.',
-    'how.s3t': 'Download the report',
-    'how.s3d': 'Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.',
-    'ea.eyebrow': 'Early Access', 'ea.h2': 'Secure your priority access.',
-    'ea.sub': 'Join the waitlist to be the first to model your cash pool when we go live.',
-    'ea.c1t': 'Automated Simulation',
-    'ea.c1b1': 'Instant visibility into interest savings before any bank conversation',
-    'ea.c1b2': 'Complimentary basic report for early access members',
-    'ea.c1b3': 'Precision multi-currency netting across all group entities',
-    'ea.c2t': 'Premium Intelligence',
-    'ea.c2b1': 'Detailed PDF reports structured for CFO and board presentation',
-    'ea.c2b2': 'Sensitivity and risk modelling across rate and volatility scenarios',
-    'ea.c2b3': 'Expert consultations with independent treasury specialists',
-    'ea.placeholder': 'treasury@yourcompany.com', 'ea.btn': 'Join Waitlist →',
-    'ea.micro': 'No spam. Only professional treasury updates.',
-    'footer.swiss': 'Swiss-based advisory',
-    'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
-    'footer.location': 'Geneva, Switzerland',
-    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.',
-    'toast.success': 'You are on the list. We will notify you when the simulator launches.',
-    'toast.invalid': 'Please enter a valid email address.',
-  },
-  de: {
-    'nav.blog': 'Blog', 'nav.contact': 'Kontakt', 'nav.cta': 'Früher Zugang', 'nav.cta_mobile': 'Früher Zugang →',
-    'hero.eyebrow': 'Unabhängige Schweizer Treasury-Intelligence',
-    'hero.h1': 'Modellieren Sie Ihren Cash Pool — bevor Sie sich entscheiden.',
-    'hero.sub': 'Der erste unabhängige Cash-Pool-Simulator. Entwickelt von Treasury-Experten, nicht von Software-Anbietern oder Banken.',
-    'hero.b1': 'Kennen Sie Ihre Einsparungen vor dem Bankgespräch — nicht danach.',
-    'hero.b2': 'Vollständige P&L-Auswirkung, Sensitivitätsanalyse und Compliance-Matrix.',
-    'hero.b3': 'Board-fähiger PDF-Bericht. Keine Tabellen, keine Berater.',
-    'hero.cta1': 'Früher Zugang →', 'hero.cta2': 'So funktioniert es',
-    'hero.trust': 'Kostenlose Anmeldung. Erster Bericht gratis bei Launch.',
-    'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
-    'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
-    'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
-    'preview.title': 'Management Summary', 'preview.client': 'Acme Manufacturing Group · 8 Einheiten · 6 Währungen',
-    'preview.kpi1': 'Jährl. Nettoeinsparungen', 'preview.kpi2': 'Netting-Effizienz',
-    'preview.kpi3': 'Brutto-Zinsreduktion', 'preview.kpi4': 'Freigesetzte Liquidität',
-    'preview.chart_label': 'Zinskosten Vorher / Nachher',
-    'preview.svg_before': 'Vor Pool', 'preview.svg_after': 'Nach Pool',
-    'preview.svg_savings': '↓ €842k jährl. Einsparungen',
-    'preview.matrix_label': 'Sensitivitätsmatrix — Nettonutzen (Zinssatz × Volatilität)',
-    'preview.note': 'Illustrative Daten. Der tatsächliche Bericht wird aus Ihren Eingaben erstellt.',
-    'how.eyebrow': 'So funktioniert es', 'how.h2': 'Von den Daten zur Entscheidung —<br>in drei Schritten.',
-    'how.s1t': 'Konzernstruktur eingeben',
-    'how.s1d': 'Geben Sie jede Einheit, ihr durchschnittliches Tagesguthaben, die Anzahl der Konten und Ihre aktuellen Bankkonditionen ein. Live-Zinssätze der wichtigsten Zentralbanken.',
-    'how.s2t': 'Simulation ausführen',
-    'how.s2d': 'Das System berechnet die Netting-Effizienz, modelliert drei Szenarien mit täglicher Cashflow-Volatilität und erstellt einen vollständigen Vorher/Nachher-P&L-Vergleich.',
-    'how.s3t': 'Bericht herunterladen',
-    'how.s3d': 'Exportieren Sie ein strukturiertes PDF für Ihren CFO, Verwaltungsrat oder Bank-Ausschreibungen. Mit Management Summary, Sensitivitätsanalyse und Umsetzungsplan.',
-    'ea.eyebrow': 'Früher Zugang', 'ea.h2': 'Sichern Sie sich Ihren Vorrangzugang.',
-    'ea.sub': 'Registrieren Sie sich auf der Warteliste, um als Erster Ihren Cash Pool zu modellieren.',
-    'ea.c1t': 'Automatisierte Simulation',
-    'ea.c1b1': 'Sofortige Übersicht über Zinseinsparungen vor jedem Bankgespräch',
-    'ea.c1b2': 'Kostenloser Basisbericht für Früh-Zugangs-Mitglieder',
-    'ea.c1b3': 'Präzises Multi-Währungs-Netting für alle Konzerneinheiten',
-    'ea.c2t': 'Premium-Intelligence',
-    'ea.c2b1': 'Detaillierte PDF-Berichte für CFO und Verwaltungsrat',
-    'ea.c2b2': 'Sensitivitäts- und Risikomodellierung für verschiedene Zinsszenarien',
-    'ea.c2b3': 'Expertenberatung mit unabhängigen Treasury-Spezialisten',
-    'ea.placeholder': 'treasury@ihrefirma.com', 'ea.btn': 'Zur Warteliste →',
-    'ea.micro': 'Kein Spam. Nur professionelle Treasury-Updates.',
-    'footer.swiss': 'Schweizer Treasury-Beratung',
-    'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
-    'footer.location': 'Genf, Schweiz',
-    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Ergebnisse sind illustrativ — keine Finanzberatung.',
-    'toast.success': 'Sie stehen auf der Liste. Wir benachrichtigen Sie beim Launch.',
-    'toast.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
-  },
-  fr: {
-    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Accès anticipé', 'nav.cta_mobile': 'Accès anticipé →',
-    'hero.eyebrow': 'Intelligence suisse en trésorerie indépendante',
-    'hero.h1': 'Modélisez votre cash pool avant de vous engager.',
-    'hero.sub': 'Le premier simulateur de cash pooling indépendant. Conçu par des professionnels de la trésorerie, pas par des éditeurs de logiciels ni des banques.',
-    'hero.b1': 'Connaissez vos économies avant la négociation bancaire — pas après.',
-    'hero.b2': 'Impact P&L complet, analyse de sensibilité et matrice réglementaire.',
-    'hero.b3': 'Rapport PDF prêt pour le conseil. Sans tableurs, sans consultants.',
-    'hero.cta1': 'Accès anticipé →', 'hero.cta2': 'Voir comment ça fonctionne',
-    'hero.trust': 'Inscription gratuite. Premier rapport offert au lancement.',
-    'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
-    'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
-    'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
-    'preview.title': 'Résumé exécutif', 'preview.client': 'Acme Manufacturing Group · 8 entités · 6 devises',
-    'preview.kpi1': 'Économies nettes annuelles', 'preview.kpi2': 'Efficacité de netting',
-    'preview.kpi3': 'Réduction brute des intérêts', 'preview.kpi4': 'Liquidités libérées',
-    'preview.chart_label': 'Comparaison des coûts d\'intérêts avant / après',
-    'preview.svg_before': 'Avant pool', 'preview.svg_after': 'Après pool',
-    'preview.svg_savings': '↓ €842k d\'économies annuelles',
-    'preview.matrix_label': 'Matrice de sensibilité — Bénéfice net (taux × volatilité)',
-    'preview.note': 'Données illustratives. Le rapport réel est généré à partir de vos données.',
-    'how.eyebrow': 'Comment ça fonctionne', 'how.h2': 'Des données à la décision du conseil —<br>en trois étapes.',
-    'how.s1t': 'Saisir la structure du groupe',
-    'how.s1d': 'Renseignez chaque entité, son solde journalier moyen, le nombre de comptes et vos taux bancaires actuels. Taux en temps réel des principales banques centrales.',
-    'how.s2t': 'Lancer la simulation',
-    'how.s2d': 'Le moteur calcule l\'efficacité de netting, modélise trois scénarios avec la volatilité des flux journaliers et produit une comparaison P&L complète avant/après.',
-    'how.s3t': 'Télécharger le rapport',
-    'how.s3d': 'Exportez un PDF structuré prêt pour votre CFO, votre conseil ou un appel d\'offres bancaire. Résumé exécutif, analyse de sensibilité et feuille de route inclus.',
-    'ea.eyebrow': 'Accès anticipé', 'ea.h2': 'Sécurisez votre accès prioritaire.',
-    'ea.sub': 'Rejoignez la liste d\'attente pour être le premier à modéliser votre cash pool à notre lancement.',
-    'ea.c1t': 'Simulation automatisée',
-    'ea.c1b1': 'Visibilité immédiate sur les économies d\'intérêts avant toute négociation bancaire',
-    'ea.c1b2': 'Rapport de base offert pour les membres en accès anticipé',
-    'ea.c1b3': 'Netting multi-devises précis pour toutes les entités du groupe',
-    'ea.c2t': 'Intelligence premium',
-    'ea.c2b1': 'Rapports PDF détaillés structurés pour le CFO et le conseil d\'administration',
-    'ea.c2b2': 'Modélisation de la sensibilité et des risques pour différents scénarios de taux',
-    'ea.c2b3': 'Consultations d\'experts avec des spécialistes indépendants en trésorerie',
-    'ea.placeholder': 'tresorerie@votreentreprise.com', 'ea.btn': 'Rejoindre la liste →',
-    'ea.micro': 'Pas de spam. Uniquement des actualités professionnelles en trésorerie.',
-    'footer.swiss': 'Conseil suisse en trésorerie',
-    'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
-    'footer.location': 'Genève, Suisse',
-    'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Les résultats sont illustratifs — pas de conseil financier.',
-    'toast.success': 'Vous êtes sur la liste. Nous vous notifierons au lancement.',
-    'toast.invalid': 'Veuillez saisir une adresse e-mail valide.',
-  }
-};
+const WORKER_URL = 'https://brevo-subscribe.kuba-houser.workers.dev';
 
-let currentLang = 'en';
-
-function setLang(lang) {
-  currentLang = lang;
-  const t = translations[lang];
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    if (t[key] !== undefined) el.innerHTML = t[key];
-  });
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const key = el.dataset.i18nPh;
-    if (t[key] !== undefined) el.placeholder = t[key];
-  });
-  const svgMap = { 'svg-before': 'preview.svg_before', 'svg-after': 'preview.svg_after', 'svg-savings': 'preview.svg_savings' };
-  Object.entries(svgMap).forEach(([id, key]) => {
-    const el = document.getElementById(id);
-    if (el && t[key]) el.textContent = t[key];
-  });
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
-  });
-  localStorage.setItem('cpm_lang', lang);
-}
-
-(function() {
-  const saved = localStorage.getItem('cpm_lang');
-  if (saved && translations[saved]) setLang(saved);
-})();
-
-function toggleMobileNav() {
-  document.getElementById('navBurger').classList.toggle('open');
-  document.getElementById('navMobile').classList.toggle('open');
-}
-
-async function addToBrevo(email) {
+async function addToBrevo(email, listId) {
   try {
-    await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
+    await fetch(WORKER_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
   } catch(e) { console.error(e); }
 }
 
-async function handleEarlyAccess() {
-  const e = document.getElementById('eaEmail').value;
-  const t = translations[currentLang];
-  if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
-  showToast(t['toast.success']);
-  document.getElementById('eaEmail').value = '';
-}
-
 async function handleWaitlist() {
   const e = document.getElementById('wlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
+  await addToBrevo(e, 2);
   showToast('You are on the list. We will notify you when the simulator launches.');
   document.getElementById('wlEmail').value = '';
 }
@@ -930,33 +539,15 @@ async function handleWaitlist() {
 async function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
   if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'newsletter_signup');
+  await addToBrevo(e, 2);
   showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
-// Scale iframe dashboard to fit any screen width
-function scalePreviewDashboard() {
-  const wrap = document.querySelector('.preview-iframe-wrap');
-  const iframe = document.querySelector('.preview-iframe');
-  if (!wrap || !iframe) return;
-  const IFRAME_W = 1100;
-  const IFRAME_H = 780;
-  const scale = wrap.offsetWidth / IFRAME_W;
-  iframe.style.transform = 'scale(' + scale + ')';
-  // Show ~640px of content on desktop, min 290px on mobile (header + KPI row)
-  const visibleH = Math.max(290, Math.round(640 * scale));
-  wrap.style.height = visibleH + 'px';
-}
-scalePreviewDashboard();
-window.addEventListener('resize', scalePreviewDashboard);
 </script>
 </body>
 </html>
