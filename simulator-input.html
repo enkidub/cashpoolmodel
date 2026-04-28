@@ -156,6 +156,7 @@ table.et tr:hover td{background:var(--paper)}
       </div>
 
       <div id="aiSection" style="display:none">
+        <div class="note" style="background:#fefce8;border-color:#fde68a;color:#92400e">⚠ AI extraction is in private beta. <a href="/contact.html" style="color:#92400e;font-weight:600;text-decoration:underline">Contact us</a> to enable it for your account — or enter data manually below.</div>
         <div class="note">Upload PDF or CSV bank statements. AI will extract entity names, currencies, average balances, and account counts. You can review and edit everything before proceeding.</div>
         <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
           ondragover="event.preventDefault();this.classList.add('drag')"
@@ -198,11 +199,19 @@ table.et tr:hover td{background:var(--paper)}
         </div>
         <div class="fg">
           <label>Pool type</label>
-          <select id="poolType" onchange="recalc()">
+          <select id="poolType" onchange="onPoolTypeChange()">
             <option value="zba">Zero-Balancing (Physical ZBA)</option>
             <option value="notional">Notional Pooling</option>
+            <option value="target">Target Balancing</option>
           </select>
         </div>
+      </div>
+      <div class="row" id="targetBalRow" style="display:none">
+        <div class="fg">
+          <label>Minimum retained balance per entity (EUR) <div class="tt"><div class="tt-icon">?</div><span>Each entity sweeps only the amount above this threshold. Entities keep this buffer for operational liquidity.</span></div></label>
+          <input type="number" id="targetBal" value="200000" step="50000" oninput="recalc()">
+        </div>
+        <div class="fg"></div>
       </div>
       <div class="row">
         <div class="fg">
@@ -249,6 +258,7 @@ table.et tr:hover td{background:var(--paper)}
         </table>
       </div>
       <button class="add-btn" onclick="addEntity()">+ Add entity</button>
+      <div id="entitySummary" style="display:flex;gap:20px;flex-wrap:wrap;padding:10px 2px 4px;font-size:12px;border-top:1px solid var(--rule);margin-top:8px"></div>
       <div class="preset-btns">
         <button class="preset-btn" onclick="loadTemplate('western')">🌍 Western Europe</button>
         <button class="preset-btn" onclick="loadTemplate('cee')">🌐 CEE template</button>
@@ -292,6 +302,22 @@ table.et tr:hover td{background:var(--paper)}
         <button class="preset-btn" onclick="setPreset('gbp')">BoE / GBP</button>
         <button class="preset-btn" onclick="setPreset('chf')">SNB / CHF</button>
       </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule)">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="whtApplies" onchange="toggleWht()" style="accent-color:var(--navy);width:14px;height:14px;flex-shrink:0">
+          <span style="font-size:12px;font-weight:500;color:var(--ink-mid)">Cross-border pool — withholding tax (WHT) on intercompany interest</span>
+          <div class="tt"><div class="tt-icon">?</div><span>WHT is deducted when the pool header pays interest to surplus entities in other jurisdictions. Most relevant for ZBA. Notional pooling avoids this.</span></div>
+        </label>
+        <div id="whtRateRow" style="display:none;margin-top:10px">
+          <div class="row">
+            <div class="fg">
+              <label>Effective WHT rate (%) <div class="tt"><div class="tt-icon">?</div><span>Check your bilateral tax treaty. Common rates: 5%, 10%, 15%. Applied to annual credit interest paid from header to surplus entities.</span></div></label>
+              <input type="number" id="whtRate" value="5" step="0.5" min="0" max="35" oninput="recalc()">
+            </div>
+            <div class="fg"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -327,10 +353,10 @@ table.et tr:hover td{background:var(--paper)}
 
   <!-- VIEW REPORT BUTTON -->
   <div style="padding:24px 0 48px;text-align:center">
-    <button class="btn btn-navy" style="padding:13px 36px;font-size:14px;border-radius:8px" onclick="viewReport()">
+    <button class="btn btn-navy" id="viewReportBtn" style="padding:13px 36px;font-size:14px;border-radius:8px;opacity:.45;cursor:not-allowed" onclick="viewReport()" disabled>
       View Full Report →
     </button>
-    <div style="margin-top:10px;font-size:11px;color:var(--ink-fnt)">Results update automatically as you enter data</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--ink-fnt)" id="reportBtnNote">Add at least 2 entities to generate your report.</div>
   </div>
 
 </div>
@@ -473,9 +499,29 @@ function makeCurrencySelect(selected) {
   </select>`;
 }
 
-// ── FLAGS / COUNTRIES ──
-const FLAGS={DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸',RO:'🇷🇴',SG:'🇸🇬',HK:'🇭🇰',NO:'🇳🇴',DK:'🇩🇰'};
-const COUNTRIES = Object.entries(FLAGS).map(([k,v])=>({code:k,flag:v}));
+// ── COUNTRIES ──
+const COUNTRIES = [
+  {code:'DE',flag:'🇩🇪',name:'Germany'},
+  {code:'FR',flag:'🇫🇷',name:'France'},
+  {code:'GB',flag:'🇬🇧',name:'United Kingdom'},
+  {code:'NL',flag:'🇳🇱',name:'Netherlands'},
+  {code:'CH',flag:'🇨🇭',name:'Switzerland'},
+  {code:'AT',flag:'🇦🇹',name:'Austria'},
+  {code:'CZ',flag:'🇨🇿',name:'Czech Republic'},
+  {code:'SK',flag:'🇸🇰',name:'Slovakia'},
+  {code:'PL',flag:'🇵🇱',name:'Poland'},
+  {code:'HU',flag:'🇭🇺',name:'Hungary'},
+  {code:'US',flag:'🇺🇸',name:'United States'},
+  {code:'BE',flag:'🇧🇪',name:'Belgium'},
+  {code:'SE',flag:'🇸🇪',name:'Sweden'},
+  {code:'IT',flag:'🇮🇹',name:'Italy'},
+  {code:'ES',flag:'🇪🇸',name:'Spain'},
+  {code:'RO',flag:'🇷🇴',name:'Romania'},
+  {code:'SG',flag:'🇸🇬',name:'Singapore'},
+  {code:'HK',flag:'🇭🇰',name:'Hong Kong'},
+  {code:'NO',flag:'🇳🇴',name:'Norway'},
+  {code:'DK',flag:'🇩🇰',name:'Denmark'},
+];
 
 const PRESETS={
   eur:{debit:4.15,credit:2.40,poolDebit:2.65,poolCredit:3.50},
@@ -528,13 +574,22 @@ function updateEntityField(el) {
   recalc();
 }
 
+function fmtBal(n) {
+  if (!n && n !== 0) return '';
+  const abs = Math.abs(n);
+  const sign = n < 0 ? '−' : '+';
+  if (abs >= 1e6) return sign + '€' + (abs/1e6).toFixed(2) + 'M';
+  if (abs >= 1e3) return sign + '€' + Math.round(abs/1000) + 'k';
+  return (n < 0 ? '−' : '') + '€' + abs;
+}
+
 function renderEntities(){
   g('entityBody').innerHTML = entities.map((e,i) => `
     <tr>
       <td><input class="et-inp" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()" style="text-align:left;min-width:130px"></td>
       <td>
-        <select class="et-inp" onchange="entities[${i}].country=this.value;recalc()" style="text-align:left;min-width:80px">
-          ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code}</option>`).join('')}
+        <select class="et-inp" onchange="entities[${i}].country=this.value;recalc()" style="text-align:left;min-width:120px">
+          ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.name}</option>`).join('')}
         </select>
       </td>
       <td>
@@ -542,14 +597,47 @@ function renderEntities(){
           ${CURRENCIES.map(c=>`<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('')}
         </select>
       </td>
-      <td><input class="et-inp num ${e.balance>=0?'pos':'neg'}" type="number" value="${e.balance}" step="50000"
-        onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='et-inp num '+(entities[${i}].balance>=0?'pos':'neg');recalc()"
-        style="min-width:130px"></td>
+      <td>
+        <input class="et-inp num ${e.balance>=0?'pos':'neg'}" type="number" value="${e.balance}" step="50000"
+          onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='et-inp num '+(entities[${i}].balance>=0?'pos':'neg');renderSummary();recalc()"
+          style="min-width:130px">
+        <div style="font-size:9px;color:var(--ink-fnt);text-align:right;margin-top:1px">${fmtBal(e.balance)}</div>
+      </td>
       <td><input class="et-inp num" type="number" value="${e.accounts}" min="1" max="20"
-        onchange="entities[${i}].accounts=parseInt(this.value)||1;recalc()" style="min-width:55px"></td>
+        onchange="entities[${i}].accounts=parseInt(this.value)||1;recalc()" style="min-width:55px"
+        title="Number of bank accounts for this entity — used for per-account fee calculation"></td>
       <td><button class="del-btn" onclick="removeEntity(${i})">✕</button></td>
     </tr>
   `).join('');
+  renderSummary();
+}
+
+function renderSummary() {
+  const el = g('entitySummary');
+  if (!el) return;
+  const surplus = entities.filter(e=>e.balance>0).reduce((s,e)=>s+e.balance,0);
+  const deficit = entities.filter(e=>e.balance<0).reduce((s,e)=>s+Math.abs(e.balance),0);
+  const net = surplus - deficit;
+  if (!entities.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <span style="color:var(--emerald)">Surplus <strong>${fmtBal(surplus)}</strong></span>
+    <span style="color:var(--red)">Deficit <strong>${fmtBal(-deficit)}</strong></span>
+    <span style="color:${net>=0?'var(--emerald)':'var(--red)'}">Net <strong>${fmtBal(net)}</strong></span>
+    <span style="color:var(--ink-fnt)">${entities.length} ${entities.length===1?'entity':'entities'} · ${entities.reduce((s,e)=>s+e.accounts,0)} accounts</span>
+  `;
+}
+
+// ── POOL TYPE / WHT TOGGLES ──
+function onPoolTypeChange() {
+  const pt = g('poolType').value;
+  const targetRow = g('targetBalRow');
+  if (targetRow) targetRow.style.display = pt === 'target' ? '' : 'none';
+  recalc();
+}
+function toggleWht() {
+  const row = g('whtRateRow');
+  if (row) row.style.display = g('whtApplies').checked ? '' : 'none';
+  recalc();
 }
 
 // ── MODE TOGGLE ──
@@ -591,6 +679,9 @@ async function processFiles(files) {
       : { model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]}] };
 
     const res  = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if (!res.ok) {
+      throw new Error(`API error ${res.status} — extraction requires backend configuration. Please enter data manually.`);
+    }
     const data = await res.json();
     const text = data.content?.find(b=>b.type==='text')?.text||'[]';
     const clean= text.replace(/```[a-z]*\n?/g,'').replace(/```/g,'').trim();
@@ -643,36 +734,68 @@ function recalc(){
   const fees= parseFloat(g('bankFees').value)        || 30000;
   const adm = parseFloat(g('adminCost').value)       || 40000;
   const fxv = parseFloat(g('fxVolume').value)        || 500;
+  const poolType   = g('poolType').value;
+  const targetBal  = poolType === 'target' ? (parseFloat(g('targetBal')?.value) || 200000) : 0;
+  const whtApplies = g('whtApplies')?.checked || false;
+  const whtRate    = whtApplies ? (parseFloat(g('whtRate')?.value || 5) / 100) : 0;
+
+  // Target Balancing: entities only sweep amounts above their retained minimum
+  const calcEnt = poolType === 'target'
+    ? entities.map(e => ({...e,
+        balance: e.balance > 0 ? Math.max(0, e.balance - targetBal) : Math.min(0, e.balance + targetBal)
+      }))
+    : entities;
 
   let surplus=0, deficit=0, intCostBef=0, intIncBef=0, intCostAft=0, intIncAft=0;
-  entities.forEach(e=>{
+  calcEnt.forEach(e=>{
     const b=e.balance;
     if(b>0){surplus+=b;intIncBef+=b*cr;intIncAft+=b*pcr}
     else if(b<0){deficit+=Math.abs(b);intCostBef+=Math.abs(b)*dr;intCostAft+=Math.abs(b)*pdr}
   });
 
-  const netting     = Math.min(surplus,deficit);
-  const nettingEff  = (surplus+deficit)>0 ? netting/Math.max(surplus,deficit)*100 : 0;
-  const nettingSave = netting*(dr-pdr)*0.85;
-  const interestSaving = (intCostBef-intCostAft)+(intIncAft-intIncBef)+nettingSave;
-  const fxSaving    = fxv*1e6*0.0008;
-  const opSaving    = fxSaving+fxv*1e6*0.0003;
-  const annualCosts = fees+adm;
-  const netBenefit  = interestSaving+opSaving-annualCosts;
-  const poolBalance = entities.reduce((s,e)=>s+e.balance,0);
-  const paybackMo   = netBenefit>0 ? impl/netBenefit*12 : 999;
-  const groupName   = g('groupName').value || 'Sample Group';
-  const poolBank    = g('poolBank').value  || 'ING Bank';
-  const currencyVal = g('selectedCurrency')?.value || currency;
+  const netting    = Math.min(surplus,deficit);
+  const nettingEff = (surplus+deficit)>0 ? netting/Math.max(surplus,deficit)*100 : 0;
+  const nettingSave= netting*(dr-pdr)*0.85;
+  let interestSaving = (intCostBef-intCostAft)+(intIncAft-intIncBef)+nettingSave;
 
-  const checks=[groupName.length>2,entities.length>=2,surplus>0,deficit>0,dr>0];
+  // Pool-type adjustments:
+  // Notional: no physical sweeps → avoids transfer costs, but bank charges ~20% premium on fees
+  // ZBA + WHT: WHT deducted on interest income paid from header to surplus entities
+  const notionalFeePremium = poolType === 'notional' ? fees * 0.20 : 0;
+  const whtCost = (whtApplies && poolType !== 'notional') ? intIncAft * whtRate : 0;
+
+  const fxSaving   = fxv*1e6*0.0008;
+  const opSaving   = fxSaving+fxv*1e6*0.0003;
+  const annualCosts= fees+adm+notionalFeePremium+whtCost;
+  const netBenefit = interestSaving+opSaving-annualCosts;
+  const poolBalance= calcEnt.reduce((s,e)=>s+e.balance,0);
+  const paybackMo  = netBenefit>0 ? impl/netBenefit*12 : 999;
+  const groupName  = g('groupName').value || 'Sample Group';
+  const poolBank   = g('poolBank').value  || 'ING Bank';
+  const currencyVal= g('selectedCurrency')?.value || currency;
+
+  // Progress bar — fixed: doesn't require deficit (all-surplus groups are valid)
+  const checks=[groupName.length>2, entities.length>=2, (surplus+deficit)>0, dr>0, impl>0];
   const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
   if(g('progFill')) g('progFill').style.width=pct+'%';
+
+  // View Report button — enable when ≥2 entities
+  const btn = g('viewReportBtn');
+  if (btn) {
+    const ready = entities.length >= 2;
+    btn.disabled = !ready;
+    btn.style.opacity = ready ? '1' : '0.45';
+    btn.style.cursor = ready ? 'pointer' : 'not-allowed';
+    const note = g('reportBtnNote');
+    if (note) note.textContent = ready
+      ? 'Results calculated from your inputs above.'
+      : 'Add at least 2 entities to generate your report.';
+  }
 
   try {
     localStorage.setItem('cpm_sim', JSON.stringify({
       groupName, poolBank, currency: currencyVal,
-      poolType: g('poolType').value,
+      poolType,
       totalEntities: entities.length,
       totalAccounts: entities.reduce((s,e)=>s+e.accounts,0),
       surplus, deficit, netting,
@@ -691,6 +814,7 @@ function recalc(){
       intCostBef:Math.round(intCostBef), intIncBef:Math.round(intIncBef),
       intCostAft:Math.round(intCostAft), intIncAft:Math.round(intIncAft),
       nettingSave:Math.round(nettingSave), fxSaving:Math.round(fxSaving),
+      whtCost:Math.round(whtCost), notionalFeePremium:Math.round(notionalFeePremium),
       annualCosts, ts:Date.now(),
     }));
   } catch(e){}
@@ -698,11 +822,34 @@ function recalc(){
 
 function viewReport(){ recalc(); window.location.href='/dashboard-preview.html'; }
 
-// Init
-g('poolBankInput').value = 'ING Bank';
-loadTemplate('western');
-g('groupName').value = 'Acme Manufacturing Group';
-recalc();
+// Init — restore previous session or load demo template
+(function init() {
+  const saved = (() => { try { return JSON.parse(localStorage.getItem('cpm_sim')); } catch(e){} return null; })();
+  if (saved && saved.entities && saved.entities.length > 0) {
+    if (saved.groupName) g('groupName').value = saved.groupName;
+    if (saved.poolBank)  { g('poolBankInput').value = saved.poolBank; g('poolBank').value = saved.poolBank; }
+    if (saved.currency)  {
+      const c = CURRENCIES.find(x => x.code === saved.currency);
+      if (c) { g('currencyInput').value = c.code + ' — ' + c.name; g('selectedCurrency').value = c.code; currency = c.code; }
+    }
+    if (saved.poolType) { g('poolType').value = saved.poolType; onPoolTypeChange(); }
+    if (saved.debitRate  !== undefined) g('debitRate').value  = (saved.debitRate*100).toFixed(2);
+    if (saved.creditRate !== undefined) g('creditRate').value = (saved.creditRate*100).toFixed(2);
+    if (saved.poolDebit  !== undefined) g('poolDebit').value  = (saved.poolDebit*100).toFixed(2);
+    if (saved.poolCredit !== undefined) g('poolCredit').value = (saved.poolCredit*100).toFixed(2);
+    if (saved.implCost   !== undefined) g('implCost').value   = saved.implCost;
+    if (saved.bankFees   !== undefined) g('bankFees').value   = saved.bankFees;
+    if (saved.adminCost  !== undefined) g('adminCost').value  = saved.adminCost;
+    if (saved.fxVolume   !== undefined) g('fxVolume').value   = saved.fxVolume;
+    entities = (saved.entities || []).map(e => ({...e}));
+    renderEntities();
+  } else {
+    g('poolBankInput').value = 'ING Bank';
+    loadTemplate('western');
+    g('groupName').value = 'Acme Manufacturing Group';
+  }
+  recalc();
+})();
 </script>
 </body>
 </html>
