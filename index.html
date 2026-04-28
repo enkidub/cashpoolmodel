@@ -543,19 +543,17 @@ h1              { animation-delay: .11s; }
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Swiss Treasury Intelligence</div>
-    <h1 data-i18n="hero.h1">Model your cash pool before you commit.</h1>
-    <p class="hero-sub" data-i18n="hero.sub">The first independent cash pooling simulator. Built by treasury practitioners, not software vendors or banks.</p>
-    <ul class="hero-bullets">
-      <li class="hero-bullet" data-i18n="hero.b1">Know your savings before the bank pitch — not after.</li>
-      <li class="hero-bullet" data-i18n="hero.b2">Full P&amp;L impact, sensitivity analysis, and regulatory matrix.</li>
-      <li class="hero-bullet" data-i18n="hero.b3">Board-ready PDF report. No spreadsheets, no consultants.</li>
-    </ul>
+    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Cash Pooling Intelligence</div>
+    <h1 data-i18n="hero.h1">See how much your company could save with cash pooling.</h1>
+    <p class="hero-sub" data-i18n="hero.sub">Most treasury teams find out the numbers only after signing with a bank. CashPoolModel gives you an independent, AI-assisted simulation in minutes — before any commitment, before any vendor conversation.</p>
     <div class="actions">
-      <button class="btn btn-navy" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta1">Get Early Access →</button>
-      <a class="btn btn-outline" href="#how" data-i18n="hero.cta2">See How It Works</a>
+      <a class="btn btn-navy" href="/simulator-input.html" data-i18n="hero.cta1">Run your simulation →</a>
+      <a class="btn btn-outline" href="/dashboard-preview.html" data-i18n="hero.cta2">See a sample report</a>
     </div>
-    <p class="trust-line" data-i18n="hero.trust">Free to join. First report on us when we launch.</p>
+    <div style="margin-top:18px; font-size:12px; color:var(--ink-fnt); display:flex; align-items:center; gap:8px;">
+      <div style="width:4px; height:4px; border-radius:50%; background:var(--gold);"></div>
+      <span data-i18n="hero.benchmark">Groups modelled on CashPoolModel typically identify €200k–€800k in annual savings.</span>
+    </div>
   </div>
 </section>
 
@@ -690,14 +688,11 @@ h1              { animation-delay: .11s; }
 const translations = {
   en: {
     'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Get Early Access', 'nav.cta_mobile': 'Get Early Access →',
-    'hero.eyebrow': 'Independent Swiss Treasury Intelligence',
-    'hero.h1': 'Model your cash pool before you commit.',
-    'hero.sub': 'The first independent cash pooling simulator. Built by treasury practitioners, not software vendors or banks.',
-    'hero.b1': 'Know your savings before the bank pitch — not after.',
-    'hero.b2': 'Full P&L impact, sensitivity analysis, and regulatory matrix.',
-    'hero.b3': 'Board-ready PDF report. No spreadsheets, no consultants.',
-    'hero.cta1': 'Get Early Access →', 'hero.cta2': 'See How It Works',
-    'hero.trust': 'Free to join. First report on us when we launch.',
+    'hero.eyebrow': 'Independent Cash Pooling Intelligence',
+    'hero.h1': 'See how much your company could save with cash pooling.',
+    'hero.sub': 'Most treasury teams find out the numbers only after signing with a bank. CashPoolModel gives you an independent, AI-assisted simulation in minutes — before any commitment, before any vendor conversation.',
+    'hero.cta1': 'Run your simulation →', 'hero.cta2': 'See a sample report',
+    'hero.benchmark': 'Groups modelled on CashPoolModel typically identify €200k–€800k in annual savings.',
     'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
     'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
     'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
@@ -737,14 +732,11 @@ const translations = {
   },
   de: {
     'nav.blog': 'Blog', 'nav.contact': 'Kontakt', 'nav.cta': 'Früher Zugang', 'nav.cta_mobile': 'Früher Zugang →',
-    'hero.eyebrow': 'Unabhängige Schweizer Treasury-Intelligence',
-    'hero.h1': 'Modellieren Sie Ihren Cash Pool — bevor Sie sich entscheiden.',
-    'hero.sub': 'Der erste unabhängige Cash-Pool-Simulator. Entwickelt von Treasury-Experten, nicht von Software-Anbietern oder Banken.',
-    'hero.b1': 'Kennen Sie Ihre Einsparungen vor dem Bankgespräch — nicht danach.',
-    'hero.b2': 'Vollständige P&L-Auswirkung, Sensitivitätsanalyse und Compliance-Matrix.',
-    'hero.b3': 'Board-fähiger PDF-Bericht. Keine Tabellen, keine Berater.',
-    'hero.cta1': 'Früher Zugang →', 'hero.cta2': 'So funktioniert es',
-    'hero.trust': 'Kostenlose Anmeldung. Erster Bericht gratis bei Launch.',
+    'hero.eyebrow': 'Unabhängige Cash-Pooling-Intelligence',
+    'hero.h1': 'Ermitteln Sie, wie viel Ihr Unternehmen mit Cash Pooling sparen könnte.',
+    'hero.sub': 'Die meisten Treasury-Teams erfahren die Zahlen erst nach der Unterschrift bei einer Bank. CashPoolModel gibt Ihnen eine unabhängige, KI-gestützte Simulation in Minuten — vor jeder Bindung, vor jedem Anbieter-Gespräch.',
+    'hero.cta1': 'Simulation starten →', 'hero.cta2': 'Beispielbericht ansehen',
+    'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise €200k–€800k jährliche Einsparungen.',
     'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
     'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
     'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
@@ -784,14 +776,11 @@ const translations = {
   },
   fr: {
     'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Accès anticipé', 'nav.cta_mobile': 'Accès anticipé →',
-    'hero.eyebrow': 'Intelligence suisse en trésorerie indépendante',
-    'hero.h1': 'Modélisez votre cash pool avant de vous engager.',
-    'hero.sub': 'Le premier simulateur de cash pooling indépendant. Conçu par des professionnels de la trésorerie, pas par des éditeurs de logiciels ni des banques.',
-    'hero.b1': 'Connaissez vos économies avant la négociation bancaire — pas après.',
-    'hero.b2': 'Impact P&L complet, analyse de sensibilité et matrice réglementaire.',
-    'hero.b3': 'Rapport PDF prêt pour le conseil. Sans tableurs, sans consultants.',
-    'hero.cta1': 'Accès anticipé →', 'hero.cta2': 'Voir comment ça fonctionne',
-    'hero.trust': 'Inscription gratuite. Premier rapport offert au lancement.',
+    'hero.eyebrow': 'Intelligence indépendante en cash pooling',
+    'hero.h1': 'Découvrez combien votre entreprise pourrait économiser avec le cash pooling.',
+    'hero.sub': 'La plupart des équipes trésorerie découvrent les chiffres seulement après avoir signé avec une banque. CashPoolModel vous offre une simulation indépendante et assistée par IA en quelques minutes — avant tout engagement, avant toute conversation avec un prestataire.',
+    'hero.cta1': 'Lancer votre simulation →', 'hero.cta2': 'Voir un exemple de rapport',
+    'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement €200k–€800k d\'économies annuelles.',
     'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
     'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
     'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
