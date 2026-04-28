@@ -3,42 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="index, follow">
-<title>Cash Pooling Insights & Treasury Strategy — CashPoolModel Blog</title>
-<meta name="description" content="Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not software vendors or banks.">
-<link rel="canonical" href="https://cashpoolmodel.com/blog.html">
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://cashpoolmodel.com/blog.html">
-<meta property="og:title" content="Cash Pooling Insights & Treasury Strategy — CashPoolModel Blog">
-<meta property="og:description" content="Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not software vendors or banks.">
-<meta property="og:image" content="https://cashpoolmodel.com/og-image.png">
-<meta property="og:site_name" content="CashPoolModel">
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Cash Pooling Blog — CashPoolModel">
-<meta name="twitter:description" content="Practical treasury insights on cash pooling, liquidity strategy, and bank selection. Written by practitioners, not software vendors or banks.">
-<meta name="twitter:image" content="https://cashpoolmodel.com/og-image.png">
-<!-- Hreflang -->
-<link rel="alternate" hreflang="en" href="https://cashpoolmodel.com/blog.html">
-<link rel="alternate" hreflang="de" href="https://cashpoolmodel.com/blog.html?lang=de">
-<link rel="alternate" hreflang="fr" href="https://cashpoolmodel.com/blog.html?lang=fr">
-<link rel="alternate" hreflang="x-default" href="https://cashpoolmodel.com/blog.html">
-<!-- JSON-LD Articles -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    { "@type":"Article", "headline":"The ROI of Liquidity: Why Static Spreadsheets Fail in Cash Pool Modeling", "datePublished":"2026-04-01", "keywords":"Research, Cash Pool Modeling", "url":"https://cashpoolmodel.com/blog.html#research", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"Why Netting Efficiency Is the Only Number That Matters in Cashpooling", "datePublished":"2025-04-01", "keywords":"Liquidity, Netting Efficiency", "url":"https://cashpoolmodel.com/blog.html#netting", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"Intercompany Interest Rates: What the OECD Actually Says", "datePublished":"2025-03-01", "keywords":"Transfer Pricing, OECD", "url":"https://cashpoolmodel.com/blog.html#tp", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"Cash Pooling Across Borders: What's Actually Allowed", "datePublished":"2025-02-01", "keywords":"Regulatory, Cross-border Cash Pooling", "url":"https://cashpoolmodel.com/blog.html#reg", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"How to Run a Cashpool Bank RFP Without Leaving Money on the Table", "datePublished":"2025-01-01", "keywords":"Banking, Bank RFP", "url":"https://cashpoolmodel.com/blog.html#rfp", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?", "datePublished":"2024-12-01", "keywords":"Structure, Cash Pool Structure", "url":"https://cashpoolmodel.com/blog.html#zb", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} },
-    { "@type":"Article", "headline":"Kyriba, SAP, or Cobase? Choosing a TMS for Your Group", "datePublished":"2024-11-01", "keywords":"Technology, Treasury Management System", "url":"https://cashpoolmodel.com/blog.html#tms", "author":{"@type":"Person","name":"Jakub Houser"}, "publisher":{"@type":"Organization","name":"Intercompany.io","url":"https://cashpoolmodel.com"} }
-  ]
-}
-</script>
+<title>Blog — CashPoolModel</title>
+<meta name="description" content="Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not vendors.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -100,13 +66,13 @@ a { color: inherit; text-decoration: none; }
   transition: all .14s; white-space: nowrap;
 }
 .nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
-@media (max-width: 580px) { .nav-links { display: none; } .nav-cta { display: none; } }
+@media (max-width: 580px) { .nav-links { display: none; } }
 
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
 
 /* ── PAGE HEADER ── */
 .page-header {
-  padding: clamp(44px, 5.5vw, 72px) 0 clamp(28px, 4vw, 44px);
+  padding: clamp(44px, 7vw, 80px) 0 clamp(32px, 5vw, 52px);
   border-bottom: 1px solid var(--rule);
 }
 .ph-eyebrow {
@@ -127,7 +93,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── BLOG LIST VIEW ── */
-.blog-list { padding: clamp(32px, 4.5vw, 56px) 0; }
+.blog-list { padding: clamp(36px, 5vw, 60px) 0; }
 
 /* Featured article — top */
 .featured-article {
@@ -201,8 +167,6 @@ a { color: inherit; text-decoration: none; }
 }
 .ac-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
 .ac-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
-.ac-time { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
-.fa-time { font-size: 11px; color: var(--ink-fnt); font-family: var(--mono); }
 .ac-read { font-size: 11px; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 3px; }
 .ac-read::after { content: '→'; transition: transform .14s; }
 .article-card:hover .ac-read::after { transform: translateX(3px); }
@@ -244,10 +208,6 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(135deg, #0d1a2a 0%, #0a2a3a 100%);
 }
 .thumb-tms svg { width: 100px; height: 100px; opacity: .85; }
-.thumb-research {
-  background: linear-gradient(135deg, #1a1400 0%, #2a1f00 100%);
-}
-.thumb-research svg { width: 100px; height: 100px; opacity: .9; }
 
 /* Featured article visual */
 .thumb-featured {
@@ -353,17 +313,18 @@ a { color: inherit; text-decoration: none; }
 .nl-btn:hover { background: var(--gold-h); }
 
 /* Footer */
-footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 22px; border-top: 1px solid rgba(255,255,255,.06); }
+footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 36px 0 24px; }
 .footer-i { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.footer-brand { font-family: var(--serif); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 3px; }
+.footer-brand { font-family: var(--serif); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.footer-swiss { font-size: 10px; font-weight: 400; letter-spacing: .2px; color: rgba(255,255,255,.32); margin-bottom: 5px; }
 .footer-sub { font-size: 11px; line-height: 1.6; }
-.footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
+.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
 .footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
 .footer-links a:hover { color: rgba(255,255,255,.8); }
-.footer-copy { font-size: 11px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.06); }
-.footer-swiss { font-size: 10px; font-weight: 400; letter-spacing: 0.2px; color: rgba(255,255,255,.32); margin-bottom: 5px; }
-.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
-.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; }
+.footer-copy { font-size: 11px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.06); }
+@media (max-width: 600px) { .footer-i { flex-direction: column; align-items: center; text-align: center; } .footer-links { justify-content: center; } .footer-copy { text-align: center; } }
 
 /* Buttons */
 .btn {
@@ -388,19 +349,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .page-header { animation: fadeUp .4s ease forwards; }
-.lang-sw { display: flex; align-items: center; gap: 1px; margin-right: 4px; }
-.lang-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--ink-fnt); padding: 5px 6px; border-radius: 3px; transition: color .14s; }
-.lang-btn:hover { color: var(--navy); }
-.lang-btn.active { color: var(--navy); }
-.lang-sep { color: var(--rule); font-size: 11px; line-height: 1; user-select: none; }
 </style>
-<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', 'G-5SX745CBEE');
 </script>
 </head>
 <body>
@@ -423,17 +379,10 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
       </div>
     </a>
     <div class="nav-links">
-      <a class="nav-link active" href="/blog.html" data-i18n="nav.blog">Blog</a>
-      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Contact</a>
+      <a class="nav-link active" href="/blog.html">Blog</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
     </div>
-    <div class="lang-sw">
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
-      <span class="lang-sep">·</span>
-      <button class="lang-btn" onclick="setLang('de')">DE</button>
-      <span class="lang-sep">·</span>
-      <button class="lang-btn" onclick="setLang('fr')">FR</button>
-    </div>
-    <a class="nav-cta" href="/index.html#early-access" data-i18n="nav.cta">Get Early Access</a>
+    <a class="nav-cta" href="/index.html#waitlist">Get Early Access</a>
   </div>
 </nav>
 
@@ -444,7 +393,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
     <div class="wrap">
 
       <!-- FEATURED -->
-      <div class="featured-article" data-post="netting" onclick="showPost('netting')">
+      <div class="featured-article" onclick="showPost('netting')">
         <div class="fa-visual thumb-featured">
           <!-- Netting: two overlapping circles with flow arrows -->
           <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -460,13 +409,12 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
           </svg>
         </div>
         <div class="fa-body">
-          <div class="fa-tag" data-i18n="feat.tag">Liquidity · Featured</div>
-          <div class="fa-title" data-i18n="feat.title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
-          <div class="fa-excerpt" data-i18n="feat.excerpt">Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is something different — and most simulators barely mention it.</div>
+          <div class="fa-tag">Liquidity · Featured</div>
+          <div class="fa-title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
+          <div class="fa-excerpt">Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is something different — and most simulators barely mention it.</div>
           <div class="fa-meta">
-            <span class="fa-date" data-i18n="feat.date">Apr 2025</span>
-            <span class="fa-time"></span>
-            <span class="fa-read" data-i18n="feat.read">Read article</span>
+            <span class="fa-date">Apr 2025</span>
+            <span class="fa-read">Read article</span>
           </div>
         </div>
       </div>
@@ -475,7 +423,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
       <div class="articles-grid">
 
         <!-- Transfer Pricing -->
-        <div class="article-card" data-post="tp" onclick="showPost('tp')">
+        <div class="article-card" onclick="showPost('tp')">
           <div class="ac-visual thumb-tp">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="50" y1="20" x2="50" y2="80" stroke="rgba(134,239,172,.4)" stroke-width="1.5"/>
@@ -489,14 +437,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
             </svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.tp.tag">Transfer Pricing</div>
-            <div class="ac-title" data-i18n="card.tp.title">Intercompany Interest Rates: What the OECD Actually Says</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.tp.date">Mar 2025</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag">Transfer Pricing</div>
+            <div class="ac-title">Intercompany Interest Rates: What the OECD Actually Says</div>
+            <div class="ac-meta"><span class="ac-date">Mar 2025</span><span class="ac-read">Read</span></div>
           </div>
         </div>
 
         <!-- Regulatory -->
-        <div class="article-card" data-post="reg" onclick="showPost('reg')">
+        <div class="article-card" onclick="showPost('reg')">
           <div class="ac-visual thumb-reg">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M50 15 L75 25 L75 50 C75 65 63 78 50 82 C37 78 25 65 25 50 L25 25 Z" stroke="rgba(196,181,253,.5)" stroke-width="1.5" fill="rgba(124,58,237,.08)"/>
@@ -505,14 +453,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
             </svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.reg.tag">Regulatory</div>
-            <div class="ac-title" data-i18n="card.reg.title">Cash Pooling Across Borders: What's Actually Allowed</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.reg.date">Feb 2025</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag">Regulatory</div>
+            <div class="ac-title">Cash Pooling Across Borders: What's Actually Allowed</div>
+            <div class="ac-meta"><span class="ac-date">Feb 2025</span><span class="ac-read">Read</span></div>
           </div>
         </div>
 
         <!-- RFP -->
-        <div class="article-card" data-post="rfp" onclick="showPost('rfp')">
+        <div class="article-card" onclick="showPost('rfp')">
           <div class="ac-visual thumb-rfp">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="22" y="18" width="36" height="46" rx="2" stroke="rgba(94,234,212,.4)" stroke-width="1.2" fill="rgba(20,184,166,.06)"/>
@@ -524,14 +472,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
             </svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.rfp.tag">Banking</div>
-            <div class="ac-title" data-i18n="card.rfp.title">How to Run a Cashpool Bank RFP Without Leaving Money on the Table</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.rfp.date">Jan 2025</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag">Banking</div>
+            <div class="ac-title">How to Run a Cashpool Bank RFP Without Leaving Money on the Table</div>
+            <div class="ac-meta"><span class="ac-date">Jan 2025</span><span class="ac-read">Read</span></div>
           </div>
         </div>
 
         <!-- ZB vs Notional -->
-        <div class="article-card" data-post="zb" onclick="showPost('zb')">
+        <div class="article-card" onclick="showPost('zb')">
           <div class="ac-visual thumb-zb">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="32" r="8" stroke="rgba(253,224,71,.5)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
@@ -544,14 +492,14 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
             </svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.zb.tag">Structure</div>
-            <div class="ac-title" data-i18n="card.zb.title">Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.zb.date">Dec 2024</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag">Structure</div>
+            <div class="ac-title">Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?</div>
+            <div class="ac-meta"><span class="ac-date">Dec 2024</span><span class="ac-read">Read</span></div>
           </div>
         </div>
 
         <!-- TMS -->
-        <div class="article-card" data-post="tms" onclick="showPost('tms')">
+        <div class="article-card" onclick="showPost('tms')">
           <div class="ac-visual thumb-tms">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="10" stroke="rgba(125,211,252,.6)" stroke-width="1.3" fill="rgba(14,165,233,.08)"/>
@@ -567,29 +515,21 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
             </svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.tms.tag">Technology</div>
-            <div class="ac-title" data-i18n="card.tms.title">Kyriba, SAP, or Cobase? Choosing a TMS for Your Group</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.tms.date">Nov 2024</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag">Technology</div>
+            <div class="ac-title">Kyriba, SAP, or Cobase? Choosing a TMS for Your Group</div>
+            <div class="ac-meta"><span class="ac-date">Nov 2024</span><span class="ac-read">Read</span></div>
           </div>
         </div>
 
-        <!-- Research -->
-        <div class="article-card" data-post="research" onclick="showPost('research')">
-          <div class="ac-visual thumb-research">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="18" y="30" width="64" height="40" rx="3" stroke="rgba(251,191,36,.4)" stroke-width="1.2" fill="rgba(234,179,8,.06)"/>
-              <line x1="18" y1="42" x2="82" y2="42" stroke="rgba(251,191,36,.25)" stroke-width="1"/>
-              <rect x="26" y="48" width="12" height="14" rx="1" fill="rgba(234,179,8,.18)" stroke="rgba(251,191,36,.5)" stroke-width="1"/>
-              <rect x="44" y="44" width="12" height="18" rx="1" fill="rgba(234,179,8,.25)" stroke="rgba(251,191,36,.6)" stroke-width="1"/>
-              <rect x="62" y="38" width="12" height="24" rx="1" fill="rgba(234,179,8,.35)" stroke="rgba(251,191,36,.7)" stroke-width="1"/>
-              <polyline points="26,68 50,52 74,38" stroke="rgba(74,222,128,.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <text x="50" y="84" text-anchor="middle" fill="rgba(251,191,36,.4)" font-size="6.5" font-family="DM Mono, monospace">RESEARCH</text>
-            </svg>
+        <!-- Placeholder — coming soon -->
+        <div class="article-card" style="opacity:.5;cursor:default;pointer-events:none;">
+          <div class="ac-visual" style="background:var(--paper-w);height:140px;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--rule)" stroke-width="1.5"><circle cx="20" cy="20" r="14"/><line x1="20" y1="12" x2="20" y2="20"/><line x1="20" y1="20" x2="26" y2="20"/></svg>
           </div>
           <div class="ac-body">
-            <div class="ac-tag" data-i18n="card.research.tag">Research</div>
-            <div class="ac-title" data-i18n="card.research.title">The ROI of Liquidity: Why Static Spreadsheets Fail in Cash Pool Modeling</div>
-            <div class="ac-meta"><span class="ac-date" data-i18n="card.research.date">Apr 2026</span><span class="ac-time"></span><span class="ac-read" data-i18n="read">Read</span></div>
+            <div class="ac-tag" style="color:var(--ink-fnt)">Coming soon</div>
+            <div class="ac-title" style="color:var(--ink-fnt)">New article in preparation</div>
+            <div class="ac-meta"><span class="ac-date">—</span></div>
           </div>
         </div>
 
@@ -602,12 +542,12 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
     <div class="wrap">
       <div class="nl-inner">
         <div class="nl-text">
-          <div class="nl-title" data-i18n="nl.title">Treasury Notes</div>
-          <div class="nl-sub" data-i18n="nl.sub">When something worth reading happens in treasury — we write about it.</div>
+          <div class="nl-title">Treasury Notes</div>
+          <div class="nl-sub">When something worth reading happens in treasury — we write about it.</div>
         </div>
         <div class="nl-form">
-          <input class="nl-input" type="email" id="nlEmail" data-i18n-ph="nl.placeholder" placeholder="your@email.com">
-          <button class="nl-btn" onclick="handleNewsletter()" data-i18n="nl.btn">Subscribe</button>
+          <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
+          <button class="nl-btn" onclick="handleNewsletter()">Subscribe</button>
         </div>
       </div>
     </div>
@@ -620,7 +560,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
 
   <div class="post-header-wrap">
     <div class="post-wrap">
-      <span class="back-btn" onclick="showList()" data-i18n="back">All articles</span>
+      <span class="back-btn" onclick="showList()">All articles</span>
       <div class="post-eyebrow">
         <span class="post-tag" id="postTag"></span>
         <span class="post-date" id="postDate"></span>
@@ -637,7 +577,7 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
   <!-- More articles -->
   <div class="wrap">
     <div class="more-articles">
-      <div class="more-label" data-i18n="more">More articles</div>
+      <div class="more-label">More articles</div>
       <div class="more-grid" id="moreGrid"></div>
     </div>
   </div>
@@ -646,12 +586,12 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
   <div class="post-cta">
     <div class="post-cta-inner">
       <div>
-        <div class="pci-t" data-i18n="pci.t">Stay informed on treasury developments.</div>
-        <div class="pci-s" data-i18n="pci.s">When something worth reading happens — we write about it.</div>
+        <div class="pci-t">Stay informed on treasury developments.</div>
+        <div class="pci-s">When something worth reading happens — we write about it.</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <input class="nl-input" type="email" id="pfEmail" data-i18n-ph="nl.placeholder" placeholder="your@email.com" style="background:var(--paper-w);border:1.5px solid var(--rule);color:var(--ink);min-width:180px;padding:10px 13px;border-radius:var(--r);font-family:var(--sans);font-size:13px;outline:none;">
-        <button onclick="handlePostNewsletter()" data-i18n="nl.btn" style="padding:10px 18px;border-radius:var(--r);background:var(--navy);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:var(--sans);">Subscribe</button>
+        <input class="nl-input" type="email" id="pfEmail" placeholder="your@email.com" style="background:var(--paper-w);border:1.5px solid var(--rule);color:var(--ink);min-width:180px;padding:10px 13px;border-radius:var(--r);font-family:var(--sans);font-size:13px;outline:none;">
+        <button onclick="handlePostNewsletter()" style="padding:10px 18px;border-radius:var(--r);background:var(--navy);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:var(--sans);">Subscribe</button>
       </div>
     </div>
   </div>
@@ -665,157 +605,126 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
       <div>
         <div class="footer-brand">CashPoolModel</div>
         <div class="footer-swiss">by Intercompany.io</div>
-        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence</div>
+        <div class="footer-sub">Independent Swiss treasury intelligence</div>
         <div class="footer-loc">
           <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
-          <span data-i18n="footer.location">Geneva, Switzerland</span>
+          <span>Geneva, Switzerland</span>
         </div>
       </div>
       <div class="footer-links">
-        <a href="/index.html" data-i18n="footer.home">Home</a>
-        <a href="/blog.html" data-i18n="nav.blog">Blog</a>
-        <a href="/contact.html" data-i18n="nav.contact">Contact</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
         <a href="/simulator-input.html">Simulator</a>
       </div>
     </div>
-    <div class="footer-copy" data-i18n="footer.copy">© 2025 Intercompany.io · CashPoolModel. Not financial advice.</div>
+    <div class="footer-copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.</div>
   </div>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-let currentLang = 'en';
-let currentPostId = null;
-
-const UI = {
-  en: {
-    'nav.blog':'Blog','nav.contact':'Contact','nav.cta':'Get Early Access',
-    'feat.tag':'Liquidity · Featured',
-    'feat.title':'Why Netting Efficiency Is the Only Number That Matters in Cashpooling',
-    'feat.excerpt':'Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is something different — and most simulators barely mention it.',
-    'feat.date':'Apr 2025','feat.read':'Read article','read':'Read',
-    'card.tp.tag':'Transfer Pricing','card.tp.title':'Intercompany Interest Rates: What the OECD Actually Says','card.tp.date':'Mar 2025',
-    'card.reg.tag':'Regulatory','card.reg.title':"Cash Pooling Across Borders: What's Actually Allowed",'card.reg.date':'Feb 2025',
-    'card.rfp.tag':'Banking','card.rfp.title':'How to Run a Cashpool Bank RFP Without Leaving Money on the Table','card.rfp.date':'Jan 2025',
-    'card.zb.tag':'Structure','card.zb.title':'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?','card.zb.date':'Dec 2024',
-    'card.tms.tag':'Technology','card.tms.title':'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group','card.tms.date':'Nov 2024',
-    'card.research.tag':'Research','card.research.title':'The ROI of Liquidity: Why Static Spreadsheets Fail in Cash Pool Modeling','card.research.date':'Apr 2026',
-    'card.soon.tag':'Coming soon','card.soon.title':'New article in preparation',
-    'nl.title':'Treasury Notes','nl.sub':'When something worth reading happens in treasury — we write about it.','nl.placeholder':'your@email.com','nl.btn':'Subscribe',
-    'back':'All articles','more':'More articles',
-    'pci.t':'Stay informed on treasury developments.','pci.s':'When something worth reading happens — we write about it.',
-    'footer.home':'Home','footer.sub':'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>','footer.location':'Geneva, Switzerland',
-    'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Not financial advice.',
-    'toast.sub':'Subscribed. When something worth reading happens — you will hear from us.','toast.invalid':'Please enter a valid email address.',
-  },
-  de: {
-    'nav.blog':'Blog','nav.contact':'Kontakt','nav.cta':'Früher Zugang',
-    'feat.tag':'Liquidität · Empfohlen',
-    'feat.title':'Warum Netting-Effizienz die einzige Kennzahl ist, die beim Cash Pooling wirklich zählt',
-    'feat.excerpt':'Die meisten Treasury-Teams fixieren sich auf den Zinsspread. Der eigentliche Treiber des Cash-Pool-ROI ist ein anderer — und die meisten Simulatoren erwähnen ihn kaum.',
-    'feat.date':'Apr. 2025','feat.read':'Artikel lesen','read':'Lesen',
-    'card.tp.tag':'Verrechnungspreise','card.tp.title':'Konzerninterne Zinssätze: Was die OECD tatsächlich sagt','card.tp.date':'März 2025',
-    'card.reg.tag':'Regulierung','card.reg.title':'Grenzüberschreitendes Cash Pooling: Was tatsächlich erlaubt ist','card.reg.date':'Feb. 2025',
-    'card.rfp.tag':'Banking','card.rfp.title':'Wie man eine Bank-Ausschreibung für Cash Pooling ohne Verluste durchführt','card.rfp.date':'Jan. 2025',
-    'card.zb.tag':'Struktur','card.zb.title':'Zero-Balancing vs. Notional Pooling: Was ist wirklich besser?','card.zb.date':'Dez. 2024',
-    'card.tms.tag':'Technologie','card.tms.title':'Kyriba, SAP oder Cobase? Ein TMS für Ihren Konzern auswählen','card.tms.date':'Nov. 2024',
-    'card.research.tag':'Forschung','card.research.title':'Der ROI von Liquidität: Warum statische Tabellenkalkulationen im Cash-Pool-Modelling versagen','card.research.date':'Apr. 2026',
-    'card.soon.tag':'Demnächst','card.soon.title':'Neuer Artikel in Vorbereitung',
-    'nl.title':'Treasury Notes','nl.sub':'Wenn im Treasury etwas Lesenswertes passiert — schreiben wir darüber.','nl.placeholder':'ihre@email.com','nl.btn':'Abonnieren',
-    'back':'Alle Artikel','more':'Weitere Artikel',
-    'pci.t':'Bleiben Sie über Treasury-Entwicklungen informiert.','pci.s':'Wenn etwas Lesenswertes passiert — schreiben wir darüber.',
-    'footer.home':'Startseite','footer.sub':'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>','footer.location':'Genf, Schweiz',
-    'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Keine Finanzberatung.',
-    'toast.sub':'Abonniert. Wenn etwas Lesenswertes passiert — hören Sie von uns.','toast.invalid':'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
-  },
-  fr: {
-    'nav.blog':'Blog','nav.contact':'Contact','nav.cta':'Accès anticipé',
-    'feat.tag':'Liquidités · Mis en avant',
-    'feat.title':"Pourquoi l'efficacité de netting est la seule métrique qui compte en cash pooling",
-    'feat.excerpt':"La plupart des équipes de trésorerie se concentrent sur l'écart de taux. Le véritable moteur du ROI d'un cash pool est tout autre — et la plupart des simulateurs l'évoquent à peine.",
-    'feat.date':'Avr 2025','feat.read':'Lire l\'article','read':'Lire',
-    'card.tp.tag':'Prix de transfert','card.tp.title':"Taux d'intérêts interentreprises : ce que l'OCDE dit réellement",'card.tp.date':'Mars 2025',
-    'card.reg.tag':'Réglementaire','card.reg.title':"Cash pooling transfrontalier : ce qui est réellement autorisé",'card.reg.date':'Fév 2025',
-    'card.rfp.tag':'Banque','card.rfp.title':"Comment mener un appel d'offres bancaire pour cash pool sans perdre d'argent",'card.rfp.date':'Janv 2025',
-    'card.zb.tag':'Structure','card.zb.title':'Zero-balancing vs. netting notionnel : lequel est réellement meilleur ?','card.zb.date':'Déc 2024',
-    'card.tms.tag':'Technologie','card.tms.title':'Kyriba, SAP ou Cobase ? Choisir un TMS pour votre groupe','card.tms.date':'Nov 2024',
-    'card.research.tag':'Recherche','card.research.title':'Le ROI de la liquidité : pourquoi les tableurs statiques échouent dans la modélisation du cash pool','card.research.date':'Avr 2026',
-    'card.soon.tag':'Prochainement','card.soon.title':'Nouvel article en préparation',
-    'nl.title':'Treasury Notes','nl.sub':'Quand quelque chose de notable se passe en trésorerie — nous en écrivons.','nl.placeholder':'votre@email.com','nl.btn':'S\'abonner',
-    'back':'Tous les articles','more':'Plus d\'articles',
-    'pci.t':'Restez informé des actualités trésorerie.','pci.s':'Quand quelque chose de notable se passe — nous en écrivons.',
-    'footer.home':'Accueil','footer.sub':'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>','footer.location':'Genève, Suisse',
-    'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Pas de conseil financier.',
-    'toast.sub':'Abonné. Quand quelque chose de notable se passe — vous en entendrez parler.','toast.invalid':'Veuillez saisir une adresse e-mail valide.',
-  }
-};
-
-function setLang(lang) {
-  currentLang = lang;
-  const t = UI[lang];
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-i18n]').forEach(el => { if (t[el.dataset.i18n] !== undefined) el.innerHTML = t[el.dataset.i18n]; });
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => { if (t[el.dataset.i18nPh] !== undefined) el.placeholder = t[el.dataset.i18nPh]; });
-  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.textContent === lang.toUpperCase()));
-  if (currentPostId) showPost(currentPostId);
-  localStorage.setItem('cpm_lang', lang);
-}
-
-(function(){ const s = localStorage.getItem('cpm_lang'); if (s && UI[s]) { currentLang = s; setLang(s); } })();
-
 const POSTS = {
   netting: {
-    en: { tag:'Liquidity', date:'April 2025', title:'Why Netting Efficiency Is the Only Number That Matters in Cashpooling', lead:'Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is netting efficiency — and most simulators barely mention it.', body:`<h2>What netting efficiency actually measures</h2><p>Netting efficiency is the ratio of the offset between your group's surplus and deficit balances. A group with €5M in surpluses and €3M in deficits has a netting offset of €3M — meaning €3M of deficit is funded internally instead of through external borrowing.</p><p>A group with 80% netting efficiency gets most of its pool value from internal funding, regardless of what the bank charges. A group with 20% efficiency is essentially just getting a marginally better rate on external borrowing.</p><div class="post-callout"><p><strong>Rule of thumb:</strong> below 30% netting efficiency, cashpooling delivers modest returns. Above 60%, the business case holds across almost all rate environments.</p></div><h2>What drives netting efficiency</h2><p>Group structure matters more than rates. Groups where some entities are consistently cash-rich and others consistently cash-poor have naturally high netting efficiency. Groups where all entities move in the same direction — all flush in Q4, all dry in Q2 — see low netting efficiency because there is nothing to offset.</p><p>The practical implication: before modelling pool rates, model the <strong>direction and seasonality of your entities' cash flows</strong>.</p><h2>How to improve netting efficiency structurally</h2><p>Several choices increase netting efficiency: broadening pool participation to include more entities, adjusting payment terms to move surplus and deficit peaks out of phase, and restructuring which entity holds which assets. These are changes identified before the pool is live — not after.</p>` },
-    de: { tag:'Liquidität', date:'April 2025', title:'Warum Netting-Effizienz die einzige Kennzahl ist, die beim Cash Pooling wirklich zählt', lead:'Die meisten Treasury-Teams fixieren sich auf den Zinsspread. Der eigentliche Treiber des Cash-Pool-ROI ist ein anderer — und die meisten Simulatoren erwähnen ihn kaum.', body:`<h2>Was Netting-Effizienz wirklich misst</h2><p>Netting-Effizienz ist das Verhältnis der Aufrechnung zwischen Überschuss- und Defizitsalden Ihrer Gruppe. Eine Gruppe mit €5 Mio. Überschüssen und €3 Mio. Defiziten hat einen Netting-Offset von €3 Mio. — d.h. €3 Mio. Defizit werden intern statt durch externe Kreditaufnahme finanziert.</p><p>Eine Gruppe mit 80% Netting-Effizienz schöpft den Großteil des Pool-Wertes aus interner Finanzierung, unabhängig vom Bankzins. Eine Gruppe mit 20% Effizienz erhält im Wesentlichen nur einen marginal besseren Zinssatz auf externe Kreditaufnahmen.</p><div class="post-callout"><p><strong>Faustformel:</strong> Unter 30% Netting-Effizienz liefert Cash Pooling mäßige Erträge. Über 60% trägt das Business Case in fast allen Zinsumgebungen.</p></div><h2>Was die Netting-Effizienz beeinflusst</h2><p>Die Konzernstruktur ist wichtiger als die Zinsen. Gruppen, bei denen einige Einheiten konstant liquiditätsstark und andere konstant liquiditätsschwach sind, haben naturgemäß eine hohe Netting-Effizienz. Gruppen, bei denen alle Einheiten in dieselbe Richtung tendieren — alle liquide im Q4, alle angespannt im Q2 — weisen niedrige Netting-Effizienz auf.</p><p>Die praktische Konsequenz: Vor der Modellierung von Pool-Zinsen sollten Sie die <strong>Richtung und Saisonalität der Cashflows Ihrer Einheiten</strong> modellieren.</p><h2>Wie man die Netting-Effizienz strukturell verbessert</h2><p>Mehrere Maßnahmen erhöhen die Netting-Effizienz: Erweiterung der Pool-Teilnahme auf mehr Einheiten, Anpassung von Zahlungszielen zur zeitlichen Entkoppelung von Überschuss- und Defizitspitzen sowie Umstrukturierung, welche Einheit welche Vermögenswerte hält. Diese Veränderungen werden vor dem Pool-Launch identifiziert — nicht danach.</p>` },
-    fr: { tag:'Liquidités', date:'Avril 2025', title:"Pourquoi l'efficacité de netting est la seule métrique qui compte en cash pooling", lead:"La plupart des équipes de trésorerie se concentrent sur l'écart de taux. Le véritable moteur du ROI d'un cash pool est tout autre — et la plupart des simulateurs l'évoquent à peine.", body:`<h2>Ce que mesure réellement l'efficacité de netting</h2><p>L'efficacité de netting est le ratio de compensation entre les soldes excédentaires et déficitaires de votre groupe. Un groupe avec €5M d'excédents et €3M de déficits a un offset de netting de €3M — ce qui signifie que €3M de déficit sont financés en interne plutôt que par emprunt externe.</p><p>Un groupe avec 80% d'efficacité de netting tire l'essentiel de la valeur du pool d'un financement interne, quelle que soit la tarification bancaire. Un groupe avec 20% d'efficacité obtient essentiellement un taux légèrement meilleur sur ses emprunts externes.</p><div class="post-callout"><p><strong>Règle empirique :</strong> en dessous de 30% d'efficacité de netting, le cash pooling délivre des rendements modestes. Au-delà de 60%, le business case est solide dans presque tous les environnements de taux.</p></div><h2>Ce qui détermine l'efficacité de netting</h2><p>La structure du groupe compte davantage que les taux. Les groupes où certaines entités sont structurellement excédentaires et d'autres structurellement déficitaires ont naturellement une efficacité de netting élevée. Les groupes où toutes les entités évoluent dans le même sens affichent une faible efficacité de netting car il n'y a rien à compenser.</p><p>Conséquence pratique : avant de modéliser les taux du pool, modélisez la <strong>direction et la saisonnalité des flux de trésorerie de vos entités</strong>.</p><h2>Comment améliorer structurellement l'efficacité de netting</h2><p>Plusieurs choix augmentent l'efficacité de netting : élargir la participation au pool, ajuster les conditions de paiement pour désynchroniser les pics d'excédents et de déficits, et restructurer quelle entité détient quels actifs. Ces changements s'identifient avant la mise en place du pool — pas après.</p>` },
+    tag: 'Liquidity', date: 'April 2025',
+    title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling',
+    lead: 'Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is netting efficiency — and most simulators barely mention it.',
+    body: `<h2>What netting efficiency actually measures</h2>
+<p>Netting efficiency is the ratio of the offset between your group's surplus and deficit balances. A group with €5M in surpluses and €3M in deficits has a netting offset of €3M — meaning €3M of deficit is funded internally instead of through external borrowing.</p>
+<p>A group with 80% netting efficiency gets most of its pool value from internal funding, regardless of what the bank charges. A group with 20% efficiency is essentially just getting a marginally better rate on external borrowing.</p>
+<div class="post-callout"><p><strong>Rule of thumb:</strong> below 30% netting efficiency, cashpooling delivers modest returns. Above 60%, the business case holds across almost all rate environments.</p></div>
+<h2>What drives netting efficiency</h2>
+<p>Group structure matters more than rates. Groups where some entities are consistently cash-rich and others consistently cash-poor have naturally high netting efficiency. Groups where all entities move in the same direction — all flush in Q4, all dry in Q2 — see low netting efficiency because there is nothing to offset.</p>
+<p>The practical implication: before modelling pool rates, model the <strong>direction and seasonality of your entities' cash flows</strong>.</p>
+<h2>How to improve netting efficiency structurally</h2>
+<p>Several choices increase netting efficiency: broadening pool participation to include more entities, adjusting payment terms to move surplus and deficit peaks out of phase, and restructuring which entity holds which assets. These are changes identified before the pool is live — not after.</p>`
   },
   tp: {
-    en: { tag:'Transfer Pricing', date:'March 2025', title:'Intercompany Interest Rates: What the OECD Actually Says', lead:'Setting the wrong intercompany interest rate on pooling arrangements is one of the most common and most expensive compliance gaps in cross-border treasury structures.', body:`<h2>The arm's length principle applied to pools</h2><p>The OECD Transfer Pricing Guidelines require that intercompany transactions — including cash pool balances — be priced as if between unrelated parties. The rate paid to a surplus entity and charged to a deficit entity must reflect what a bank would offer for comparable standalone transactions.</p><div class="post-callout"><p><strong>The correct framework:</strong> the pool participant rate should reflect the entity's standalone creditworthiness adjusted for the benefit of group membership — not the group's blended rate alone.</p></div><h2>Safe harbour rates across jurisdictions</h2><p>Several countries have safe harbour provisions for intercompany loans. Outside safe harbours, you need comparables analysis — a Refinitiv or Bloomberg search for comparable third-party loans, documented and retained for at least five years.</p><h2>The audit risk is real</h2><p>Tax authorities have significantly increased scrutiny of intercompany financial transactions, driven by ATAD II and OECD Pillar Two. The most common finding: group companies in deficit positions being charged below-market rates by the pool leader, effectively subsidising profitable entities in low-tax jurisdictions.</p>` },
-    de: { tag:'Verrechnungspreise', date:'März 2025', title:'Konzerninterne Zinssätze: Was die OECD tatsächlich sagt', lead:'Den falschen konzerninternen Zinssatz für Pooling-Arrangements festzulegen ist eine der häufigsten und kostspieligsten Compliance-Lücken in grenzüberschreitenden Treasury-Strukturen.', body:`<h2>Der Fremdvergleichsgrundsatz angewandt auf Pools</h2><p>Die OECD-Verrechnungspreisrichtlinien verlangen, dass konzerninterne Transaktionen — einschließlich Cash-Pool-Salden — so bepreist werden müssen, als ob sie zwischen fremden Dritten stattfänden. Der Zinssatz, der einer Überschusseinheit gezahlt und einer Defiziteinheit belastet wird, muss dem entsprechen, was eine Bank für vergleichbare eigenständige Transaktionen anbieten würde.</p><div class="post-callout"><p><strong>Der richtige Rahmen:</strong> Der Pool-Teilnehmer-Zinssatz sollte die eigenständige Kreditwürdigkeit der Einheit widerspiegeln, angepasst um den Vorteil der Konzernzugehörigkeit — nicht nur den Mischzins der Gruppe.</p></div><h2>Safe-Harbour-Zinssätze in verschiedenen Jurisdiktionen</h2><p>Mehrere Länder haben Safe-Harbour-Regelungen für konzerninterne Darlehen. Außerhalb von Safe Harbours benötigen Sie eine Vergleichbarkeitsanalyse — eine Refinitiv- oder Bloomberg-Suche nach vergleichbaren Drittpartei-Darlehen, dokumentiert und mindestens fünf Jahre aufbewahrt.</p><h2>Das Prüfungsrisiko ist real</h2><p>Steuerbehörden haben die Kontrolle konzerninterner Finanztransaktionen erheblich verschärft, getrieben durch ATAD II und OECD Pillar Two. Der häufigste Befund: Konzerngesellschaften in Defizitpositionen werden vom Pool-Leader zu unter-marktüblichen Zinssätzen belastet, wodurch effektiv gewinnstarke Einheiten in Niedrigsteuergebieten subventioniert werden.</p>` },
-    fr: { tag:'Prix de transfert', date:'Mars 2025', title:"Taux d'intérêts interentreprises : ce que l'OCDE dit réellement", lead:"Fixer le mauvais taux d'intérêt interentreprises sur les arrangements de pooling est l'une des lacunes de conformité les plus courantes et les plus coûteuses dans les structures de trésorerie transfrontalières.", body:`<h2>Le principe de pleine concurrence appliqué aux pools</h2><p>Les Principes de l'OCDE pour les prix de transfert exigent que les transactions interentreprises — y compris les soldes de cash pool — soient tarifées comme si elles avaient lieu entre parties indépendantes. Le taux versé à une entité excédentaire et facturé à une entité déficitaire doit refléter ce qu'une banque offrirait pour des transactions comparables en stand-alone.</p><div class="post-callout"><p><strong>Le cadre correct :</strong> le taux du participant au pool doit refléter la solvabilité intrinsèque de l'entité ajustée de l'avantage de l'appartenance au groupe — pas seulement le taux blended du groupe.</p></div><h2>Taux de safe harbor dans différentes juridictions</h2><p>Plusieurs pays disposent de dispositions de safe harbor pour les prêts interentreprises. En dehors des safe harbors, vous avez besoin d'une analyse de comparabilité — une recherche Refinitiv ou Bloomberg pour des prêts tiers comparables, documentée et conservée au moins cinq ans.</p><h2>Le risque de contrôle fiscal est réel</h2><p>Les autorités fiscales ont considérablement renforcé leur surveillance des transactions financières interentreprises, sous l'impulsion d'ATAD II et du Pilier Deux de l'OCDE. Le constat le plus fréquent : des sociétés du groupe en position déficitaire se voient facturer des taux inférieurs au marché par le pool leader, subventionnant effectivement des entités profitables dans des juridictions à faible imposition.</p>` },
+    tag: 'Transfer Pricing', date: 'March 2025',
+    title: 'Intercompany Interest Rates: What the OECD Actually Says',
+    lead: 'Setting the wrong intercompany interest rate on pooling arrangements is one of the most common and most expensive compliance gaps in cross-border treasury structures.',
+    body: `<h2>The arm's length principle applied to pools</h2>
+<p>The OECD Transfer Pricing Guidelines require that intercompany transactions — including cash pool balances — be priced as if between unrelated parties. The rate paid to a surplus entity and charged to a deficit entity must reflect what a bank would offer for comparable standalone transactions.</p>
+<div class="post-callout"><p><strong>The correct framework:</strong> the pool participant rate should reflect the entity's standalone creditworthiness adjusted for the benefit of group membership — not the group's blended rate alone.</p></div>
+<h2>Safe harbour rates across jurisdictions</h2>
+<p>Several countries have safe harbour provisions for intercompany loans. Outside safe harbours, you need comparables analysis — a Refinitiv or Bloomberg search for comparable third-party loans, documented and retained for at least five years.</p>
+<h2>The audit risk is real</h2>
+<p>Tax authorities have significantly increased scrutiny of intercompany financial transactions, driven by ATAD II and OECD Pillar Two. The most common finding: group companies in deficit positions being charged below-market rates by the pool leader, effectively subsidising profitable entities in low-tax jurisdictions.</p>`
   },
   reg: {
-    en: { tag:'Regulatory', date:'February 2025', title:"Cash Pooling Across Borders: What's Actually Allowed", lead:'Regulatory restrictions on cross-border cash pooling differ significantly by jurisdiction. What works seamlessly in one market may require central bank approval — or may not be permitted — across the border.', body:`<h2>The core question: physical or notional?</h2><p>Most regulatory restrictions target the physical movement of cash across borders — zero-balancing structures — rather than notional pooling, where balances stay in place and only the interest calculation is centralised. This distinction is critical when evaluating feasibility in restrictive markets.</p><h2>Common restriction patterns</h2><p>Several markets impose <strong>thin capitalisation rules</strong> that limit the deductibility of intercompany interest, effectively increasing the cost of cross-border pool participation. Others require documentation of economic substance — the arrangement must be demonstrably rational for each participating entity, not just for the group as a whole.</p><div class="post-callout"><p><strong>Key point:</strong> "The group benefits" is not a sufficient justification in most jurisdictions. Each entity's participation must stand on its own economic merits.</p></div><h2>Withholding tax on intercompany interest</h2><p>Interest payments between group entities — which are the mechanism through which a cash pool allocates costs and benefits — are typically treated as taxable income in the recipient's jurisdiction. Withholding tax rates vary significantly, and double tax treaties may reduce or eliminate them. This analysis must be completed before the pool structure is finalised.</p><h2>Practical recommendation</h2><p>Obtain local legal and tax opinions before going live in any jurisdiction where you have doubts. The implementation cost of proper advice is trivial compared to the reassessment risk on several years of intercompany interest.</p>` },
-    de: { tag:'Regulierung', date:'Februar 2025', title:'Grenzüberschreitendes Cash Pooling: Was tatsächlich erlaubt ist', lead:'Regulatorische Beschränkungen für grenzüberschreitendes Cash Pooling unterscheiden sich erheblich je nach Jurisdiktion. Was in einem Markt reibungslos funktioniert, kann anderswo eine Zentralbankenerlaubnis erfordern — oder schlicht nicht erlaubt sein.', body:`<h2>Die Kernfrage: Physisch oder Notional?</h2><p>Die meisten regulatorischen Beschränkungen zielen auf die physische Bewegung von Liquidität über Grenzen — Zero-Balancing-Strukturen — und nicht auf Notional Pooling, bei dem die Salden am Ort bleiben und nur die Zinsberechnung zentralisiert wird. Diese Unterscheidung ist entscheidend bei der Beurteilung der Machbarkeit in restriktiven Märkten.</p><h2>Häufige Beschränkungsmuster</h2><p>Mehrere Märkte haben <strong>Thin-Capitalization-Regeln</strong>, die die Abzugsfähigkeit konzerninterner Zinsen begrenzen und damit die Kosten der grenzüberschreitenden Pool-Teilnahme erhöhen. Andere verlangen den Nachweis wirtschaftlicher Substanz — die Vereinbarung muss für jede teilnehmende Einheit nachweislich rational sein, nicht nur für die Gruppe als Ganzes.</p><div class="post-callout"><p><strong>Wichtig:</strong> "Die Gruppe profitiert" ist in den meisten Jurisdiktionen keine ausreichende Begründung. Die Teilnahme jeder Einheit muss aus eigener wirtschaftlicher Logik heraus gerechtfertigt sein.</p></div><h2>Quellensteuer auf konzerninterne Zinsen</h2><p>Zinszahlungen zwischen Konzerneinheiten gelten in der Regel als steuerpflichtiges Einkommen in der Jurisdiktion des Empfängers. Die Quellensteuersätze variieren erheblich, und Doppelbesteuerungsabkommen können sie reduzieren oder beseitigen. Diese Analyse muss vor Abschluss der Pool-Struktur durchgeführt werden.</p><h2>Praktische Empfehlung</h2><p>Holen Sie lokale Rechts- und Steuerberatungen ein, bevor Sie in einer Jurisdiktion live gehen, in der Sie Zweifel haben. Die Implementierungskosten für ordentliche Beratung sind trivial im Vergleich zum Nachveranlagungsrisiko auf mehrere Jahre konzerninterner Zinsen.</p>` },
-    fr: { tag:'Réglementaire', date:'Février 2025', title:"Cash pooling transfrontalier : ce qui est réellement autorisé", lead:"Les restrictions réglementaires sur le cash pooling transfrontalier diffèrent significativement selon les juridictions. Ce qui fonctionne parfaitement dans un marché peut nécessiter une autorisation de banque centrale — ou ne pas être autorisé — de l'autre côté de la frontière.", body:`<h2>La question centrale : physique ou notionnel ?</h2><p>La plupart des restrictions réglementaires ciblent le mouvement physique de liquidités transfrontalier — les structures de zero-balancing — plutôt que le netting notionnel, où les soldes restent en place et seul le calcul des intérêts est centralisé. Cette distinction est critique pour évaluer la faisabilité dans les marchés restrictifs.</p><h2>Schémas de restrictions courants</h2><p>Plusieurs marchés imposent des <strong>règles de sous-capitalisation</strong> qui limitent la déductibilité des intérêts interentreprises, augmentant effectivement le coût de la participation transfrontalière au pool. D'autres exigent la documentation de la substance économique — l'arrangement doit être rationnellement justifiable pour chaque entité participante, pas seulement pour le groupe dans son ensemble.</p><div class="post-callout"><p><strong>Point clé :</strong> "le groupe en bénéficie" n'est pas une justification suffisante dans la plupart des juridictions. La participation de chaque entité doit se justifier par ses propres mérites économiques.</p></div><h2>Retenue à la source sur les intérêts interentreprises</h2><p>Les paiements d'intérêts entre entités du groupe sont généralement traités comme des revenus imposables dans la juridiction du bénéficiaire. Les taux de retenue à la source varient significativement, et les conventions fiscales bilatérales peuvent les réduire ou les éliminer. Cette analyse doit être effectuée avant la finalisation de la structure du pool.</p><h2>Recommandation pratique</h2><p>Obtenez des avis juridiques et fiscaux locaux avant de démarrer dans toute juridiction sujette à doute. Le coût d'un conseil approprié est dérisoire comparé au risque de redressement fiscal sur plusieurs années d'intérêts interentreprises.</p>` },
+    tag: 'Regulatory', date: 'February 2025',
+    title: "Cash Pooling Across Borders: What's Actually Allowed",
+    lead: 'Regulatory restrictions on cross-border cash pooling differ significantly by jurisdiction. What works seamlessly in one market may require central bank approval — or may not be permitted — across the border.',
+    body: `<h2>The core question: physical or notional?</h2>
+<p>Most regulatory restrictions target the physical movement of cash across borders — zero-balancing structures — rather than notional pooling, where balances stay in place and only the interest calculation is centralised. This distinction is critical when evaluating feasibility in restrictive markets.</p>
+<h2>Common restriction patterns</h2>
+<p>Several markets impose <strong>thin capitalisation rules</strong> that limit the deductibility of intercompany interest, effectively increasing the cost of cross-border pool participation. Others require documentation of economic substance — the arrangement must be demonstrably rational for each participating entity, not just for the group as a whole.</p>
+<div class="post-callout"><p><strong>Key point:</strong> "The group benefits" is not a sufficient justification in most jurisdictions. Each entity's participation must stand on its own economic merits.</p></div>
+<h2>Withholding tax on intercompany interest</h2>
+<p>Interest payments between group entities — which are the mechanism through which a cash pool allocates costs and benefits — are typically treated as taxable income in the recipient's jurisdiction. Withholding tax rates vary significantly, and double tax treaties may reduce or eliminate them. This analysis must be completed before the pool structure is finalised.</p>
+<h2>Practical recommendation</h2>
+<p>Obtain local legal and tax opinions before going live in any jurisdiction where you have doubts. The implementation cost of proper advice is trivial compared to the reassessment risk on several years of intercompany interest. The regulatory compliance matrix in the CashPoolModel report provides a structured starting point for this analysis.</p>`
   },
   rfp: {
-    en: { tag:'Banking', date:'January 2025', title:'How to Run a Cashpool Bank RFP Without Leaving Money on the Table', lead:'Most corporate treasury teams run bank RFPs the same way their predecessors did a decade ago. The process needs to evolve.', body:`<h2>What banks actually respond to</h2><p>Banks price cash pooling mandates based on two things: the net interest position of the pool and the ancillary wallet — FX, payments, trade finance — they expect to win. A group with a structural surplus pool and significant FX flows receives dramatically better pricing than a group with a deficit pool and no ancillary business.</p><div class="post-callout"><p><strong>Practical insight:</strong> groups that share their current wallet breakdown with bidding banks typically receive pricing 30 to 50 basis points tighter than groups that keep this information confidential.</p></div><h2>Structuring the tender</h2><p>A well-structured cashpool RFP includes: group structure overview, current account count and balances by entity, expected transaction volumes by type, current banking relationships, evaluation criteria and weighting, and a standardised pricing template that forces banks to quote in comparable formats.</p><p>The pricing template is critical. Banks will quote rates in different formats — spread over benchmark, flat rate, tiered — unless you force standardisation. A good RFP template normalises quotes to a common basis, making real comparison possible.</p><h2>What to evaluate beyond price</h2><p>Implementation timeline, quality of the connectivity to your ERP or TMS, the bank's footprint in the jurisdictions you need, and the quality of the local relationship teams in each market. Price is the starting point, not the finish line.</p>` },
-    de: { tag:'Banking', date:'Januar 2025', title:'Wie man eine Bank-Ausschreibung für Cash Pooling ohne Verluste durchführt', lead:'Die meisten Corporate-Treasury-Teams führen Bank-Ausschreibungen genauso durch wie ihre Vorgänger vor einem Jahrzehnt. Der Prozess muss sich weiterentwickeln.', body:`<h2>Worauf Banken wirklich reagieren</h2><p>Banken bepreisen Cash-Pooling-Mandate nach zwei Kriterien: der Nettozinsposition des Pools und dem Nebengeschäft — FX, Zahlungen, Handelsfinanzierung — das sie zu gewinnen erwarten. Eine Gruppe mit einem strukturellen Überschuss-Pool und erheblichen FX-Volumina erhält deutlich bessere Konditionen als eine Gruppe mit einem Defizit-Pool ohne Nebengeschäft.</p><div class="post-callout"><p><strong>Praktische Erkenntnis:</strong> Gruppen, die Banken ihre aktuelle Wallet-Verteilung mitteilen, erhalten in der Regel 30 bis 50 Basispunkte günstigere Konditionen als Gruppen, die diese Information vertraulich behandeln.</p></div><h2>Struktur der Ausschreibung</h2><p>Eine gut strukturierte Cash-Pool-Ausschreibung enthält: Konzernstrukturüberblick, aktuelle Kontoanzahl und Salden je Einheit, erwartete Transaktionsvolumina je Art, bestehende Bankbeziehungen, Bewertungskriterien und -gewichtung sowie eine standardisierte Preistabelle, die Banken zwingt, in vergleichbaren Formaten zu bieten.</p><p>Die Preistabelle ist entscheidend. Banken bieten in unterschiedlichen Formaten an — Spread über Benchmark, Festzins, gestuft — wenn Sie keine Standardisierung vorgeben.</p><h2>Was neben dem Preis zu bewerten ist</h2><p>Implementierungszeitraum, Qualität der Konnektivität zu Ihrem ERP oder TMS, die Präsenz der Bank in den benötigten Jurisdiktionen und die Qualität der lokalen Beziehungsteams in jedem Markt. Der Preis ist der Ausgangspunkt, nicht das Ziel.</p>` },
-    fr: { tag:'Banque', date:'Janvier 2025', title:"Comment mener un appel d'offres bancaire pour cash pool sans perdre d'argent", lead:"La plupart des équipes de trésorerie d'entreprise conduisent leurs appels d'offres bancaires de la même façon que leurs prédécesseurs il y a dix ans. Le processus doit évoluer.", body:`<h2>Ce à quoi les banques répondent vraiment</h2><p>Les banques tarifent les mandats de cash pooling sur deux critères : la position d'intérêt nette du pool et le wallet annexe — change, paiements, financement commercial — qu'elles espèrent remporter. Un groupe avec un pool structurellement excédentaire et des flux de change significatifs obtient des tarifs bien plus avantageux qu'un groupe avec un pool déficitaire sans activité annexe.</p><div class="post-callout"><p><strong>Insight pratique :</strong> les groupes qui partagent la répartition de leur wallet actuel avec les banques soumissionnaires obtiennent typiquement des tarifs 30 à 50 points de base plus serrés que les groupes qui maintiennent cette information confidentielle.</p></div><h2>Structurer l'appel d'offres</h2><p>Un appel d'offres de cash pool bien structuré comprend : présentation de la structure du groupe, nombre de comptes et soldes actuels par entité, volumes de transactions attendus par type, relations bancaires actuelles, critères et pondération d'évaluation, et un modèle de tarification standardisé qui oblige les banques à soumissionner dans des formats comparables.</p><h2>Ce qu'il faut évaluer au-delà du prix</h2><p>Délai de mise en place, qualité de la connectivité à votre ERP ou TMS, empreinte de la banque dans les juridictions requises, et qualité des équipes de relation locales dans chaque marché. Le prix est le point de départ, pas la ligne d'arrivée.</p>` },
+    tag: 'Banking', date: 'January 2025',
+    title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table',
+    lead: 'Most corporate treasury teams run bank RFPs the same way their predecessors did a decade ago. The process needs to evolve.',
+    body: `<h2>What banks actually respond to</h2>
+<p>Banks price cash pooling mandates based on two things: the net interest position of the pool and the ancillary wallet — FX, payments, trade finance — they expect to win. A group with a structural surplus pool and significant FX flows receives dramatically better pricing than a group with a deficit pool and no ancillary business.</p>
+<div class="post-callout"><p><strong>Practical insight:</strong> groups that share their current wallet breakdown with bidding banks typically receive pricing 30 to 50 basis points tighter than groups that keep this information confidential.</p></div>
+<h2>Structuring the tender</h2>
+<p>A well-structured cashpool RFP includes: group structure overview, current account count and balances by entity, expected transaction volumes by type, current banking relationships, evaluation criteria and weighting, and a standardised pricing template that forces banks to quote in comparable formats.</p>
+<p>The pricing template is critical. Banks will quote rates in different formats — spread over benchmark, flat rate, tiered — unless you force standardisation. A good RFP template normalises quotes to a common basis, making real comparison possible.</p>
+<h2>What to evaluate beyond price</h2>
+<p>Implementation timeline, quality of the connectivity to your ERP or TMS, the bank's footprint in the jurisdictions you need, and the quality of the local relationship teams in each market. Price is the starting point, not the finish line.</p>`
   },
   zb: {
-    en: { tag:'Structure', date:'December 2024', title:'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?', lead:'The debate between physical and notional pooling comes up in almost every treasury project. The right answer depends on factors most advice articles ignore.', body:`<h2>The standard comparison is misleading</h2><p>Most articles compare zero-balancing and notional pooling on a simple axis: physical movement of funds versus virtual offset. This misses the real decision criteria, which are legal, tax, and operational.</p><h2>When zero-balancing wins</h2><p>Zero-balancing (physical sweep) is cleaner from a tax perspective because the intercompany funding is explicit: funds move, loans are created, interest is charged and paid. This makes arm's length pricing visible and auditable. It also works in more jurisdictions — notional pooling requires banks with offsetting balance capabilities, which not all local banks provide.</p><h2>When notional pooling wins</h2><p>Notional pooling avoids the operational complexity of daily sweep transactions and the associated intercompany loan accounting. For groups where subsidiaries are operationally autonomous and local management resists the optics of cash being swept to a holding company, notional preserves the legal ownership of balances while achieving the interest offset.</p><div class="post-callout"><p><strong>Bottom line:</strong> if your group operates in markets where zero-balancing is well-supported by local banks, and you have a cooperative legal and tax team, zero-balancing usually delivers cleaner outcomes. For distributed groups across many markets with varying local bank relationships, notional is often more pragmatic.</p></div>` },
-    de: { tag:'Struktur', date:'Dezember 2024', title:'Zero-Balancing vs. Notional Pooling: Was ist wirklich besser?', lead:'Die Debatte zwischen physischem und notionalem Pooling kommt in fast jedem Treasury-Projekt auf. Die richtige Antwort hängt von Faktoren ab, die die meisten Ratgeber-Artikel ignorieren.', body:`<h2>Der übliche Vergleich ist irreführend</h2><p>Die meisten Artikel vergleichen Zero-Balancing und Notional Pooling auf einer einfachen Achse: physische Geldbewegung versus virtuelle Aufrechnung. Das verfehlt die eigentlichen Entscheidungskriterien: rechtliche, steuerliche und operative Aspekte.</p><h2>Wann Zero-Balancing besser ist</h2><p>Zero-Balancing (physisches Sweeping) ist steuerlich sauberer, weil die konzerninterne Finanzierung explizit ist: Mittel bewegen sich, Darlehen entstehen, Zinsen werden berechnet und gezahlt. Das macht die Fremdpreisgestaltung sichtbar und prüfbar. Es funktioniert auch in mehr Jurisdiktionen — Notional Pooling erfordert Banken mit Saldierungsmöglichkeiten, die nicht alle Lokalbanken bieten.</p><h2>Wann Notional Pooling besser ist</h2><p>Notional Pooling vermeidet die operative Komplexität täglicher Sweep-Transaktionen und die damit verbundene konzerninterne Darlehensbuchhaltung. Für Gruppen, in denen Tochtergesellschaften operativ autonom sind und lokales Management dem Eindruck widersteht, dass Liquidität zur Holding überwiesen wird, bewahrt Notional das rechtliche Eigentum an den Salden bei gleichzeitiger Zinsaufrechnung.</p><div class="post-callout"><p><strong>Fazit:</strong> Wenn Ihre Gruppe in Märkten tätig ist, in denen Zero-Balancing gut unterstützt wird, und Sie ein kooperatives Rechts- und Steuerteam haben, liefert Zero-Balancing in der Regel sauberere Ergebnisse. Für verteilte Gruppen in vielen Märkten mit unterschiedlichen lokalen Bankbeziehungen ist Notional oft pragmatischer.</p></div>` },
-    fr: { tag:'Structure', date:'Décembre 2024', title:'Zero-balancing vs. netting notionnel : lequel est réellement meilleur ?', lead:'Le débat entre pooling physique et notionnel revient dans presque chaque projet de trésorerie. La bonne réponse dépend de facteurs que la plupart des articles de conseil ignorent.', body:`<h2>La comparaison standard est trompeuse</h2><p>La plupart des articles comparent le zero-balancing et le netting notionnel sur un axe simple : mouvement physique de fonds contre compensation virtuelle. Cela passe à côté des vrais critères de décision, qui sont légaux, fiscaux et opérationnels.</p><h2>Quand le zero-balancing l'emporte</h2><p>Le zero-balancing (sweep physique) est plus propre fiscalement parce que le financement interentreprises est explicite : les fonds se déplacent, des prêts sont créés, des intérêts sont facturés et payés. Cela rend la tarification en pleine concurrence visible et auditable. Il fonctionne également dans davantage de juridictions — le netting notionnel exige des banques disposant de capacités de compensation que toutes les banques locales n'offrent pas.</p><h2>Quand le netting notionnel l'emporte</h2><p>Le netting notionnel évite la complexité opérationnelle des transactions de sweep quotidiennes et la comptabilité des prêts interentreprises associée. Pour les groupes où les filiales sont opérationnellement autonomes et où le management local résiste à l'image d'une remontée de trésorerie vers la holding, le notionnel préserve la propriété légale des soldes tout en réalisant la compensation d'intérêts.</p><div class="post-callout"><p><strong>Conclusion :</strong> si votre groupe opère dans des marchés où le zero-balancing est bien supporté par les banques locales et que vous disposez d'une équipe juridique et fiscale coopérative, le zero-balancing délivre généralement des résultats plus nets. Pour les groupes distribués sur de nombreux marchés avec des relations bancaires locales variables, le notionnel est souvent plus pragmatique.</p></div>` },
+    tag: 'Structure', date: 'December 2024',
+    title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?',
+    lead: 'The debate between physical and notional pooling comes up in almost every treasury project. The right answer depends on factors most advice articles ignore.',
+    body: `<h2>The standard comparison is misleading</h2>
+<p>Most articles compare zero-balancing and notional pooling on a simple axis: physical movement of funds versus virtual offset. This misses the real decision criteria, which are legal, tax, and operational.</p>
+<h2>When zero-balancing wins</h2>
+<p>Zero-balancing (physical sweep) is cleaner from a tax perspective because the intercompany funding is explicit: funds move, loans are created, interest is charged and paid. This makes arm's length pricing visible and auditable. It also works in more jurisdictions — notional pooling requires banks with offsetting balance capabilities, which not all local banks provide.</p>
+<h2>When notional pooling wins</h2>
+<p>Notional pooling avoids the operational complexity of daily sweep transactions and the associated intercompany loan accounting. For groups where subsidiaries are operationally autonomous and local management resists the optics of cash being swept to a holding company, notional preserves the legal ownership of balances while achieving the interest offset.</p>
+<div class="post-callout"><p><strong>Bottom line:</strong> if your group operates in markets where zero-balancing is well-supported by local banks, and you have a cooperative legal and tax team, zero-balancing usually delivers cleaner outcomes. For distributed groups across many markets with varying local bank relationships, notional is often more pragmatic.</p></div>`
   },
   tms: {
-    en: { tag:'Technology', date:'November 2024', title:'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group', lead:'The TMS market has changed significantly over the past few years. Cloud-native challengers are winning deals that used to go automatically to established names.', body:`<h2>What a TMS needs to do for a cash pool</h2><p>For cash pooling specifically, the TMS needs to: receive balance data from pool banks, calculate intercompany interest allocations, post accounting entries to each entity's ledger, and produce reporting for treasury and finance. Everything else is secondary.</p><h2>Kyriba</h2><p>Kyriba remains a strong choice for complex multi-bank, multi-currency pool structures. Its cash pooling module handles both zero-balancing and notional structures with solid intercompany accounting capabilities. The weakness is implementation time — typically four to eight months for full cash management — and pricing, which has increased significantly in recent years.</p><h2>SAP TRM</h2><p>If your group runs SAP for ERP, SAP Treasury and Risk Management is the natural choice. The integration is seamless and intercompany accounting flows directly into the general ledger. For groups on S/4HANA, the module has improved substantially and is worth serious evaluation.</p><h2>Cloud-native challengers</h2><p>Platforms such as Cobase, Nomentia, and TreasuryXpress are increasingly viable for groups with five to twenty pool entities and a single primary bank relationship. They implement faster — six to twelve weeks is realistic — and cost significantly less. The trade-off is depth: complex multi-currency netting engines and sophisticated intercompany allocation logic are still maturing on these platforms.</p>` },
-    de: { tag:'Technologie', date:'November 2024', title:'Kyriba, SAP oder Cobase? Ein TMS für Ihren Konzern auswählen', lead:'Der TMS-Markt hat sich in den letzten Jahren erheblich verändert. Cloud-native Herausforderer gewinnen Aufträge, die früher automatisch an etablierte Namen gingen.', body:`<h2>Was ein TMS für einen Cash Pool leisten muss</h2><p>Für Cash Pooling muss das TMS: Salden von Pool-Banken empfangen, konzerninterne Zinszuteilungen berechnen, Buchungseinträge im Ledger jeder Einheit verbuchen und Reporting für Treasury und Finanzen erstellen. Alles andere ist zweitrangig.</p><h2>Kyriba</h2><p>Kyriba bleibt eine starke Wahl für komplexe Multi-Bank-, Multi-Währungs-Pool-Strukturen. Das Cash-Pooling-Modul handhabt sowohl Zero-Balancing- als auch Notional-Strukturen mit soliden konzerninternen Buchhaltungsfähigkeiten. Die Schwäche ist die Implementierungszeit — typischerweise vier bis acht Monate für vollständiges Cash Management — und die Preisgestaltung, die in den letzten Jahren erheblich gestiegen ist.</p><h2>SAP TRM</h2><p>Wenn Ihr Konzern SAP für ERP nutzt, ist SAP Treasury und Risikocontrolling die natürliche Wahl. Die Integration ist nahtlos und konzerninterne Buchungen fließen direkt in das Hauptbuch. Für Gruppen auf S/4HANA hat sich das Modul erheblich verbessert und verdient eine ernsthafte Evaluierung.</p><h2>Cloud-native Herausforderer</h2><p>Plattformen wie Cobase, Nomentia und TreasuryXpress sind zunehmend geeignet für Gruppen mit fünf bis zwanzig Pool-Einheiten und einer primären Bankbeziehung. Sie implementieren schneller — sechs bis zwölf Wochen sind realistisch — und kosten deutlich weniger. Der Kompromiss ist Tiefe: komplexe Multi-Währungs-Netting-Engines und ausgeklügelte konzerninterne Allokationslogiken reifen auf diesen Plattformen noch.</p>` },
-    fr: { tag:'Technologie', date:'Novembre 2024', title:'Kyriba, SAP ou Cobase ? Choisir un TMS pour votre groupe', lead:"Le marché des TMS a considérablement évolué ces dernières années. Les challengers cloud-native remportent des contrats qui allaient automatiquement aux noms établis.", body:`<h2>Ce qu'un TMS doit faire pour un cash pool</h2><p>Pour le cash pooling spécifiquement, le TMS doit : recevoir les données de soldes des banques pool, calculer les allocations d'intérêts interentreprises, comptabiliser les écritures dans le ledger de chaque entité, et produire du reporting pour la trésorerie et la finance. Tout le reste est secondaire.</p><h2>Kyriba</h2><p>Kyriba reste un choix solide pour les structures de pool multi-banques et multi-devises complexes. Son module de cash pooling gère les structures de zero-balancing et de netting notionnel avec de solides capacités de comptabilité interentreprises. Le point faible est le délai de mise en œuvre — typiquement quatre à huit mois pour la gestion complète du cash — et la tarification, qui a sensiblement augmenté ces dernières années.</p><h2>SAP TRM</h2><p>Si votre groupe utilise SAP pour l'ERP, SAP Treasury and Risk Management est le choix naturel. L'intégration est transparente et la comptabilité interentreprises s'alimente directement dans le grand livre. Pour les groupes sur S/4HANA, le module s'est considérablement amélioré et mérite une évaluation sérieuse.</p><h2>Challengers cloud-native</h2><p>Des plateformes comme Cobase, Nomentia et TreasuryXpress sont de plus en plus viables pour les groupes de cinq à vingt entités pool avec une relation bancaire principale. Elles se déploient plus vite — six à douze semaines est réaliste — et coûtent significativement moins. La contrepartie est la profondeur : les moteurs de netting multi-devises complexes et la logique d'allocation interentreprises sophistiquée sont encore en cours de maturation sur ces plateformes.</p>` },
-  },
-  research: {
-    en: { tag:'Research', date:'Apr 2026', title:'The ROI of Liquidity: Why Static Spreadsheets Fail in Cash Pool Modeling', lead:'Most cash pool business cases are built on static average balances. Two independent academic studies explain why this approach systematically overstates savings — and what a simulation-based model changes.', body:`<h2>The case against static models</h2><p>When a CFO asks "what would a cash pool save us?", the default answer is a spreadsheet. Someone from finance takes the current account balances, applies the bank's proposed rate spread, and produces a single savings number. The problem with this approach is not the arithmetic — it is the assumptions embedded in the inputs.</p><p>Real cash pools do not operate on average balances. They operate on daily cash flows that are seasonal, correlated across entities, and highly sensitive to payment terms and customer behaviour. A model built on monthly averages misses the intraday structure that drives netting efficiency — the single most important variable in cash pool ROI.</p><h2>What Jakub Houser's 2023 research found</h2><p>In his 2023 research at Masaryk University, <strong>Jakub Houser</strong> examined the structural tension between bank and corporate interests in cash pooling arrangements. Banks present pool proposals to their advantage: they tend to highlight gross interest savings while underplaying the compensation balance requirements, the minimum volumes needed to sustain favourable pricing, and the operational overhead that falls on the corporate treasury team.</p><p>The research documented a consistent pattern: treasury teams at mid-market multinationals were spending between 1.5 and 3 FTE hours per week manually reconciling pool positions, chasing intercompany loan documentation, and resolving discrepancies between pool statements and internal ledgers. At a fully-loaded cost of €80,000 per FTE, that represents €60,000 to €120,000 in annual operational cost that rarely appears in a bank's pitch deck.</p><div class="post-callout"><p><strong>Key finding:</strong> the true cost of a poorly-modelled cash pool is not just the interest spread left on the table — it is the operational overhead and missed netting efficiency that compound over multiple years.</p></div><h2>The Corvinus insight: volatility matters more than rate</h2><p>A 2016 study from <strong>Corvinus University's Centre for Economic and Regional Studies</strong> applied Monte Carlo simulation to model cash flow volatility in corporate treasury structures. The study found that under volatile cash flow conditions — standard deviation of daily balances exceeding 15% of the mean — the effective netting efficiency of a pool degrades by 20 to 40 percentage points compared to models built on stable average balances.</p><p>This has a direct implication for cash pool modelling: a group with €10M in surplus and €8M in deficit, modelled on static averages, appears to have 80% netting efficiency. The same group, modelled with realistic daily volatility, may have effective netting efficiency of 45 to 55%. The interest savings estimate built on the static model is overstated by nearly 40%.</p><p>The Corvinus methodology — running thousands of cash flow scenarios across different volatility assumptions — is precisely the approach that separates a robust cash pool model from a back-of-envelope estimate.</p><h2>Why intercompany loan structures are systematically undermodelled</h2><p>Every zero-balancing cash pool creates a continuous series of intercompany loans between pool participants and the pool header. These loans must be documented, priced at arm's length, and accounted for in each entity's local ledger. In a group with eight pool participants, that can mean 16 loan positions updated daily.</p><p>Static spreadsheet models ignore this complexity entirely. They show the net interest saving without accounting for the transfer pricing compliance cost, the legal documentation overhead, or the accounting entries that must be made in each jurisdiction. Jakub Houser's 2023 research identified intercompany loan management as the single largest source of unplanned cost in cash pool implementations — typically emerging in year two, after the initial implementation enthusiasm has faded.</p><h2>What a proper simulation model produces</h2><p>A simulation-based approach, grounded in daily cash flow volatility rather than static averages, produces three outputs that a spreadsheet cannot:</p><ul><li><strong>A realistic netting efficiency range</strong> — not a single number, but a distribution across cash flow scenarios, allowing the business case to be stress-tested before the bank conversation.</li><li><strong>A sensitivity matrix</strong> — how savings change across rate environments and volatility assumptions, so the CFO understands the dependency on market conditions they cannot control.</li><li><strong>An operational cost estimate</strong> — including FTE hours for reconciliation and intercompany accounting, so the net benefit is comparable to the gross benefit the bank presents.</li></ul><h2>The practical implication</h2><p>Before approaching any bank with a cash pool mandate, the group treasury team should have already modelled three scenarios with different volatility assumptions, benchmarked netting efficiency against the group's own cash flow history, and estimated the FTE cost of pool operations. That is the foundation on which a bank RFP becomes a negotiation rather than a request for a quote.</p><p>CashPoolModel's simulation engine was designed to produce exactly this — a structured, volatility-adjusted model that arrives before the bank pitch, not after.</p><div class="post-callout"><p><strong>Research references</strong><br>Houser, J. (2023). <em>Cash Pooling Efficiency in Multinational Corporations</em>. Masaryk University, Faculty of Economics and Administration.<br>Corvinus Centre for Economic and Regional Studies (2016). <em>Liquidity Management and Cash Flow Volatility in Corporate Treasury</em>. Working Paper No. 2016/05. <a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank">Available online</a>.</p></div>` },
-    de: { tag:'Forschung', date:'Apr. 2026', title:'Der ROI von Liquidität: Warum statische Tabellenkalkulationen im Cash-Pool-Modelling versagen', lead:'Die meisten Cash-Pool-Business-Cases basieren auf statischen Durchschnittswerten. Zwei unabhängige akademische Studien zeigen, warum dieser Ansatz Einsparungen systematisch überschätzt — und was ein simulationsbasiertes Modell verändert.', body:`<h2>Das Argument gegen statische Modelle</h2><p>Wenn ein CFO fragt „Was würde ein Cash Pool uns sparen?", lautet die Standardantwort: eine Tabellenkalkulation. Jemand aus dem Finanzbereich nimmt die aktuellen Kontosalden, wendet den von der Bank vorgeschlagenen Zinsspread an und errechnet eine einzige Einsparzahl. Das Problem bei diesem Ansatz liegt nicht in der Arithmetik — sondern in den Annahmen, die in die Eingaben einfließen.</p><p>Echte Cash Pools funktionieren nicht auf Basis von Durchschnittssalden. Sie operieren auf Basis von täglichen Cashflows, die saisonal sind, zwischen Einheiten korrelieren und stark von Zahlungszielen und dem Kundenverhalten abhängen. Ein auf Monatsdurchschnittswerten aufgebautes Modell verfehlt die tageszeitliche Struktur, die die Netting-Effizienz bestimmt — die wichtigste Variable im Cash-Pool-ROI.</p><h2>Was Jakub Housers Forschung 2023 ergab</h2><p>In seiner Forschung 2023 an der Masaryk-Universität untersuchte <strong>Jakub Houser</strong> die strukturelle Spannung zwischen den Interessen der Bank und des Unternehmens bei Cash-Pooling-Arrangements. Banken präsentieren Pool-Angebote zu ihrem Vorteil: Sie betonen die Brutto-Zinseinsparungen und spielen die Kompensationsbalance-Anforderungen, die Mindestvolumina zur Aufrechterhaltung günstiger Konditionen und den operativen Mehraufwand herunter, der auf das Corporate-Treasury-Team entfällt.</p><p>Die Forschung dokumentierte ein konsistentes Muster: Treasury-Teams in mittelständischen Konzernen verbrachten zwischen 1,5 und 3 FTE-Stunden pro Woche damit, Pool-Positionen manuell abzustimmen, Intercompany-Darlehensdokumentation nachzuverfolgen und Diskrepanzen zwischen Pool-Auszügen und internen Hauptbüchern zu klären. Bei Vollkosten von 80.000 € pro FTE entspricht das 60.000 bis 120.000 € jährlichen Betriebskosten, die in den Präsentationen der Bank selten erscheinen.</p><div class="post-callout"><p><strong>Kernergebnis:</strong> Die wahren Kosten eines schlecht modellierten Cash Pools sind nicht nur der entgangene Zinsspread — sondern der operative Mehraufwand und die verpasste Netting-Effizienz, die sich über mehrere Jahre addieren.</p></div><h2>Die Corvinus-Erkenntnis: Volatilität zählt mehr als der Zinssatz</h2><p>Eine Studie der <strong>Corvinus University aus dem Jahr 2016</strong> wendete Monte-Carlo-Simulation an, um die Cashflow-Volatilität in Corporate-Treasury-Strukturen zu modellieren. Die Studie ergab, dass unter volatilen Cashflow-Bedingungen — Standardabweichung der Tagessalden über 15 % des Mittelwerts — die effektive Netting-Effizienz eines Pools um 20 bis 40 Prozentpunkte gegenüber Modellen auf Basis stabiler Durchschnittssalden abnimmt.</p><p>Das hat direkte Konsequenzen für die Cash-Pool-Modellierung: Eine Gruppe mit 10 Mio. € Überschuss und 8 Mio. € Defizit, modelliert auf Basis statischer Durchschnittswerte, erscheint mit einer Netting-Effizienz von 80 %. Dieselbe Gruppe, modelliert mit realistischer Tagesvolatilität, kann eine effektive Netting-Effizienz von 45 bis 55 % aufweisen. Die Einsparungsschätzung auf Basis des statischen Modells ist um knapp 40 % überhöht.</p><h2>Warum Intercompany-Darlehensstrukturen systematisch untermodelliert werden</h2><p>Jedes Zero-Balancing-Cash-Pool schafft eine kontinuierliche Serie von Intercompany-Darlehen zwischen Pool-Teilnehmern und dem Pool-Header. Diese Darlehen müssen dokumentiert, zu marktüblichen Konditionen bepreist und im lokalen Hauptbuch jeder Einheit erfasst werden. In einer Gruppe mit acht Pool-Teilnehmern können das 16 täglich aktualisierte Darlehenspositionen sein.</p><p>Statische Tabellenkalkulationsmodelle ignorieren diese Komplexität vollständig. Jakub Housers Forschung 2023 identifizierte das Intercompany-Darlehensmanagement als die größte Quelle ungeplanter Kosten bei Cash-Pool-Implementierungen — typischerweise in Jahr zwei sichtbar, wenn die anfängliche Implementierungsbegeisterung verflogen ist.</p><h2>Was ein korrektes Simulationsmodell liefert</h2><p>Ein simulationsbasierter Ansatz, der auf täglicher Cashflow-Volatilität statt auf statischen Durchschnittswerten basiert, liefert drei Outputs, die eine Tabellenkalkulation nicht kann:</p><ul><li><strong>Einen realistischen Bereich für die Netting-Effizienz</strong> — keine einzelne Zahl, sondern eine Verteilung über Cashflow-Szenarien, die es ermöglicht, den Business Case vor dem Bankgespräch zu stressen.</li><li><strong>Eine Sensitivitätsmatrix</strong> — wie sich Einsparungen über Zinsumgebungen und Volatilitätsannahmen verändern, damit der CFO die Abhängigkeit von Marktbedingungen versteht.</li><li><strong>Eine operative Kostenschätzung</strong> — einschließlich FTE-Stunden für Abstimmung und Intercompany-Buchhaltung, damit der Nettonutzen mit dem Bruttonutzen der Bank vergleichbar ist.</li></ul><div class="post-callout"><p><strong>Forschungsquellen</strong><br>Houser, J. (2023). <em>Cash Pooling Efficiency in Multinational Corporations</em>. Masaryk-Universität, Fakultät für Wirtschaft und Verwaltung.<br>Corvinus Centre for Economic and Regional Studies (2016). <em>Liquidity Management and Cash Flow Volatility in Corporate Treasury</em>. Working Paper Nr. 2016/05. <a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank">Online verfügbar</a>.</p></div>` },
-    fr: { tag:'Recherche', date:'Avr 2026', title:'Le ROI de la liquidité : pourquoi les tableurs statiques échouent dans la modélisation du cash pool', lead:"La plupart des business cases de cash pool reposent sur des soldes moyens statiques. Deux études académiques indépendantes expliquent pourquoi cette approche surestime systématiquement les économies — et ce qu'un modèle basé sur la simulation change.", body:`<h2>L'argument contre les modèles statiques</h2><p>Quand un CFO demande « combien un cash pool nous ferait-il économiser ? », la réponse par défaut est un tableur. Quelqu'un des finances prend les soldes de comptes courants, applique le spread de taux proposé par la banque et produit un chiffre d'économies unique. Le problème de cette approche ne réside pas dans l'arithmétique — mais dans les hypothèses intégrées dans les données d'entrée.</p><p>Les cash pools réels ne fonctionnent pas sur des soldes moyens. Ils opèrent sur des flux de trésorerie quotidiens, saisonniers, corrélés entre entités et très sensibles aux délais de paiement et au comportement des clients. Un modèle construit sur des moyennes mensuelles passe à côté de la structure intrajournalière qui détermine l'efficacité de netting — la variable la plus importante dans le ROI d'un cash pool.</p><h2>Ce que la recherche de Jakub Houser en 2023 a révélé</h2><p>Dans sa recherche de 2023 à l'Université Masaryk, <strong>Jakub Houser</strong> a examiné la tension structurelle entre les intérêts des banques et des entreprises dans les arrangements de cash pooling. Les banques présentent leurs propositions de pool à leur avantage : elles mettent en avant les économies d'intérêts brutes tout en minimisant les exigences de solde compensatoire, les volumes minimaux nécessaires au maintien de tarifs favorables et la charge opérationnelle qui incombe à l'équipe de trésorerie d'entreprise.</p><p>La recherche a documenté un schéma récurrent : les équipes de trésorerie des multinationales de taille intermédiaire consacraient entre 1,5 et 3 heures ETP par semaine à la réconciliation manuelle des positions de pool, au suivi de la documentation des prêts interentreprises et à la résolution des écarts entre les relevés pool et les livres internes. Au coût complet de 80 000 € par ETP, cela représente de 60 000 à 120 000 € de coût opérationnel annuel qui apparaît rarement dans les présentations bancaires.</p><div class="post-callout"><p><strong>Résultat clé :</strong> le vrai coût d'un cash pool mal modélisé n'est pas seulement le spread d'intérêt laissé sur la table — c'est la charge opérationnelle et l'efficacité de netting manquée qui se cumulent sur plusieurs années.</p></div><h2>L'apport de Corvinus : la volatilité compte plus que le taux</h2><p>Une étude de 2016 du <strong>Centre pour les études économiques et régionales de l'Université Corvinus</strong> a appliqué la simulation Monte Carlo pour modéliser la volatilité des flux de trésorerie dans les structures de trésorerie d'entreprise. L'étude a montré que dans des conditions de flux de trésorerie volatils — écart-type des soldes quotidiens dépassant 15 % de la moyenne — l'efficacité de netting effective d'un pool se dégrade de 20 à 40 points de pourcentage par rapport aux modèles construits sur des soldes moyens stables.</p><p>Cela a une implication directe pour la modélisation des cash pools : un groupe avec 10 M€ d'excédents et 8 M€ de déficits, modélisé sur des moyennes statiques, apparaît avec une efficacité de netting de 80 %. Le même groupe, modélisé avec une volatilité quotidienne réaliste, peut avoir une efficacité de netting effective de 45 à 55 %. L'estimation d'économies construite sur le modèle statique est surestimée de près de 40 %.</p><h2>Pourquoi les structures de prêts interentreprises sont systématiquement sous-modélisées</h2><p>Tout cash pool à solde zéro crée une série continue de prêts interentreprises entre les participants au pool et le header. Ces prêts doivent être documentés, tarifés aux conditions de pleine concurrence et comptabilisés dans le grand livre local de chaque entité. Dans un groupe de huit participants au pool, cela peut signifier 16 positions de prêt mises à jour quotidiennement.</p><p>La recherche de Jakub Houser en 2023 a identifié la gestion des prêts interentreprises comme la principale source de coûts imprévus dans les implémentations de cash pool — apparaissant typiquement en année deux, une fois l'enthousiasme initial de mise en œuvre retombé.</p><h2>Ce que produit un modèle de simulation correct</h2><p>Une approche basée sur la simulation, ancrée dans la volatilité quotidienne des flux de trésorerie plutôt que dans des moyennes statiques, produit trois outputs qu'un tableur ne peut pas fournir :</p><ul><li><strong>Une plage réaliste d'efficacité de netting</strong> — pas un chiffre unique, mais une distribution sur des scénarios de flux de trésorerie, permettant de tester le business case avant la conversation bancaire.</li><li><strong>Une matrice de sensibilité</strong> — comment les économies évoluent selon les environnements de taux et les hypothèses de volatilité, pour que le CFO comprenne la dépendance aux conditions de marché qu'il ne peut pas contrôler.</li><li><strong>Une estimation des coûts opérationnels</strong> — incluant les heures ETP pour la réconciliation et la comptabilité interentreprises, afin que le bénéfice net soit comparable au bénéfice brut présenté par la banque.</li></ul><div class="post-callout"><p><strong>Références de recherche</strong><br>Houser, J. (2023). <em>Cash Pooling Efficiency in Multinational Corporations</em>. Université Masaryk, Faculté d'économie et d'administration.<br>Corvinus Centre for Economic and Regional Studies (2016). <em>Liquidity Management and Cash Flow Volatility in Corporate Treasury</em>. Document de travail n° 2016/05. <a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank">Disponible en ligne</a>.</p></div>` },
+    tag: 'Technology', date: 'November 2024',
+    title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group',
+    lead: 'The TMS market has changed significantly over the past few years. Cloud-native challengers are winning deals that used to go automatically to established names.',
+    body: `<h2>What a TMS needs to do for a cash pool</h2>
+<p>For cash pooling specifically, the TMS needs to: receive balance data from pool banks, calculate intercompany interest allocations, post accounting entries to each entity's ledger, and produce reporting for treasury and finance. Everything else is secondary.</p>
+<h2>Kyriba</h2>
+<p>Kyriba remains a strong choice for complex multi-bank, multi-currency pool structures. Its cash pooling module handles both zero-balancing and notional structures with solid intercompany accounting capabilities. The weakness is implementation time — typically four to eight months for full cash management — and pricing, which has increased significantly in recent years.</p>
+<h2>SAP TRM</h2>
+<p>If your group runs SAP for ERP, SAP Treasury and Risk Management is the natural choice. The integration is seamless and intercompany accounting flows directly into the general ledger. For groups on S/4HANA, the module has improved substantially and is worth serious evaluation.</p>
+<h2>Cloud-native challengers</h2>
+<p>Platforms such as Cobase, Nomentia, and TreasuryXpress are increasingly viable for groups with five to twenty pool entities and a single primary bank relationship. They implement faster — six to twelve weeks is realistic — and cost significantly less. The trade-off is depth: complex multi-currency netting engines and sophisticated intercompany allocation logic are still maturing on these platforms.</p>`
   }
 };
 
-function getAllPosts(lang) {
-  return ['research','netting','tp','reg','rfp','zb','tms'].map(id => ({ id, tag: POSTS[id][lang].tag, date: POSTS[id][lang].date, title: POSTS[id][lang].title }));
-}
+const ALL_POSTS = [
+  { id: 'netting', tag: 'Liquidity',         date: 'Apr 2025', title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling' },
+  { id: 'tp',      tag: 'Transfer Pricing',   date: 'Mar 2025', title: 'Intercompany Interest Rates: What the OECD Actually Says' },
+  { id: 'reg',     tag: 'Regulatory',         date: 'Feb 2025', title: 'Cash Pooling Across Borders: What\'s Actually Allowed' },
+  { id: 'rfp',     tag: 'Banking',            date: 'Jan 2025', title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table' },
+  { id: 'zb',      tag: 'Structure',          date: 'Dec 2024', title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?' },
+  { id: 'tms',     tag: 'Technology',         date: 'Nov 2024', title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group' },
+];
 
 function showPost(id) {
-  const p = POSTS[id][currentLang];
+  const p = POSTS[id];
   if (!p) return;
-  currentPostId = id;
   document.getElementById('postTag').textContent = p.tag;
   document.getElementById('postDate').textContent = p.date;
   document.getElementById('postTitle').textContent = p.title;
   document.getElementById('postLead').textContent = p.lead;
   document.getElementById('postBody').innerHTML = p.body;
-  const others = getAllPosts(currentLang).filter(a => a.id !== id).slice(0, 3);
+
+  // More articles — show 3 others
+  const others = ALL_POSTS.filter(a => a.id !== id).slice(0, 3);
   document.getElementById('moreGrid').innerHTML = others.map(a => `
     <div class="more-card" onclick="showPost('${a.id}')">
       <div class="more-tag">${a.tag}</div>
@@ -823,15 +732,14 @@ function showPost(id) {
       <div class="more-date">${a.date}</div>
     </div>
   `).join('');
+
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('postView').classList.add('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
   document.title = p.title + ' — CashPoolModel';
-  if (typeof gtag !== 'undefined') gtag('event', 'article_view', { article_id: id });
 }
 
 function showList() {
-  currentPostId = null;
   document.getElementById('listView').classList.remove('hidden');
   document.getElementById('postView').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
@@ -840,25 +748,23 @@ function showList() {
 
 function handleNewsletter() {
   const e = document.getElementById('nlEmail').value;
-  const t = UI[currentLang];
-  if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
+  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
   addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'newsletter_signup');
-  showToast(t['toast.sub']);
+  showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('nlEmail').value = '';
 }
 function handlePostNewsletter() {
   const e = document.getElementById('pfEmail').value;
-  const t = UI[currentLang];
-  if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
+  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
   addToBrevo(e);
-  showToast(t['toast.sub']);
+  showToast('Subscribed. When something worth reading happens — you will hear from us.');
   document.getElementById('pfEmail').value = '';
 }
 async function addToBrevo(email) {
   try {
     await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
   } catch(e) { console.error(e); }
@@ -869,23 +775,9 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+// Handle direct URL with hash e.g. blog.html#netting
 const hash = window.location.hash.slice(1);
 if (hash && POSTS[hash]) showPost(hash);
-
-(function injectReadingTimes() {
-  function calcMins(html) {
-    const words = html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
-    return Math.max(1, Math.round(words / 200));
-  }
-  document.querySelectorAll('[data-post]').forEach(card => {
-    const id = card.dataset.post;
-    const p = POSTS[id];
-    if (!p) return;
-    const mins = calcMins(p.en.body);
-    const el = card.querySelector('.ac-time, .fa-time');
-    if (el) el.textContent = mins + ' min';
-  });
-})();
 </script>
 </body>
 </html>
