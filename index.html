@@ -462,16 +462,6 @@ footer {
 }
 .footer-swiss { font-size: 10px; font-weight: 400; letter-spacing: 0.2px; color: rgba(255,255,255,.32); margin-bottom: 5px; }
 .footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
-/* ── METHODOLOGY ── */
-.meth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 36px; }
-@media (max-width: 680px) { .meth-grid { grid-template-columns: 1fr; gap: 24px; } }
-.meth-item { background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl); padding: 28px 28px 24px; }
-.meth-num { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 6px; }
-.meth-inst { font-size: 11px; color: var(--ink-fnt); letter-spacing: .3px; margin-bottom: 10px; }
-.meth-title { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 10px; line-height: 1.3; }
-.meth-link { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--rule); transition: text-decoration-color .15s; }
-.meth-link:hover { text-decoration-color: var(--gold); }
-.meth-desc { font-size: 13px; color: var(--ink-lt); line-height: 1.65; font-weight: 300; }
 .ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
 
 /* ── LANG SWITCHER ── */
@@ -500,13 +490,12 @@ h1              { animation-delay: .11s; }
 .actions        { animation-delay: .28s; }
 .trust-line     { animation-delay: .33s; }
 </style>
-<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', 'G-5SX745CBEE');
 </script>
 </head>
 <body>
@@ -610,17 +599,17 @@ h1              { animation-delay: .11s; }
       <div class="how-step">
         <div class="how-n">01</div>
         <div class="how-t" data-i18n="how.s1t">Enter your group structure</div>
-        <div class="how-d" data-i18n="how.s1d">Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.</div>
+        <div class="how-d" data-i18n="how.s1d">Upload your bank statements and AI extracts entity names, balances, and currencies in seconds. Or enter data manually and adjust anything. CFOs typically complete setup in under five minutes.</div>
       </div>
       <div class="how-step">
         <div class="how-n">02</div>
         <div class="how-t" data-i18n="how.s2t">Run the simulation</div>
-        <div class="how-d" data-i18n="how.s2d">The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&amp;L comparison.</div>
+        <div class="how-d" data-i18n="how.s2d">The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.</div>
       </div>
       <div class="how-step">
         <div class="how-n">03</div>
         <div class="how-t" data-i18n="how.s3t">Download the report</div>
-        <div class="how-d" data-i18n="how.s3d">Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.</div>
+        <div class="how-d" data-i18n="how.s3d">Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&amp;L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.</div>
       </div>
     </div>
   </div>
@@ -668,27 +657,6 @@ h1              { animation-delay: .11s; }
         <button class="ea-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Join Waitlist →</button>
       </div>
       <div class="ea-micro" data-i18n="ea.micro">No spam. Only professional treasury updates.</div>
-    </div>
-  </div>
-</section>
-
-<!-- METHODOLOGY -->
-<section class="section" id="methodology">
-  <div class="wrap">
-    <div class="sec-eyebrow">Research Foundation</div>
-    <h2>Built on independent research,<br>not vendor claims.</h2>
-    <p class="sec-sub">The simulation methodology behind CashPoolModel is grounded in peer-reviewed academic work and independent treasury practice — not marketing benchmarks.</p>
-    <div class="meth-grid">
-      <div class="meth-item">
-        <div class="meth-inst">Masaryk University · Faculty of Economics and Administration</div>
-        <div class="meth-title"><a href="/blog.html" onclick="event.preventDefault();window.location='/blog.html';" class="meth-link">Research on Cash Pooling Efficiency from Masaryk University</a></div>
-        <div class="meth-desc">Jakub Houser's 2023 research examined the structural conflict between bank and corporate interests in cash pooling, quantified the FTE cost of manual pool management, and analysed the impact of intercompany loan structures on group liquidity efficiency.</div>
-      </div>
-      <div class="meth-item">
-        <div class="meth-inst">Corvinus University · Centre for Economic and Regional Studies</div>
-        <div class="meth-title"><a href="https://unipub.lib.uni-corvinus.hu/2207/1/cewp_201605.pdf" rel="noopener noreferrer" target="_blank" class="meth-link">Liquidity Management Study by Corvinus University</a></div>
-        <div class="meth-desc">Applied Monte Carlo simulation to model cash flow volatility in corporate treasury structures, demonstrating that static average-balance models systematically overstate netting efficiency under realistic daily volatility conditions.</div>
-      </div>
     </div>
   </div>
 </section>
@@ -743,11 +711,11 @@ const translations = {
     'preview.note': 'Illustrative data. Actual report generated from your inputs.',
     'how.eyebrow': 'How it works', 'how.h2': 'From data to board decision<br>in three steps.',
     'how.s1t': 'Enter your group structure',
-    'how.s1d': 'Input each entity, its average daily balance, number of accounts, and your current bank rates. Live rate presets from major central banks.',
+    'how.s1d': 'Upload your bank statements and AI extracts entity names, balances, and currencies in seconds. Or enter data manually and adjust anything. CFOs typically complete setup in under five minutes.',
     'how.s2t': 'Run the simulation',
-    'how.s2d': 'The engine calculates netting efficiency, models three scenarios with daily cash flow volatility, and produces a full before/after P&L comparison.',
+    'how.s2d': 'The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.',
     'how.s3t': 'Download the report',
-    'how.s3d': 'Export a structured PDF ready for your CFO, board, or bank RFP. Executive summary, sensitivity analysis, and implementation roadmap included.',
+    'how.s3d': 'Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.',
     'ea.eyebrow': 'Early Access', 'ea.h2': 'Secure your priority access.',
     'ea.sub': 'Join the waitlist to be the first to model your cash pool when we go live.',
     'ea.c1t': 'Automated Simulation',
@@ -790,11 +758,11 @@ const translations = {
     'preview.note': 'Illustrative Daten. Der tatsächliche Bericht wird aus Ihren Eingaben erstellt.',
     'how.eyebrow': 'So funktioniert es', 'how.h2': 'Von den Daten zur Entscheidung —<br>in drei Schritten.',
     'how.s1t': 'Konzernstruktur eingeben',
-    'how.s1d': 'Geben Sie jede Einheit, ihr durchschnittliches Tagesguthaben, die Anzahl der Konten und Ihre aktuellen Bankkonditionen ein. Live-Zinssätze der wichtigsten Zentralbanken.',
+    'how.s1d': 'Laden Sie Ihre Kontoauszüge hoch — KI extrahiert Entitätsnamen, Salden und Währungen in Sekunden. Oder geben Sie Daten manuell ein. CFOs schließen die Einrichtung typischerweise in unter fünf Minuten ab.',
     'how.s2t': 'Simulation ausführen',
-    'how.s2d': 'Das System berechnet die Netting-Effizienz, modelliert drei Szenarien mit täglicher Cashflow-Volatilität und erstellt einen vollständigen Vorher/Nachher-P&L-Vergleich.',
+    'how.s2d': 'Das System modelliert Ihre Netting-Effizienz, Zinseinsparungen und Amortisationszeit in drei Szenarien — Basis, optimistisch und Stress. Stellen Sie dem KI-Analysten beliebige Fragen zu Ihren Zahlen in natürlicher Sprache.',
     'how.s3t': 'Bericht herunterladen',
-    'how.s3d': 'Exportieren Sie ein strukturiertes PDF für Ihren CFO, Verwaltungsrat oder Bank-Ausschreibungen. Mit Management Summary, Sensitivitätsanalyse und Umsetzungsplan.',
+    'how.s3d': 'Exportieren Sie ein board-fertiges PDF: Executive Summary mit GO/NO-GO-Empfehlung, vollständiger P&L-Vergleich, Sensitivitätsmatrix, Pool-Strukturdiagramm und Bank-Ausschreibungspaket. Bereit für Ihren CFO oder das nächste Bankgespräch.',
     'ea.eyebrow': 'Früher Zugang', 'ea.h2': 'Sichern Sie sich Ihren Vorrangzugang.',
     'ea.sub': 'Registrieren Sie sich auf der Warteliste, um als Erster Ihren Cash Pool zu modellieren.',
     'ea.c1t': 'Automatisierte Simulation',
@@ -837,11 +805,11 @@ const translations = {
     'preview.note': 'Données illustratives. Le rapport réel est généré à partir de vos données.',
     'how.eyebrow': 'Comment ça fonctionne', 'how.h2': 'Des données à la décision du conseil —<br>en trois étapes.',
     'how.s1t': 'Saisir la structure du groupe',
-    'how.s1d': 'Renseignez chaque entité, son solde journalier moyen, le nombre de comptes et vos taux bancaires actuels. Taux en temps réel des principales banques centrales.',
+    'how.s1d': 'Importez vos relevés bancaires et l\'IA extrait les noms d\'entités, soldes et devises en quelques secondes. Ou saisissez les données manuellement. Les CFO terminent généralement la configuration en moins de cinq minutes.',
     'how.s2t': 'Lancer la simulation',
-    'how.s2d': 'Le moteur calcule l\'efficacité de netting, modélise trois scénarios avec la volatilité des flux journaliers et produit une comparaison P&L complète avant/après.',
+    'how.s2d': 'Le moteur modélise votre efficacité de netting, les économies d\'intérêts et la période de retour sur investissement en trois scénarios — de base, optimiste et de stress. Posez toute question à l\'analyste IA sur vos chiffres en langage naturel.',
     'how.s3t': 'Télécharger le rapport',
-    'how.s3d': 'Exportez un PDF structuré prêt pour votre CFO, votre conseil ou un appel d\'offres bancaire. Résumé exécutif, analyse de sensibilité et feuille de route inclus.',
+    'how.s3d': 'Exportez un PDF prêt pour le conseil : résumé exécutif avec verdict GO/NO-GO, comparaison P&L complète, matrice de sensibilité, schéma de structure du pool et dossier d\'appel d\'offres bancaire. Prêt pour votre CFO ou votre prochaine réunion bancaire.',
     'ea.eyebrow': 'Accès anticipé', 'ea.h2': 'Sécurisez votre accès prioritaire.',
     'ea.sub': 'Rejoignez la liste d\'attente pour être le premier à modéliser votre cash pool à notre lancement.',
     'ea.c1t': 'Simulation automatisée',
