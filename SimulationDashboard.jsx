@@ -542,12 +542,6 @@ function MainContent() {
             <span>Generated April 2025</span>
           </div>
           <div className="w-px h-4 bg-slate-200" />
-          <button className="flex items-center gap-1.5 text-[12px] font-medium text-slate-600
-            bg-white border border-slate-200 hover:border-slate-300 px-3.5 py-2 rounded-lg
-            transition-colors shadow-sm hover:bg-slate-50">
-            <Ico name="file" size={13} color="#64748b" />
-            Share
-          </button>
           <button className="flex items-center gap-1.5 text-[12px] font-semibold text-white
             bg-slate-900 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors shadow-sm">
             <Ico name="download" size={13} color="white" />

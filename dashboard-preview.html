@@ -1098,14 +1098,6 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
             Generated April 2025
           </div>
           <div style={{ width:1, height:16, background:'#e2e8f0' }} />
-          <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:500,
-            color:'#475569', background:'#fff', border:'1px solid #e2e8f0', padding:'7px 14px',
-            borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
-            onClick={() => { navigator.clipboard.writeText(window.location.href); }}
-            onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
-            onMouseLeave={e => e.currentTarget.style.background='#fff'}>
-            <Ico name="file" size={13} color="#64748b"/> Copy link
-          </button>
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600,
             color:'#fff', background:'#0f172a', border:'none', padding:'8px 16px',
             borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
