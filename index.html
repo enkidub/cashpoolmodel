@@ -424,6 +424,9 @@ footer {
   .footer-links { justify-content: center; }
   .footer-copy { text-align: center; }
 }
+.footer-swiss { font-size: 9px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: 5px; }
+.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
+.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
 
 /* ── LANG SWITCHER ── */
 .lang-sw { display: flex; align-items: center; gap: 1px; margin-right: 4px; }
@@ -497,7 +500,7 @@ h1              { animation-delay: .11s; }
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Treasury Intelligence</div>
+    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Swiss Treasury Intelligence</div>
     <h1 data-i18n="hero.h1">Model your cash pool before you commit.</h1>
     <p class="hero-sub" data-i18n="hero.sub">The first independent cash pooling simulator. Built by treasury practitioners, not software vendors.</p>
     <ul class="hero-bullets">
@@ -688,7 +691,12 @@ h1              { animation-delay: .11s; }
     <div class="footer-i">
       <div>
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence · Geneva, Switzerland</div>
+        <div class="footer-swiss" data-i18n="footer.swiss">Swiss-based advisory</div>
+        <div class="footer-sub" data-i18n="footer.sub">Independent Swiss treasury intelligence</div>
+        <div class="footer-loc">
+          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
+          <span data-i18n="footer.location">Geneva, Switzerland</span>
+        </div>
       </div>
       <div class="footer-links">
         <a href="/blog.html" data-i18n="nav.blog">Blog</a>
@@ -706,7 +714,7 @@ h1              { animation-delay: .11s; }
 const translations = {
   en: {
     'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Get Early Access', 'nav.cta_mobile': 'Get Early Access →',
-    'hero.eyebrow': 'Independent Treasury Intelligence',
+    'hero.eyebrow': 'Independent Swiss Treasury Intelligence',
     'hero.h1': 'Model your cash pool before you commit.',
     'hero.sub': 'The first independent cash pooling simulator. Built by treasury practitioners, not software vendors.',
     'hero.b1': 'Know your savings before the bank pitch — not after.',
@@ -744,14 +752,16 @@ const translations = {
     'ea.c2b3': 'Expert consultations with independent treasury specialists',
     'ea.placeholder': 'treasury@yourcompany.com', 'ea.btn': 'Join Waitlist →',
     'ea.micro': 'No spam. Only professional treasury updates.',
-    'footer.sub': 'Independent treasury intelligence · Geneva, Switzerland',
+    'footer.swiss': 'Swiss-based advisory',
+    'footer.sub': 'Independent Swiss treasury intelligence',
+    'footer.location': 'Geneva, Switzerland',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.',
     'toast.success': 'You are on the list. We will notify you when the simulator launches.',
     'toast.invalid': 'Please enter a valid email address.',
   },
   de: {
     'nav.blog': 'Blog', 'nav.contact': 'Kontakt', 'nav.cta': 'Früher Zugang', 'nav.cta_mobile': 'Früher Zugang →',
-    'hero.eyebrow': 'Unabhängige Treasury-Intelligence',
+    'hero.eyebrow': 'Unabhängige Schweizer Treasury-Intelligence',
     'hero.h1': 'Modellieren Sie Ihren Cash Pool — bevor Sie sich entscheiden.',
     'hero.sub': 'Der erste unabhängige Cash-Pool-Simulator. Entwickelt von Treasury-Experten, nicht von Software-Anbietern.',
     'hero.b1': 'Kennen Sie Ihre Einsparungen vor dem Bankgespräch — nicht danach.',
@@ -789,14 +799,16 @@ const translations = {
     'ea.c2b3': 'Expertenberatung mit unabhängigen Treasury-Spezialisten',
     'ea.placeholder': 'treasury@ihrefirma.com', 'ea.btn': 'Zur Warteliste →',
     'ea.micro': 'Kein Spam. Nur professionelle Treasury-Updates.',
-    'footer.sub': 'Unabhängige Treasury-Intelligence · Genf, Schweiz',
+    'footer.swiss': 'Schweizer Treasury-Beratung',
+    'footer.sub': 'Unabhängige Schweizer Treasury-Intelligence',
+    'footer.location': 'Genf, Schweiz',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Ergebnisse sind illustrativ — keine Finanzberatung.',
     'toast.success': 'Sie stehen auf der Liste. Wir benachrichtigen Sie beim Launch.',
     'toast.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
   },
   fr: {
     'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Accès anticipé', 'nav.cta_mobile': 'Accès anticipé →',
-    'hero.eyebrow': 'Intelligence trésorerie indépendante',
+    'hero.eyebrow': 'Intelligence suisse en trésorerie indépendante',
     'hero.h1': 'Modélisez votre cash pool avant de vous engager.',
     'hero.sub': 'Le premier simulateur de cash pooling indépendant. Conçu par des professionnels de la trésorerie, non par des éditeurs de logiciels.',
     'hero.b1': 'Connaissez vos économies avant la négociation bancaire — pas après.',
@@ -834,7 +846,9 @@ const translations = {
     'ea.c2b3': 'Consultations d\'experts avec des spécialistes indépendants en trésorerie',
     'ea.placeholder': 'tresorerie@votreentreprise.com', 'ea.btn': 'Rejoindre la liste →',
     'ea.micro': 'Pas de spam. Uniquement des actualités professionnelles en trésorerie.',
-    'footer.sub': 'Intelligence trésorerie indépendante · Genève, Suisse',
+    'footer.swiss': 'Conseil suisse en trésorerie',
+    'footer.sub': 'Intelligence suisse en trésorerie indépendante',
+    'footer.location': 'Genève, Suisse',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Les résultats sont illustratifs — pas de conseil financier.',
     'toast.success': 'Vous êtes sur la liste. Nous vous notifierons au lancement.',
     'toast.invalid': 'Veuillez saisir une adresse e-mail valide.',

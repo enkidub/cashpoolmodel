@@ -321,6 +321,8 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
 .footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
 .footer-links a:hover { color: rgba(255,255,255,.8); }
 .footer-copy { font-size: 11px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.06); }
+.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
+.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; }
 
 /* Buttons */
 .btn {
@@ -604,7 +606,11 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 28px 0 2
     <div class="footer-i">
       <div>
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence · Geneva, Switzerland</div>
+        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence</div>
+        <div class="footer-loc">
+          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
+          <span data-i18n="footer.location">Geneva, Switzerland</span>
+        </div>
       </div>
       <div class="footer-links">
         <a href="/index.html" data-i18n="footer.home">Home</a>
@@ -639,7 +645,7 @@ const UI = {
     'nl.title':'Treasury Notes','nl.sub':'When something worth reading happens in treasury — we write about it.','nl.placeholder':'your@email.com','nl.btn':'Subscribe',
     'back':'All articles','more':'More articles',
     'pci.t':'Stay informed on treasury developments.','pci.s':'When something worth reading happens — we write about it.',
-    'footer.home':'Home','footer.sub':'Independent treasury intelligence · Geneva, Switzerland',
+    'footer.home':'Home','footer.sub':'Independent treasury intelligence','footer.location':'Geneva, Switzerland',
     'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Not financial advice.',
     'toast.sub':'Subscribed. When something worth reading happens — you will hear from us.','toast.invalid':'Please enter a valid email address.',
   },
@@ -658,7 +664,7 @@ const UI = {
     'nl.title':'Treasury Notes','nl.sub':'Wenn im Treasury etwas Lesenswertes passiert — schreiben wir darüber.','nl.placeholder':'ihre@email.com','nl.btn':'Abonnieren',
     'back':'Alle Artikel','more':'Weitere Artikel',
     'pci.t':'Bleiben Sie über Treasury-Entwicklungen informiert.','pci.s':'Wenn etwas Lesenswertes passiert — schreiben wir darüber.',
-    'footer.home':'Startseite','footer.sub':'Unabhängige Treasury-Intelligence · Genf, Schweiz',
+    'footer.home':'Startseite','footer.sub':'Unabhängige Treasury-Intelligence','footer.location':'Genf, Schweiz',
     'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Keine Finanzberatung.',
     'toast.sub':'Abonniert. Wenn etwas Lesenswertes passiert — hören Sie von uns.','toast.invalid':'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
   },
@@ -677,7 +683,7 @@ const UI = {
     'nl.title':'Treasury Notes','nl.sub':'Quand quelque chose de notable se passe en trésorerie — nous en écrivons.','nl.placeholder':'votre@email.com','nl.btn':'S\'abonner',
     'back':'Tous les articles','more':'Plus d\'articles',
     'pci.t':'Restez informé des actualités trésorerie.','pci.s':'Quand quelque chose de notable se passe — nous en écrivons.',
-    'footer.home':'Accueil','footer.sub':'Intelligence trésorerie indépendante · Genève, Suisse',
+    'footer.home':'Accueil','footer.sub':'Intelligence trésorerie indépendante','footer.location':'Genève, Suisse',
     'footer.copy':'© 2025 Intercompany.io · CashPoolModel. Pas de conseil financier.',
     'toast.sub':'Abonné. Quand quelque chose de notable se passe — vous en entendrez parler.','toast.invalid':'Veuillez saisir une adresse e-mail valide.',
   }

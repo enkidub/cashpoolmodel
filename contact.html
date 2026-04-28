@@ -160,6 +160,8 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px}
 .footer-links a{font-size:12px;color:rgba(255,255,255,.38);transition:color .14s}
 .footer-links a:hover{color:rgba(255,255,255,.8)}
 .footer-copy{font-size:11px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-loc{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:11px}
+.ch-flag{border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,.4);flex-shrink:0}
 @media(max-width:600px){
   .footer-i{flex-direction:column;align-items:center;text-align:center}
   .footer-links{justify-content:center}
@@ -352,7 +354,11 @@ footer{background:var(--navy);color:rgba(255,255,255,.4);padding:32px 0 22px}
     <div class="footer-i">
       <div>
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence by Intercompany.io · Geneva, Switzerland</div>
+        <div class="footer-sub" data-i18n="footer.sub">Independent treasury intelligence by Intercompany.io</div>
+        <div class="footer-loc">
+          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
+          <span data-i18n="footer.location">Geneva, Switzerland</span>
+        </div>
       </div>
       <div class="footer-links">
         <a href="/index.html" data-i18n="footer.home">Home</a>
@@ -404,7 +410,8 @@ const T = {
     'ic.label.email': 'Email',
     'ic.label.avail': 'Availability',
     'ic.avail': 'Mon–Fri, CET timezone',
-    'footer.sub': 'Independent treasury intelligence by Intercompany.io · Geneva, Switzerland',
+    'footer.sub': 'Independent treasury intelligence by Intercompany.io',
+    'footer.location': 'Geneva, Switzerland',
     'footer.home': 'Home',
     'footer.blog': 'Blog',
     'footer.contact': 'Contact',
@@ -443,7 +450,8 @@ const T = {
     'ic.label.email': 'E-Mail',
     'ic.label.avail': 'Verfügbarkeit',
     'ic.avail': 'Mo–Fr, MEZ-Zeitzone',
-    'footer.sub': 'Unabhängige Treasury-Intelligence von Intercompany.io · Genf, Schweiz',
+    'footer.sub': 'Unabhängige Treasury-Intelligence von Intercompany.io',
+    'footer.location': 'Genf, Schweiz',
     'footer.home': 'Startseite',
     'footer.blog': 'Blog',
     'footer.contact': 'Kontakt',
@@ -482,7 +490,8 @@ const T = {
     'ic.label.email': 'E-mail',
     'ic.label.avail': 'Disponibilité',
     'ic.avail': 'Lun–Ven, fuseau horaire CET',
-    'footer.sub': 'Intelligence en trésorerie indépendante par Intercompany.io · Genève, Suisse',
+    'footer.sub': 'Intelligence en trésorerie indépendante par Intercompany.io',
+    'footer.location': 'Genève, Suisse',
     'footer.home': 'Accueil',
     'footer.blog': 'Blog',
     'footer.contact': 'Contact',
