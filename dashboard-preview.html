@@ -953,20 +953,62 @@ function Sensitivity() {
   );
 }
 
+const RATES_WORKER = 'https://cpm-rates.kuba-houser.workers.dev';
+
 // ─── Export Section ───────────────────────────────────────────────────────
 function ExportSection() {
-  const [loaded, setLoaded] = React.useState(false);
-  const [rates, setRates] = React.useState([]);
+  const [loaded,   setLoaded]   = React.useState(false);
+  const [rates,    setRates]    = React.useState(RATES);  // static fallback first
+  const [liveSet,  setLiveSet]  = React.useState(new Set());
   const [syncTime, setSyncTime] = React.useState('');
 
   React.useEffect(() => {
-    const t = setTimeout(() => {
-      setRates(RATES);
-      const now = new Date();
-      setSyncTime(`Indicative reference rates · as of ${now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`);
-      setLoaded(true);
-    }, 900);
-    return () => clearTimeout(t);
+    let cancelled = false;
+
+    async function loadRates() {
+      // 600ms skeleton pause for UX
+      await new Promise(r => setTimeout(r, 600));
+      if (cancelled) return;
+
+      let displayRates = RATES;
+      let live = new Set();
+      let syncMsg = `Indicative reference rates · as of ${fmtFullDate(NOW)}`;
+
+      try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(RATES_WORKER, { signal: controller.signal });
+        clearTimeout(timer);
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.rates?.length) {
+            live = new Set(data.rates.map(r => r.name));
+            // Merge: live Worker data takes precedence over static RATES
+            displayRates = RATES.map(r => {
+              const lr = data.rates.find(x => x.name === r.name);
+              return lr
+                ? { ...r, val: lr.val + '%', chg: lr.chg ?? r.chg, pos: lr.pos ?? r.pos, isLive: true }
+                : r;
+            });
+            const asOf = data.asOf
+              ? new Date(data.asOf + 'T12:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+              : fmtFullDate(NOW);
+            syncMsg = `${live.size} live · ${RATES.length - live.size} indicative · ${asOf}`;
+          }
+        }
+      } catch(e) { /* Worker unavailable — keep static fallback silently */ }
+
+      if (!cancelled) {
+        setRates(displayRates);
+        setLiveSet(live);
+        setSyncTime(syncMsg);
+        setLoaded(true);
+      }
+    }
+
+    loadRates();
+    return () => { cancelled = true; };
   }, []);
 
   const RFP_ITEMS = [
@@ -986,7 +1028,10 @@ function ExportSection() {
         {[
           { label:'Report Status',    value:'Complete',  badge:'✓ Ready',     sub:'all sections generated' },
           { label:'Net Annual Saving',value:'€842k',     badge:'Base case',   sub:'interest + operational' },
-          { label:'Live Rate Feeds',  value:'5 Active',  badge:'↺ Live',      sub:'€STR, SOFR, SONIA, PRIBOR, SARON' },
+          { label:'Live Rate Feeds',
+            value: !loaded ? 'Loading…' : liveSet.size > 0 ? `${liveSet.size} Live` : '5 Indicative',
+            badge: !loaded ? '↺' : liveSet.size > 0 ? `+ ${RATES.length - liveSet.size} ref.` : 'Reference',
+            sub:   liveSet.size > 0 ? 'ECB · NY Fed · ČNB live' : '€STR, SOFR, PRIBOR, SONIA, SARON' },
           { label:'PDF Pages',        value:'12 pages',  badge:'Board-ready', sub:'incl. executive summary' },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
@@ -1023,42 +1068,69 @@ function ExportSection() {
         {/* Live Rates */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Live Market Rates</div>
-            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
-              color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
-              <div style={{ width:6,height:6,borderRadius:'50%',background:'#059669',animation:'pulse 2s infinite' }}/>
-              Live
-            </div>
+            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Market Rates</div>
+            {loaded && liveSet.size > 0 ? (
+              <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
+                color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
+                <div style={{ width:6,height:6,borderRadius:'50%',background:'#059669',animation:'pulse 2s infinite' }}/>
+                {liveSet.size} live
+              </div>
+            ) : (
+              <div style={{ fontSize:10, fontWeight:600, color:'#64748b', background:'#f1f5f9',
+                padding:'3px 10px', borderRadius:99 }}>
+                {loaded ? 'Indicative' : '↺ Loading'}
+              </div>
+            )}
           </div>
           <div style={{ padding:'12px 20px' }}>
             {!loaded ? (
-              // Skeleton loader
               [1,2,3,4,5].map(i => (
                 <div key={i} style={{ height:14, background:'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)',
                   backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite',
                   borderRadius:4, marginBottom:14 }}/>
               ))
             ) : (
-              rates.map((r,i) => (
-                <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-                  paddingBottom: i<rates.length-1 ? 14 : 0, marginBottom: i<rates.length-1 ? 14 : 0,
-                  borderBottom: i<rates.length-1 ? '1px solid #f8fafc' : 'none' }}>
-                  <div>
-                    <div style={{ fontSize:12, fontWeight:600, color:'#334155' }}>{r.name}</div>
-                    <div style={{ fontSize:10, color:'#94a3b8' }}>{r.src}</div>
-                  </div>
-                  <div style={{ textAlign:'right' }}>
-                    <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700, color:'#0f172a' }}>{r.val}</div>
-                    <div style={{ fontSize:10, fontWeight:600, padding:'1px 6px', borderRadius:3,
-                      background: r.pos===true?'#ecfdf5':r.pos===false?'#fee2e2':'#f1f5f9',
-                      color: r.pos===true?'#059669':r.pos===false?'#dc2626':'#64748b' }}>
-                      {r.chg}
+              rates.map((r, i) => {
+                const isLive = liveSet.has(r.name);
+                return (
+                  <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                    paddingBottom: i<rates.length-1 ? 13 : 0, marginBottom: i<rates.length-1 ? 13 : 0,
+                    borderBottom: i<rates.length-1 ? '1px solid #f8fafc' : 'none' }}>
+                    <div>
+                      <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                        {isLive && <div style={{ width:5, height:5, borderRadius:'50%', background:'#059669', flexShrink:0 }}/>}
+                        <div style={{ fontSize:12, fontWeight:600, color:'#334155' }}>{r.name}</div>
+                      </div>
+                      <div style={{ fontSize:10, color:'#94a3b8', marginTop:1 }}>
+                        {r.src} ·{' '}
+                        <span style={{ color: isLive ? '#059669' : '#94a3b8', fontWeight: isLive ? 600 : 400 }}>
+                          {isLive ? 'live' : 'indicative'}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700,
+                        color: isLive ? '#0f172a' : '#64748b' }}>{r.val}</div>
+                      {r.chg ? (
+                        <div style={{ fontSize:10, fontWeight:600, padding:'1px 6px', borderRadius:3,
+                          background: r.pos===true?'#ecfdf5':r.pos===false?'#fee2e2':'#f1f5f9',
+                          color: r.pos===true?'#059669':r.pos===false?'#dc2626':'#64748b' }}>
+                          {r.chg}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize:10, color:'#cbd5e1', fontStyle:'italic' }}>no chg data</div>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
-            {loaded && <div style={{ fontSize:10, color:'#94a3b8', marginTop:12, fontFamily:'DM Mono,monospace' }}>{syncTime}</div>}
+            {loaded && (
+              <div style={{ fontSize:10, color:'#94a3b8', marginTop:12, fontFamily:'DM Mono,monospace',
+                paddingTop:10, borderTop:'1px solid #f8fafc' }}>
+                {syncTime}
+              </div>
+            )}
           </div>
         </div>
       </div>
