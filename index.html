@@ -182,9 +182,17 @@ a { color: inherit; text-decoration: none; }
 
 /* ── HERO ── */
 .hero {
-  padding: clamp(52px, 8vw, 88px) 0 clamp(40px, 5.5vw, 68px);
+  padding: clamp(44px, 7vw, 80px) 0 clamp(36px, 5vw, 60px);
 }
-.hero-inner { position: relative; z-index: 1; }
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 4vw, 56px);
+  align-items: start;
+}
+.hero-col-left {}
+.hero-col-right {}
 
 .eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
@@ -195,17 +203,17 @@ a { color: inherit; text-decoration: none; }
 
 h1 {
   font-family: var(--serif);
-  font-size: clamp(40px, 6.5vw, 76px);
-  font-weight: 600; line-height: 1.06;
+  font-size: clamp(36px, 5.5vw, 72px);
+  font-weight: 600; line-height: 1.08;
   letter-spacing: -2px; color: var(--navy);
-  max-width: 14ch; margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 h1 em { font-style: normal; color: var(--gold); }
 
 .hero-sub {
-  font-size: clamp(15px, 1.8vw, 17px);
+  font-size: clamp(14px, 1.6vw, 16px);
   color: var(--ink-mid); line-height: 1.72;
-  max-width: 46ch; margin-bottom: 36px; font-weight: 300;
+  margin-bottom: 0; font-weight: 300;
 }
 
 .hero-bullets {
@@ -242,7 +250,6 @@ h1 em { font-style: normal; color: var(--gold); }
 .calc-card {
   background: var(--white); border: 1px solid var(--rule);
   border-radius: 14px; padding: 24px 24px 20px;
-  margin-top: 32px; max-width: 500px;
   box-shadow: 0 2px 16px rgba(11,25,41,.07);
 }
 .calc-eyebrow {
@@ -251,10 +258,10 @@ h1 em { font-style: normal; color: var(--gold); }
   margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
 }
 .calc-eyebrow::before { content:''; width:12px; height:1px; background:var(--ink-fnt); }
-.calc-row { margin-bottom: 18px; }
+.calc-row { margin-bottom: 4px; }
 .calc-label-row {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 9px;
+  margin-bottom: 4px; padding: 0 2px;
 }
 .calc-label {
   font-size: 11.5px; font-weight: 600; color: var(--ink-mid);
@@ -290,43 +297,85 @@ h1 em { font-style: normal; color: var(--gold); }
   min-width: 180px; max-width: 220px; font-weight: 400;
 }
 .calc-tip-icon:hover::after { opacity: 1; }
+
+/* Range slider — 44px tall element = 44×44 touch target, 3px visual track */
 .calc-range {
   width: 100%; -webkit-appearance: none; appearance: none;
-  height: 3px; border-radius: 2px; outline: none; cursor: pointer;
+  height: 44px; background: transparent;
+  outline: none; cursor: pointer; display: block;
+}
+.calc-range::-webkit-slider-runnable-track {
+  height: 3px; border-radius: 2px;
   background: linear-gradient(to right, var(--navy) var(--pct, 0%), var(--rule) var(--pct, 0%));
 }
+.calc-range::-moz-range-track {
+  height: 3px; border-radius: 2px; background: var(--rule); border: none;
+}
+.calc-range::-moz-range-progress {
+  height: 3px; border-radius: 2px; background: var(--navy);
+}
 .calc-range::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 18px; height: 18px;
+  -webkit-appearance: none; width: 20px; height: 20px;
   border-radius: 50%; background: var(--white);
   border: 2px solid var(--navy); cursor: pointer;
   box-shadow: 0 1px 4px rgba(11,25,41,.18); transition: box-shadow .13s;
+  margin-top: -8.5px;
 }
 .calc-range::-webkit-slider-thumb:hover { box-shadow: 0 2px 8px rgba(11,25,41,.3); }
 .calc-range::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   background: var(--white); border: 2px solid var(--navy);
   cursor: pointer; box-shadow: 0 1px 4px rgba(11,25,41,.18);
+  border: 2px solid var(--navy);
 }
-.calc-divider { border: none; border-top: 1px solid var(--rule); margin: 4px 0 16px; }
+
+.calc-divider { border: none; border-top: 1px solid var(--rule); margin: 0 0 14px; }
 .calc-output-label {
   font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 4px;
 }
 .calc-output-val {
-  font-family: var(--serif); font-size: clamp(34px, 5vw, 46px);
+  font-family: var(--serif); font-size: clamp(32px, 4vw, 44px);
   font-weight: 700; color: var(--navy); line-height: 1;
   letter-spacing: -1px; margin-bottom: 8px;
 }
 .calc-micro {
-  font-size: 10.5px; color: var(--ink-fnt); line-height: 1.55; max-width: 44ch; margin-bottom: 16px;
+  font-size: 10.5px; color: var(--ink-fnt); line-height: 1.55; margin-bottom: 16px;
 }
-.calc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.calc-actions {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 8px; margin-bottom: 14px;
+}
+.calc-actions .btn-navy { width: 100%; justify-content: center; }
+.calc-link {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 12px; color: var(--ink-mid); text-decoration: none;
+  font-weight: 500; font-family: var(--sans); padding: 3px 0;
+  border-bottom: 1px solid var(--rule); width: fit-content; align-self: center;
+  transition: color .14s, border-color .14s;
+}
+.calc-link:hover { color: var(--navy); border-color: var(--navy); }
 .calc-benchmark {
   display: flex; align-items: flex-start; gap: 7px;
   font-size: 11px; color: var(--ink-fnt); line-height: 1.5; padding-top: 12px;
   border-top: 1px solid var(--rule);
 }
 .calc-benchmark svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── MOBILE: stacked layout, compact card ── */
+@media (max-width: 719px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 20px; }
+  h1 { font-size: clamp(28px, 8.5vw, 38px); letter-spacing: -1px; margin-bottom: 12px; }
+  .hero-sub { font-size: 14px; line-height: 1.65; }
+  .calc-card { padding: 14px 14px 12px; }
+  .calc-eyebrow { display: none; }
+  .calc-row { margin-bottom: 0; }
+  .calc-label-row { margin-bottom: 2px; }
+  .calc-divider { margin: 0 0 10px; }
+  .calc-output-val { font-size: clamp(26px, 8vw, 34px); margin-bottom: 5px; }
+  .calc-micro { font-size: 10px; margin-bottom: 12px; }
+  .calc-benchmark { padding-top: 8px; }
+}
 
 /* ── SECTION ── */
 .section { padding: clamp(44px, 5.5vw, 72px) 0; }
@@ -573,12 +622,8 @@ footer {
 /* ── ANIMATIONS ── */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .hero-inner > * { opacity: 0; animation: fadeUp .45s ease forwards; }
-.eyebrow        { animation-delay: .05s; }
-h1              { animation-delay: .11s; }
-.hero-sub       { animation-delay: .17s; }
-.hero-bullets   { animation-delay: .22s; }
-.actions        { animation-delay: .28s; }
-.trust-line     { animation-delay: .33s; }
+.hero-col-left  { animation-delay: .05s; }
+.hero-col-right { animation-delay: .20s; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
 <script>
@@ -633,10 +678,16 @@ h1              { animation-delay: .11s; }
 <!-- HERO -->
 <section class="hero">
   <div class="wrap hero-inner">
-    <div class="eyebrow" data-i18n="hero.eyebrow">Independent Cash Pooling Intelligence</div>
-    <h1 data-i18n="hero.h1">See how much your company could save with cash pooling.</h1>
-    <p class="hero-sub" data-i18n="hero.sub">Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.</p>
-    <!-- Liquidity Opportunity Calculator -->
+
+    <!-- Left column: headline + subtext -->
+    <div class="hero-col-left">
+      <div class="eyebrow" data-i18n="hero.eyebrow">Independent Cash Pooling Intelligence</div>
+      <h1 data-i18n="hero.h1">See how much your company could save with cash pooling.</h1>
+      <p class="hero-sub" data-i18n="hero.sub">Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.</p>
+    </div>
+
+    <!-- Right column: Liquidity Opportunity Calculator -->
+    <div class="hero-col-right">
     <div class="calc-card">
       <div class="calc-eyebrow">Liquidity Opportunity Calculator</div>
 
@@ -678,7 +729,10 @@ h1              { animation-delay: .11s; }
       <!-- CTAs -->
       <div class="calc-actions">
         <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Calculate My Savings →</a>
-        <a class="btn btn-outline" href="/dashboard-preview.html" data-i18n="hero.cta2">View Sample Report</a>
+        <a class="calc-link" href="/dashboard-preview.html" data-i18n="hero.cta2">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="0.5" width="9" height="11" rx="1"/><path d="M3.5 3.5h5M3.5 5.5h5M3.5 7.5h3"/></svg>
+          View Sample Report
+        </a>
       </div>
 
       <!-- Trust line -->
@@ -687,6 +741,8 @@ h1              { animation-delay: .11s; }
         <span data-i18n="hero.benchmark">Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.</span>
       </div>
     </div>
+    </div><!-- /hero-col-right -->
+
   </div>
 </section>
 
