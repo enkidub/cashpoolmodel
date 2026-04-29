@@ -103,8 +103,8 @@ a{color:inherit;text-decoration:none}
 .ph-sub{font-size:15px;color:var(--ink-mid);font-weight:300;max-width:46ch;line-height:1.65}
 
 /* MAIN GRID */
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,48px);padding:clamp(28px,4vw,44px) 0 clamp(44px,5.5vw,72px);align-items:start}
-@media(max-width:720px){.contact-grid{grid-template-columns:1fr}}
+.contact-grid{display:grid;grid-template-columns:1fr 300px;gap:clamp(28px,4vw,48px);padding:clamp(28px,4vw,44px) 0 clamp(44px,5.5vw,72px);align-items:start}
+@media(max-width:800px){.contact-grid{grid-template-columns:1fr}}
 
 /* ── ADVISORY CARD ── */
 .advisory-card{
@@ -181,6 +181,12 @@ a{color:inherit;text-decoration:none}
 .ic-row:last-child{margin-bottom:0}
 .ic-icon{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--ink-fnt)}
 .ic-label{font-size:11px;color:var(--ink-fnt);letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px;font-weight:600}
+
+/* AVAILABILITY */
+.avail-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.avail-dot{width:8px;height:8px;border-radius:50%;background:var(--rule);flex-shrink:0;transition:background .4s,box-shadow .4s}
+.avail-dot.online{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+.avail-text{font-size:12px;font-weight:500;color:var(--ink-mid)}
 
 /* FOOTER */
 footer { background: var(--navy); padding: 52px 0 0; }
@@ -272,7 +278,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <div class="wrap">
   <div class="contact-grid">
 
-    <!-- LEFT: Advisory booking card -->
+    <!-- LEFT: advisory booking + enquiry form -->
     <div>
       <div class="advisory-card">
         <div class="ac-body">
@@ -313,10 +319,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- RIGHT: General enquiry form -->
-    <div>
       <div class="form-card">
         <div class="form-title" data-i18n="form.title">Send a message</div>
         <div class="form-sub" data-i18n="form.sub">For general questions about the simulator or platform.</div>
@@ -331,6 +334,54 @@ footer { background: var(--navy); padding: 52px 0 0; }
         <button class="submit-btn" onclick="handleForm()" data-i18n="form.submit">Send Message to Treasury Experts</button>
         <div class="form-success" id="formSuccess" data-i18n="form.success">
           ✓ Message received. We will get back to you within 1–2 business days.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: company info sidebar -->
+    <div class="sidebar">
+      <div class="info-card">
+        <div class="avail-row">
+          <span class="avail-dot" id="availDot"></span>
+          <span id="availText" class="avail-text">Checking…</span>
+        </div>
+
+        <div class="ic-logo">IC</div>
+        <div class="ic-name">Intercompany.io</div>
+        <div class="ic-sub" data-i18n="ic.sub">Independent Treasury Advisory · Geneva</div>
+
+        <div class="ic-divider"></div>
+
+        <div class="ic-row">
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="6.5" r="2.5"/>
+            <path d="M8 2a4.5 4.5 0 0 1 4.5 4.5c0 3.5-4.5 7.5-4.5 7.5S3.5 10 3.5 6.5A4.5 4.5 0 0 1 8 2z"/>
+          </svg>
+          <div>
+            <div class="ic-label" data-i18n="ic.label.address">Address</div>
+            Rue François-Perréard 19<br>1225 Chêne-Bourg, Switzerland
+          </div>
+        </div>
+
+        <div class="ic-row">
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 2h2l1 3-1.5 1.5a9 9 0 0 0 3 3L11 8l3 1v2a2 2 0 0 1-2 2A13 13 0 0 1 2 4a2 2 0 0 1 2-2z"/>
+          </svg>
+          <div>
+            <div class="ic-label" data-i18n="ic.label.phone">Phone</div>
+            <a href="tel:+41767763463" style="color:var(--gold)">+41 76 776 34 63</a>
+          </div>
+        </div>
+
+        <div class="ic-row">
+          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="14" height="9" rx="1.5"/>
+            <path d="m1.5 4.5 6.5 4.5 6.5-4.5"/>
+          </svg>
+          <div>
+            <div class="ic-label" data-i18n="ic.label.email">Email</div>
+            <a href="mailto:info@cashpoolmodel.com" style="color:var(--gold)">info@cashpoolmodel.com</a>
+          </div>
         </div>
       </div>
     </div>
@@ -408,6 +459,12 @@ const T = {
     'form.success': '✓ Message received. We will get back to you within 1–2 business days.',
     'form.err.email': 'Please enter a valid email address.',
     'form.err.message': 'Please add a short message.',
+    'ic.sub': 'Independent Treasury Advisory · Geneva',
+    'ic.label.address': 'Address',
+    'ic.label.phone': 'Phone',
+    'ic.label.email': 'Email',
+    'ic.online': 'Available now',
+    'ic.offline': 'Responds in 1–2 days',
     'footer.tagline': 'Independent Treasury Intelligence.',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
@@ -441,6 +498,12 @@ const T = {
     'form.success': '✓ Nachricht erhalten. Wir melden uns innerhalb von 1–2 Werktagen.',
     'form.err.email': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
     'form.err.message': 'Bitte fügen Sie eine kurze Nachricht hinzu.',
+    'ic.sub': 'Unabhängige Treasury-Beratung · Genf',
+    'ic.label.address': 'Adresse',
+    'ic.label.phone': 'Telefon',
+    'ic.label.email': 'E-Mail',
+    'ic.online': 'Jetzt verfügbar',
+    'ic.offline': 'Antwortet in 1–2 Tagen',
     'footer.tagline': 'Unabhängige Treasury-Intelligence.',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
@@ -474,6 +537,12 @@ const T = {
     'form.success': '✓ Message reçu. Nous vous répondrons dans 1 à 2 jours ouvrables.',
     'form.err.email': 'Veuillez entrer une adresse e-mail valide.',
     'form.err.message': 'Veuillez ajouter un court message.',
+    'ic.sub': 'Conseil en trésorerie indépendant · Genève',
+    'ic.label.address': 'Adresse',
+    'ic.label.phone': 'Téléphone',
+    'ic.label.email': 'E-mail',
+    'ic.online': 'Disponible maintenant',
+    'ic.offline': 'Répond en 1–2 jours',
     'footer.tagline': 'Intelligence trésorerie indépendante.',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
@@ -500,6 +569,7 @@ function setLang(lang) {
   });
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   localStorage.setItem('cpm_lang', lang);
+  updateAvailability();
 }
 
 (function() {
@@ -532,18 +602,18 @@ function toggleMobileNav() {
   document.getElementById('navMobile').classList.toggle('open');
 }
 
-(function updateAvailability() {
+function updateAvailability() {
   const cet = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Zurich' }));
   const online = cet.getDay() >= 1 && cet.getDay() <= 5 && cet.getHours() >= 9 && cet.getHours() < 18;
   const dot = document.getElementById('availDot');
   const txt = document.getElementById('availText');
   if (!dot || !txt) return;
-  if (online) {
-    dot.style.background = '#22c55e';
-    txt.dataset.i18n = 'ic.online';
-    txt.textContent = T[currentLang]['ic.online'] || 'Available now';
-  }
-})();
+  dot.classList.toggle('online', online);
+  txt.textContent = online
+    ? (T[currentLang]['ic.online'] || 'Available now')
+    : (T[currentLang]['ic.offline'] || 'Responds in 1–2 days');
+}
+updateAvailability();
 </script>
 </body>
 </html>
