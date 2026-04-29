@@ -273,18 +273,22 @@ a { color: inherit; text-decoration: none; }
 .more-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 4px; }
 
 /* Footer */
-footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 36px 0 24px; }
-.footer-i { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.footer-brand { font-family: var(--serif); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 4px; }
-.footer-swiss { font-size: 10px; font-weight: 400; letter-spacing: .2px; color: rgba(255,255,255,.32); margin-bottom: 5px; }
-.footer-sub { font-size: 11px; line-height: 1.6; }
-.footer-loc { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 11px; }
-.ch-flag { border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,.4); flex-shrink: 0; vertical-align: middle; }
-.footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-.footer-links a { font-size: 12px; color: rgba(255,255,255,.38); transition: color .14s; }
-.footer-links a:hover { color: rgba(255,255,255,.8); }
-.footer-copy { font-size: 11px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.06); }
-@media (max-width: 600px) { .footer-i { flex-direction: column; align-items: center; text-align: center; } .footer-links { justify-content: center; } .footer-copy { text-align: center; } }
+footer { background: var(--navy); padding: 52px 0 0; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(24px, 3vw, 48px); padding-bottom: 44px;
+}
+.footer-brand { font-family: var(--serif); font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.5; }
+.footer-col { display: flex; flex-direction: column; }
+.footer-col-title { font-size: 9px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px; }
+.footer-col a { font-size: 12.5px; color: rgba(255,255,255,.45); transition: color .14s; padding: 4px 0; }
+.footer-col a:hover { color: rgba(255,255,255,.85); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,.07); padding: 18px 0; font-size: 11px; color: rgba(255,255,255,.28); flex-wrap: wrap; gap: 6px; }
+.footer-bottom a { color: rgba(255,255,255,.45); text-decoration: underline; text-underline-offset: 2px; transition: color .14s; }
+.footer-bottom a:hover { color: rgba(255,255,255,.8); }
+@media (max-width: 680px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; } .footer-brand-col { grid-column: 1 / -1; } .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; } }
+@media (max-width: 360px) { .footer-grid { grid-template-columns: 1fr; } }
 
 /* Buttons */
 .btn {
@@ -533,24 +537,35 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 36px 0 2
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="footer-i">
-      <div>
+    <div class="footer-grid">
+      <div class="footer-brand-col">
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-swiss">by Intercompany.io</div>
-        <div class="footer-sub">Independent Swiss treasury intelligence</div>
-        <div class="footer-loc">
-          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
-          <span>Geneva, Switzerland</span>
-        </div>
+        <div class="footer-tagline">Independent Treasury Intelligence.</div>
       </div>
-      <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="/">Home</a>
+        <a href="/#early-access">Request Priority Access</a>
+        <a href="/simulator-input.html">Simulator</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="#">About Us</a>
         <a href="/blog.html">Blog</a>
         <a href="/contact.html">Contact</a>
-        <a href="/simulator-input.html">Simulator</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Trust &amp; Legal</div>
+        <a href="/security.html">Security &amp; Privacy</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
         <a href="/guide.html">Guide</a>
       </div>
     </div>
-    <div class="footer-copy">© 2025 Intercompany.io · CashPoolModel. Results are illustrative — not financial advice.</div>
+    <div class="footer-bottom">
+      <span>© 2026 Intercompany.io. All rights reserved.</span>
+      <span>Built in Switzerland by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank">Jakub Houser</a>.</span>
+    </div>
   </div>
 </footer>
 

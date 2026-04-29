@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index, follow">
+<title>Security & Privacy — CashPoolModel</title>
+<meta name="description" content="Institutional-grade security and Swiss data privacy for corporate treasury teams. Zero Data Retention policy. No bank connections. No data stored.">
+<link rel="canonical" href="https://cashpoolmodel.com/security.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #0b1929;
+  --navy-h:  #132540;
+  --ink:     #1a2233;
+  --ink-mid: #3d4f6a;
+  --ink-lt:  #6b7d96;
+  --ink-fnt: #9babbe;
+  --paper:   #f9f8f5;
+  --paper-w: #f2f0eb;
+  --rule:    #ddd9d0;
+  --gold:    #9a6e10;
+  --gold-h:  #7d5808;
+  --gold-p:  #fdf8ec;
+  --white:   #ffffff;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --mono:    'DM Mono', monospace;
+  --max:     1000px;
+  --pad:     clamp(20px, 4vw, 44px);
+  --r:       5px;
+  --rl:      10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-i {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
+  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.logo {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+  font-family: var(--serif); font-size: 18px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.2px;
+}
+.logo-mark {
+  width: 28px; height: 28px; border-radius: 4px; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.logo-sub { font-size: 9px; color: var(--ink-fnt); font-weight: 400; letter-spacing: .3px; font-family: var(--sans); margin-top: 1px; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link { padding: 6px 12px; border-radius: var(--r); font-size: 13px; font-weight: 500; color: var(--ink-mid); transition: all .14s; }
+.nav-link:hover { background: var(--paper-w); color: var(--navy); }
+.nav-cta {
+  padding: 8px 17px; border-radius: var(--r); background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--sans);
+  transition: all .14s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
+
+/* ── WRAP ── */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  padding: clamp(52px, 7vw, 88px) 0 clamp(36px, 5vw, 60px);
+  border-bottom: 1px solid var(--rule);
+}
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
+}
+.page-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
+.page-h1 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 600; line-height: 1.1;
+  letter-spacing: -1.5px; color: var(--navy);
+  margin-bottom: 16px; max-width: 18ch;
+}
+.page-sub {
+  font-size: clamp(14px, 1.6vw, 16px); color: var(--ink-mid);
+  line-height: 1.72; font-weight: 300; max-width: 52ch;
+}
+
+/* ── CONTENT ── */
+.content { padding: clamp(44px, 6vw, 80px) 0; }
+.content-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: clamp(32px, 4vw, 64px);
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .content-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* Section divider */
+.sec-block {
+  padding: clamp(36px, 4vw, 56px) 0;
+  border-top: 1px solid var(--rule);
+}
+.sec-block:first-child { border-top: none; padding-top: 0; }
+
+.sec-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt);
+  padding-top: 4px;
+}
+.sec-title {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 600; color: var(--navy);
+  letter-spacing: -.3px; line-height: 1.2;
+  margin-bottom: 20px;
+}
+.sec-body { display: flex; flex-direction: column; gap: 14px; }
+.sec-body p {
+  font-size: 14px; color: var(--ink-mid); line-height: 1.75; font-weight: 300;
+}
+.sec-body p strong { color: var(--navy); font-weight: 600; }
+
+/* Principle list */
+.principle-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.principle-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px; background: var(--white);
+  border: 1px solid var(--rule); border-radius: var(--r);
+}
+.principle-icon {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 10px; color: var(--gold); margin-top: 1px;
+}
+.principle-body strong {
+  display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px;
+}
+.principle-body span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
+
+/* Compliance badges */
+.compliance-row {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+}
+.badge {
+  font-size: 11px; font-weight: 600; color: var(--navy);
+  padding: 5px 12px; border: 1.5px solid var(--rule);
+  border-radius: 4px; background: var(--white);
+  font-family: var(--mono); letter-spacing: .2px;
+}
+
+/* ── CTA BAND ── */
+.cta-band {
+  background: var(--navy); margin-top: 0;
+  padding: clamp(40px, 5vw, 60px) 0;
+  position: relative; overflow: hidden;
+}
+.cta-band::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent 55%);
+}
+.cta-inner { text-align: center; }
+.cta-label { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.cta-title {
+  font-family: var(--serif); font-size: clamp(20px, 3vw, 30px);
+  font-weight: 600; color: #fff; letter-spacing: -.3px;
+  margin-bottom: 24px; line-height: 1.2;
+}
+.cta-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; background: var(--gold); color: #fff;
+  border-radius: var(--r); font-size: 14px; font-weight: 600;
+  font-family: var(--sans); transition: background .16s, transform .16s;
+}
+.cta-link:hover { background: var(--gold-h); transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+footer { background: var(--navy); padding: 52px 0 0; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(24px, 3vw, 48px); padding-bottom: 44px;
+}
+.footer-brand { font-family: var(--serif); font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.5; }
+.footer-col { display: flex; flex-direction: column; }
+.footer-col-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px;
+}
+.footer-col a { font-size: 12.5px; color: rgba(255,255,255,.45); transition: color .14s; padding: 4px 0; }
+.footer-col a:hover { color: rgba(255,255,255,.85); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 18px 0; font-size: 11px; color: rgba(255,255,255,.28);
+  flex-wrap: wrap; gap: 6px;
+}
+.footer-bottom a { color: rgba(255,255,255,.45); text-decoration: underline; text-underline-offset: 2px; transition: color .14s; }
+.footer-bottom a:hover { color: rgba(255,255,255,.8); }
+@media (max-width: 680px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+@media (max-width: 360px) { .footer-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a class="logo" href="/">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
+          <rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/>
+          <rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/>
+          <path d="M2 6.5l5.5-2.5 5.5-2.5" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div>CashPoolModel</div>
+        <div class="logo-sub">by Intercompany.io</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="/blog.html">Blog</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
+    </div>
+    <a class="nav-cta" href="/#early-access">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="wrap">
+    <div class="page-eyebrow">Security &amp; Privacy</div>
+    <h1 class="page-h1">Institutional-Grade Security &amp; Swiss Data Privacy</h1>
+    <p class="page-sub">Engineered for corporate treasurers who prioritise data integrity and confidentiality. This page explains how CashPoolModel handles — and does not handle — your financial data.</p>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="wrap">
+
+    <!-- Section 1 -->
+    <div class="sec-block">
+      <div class="content-grid">
+        <div>
+          <div class="sec-label">Principle 01</div>
+        </div>
+        <div>
+          <h2 class="sec-title">The Zero Data Retention Principle</h2>
+          <div class="sec-body">
+            <p>Every figure you enter into CashPoolModel is processed <strong>exclusively in-memory</strong>, within the active browser session on your own device. Nothing is written to a database, logged to a server, or transmitted over the network for storage.</p>
+            <p>The moment you close the tab, your data is gone — not archived, not anonymised, not retained in any form. We have no technical capability to recover it, because we never held it in the first place.</p>
+          </div>
+          <ul class="principle-list" style="margin-top:24px;">
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>In-memory processing only</strong>
+                <span>All simulation logic executes client-side. Your inputs never leave your browser session.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>No server-side persistence</strong>
+                <span>We operate no database that stores financial figures, entity names, or balance data of any kind.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>Session-scoped lifetime</strong>
+                <span>Close the tab and the data is irrecoverably gone — by design, not just policy.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="sec-block">
+      <div class="content-grid">
+        <div>
+          <div class="sec-label">Principle 02</div>
+        </div>
+        <div>
+          <h2 class="sec-title">Why Your IT Department Will Love Us</h2>
+          <div class="sec-body">
+            <p>Security reviews and procurement approvals are a real bottleneck for treasury teams adopting new tools. CashPoolModel is designed to pass even the most stringent internal IT scrutiny — because there is almost nothing to scrutinise.</p>
+          </div>
+          <ul class="principle-list" style="margin-top:24px;">
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>No bank API connections</strong>
+                <span>CashPoolModel never requests, accesses, or stores credentials to any banking system or treasury management platform.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>No software installation required</strong>
+                <span>The tool runs entirely in your browser. There is nothing to deploy, nothing to patch, and no endpoint to manage.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>Aggregated figures only</strong>
+                <span>You enter high-level group liquidity and rate assumptions — not individual account numbers, IBAN data, or transaction history.</span>
+              </div>
+            </li>
+            <li class="principle-item">
+              <span class="principle-icon">✓</span>
+              <div class="principle-body">
+                <strong>No third-party data sharing</strong>
+                <span>Session data is not processed by external analytics engines, machine learning pipelines, or data brokers.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="sec-block">
+      <div class="content-grid">
+        <div>
+          <div class="sec-label">Principle 03</div>
+        </div>
+        <div>
+          <h2 class="sec-title">Swiss Governance</h2>
+          <div class="sec-body">
+            <p>CashPoolModel is developed and operated by Intercompany.io, headquartered in Geneva, Switzerland. All product decisions, data architecture choices, and privacy governance are subject to Swiss federal law and aligned with European standards.</p>
+            <p>Switzerland's Federal Act on Data Protection (FADP / nDSG) sets some of the highest personal data standards in the world. We hold ourselves to these standards even where our zero-retention architecture means they are technically not required.</p>
+            <p><strong>Data residency:</strong> No personal data leaves your device. No cross-border data transfers occur. No data is processed on our servers, because no data reaches our servers.</p>
+          </div>
+          <div class="compliance-row">
+            <span class="badge">FADP / nDSG</span>
+            <span class="badge">GDPR aligned</span>
+            <span class="badge">Swiss domicile</span>
+            <span class="badge">Zero transfer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="wrap">
+    <div class="cta-inner">
+      <div class="cta-label">Data secured</div>
+      <div class="cta-title">Model your cash pool now.</div>
+      <a class="cta-link" href="/">Model your cash pool now &nbsp;→</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand">CashPoolModel</div>
+        <div class="footer-tagline">Independent Treasury Intelligence.</div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="/">Home</a>
+        <a href="/#early-access">Request Priority Access</a>
+        <a href="/simulator-input.html">Simulator</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="#">About Us</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Trust &amp; Legal</div>
+        <a href="/security.html">Security &amp; Privacy</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="/guide.html">Guide</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Intercompany.io. All rights reserved.</span>
+      <span>Built in Switzerland by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank">Jakub Houser</a>.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
