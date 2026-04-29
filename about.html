@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index, follow">
+<title>About — Independent Treasury Intelligence by Intercompany.io | CashPoolModel</title>
+<meta name="description" content="CashPoolModel is built by Jakub Houser, independent treasury practitioner at Intercompany.io, Geneva. 10+ years bridging corporate treasury, banking, and Web3 finance.">
+<link rel="canonical" href="https://cashpoolmodel.com/about.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cashpoolmodel.com/about.html">
+<meta property="og:title" content="About — Independent Treasury Intelligence by Intercompany.io">
+<meta property="og:description" content="Built by practitioners, engineered for CFOs. Meet the team behind CashPoolModel.">
+<meta property="og:image" content="https://cashpoolmodel.com/og-image.png">
+<meta property="og:site_name" content="CashPoolModel">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #0b1929;
+  --navy-h:  #132540;
+  --ink:     #1a2233;
+  --ink-mid: #3d4f6a;
+  --ink-lt:  #6b7d96;
+  --ink-fnt: #9babbe;
+  --paper:   #f9f8f5;
+  --paper-w: #f2f0eb;
+  --rule:    #ddd9d0;
+  --gold:    #9a6e10;
+  --gold-h:  #7d5808;
+  --gold-p:  #fdf8ec;
+  --white:   #ffffff;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --mono:    'DM Mono', monospace;
+  --max:     1000px;
+  --pad:     clamp(20px, 4vw, 44px);
+  --sh:      0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
+  --sh-lg:   0 8px 40px rgba(11,25,41,.11), 0 2px 8px rgba(11,25,41,.04);
+  --r:       5px;
+  --rl:      10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-i {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
+  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.3px;
+}
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 4px; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.logo-text { display: flex; flex-direction: column; justify-content: center; line-height: 1; }
+.logo-sub { font-size: 11px; color: var(--ink-lt); font-weight: 400; letter-spacing: .2px; font-family: var(--sans); margin-top: 3px; line-height: 1; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link { padding: 6px 12px; border-radius: var(--r); font-size: 13px; font-weight: 500; color: var(--ink-mid); transition: all .14s; }
+.nav-link:hover { background: var(--paper-w); color: var(--navy); }
+.nav-link.active { color: var(--navy); font-weight: 600; }
+.nav-cta {
+  padding: 8px 17px; border-radius: var(--r); background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--sans);
+  transition: all .14s; white-space: nowrap; text-decoration: none; display: inline-block;
+}
+.nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
+.lang-sw { display: flex; align-items: center; gap: 1px; margin-right: 4px; }
+.lang-btn { background: none; border: none; font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--ink-fnt); cursor: pointer; padding: 5px 6px; border-radius: 3px; letter-spacing: .8px; text-transform: uppercase; transition: color .14s; }
+.lang-btn:hover, .lang-btn.active { color: var(--navy); }
+.lang-sep { color: var(--rule); font-size: 11px; line-height: 1; user-select: none; }
+.nav-burger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; cursor: pointer; border: none; background: none; padding: 4px; border-radius: var(--r);
+}
+.nav-burger span { display: block; height: 2px; background: var(--navy); border-radius: 2px; transition: all .2s; }
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-mobile {
+  display: none; flex-direction: column;
+  background: rgba(249,248,245,.98); border-top: 1px solid var(--rule); padding: 8px 0 12px;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a { padding: 11px var(--pad); font-size: 15px; font-weight: 500; color: var(--ink-mid); }
+.nav-mobile a:hover, .nav-mobile a.active { color: var(--navy); }
+.nav-mobile-cta {
+  margin: 6px var(--pad) 4px; display: block; width: calc(100% - 2 * var(--pad));
+  padding: 13px; border-radius: var(--r); background: var(--navy); color: #fff;
+  font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); text-align: center; transition: background .14s;
+}
+.nav-mobile-cta:hover { background: var(--navy-h); }
+@media (max-width: 580px) { .nav-links { display: none; } .nav-cta { display: none; } .nav-burger { display: flex; } }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ── ABOUT HERO ── */
+.about-hero {
+  padding: clamp(52px, 7vw, 88px) 0 clamp(44px, 5.5vw, 68px);
+  border-bottom: 1px solid var(--rule);
+}
+.ah-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 22px;
+}
+.ah-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
+.ah-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: 600; line-height: 1.08;
+  letter-spacing: -1.2px; color: var(--navy);
+  margin-bottom: 22px; max-width: 22ch;
+}
+.ah-sub {
+  font-size: 15px; color: var(--ink-mid); font-weight: 300;
+  line-height: 1.72; max-width: 58ch; margin-bottom: 36px;
+}
+.ah-quote {
+  border-left: 3px solid var(--gold);
+  padding: 8px 0 8px 24px;
+  margin: 0; max-width: 54ch; position: relative;
+}
+.ah-quote::before {
+  content: '\201C';
+  font-family: var(--serif); font-size: 64px; line-height: 1;
+  color: var(--gold); opacity: .18;
+  position: absolute; left: 24px; top: -10px;
+  pointer-events: none;
+}
+.ah-quote p {
+  font-family: var(--serif);
+  font-size: clamp(17px, 2.2vw, 22px);
+  font-style: italic; font-weight: 400;
+  color: var(--navy); line-height: 1.55; letter-spacing: -.1px;
+  position: relative; z-index: 1;
+}
+.ah-quote cite {
+  display: block; margin-top: 12px;
+  font-style: normal; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--ink-fnt); font-family: var(--sans);
+}
+
+/* ── FOUNDER ── */
+.founder-section { padding: clamp(52px, 6.5vw, 80px) 0; }
+.founder-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(36px, 6vw, 80px); align-items: start;
+}
+@media (max-width: 700px) { .founder-grid { grid-template-columns: 1fr; } }
+
+.founder-img-col { position: relative; }
+.founder-img-wrap {
+  position: relative; overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--paper-w);
+  border: 1px solid var(--rule);
+}
+.founder-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  filter: grayscale(100%) contrast(1.04) brightness(.97);
+  display: block; transition: filter .4s;
+}
+.founder-img-wrap:hover .founder-img { filter: grayscale(85%) contrast(1.03) brightness(.99); }
+.founder-img-caption {
+  margin-top: 14px; font-size: 11px; color: var(--ink-fnt);
+  display: flex; align-items: center; gap: 8px;
+}
+.founder-img-caption::before { content: ''; width: 14px; height: 1px; background: var(--rule); }
+
+.founder-bio { padding-top: 4px; }
+.founder-eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.founder-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
+.founder-name {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3.8vw, 38px);
+  font-weight: 600; color: var(--navy); letter-spacing: -.7px;
+  line-height: 1.05; margin-bottom: 5px;
+}
+.founder-role {
+  font-size: 13px; color: var(--ink-lt); font-weight: 400; margin-bottom: 18px;
+}
+.founder-linkedin {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; color: var(--ink-mid);
+  border: 1px solid var(--rule); border-radius: var(--r);
+  padding: 7px 13px; transition: all .15s; margin-bottom: 28px;
+}
+.founder-linkedin:hover { border-color: #0077b5; color: #0077b5; background: rgba(0,119,181,.04); }
+.founder-linkedin svg { flex-shrink: 0; }
+.founder-bio-text {
+  font-size: 14px; color: var(--ink-mid); line-height: 1.78; font-weight: 300;
+}
+.founder-bio-text p + p { margin-top: 16px; }
+.founder-tags {
+  display: flex; flex-wrap: wrap; gap: 7px; margin-top: 24px;
+  padding-top: 24px; border-top: 1px solid var(--rule);
+}
+.founder-tag {
+  font-size: 11px; font-weight: 500; color: var(--ink-mid);
+  background: var(--paper-w); border: 1px solid var(--rule);
+  padding: 4px 12px; border-radius: 20px; letter-spacing: .1px;
+}
+
+/* ── EXPERTISE ── */
+.expertise-section { padding: clamp(44px, 5.5vw, 72px) 0; background: var(--paper-w); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.sec-eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 12px;
+}
+.sec-h2 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 600; letter-spacing: -.6px; color: var(--navy);
+  line-height: 1.12; margin-bottom: 10px;
+}
+.sec-sub { font-size: 15px; color: var(--ink-mid); font-weight: 300; max-width: 52ch; line-height: 1.65; }
+.expertise-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2.5vw, 28px); margin-top: 36px;
+}
+@media (max-width: 640px) { .expertise-grid { grid-template-columns: 1fr; } }
+.exp-card {
+  background: var(--white); border: 1px solid rgba(11,25,41,.09);
+  border-radius: var(--rl); padding: 30px 26px;
+  box-shadow: var(--sh); position: relative; overflow: hidden;
+}
+.exp-card-trad::before, .exp-card-web3::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+}
+.exp-card-trad::before { background: var(--navy); }
+.exp-card-web3::before { background: linear-gradient(90deg, var(--gold) 0%, rgba(154,110,16,.3) 100%); }
+
+.exp-icon {
+  width: 42px; height: 42px; border-radius: var(--r);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+}
+.exp-icon-trad { background: rgba(11,25,41,.06); color: var(--navy); }
+.exp-icon-web3 { background: var(--gold-p); color: var(--gold); }
+.exp-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.exp-label-trad { color: var(--ink-fnt); }
+.exp-label-web3 { color: var(--gold); }
+.exp-title {
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.3px; margin-bottom: 16px; line-height: 1.2;
+}
+.exp-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.exp-list li {
+  font-size: 13px; color: var(--ink-mid); font-weight: 300;
+  display: flex; align-items: baseline; gap: 10px; line-height: 1.55;
+}
+.exp-list li::before { content: '—'; color: var(--ink-fnt); font-size: 11px; flex-shrink: 0; }
+
+/* ── ABOUT CTA ── */
+.about-cta-section { padding: clamp(44px, 5.5vw, 72px) 0; }
+.about-cta {
+  background: var(--navy); border-radius: var(--rl);
+  padding: clamp(40px, 5.5vw, 64px) clamp(28px, 5vw, 56px);
+  text-align: center; position: relative; overflow: hidden;
+}
+.about-cta::before {
+  content: ''; position: absolute;
+  top: -70px; right: -70px; width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(29,78,216,.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.about-cta::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent 55%);
+}
+.cta-label {
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.cta-title {
+  font-family: var(--serif); font-size: clamp(22px, 3.5vw, 34px);
+  font-weight: 600; color: #fff; letter-spacing: -.5px;
+  line-height: 1.18; margin-bottom: 28px;
+  max-width: 34ch; margin-left: auto; margin-right: auto;
+}
+.cta-actions {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.cta-btn-gold {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: var(--r);
+  background: var(--gold); color: #fff;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); transition: all .16s; white-space: nowrap;
+}
+.cta-btn-gold:hover { background: var(--gold-h); transform: translateY(-1px); }
+.cta-btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: var(--r);
+  background: transparent; color: rgba(255,255,255,.72);
+  font-size: 13px; font-weight: 500; border: 1.5px solid rgba(255,255,255,.18);
+  cursor: pointer; font-family: var(--sans); transition: all .16s; white-space: nowrap;
+}
+.cta-btn-ghost:hover { border-color: rgba(255,255,255,.45); color: #fff; }
+
+/* ── FOOTER ── */
+footer { background: var(--navy); padding: 52px 0 0; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(24px, 3vw, 48px); padding-bottom: 44px;
+}
+.footer-brand { font-family: var(--serif); font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.6; }
+.footer-co { color: rgba(255,255,255,.45); transition: color .14s; }
+.footer-co:hover { color: rgba(255,255,255,.75); }
+.footer-loc { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: rgba(255,255,255,.28); }
+.ch-flag { border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.35); flex-shrink: 0; }
+.footer-col { display: flex; flex-direction: column; }
+.footer-col-title { font-size: 9px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px; }
+.footer-col a { font-size: 12.5px; color: rgba(255,255,255,.45); transition: color .14s; padding: 4px 0; }
+.footer-col a:hover { color: rgba(255,255,255,.85); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 18px 0; font-size: 11px; color: rgba(255,255,255,.28);
+  flex-wrap: wrap; gap: 6px;
+}
+.footer-bottom a { color: rgba(255,255,255,.45); text-decoration: underline; text-underline-offset: 2px; transition: color .14s; }
+.footer-bottom a:hover { color: rgba(255,255,255,.8); }
+@media (max-width: 680px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+@media (max-width: 360px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
+  background: var(--navy); color: #fff; padding: 11px 22px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500; box-shadow: var(--sh-lg);
+  transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.about-hero .ah-eyebrow { animation: fadeUp .35s ease both; }
+.about-hero .ah-title   { animation: fadeUp .4s ease .07s both; }
+.about-hero .ah-sub     { animation: fadeUp .4s ease .14s both; }
+.about-hero .ah-quote   { animation: fadeUp .4s ease .22s both; }
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5SX745CBEE');
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a href="/index.html" class="logo">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
+          <rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/>
+          <rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/>
+          <path d="M2 6.5l5.5-2.5 5.5-2.5" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div>CashPoolModel</div>
+        <div class="logo-sub">by Intercompany.io</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="/about.html">About</a>
+      <a class="nav-link" href="/blog.html">Blog</a>
+      <a class="nav-link" href="/contact.html">Book Advisory Session</a>
+    </div>
+    <div class="lang-sw">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <span class="lang-sep">·</span>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    </div>
+    <a class="nav-cta" href="/index.html#early-access">Request Priority Access</a>
+    <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile" id="navMobile">
+    <a href="/about.html" class="active">About</a>
+    <a href="/blog.html">Blog</a>
+    <a href="/contact.html">Book Advisory Session</a>
+    <button class="nav-mobile-cta" onclick="toggleMobileNav(); window.location='/index.html#early-access'">Request Priority Access →</button>
+  </div>
+</nav>
+
+<!-- HERO / HEADER -->
+<section class="about-hero">
+  <div class="wrap">
+    <div class="ah-eyebrow">About &amp; Trust</div>
+    <h1 class="ah-title">Independent Treasury Intelligence. Built by Practitioners, Engineered for CFOs.</h1>
+    <p class="ah-sub">CashPoolModel is the proprietary simulation engine developed by Intercompany.io, an independent treasury advisory firm based in Switzerland. We provide the missing link in group finance: an objective, mathematical simulator that puts negotiation power back into the hands of the CFO.</p>
+    <blockquote class="ah-quote">
+      <p>We are not a bank. We are your data advantage. No software lock-ins, no hidden commissions — just pure treasury intelligence.</p>
+      <cite>— Jakub Houser, Founder</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- FOUNDER PROFILE -->
+<section class="founder-section">
+  <div class="wrap">
+    <div class="founder-grid">
+
+      <!-- Left: photo -->
+      <div class="founder-img-col">
+        <div class="founder-img-wrap">
+          <img
+            class="founder-img"
+            src="profile%20picture%20bw.jpg"
+            alt="Jakub Houser — Founder, Intercompany.io"
+            loading="eager"
+          >
+        </div>
+        <div class="founder-img-caption">Jakub Houser · Geneva, Switzerland</div>
+      </div>
+
+      <!-- Right: bio -->
+      <div class="founder-bio">
+        <div class="founder-eyebrow">Founder Profile</div>
+        <div class="founder-name">Jakub Houser</div>
+        <div class="founder-role">Founder &amp; Principal Advisor, Intercompany.io</div>
+        <a class="founder-linkedin" href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" aria-label="Jakub Houser on LinkedIn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn Profile
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2.5 9.5l7-7M9.5 2.5H4.5M9.5 2.5v5"/>
+          </svg>
+        </a>
+        <div class="founder-bio-text">
+          <p>With over a decade of experience bridging corporate treasury, banking, and consulting, Jakub founded Intercompany.io to eliminate the information asymmetry between banks and corporations. His expertise spans across optimizing liquidity for traditional global enterprises to navigating the complexities of Web3 and DeFi stablecoin treasuries.</p>
+          <p>Jakub's deep analytical approach is rooted in his academic research, having dedicated his Master's Thesis to cash pooling simulations and efficiency from both the corporate and commercial banking perspectives — the direct intellectual foundation of CashPoolModel.</p>
+          <p>He also served as a Teaching Assistant for Blockchain at the University of Nicosia, underscoring his commitment to the future of decentralized finance and its intersection with enterprise treasury operations.</p>
+        </div>
+        <div class="founder-tags">
+          <span class="founder-tag">Cash Pooling Architecture</span>
+          <span class="founder-tag">FX Risk Management</span>
+          <span class="founder-tag">Treasury Transformation</span>
+          <span class="founder-tag">DeFi &amp; Web3 Treasury</span>
+          <span class="founder-tag">Stablecoin Liquidity</span>
+          <span class="founder-tag">Blockchain Finance</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section class="expertise-section">
+  <div class="wrap">
+    <div class="sec-eyebrow">Areas of Expertise</div>
+    <h2 class="sec-h2">Two worlds. One precision framework.</h2>
+    <p class="sec-sub">Intercompany.io operates at the intersection of traditional corporate treasury and the emerging digital asset economy — providing rigorous, independent intelligence for both.</p>
+
+    <div class="expertise-grid">
+
+      <!-- Traditional Finance -->
+      <div class="exp-card exp-card-trad">
+        <div class="exp-icon exp-icon-trad">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="9" width="18" height="12" rx="2"/>
+            <path d="M3 9l9-6 9 6"/>
+            <path d="M9 21V12h6v9"/>
+          </svg>
+        </div>
+        <div class="exp-label exp-label-trad">Traditional Corporate Finance</div>
+        <div class="exp-title">Cross-Border Treasury Optimization</div>
+        <ul class="exp-list">
+          <li>Cross-border cash pooling architecture &amp; structuring</li>
+          <li>FX risk management &amp; hedging strategy</li>
+          <li>Treasury transformation &amp; bank RFP advisory</li>
+          <li>Intercompany lending &amp; transfer pricing alignment</li>
+          <li>Notional and physical pooling implementation</li>
+          <li>P&amp;L &amp; working capital optimization</li>
+        </ul>
+      </div>
+
+      <!-- Web3 & DeFi -->
+      <div class="exp-card exp-card-web3">
+        <div class="exp-icon exp-icon-web3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div class="exp-label exp-label-web3">Web3 &amp; DeFi</div>
+        <div class="exp-title">Digital Asset &amp; Stablecoin Treasury</div>
+        <ul class="exp-list">
+          <li>Stablecoin liquidity management &amp; yield strategy</li>
+          <li>Blockchain financial operations &amp; reporting</li>
+          <li>DeFi protocol risk assessment for corporates</li>
+          <li>DAO treasury governance frameworks</li>
+          <li>On-chain vs off-chain treasury structuring</li>
+          <li>Regulatory compliance for digital assets (MiCA, etc.)</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta-section">
+  <div class="wrap">
+    <div class="about-cta">
+      <div class="cta-label">Next Step</div>
+      <h2 class="cta-title">Ready to optimize your group liquidity?</h2>
+      <div class="cta-actions">
+        <button
+          class="cta-btn-gold"
+          data-cal-link="intercompany.io/30min"
+          data-cal-config='{"layout":"month_view"}'
+        >
+          Book Advisory Session · €249
+        </button>
+        <a class="cta-btn-ghost" href="/index.html#early-access">
+          Request Priority Access →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand">CashPoolModel</div>
+        <div class="footer-tagline">by <a href="/about.html" class="footer-co">Intercompany.io</a>&nbsp;·&nbsp;Independent Treasury Intelligence.</div>
+        <div class="footer-loc">
+          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
+          <span>Geneva, Switzerland</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="/">Home</a>
+        <a href="/#early-access">Request Priority Access</a>
+        <a href="/simulator-input.html">Simulator</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="/about.html">About Us</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Book Advisory Session</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Trust &amp; Legal</div>
+        <a href="/security.html">Security &amp; Privacy</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="/guide.html">Guide</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Intercompany.io. All rights reserved.</span>
+      <span>Built in Switzerland by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank">Jakub Houser</a>.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- Cal.com embed -->
+<script type="text/javascript">
+(function(C,A,L){let p=function(a,ar){a.q.push(ar)};let d=C.document;C.Cal=C.Cal||function(){let cal=C.Cal;let ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement("script")).src=A;cal.loaded=true}if(ar[0]===L){const api=function(){p(api,arguments)};const namespace=ar[1];api.q=api.q||[];if(typeof namespace==="string"){cal.ns[namespace]=cal.ns[namespace]||api;p(cal.ns[namespace],ar);p(cal,["initNamespace",namespace])}else p(cal,ar);return}p(cal,ar)};})(window,"https://app.cal.com/embed/embed.js","init");
+Cal("init",{origin:"https://cal.com"});
+Cal("ui",{styles:{branding:{brandColor:"#0b1929"}},hideEventTypeDetails:false});
+</script>
+
+<script>
+let currentLang = 'en';
+
+const T = {
+  en: {},
+  de: {},
+  fr: {}
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent === lang.toUpperCase())
+  );
+  localStorage.setItem('cpm_lang', lang);
+}
+
+(function() {
+  const s = localStorage.getItem('cpm_lang');
+  if (s && T[s]) { currentLang = s; setLang(s); }
+})();
+
+function toggleMobileNav() {
+  document.getElementById('navBurger').classList.toggle('open');
+  document.getElementById('navMobile').classList.toggle('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
