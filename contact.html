@@ -185,7 +185,9 @@ a{color:inherit;text-decoration:none}
 footer { background: var(--navy); padding: 52px 0 0; }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: clamp(24px, 3vw, 48px); padding-bottom: 44px; }
 .footer-brand { font-family: var(--serif); font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.5; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.6; }
+.footer-co { color: rgba(255,255,255,.45); transition: color .14s; }
+.footer-co:hover { color: rgba(255,255,255,.75); }
 .footer-loc { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: rgba(255,255,255,.28); }
 .ch-flag { border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.35); flex-shrink: 0; }
 .footer-col { display: flex; flex-direction: column; }
@@ -399,7 +401,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
     <div class="footer-grid">
       <div class="footer-brand-col">
         <div class="footer-brand">CashPoolModel</div>
-        <div class="footer-tagline">Independent Treasury Intelligence.</div>
+        <div class="footer-tagline">by <a href="#" class="footer-co">Intercompany.io</a>&nbsp;·&nbsp;<span data-i18n="footer.tagline">Independent Treasury Intelligence.</span></div>
         <div class="footer-loc">
           <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
           <span>Geneva, Switzerland</span>
@@ -471,6 +473,7 @@ const T = {
     'ic.avail': 'Mon–Fri, CET timezone',
     'ic.online': 'Available now',
     'ic.offline': 'Responds within 24h',
+    'footer.tagline': 'Independent Treasury Intelligence.',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
     'footer.home': 'Home',
@@ -511,6 +514,7 @@ const T = {
     'ic.avail': 'Mo–Fr, MEZ-Zeitzone',
     'ic.online': 'Jetzt verfügbar',
     'ic.offline': 'Antwortet innerhalb 24h',
+    'footer.tagline': 'Unabhängige Treasury-Intelligence.',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
     'footer.home': 'Startseite',
@@ -551,6 +555,7 @@ const T = {
     'ic.avail': 'Lun–Ven, fuseau horaire CET',
     'ic.online': 'Disponible maintenant',
     'ic.offline': 'Répond sous 24h',
+    'footer.tagline': 'Intelligence trésorerie indépendante.',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
     'footer.home': 'Accueil',
