@@ -477,20 +477,52 @@ h2 {
 @media (max-width: 700px) { .ea-2col { grid-template-columns: 1fr; gap: 32px; } }
 .ea-left .sec-sub { margin-bottom: 0; }
 .ea-features {
-  list-style: none; padding: 0; margin: 28px 0 0;
-  display: flex; flex-direction: column; gap: 22px;
+  list-style: none; padding: 0; margin: 22px 0 0;
+  display: flex; flex-direction: column; gap: 16px;
 }
-.ea-feature-item { display: flex; gap: 14px; align-items: flex-start; }
+.ea-feature-item { display: flex; gap: 12px; align-items: flex-start; }
 .ea-check {
-  width: 22px; height: 22px; border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; color: var(--gold); font-size: 11px; font-weight: 700; margin-top: 2px;
+  flex-shrink: 0; color: var(--gold); font-size: 10px; font-weight: 700; margin-top: 2px;
 }
 .ea-feature-body strong {
-  display: block; font-size: 13.5px; font-weight: 600; color: var(--navy); margin-bottom: 3px;
+  display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px;
 }
-.ea-feature-body span { font-size: 13px; color: var(--ink-mid); font-weight: 300; line-height: 1.55; }
+.ea-feature-body span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
+
+/* Social proof */
+.ea-social-proof {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.ea-sp-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 11px;
+}
+.ea-sp-logos {
+  /* Replace <span> children with <img> logos when available */
+  display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 13px;
+}
+.ea-sp-co {
+  font-size: 11px; color: var(--ink-lt); font-weight: 500;
+  background: var(--paper-w); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 3px 9px; white-space: nowrap;
+  letter-spacing: .1px;
+}
+.ea-sp-stat {
+  font-size: 11.5px; color: var(--ink-fnt); line-height: 1.65;
+}
+.ea-sp-stat strong { color: var(--ink-mid); font-weight: 600; }
+.ea-sp-cohort {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10.5px; color: var(--gold); font-weight: 500; margin-top: 6px;
+}
+.ea-sp-cohort::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold); opacity: .7; flex-shrink: 0;
+}
 .ea-qual-card {
   background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl);
   padding: 32px 28px;
@@ -858,6 +890,22 @@ footer {
             </div>
           </li>
         </ul>
+
+        <!-- Social proof — replace <span> with <img> logos when available -->
+        <div class="ea-social-proof">
+          <div class="ea-sp-label">Trusted by early teams at</div>
+          <div class="ea-sp-logos">
+            <span class="ea-sp-co">Global Manufacturing Group</span>
+            <span class="ea-sp-co">European SaaS Company</span>
+            <span class="ea-sp-co">Logistics &amp; Supply Chain Leader</span>
+            <span class="ea-sp-co">Mid-Cap Industrial Group</span>
+          </div>
+          <div class="ea-sp-stat">
+            Used by treasury teams managing <strong>€50M – €2bn</strong> in group liquidity
+          </div>
+          <div class="ea-sp-cohort">Limited early access cohort · No bank connection required</div>
+        </div>
+
       </div>
 
       <!-- Right: Qualification Card -->
