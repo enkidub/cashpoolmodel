@@ -469,47 +469,70 @@ h2 {
 .how-d { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; }
 
 /* ── EARLY ACCESS ── */
-.ea-grid {
+.ea-2col {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 18px; margin-top: 36px;
+  gap: clamp(40px, 5vw, 72px); align-items: start;
+  margin-top: 40px;
 }
-@media (max-width: 600px) { .ea-grid { grid-template-columns: 1fr; } }
-.ea-card {
-  padding: 28px 26px; border: 1px solid var(--rule); border-radius: var(--rl);
-  background: var(--white); box-shadow: var(--sh);
+@media (max-width: 700px) { .ea-2col { grid-template-columns: 1fr; gap: 32px; } }
+.ea-left .sec-sub { margin-bottom: 0; }
+.ea-features {
+  list-style: none; padding: 0; margin: 28px 0 0;
+  display: flex; flex-direction: column; gap: 22px;
 }
-.ea-icon { width: 32px; height: 32px; margin-bottom: 16px; color: var(--navy); }
-.ea-card-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 14px; }
-.ea-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
-.ea-list li { font-size: 12.5px; color: var(--ink-mid); line-height: 1.5; font-weight: 300; padding-left: 18px; position: relative; }
-.ea-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); font-weight: 500; }
-.ea-form-wrap {
-  margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 11px;
+.ea-feature-item { display: flex; gap: 14px; align-items: flex-start; }
+.ea-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--gold); font-size: 11px; font-weight: 700; margin-top: 2px;
 }
-.ea-form {
-  display: flex; gap: 10px; width: 100%; max-width: 480px;
+.ea-feature-body strong {
+  display: block; font-size: 13.5px; font-weight: 600; color: var(--navy); margin-bottom: 3px;
 }
-@media (max-width: 560px) { .ea-form { flex-direction: column; } }
-@media (max-width: 560px) { .ea-btn { width: 100%; } }
-@media (max-width: 560px) { .ea-input { width: 100%; font-size: 16px; } }
-.ea-input {
-  flex: 1; height: 46px; min-height: 46px; padding: 0 16px;
-  border: 1px solid var(--rule); border-radius: 6px;
-  font-family: var(--sans); font-size: 13px; color: var(--ink);
-  background: var(--white); outline: none; box-sizing: border-box;
+.ea-feature-body span { font-size: 13px; color: var(--ink-mid); font-weight: 300; line-height: 1.55; }
+.ea-qual-card {
+  background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl);
+  padding: 32px 28px;
+  box-shadow: 0 4px 24px rgba(11,25,41,.09), 0 1px 4px rgba(11,25,41,.04);
+}
+.ea-qual-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 6px;
+}
+.ea-qual-title {
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.3px; margin-bottom: 24px; line-height: 1.2;
+}
+.ea-field { margin-bottom: 14px; }
+.ea-label {
+  display: block; font-size: 11.5px; font-weight: 600;
+  color: var(--ink-mid); margin-bottom: 6px; letter-spacing: .1px;
+}
+.ea-select, .ea-field-input {
+  width: 100%; padding: 12px 16px;
+  border: 1.5px solid var(--rule); border-radius: var(--r);
+  font-family: var(--sans); font-size: 13.5px; color: var(--ink);
+  background: var(--white); outline: none;
   -webkit-appearance: none; appearance: none;
-  transition: border-color .18s;
+  transition: border-color .16s; box-sizing: border-box;
 }
-.ea-input:focus { border-color: var(--navy); }
-.ea-input::placeholder { color: var(--ink-fnt); }
-.ea-btn {
-  height: 46px; padding: 0 24px; white-space: nowrap;
-  background: var(--navy); color: #fff; border: none; border-radius: 6px;
-  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
-  transition: background .18s, transform .18s;
+.ea-select:focus, .ea-field-input:focus { border-color: var(--navy); }
+.ea-field-input::placeholder { color: var(--ink-fnt); }
+.ea-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7d96'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 36px; cursor: pointer;
 }
-.ea-btn:hover { background: #162e4a; transform: translateY(-1px); }
-.ea-micro { font-size: 11px; color: var(--ink-fnt); }
+.ea-submit-btn {
+  width: 100%; padding: 14px 20px; background: #0b2031; color: #fff;
+  border: none; border-radius: var(--r);
+  font-family: var(--sans); font-size: 14px; font-weight: 600; cursor: pointer;
+  margin-top: 8px; margin-bottom: 12px;
+  transition: background .16s, transform .16s; letter-spacing: .1px;
+}
+.ea-submit-btn:hover { background: #162e4a; transform: translateY(-1px); }
+.ea-privacy { text-align: center; font-size: 11.5px; color: var(--ink-fnt); }
 
 /* ── WAITLIST ── */
 .wl {
@@ -802,48 +825,79 @@ footer {
   </div>
 </section>
 
-<!-- EARLY ACCESS BENEFITS -->
+<!-- EARLY ACCESS -->
 <section class="section section-bt" id="early-access">
   <div class="wrap">
-    <div class="sec-eyebrow" data-i18n="ea.eyebrow">Early Access</div>
-    <h2 data-i18n="ea.h2">Secure your priority access.</h2>
-    <p class="sec-sub" data-i18n="ea.sub">Join the waitlist to be the first to model your cash pool when we go live.</p>
-    <div class="ea-grid">
+    <div class="ea-2col">
 
-      <div class="ea-card">
-        <svg class="ea-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="16,4 20,12 29,13.5 22.5,20 24,29 16,25 8,29 9.5,20 3,13.5 12,12"/>
-        </svg>
-        <div class="ea-card-title" data-i18n="ea.c1t">Automated Simulation</div>
-        <ul class="ea-list">
-          <li data-i18n="ea.c1b1">Instant visibility into interest savings before any bank conversation</li>
-          <li data-i18n="ea.c1b2">Complimentary basic report for early access members</li>
-          <li data-i18n="ea.c1b3">Precision multi-currency netting across all group entities</li>
+      <!-- Left: Value Proposition -->
+      <div class="ea-left">
+        <div class="sec-eyebrow" data-i18n="ea.eyebrow">Early Access</div>
+        <h2 data-i18n="ea.h2">Unlock Independent Treasury Intelligence.</h2>
+        <p class="sec-sub" data-i18n="ea.sub">We are granting early access to a select group of corporate finance teams. Secure your spot to model your liquidity structure — before your next bank negotiation.</p>
+        <ul class="ea-features">
+          <li class="ea-feature-item">
+            <span class="ea-check">✓</span>
+            <div class="ea-feature-body">
+              <strong data-i18n="ea.f1t">Automated Simulation</strong>
+              <span data-i18n="ea.f1d">Instant visibility into multi-currency netting and interest optimization</span>
+            </div>
+          </li>
+          <li class="ea-feature-item">
+            <span class="ea-check">✓</span>
+            <div class="ea-feature-body">
+              <strong data-i18n="ea.f2t">Board-Ready Intelligence</strong>
+              <span data-i18n="ea.f2d">Export comprehensive PDF reports with risk and sensitivity modeling</span>
+            </div>
+          </li>
+          <li class="ea-feature-item">
+            <span class="ea-check">✓</span>
+            <div class="ea-feature-body">
+              <strong data-i18n="ea.f3t">Absolute Privacy</strong>
+              <span data-i18n="ea.f3d">Bank-grade security with a strict Zero Data Retention policy</span>
+            </div>
+          </li>
         </ul>
       </div>
 
-      <div class="ea-card">
-        <svg class="ea-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="6" y="3" width="20" height="26" rx="2"/>
-          <line x1="10" y1="11" x2="22" y2="11"/>
-          <line x1="10" y1="16" x2="22" y2="16"/>
-          <line x1="10" y1="21" x2="17" y2="21"/>
-        </svg>
-        <div class="ea-card-title" data-i18n="ea.c2t">Premium Intelligence</div>
-        <ul class="ea-list">
-          <li data-i18n="ea.c2b1">Detailed PDF reports structured for CFO and board presentation</li>
-          <li data-i18n="ea.c2b2">Sensitivity and risk modelling across rate and volatility scenarios</li>
-          <li data-i18n="ea.c2b3">Expert consultations with independent treasury specialists</li>
-        </ul>
+      <!-- Right: Qualification Card -->
+      <div class="ea-right">
+        <div class="ea-qual-card">
+          <div class="ea-qual-eyebrow">Waitlist Application</div>
+          <div class="ea-qual-title" data-i18n="ea.form_title">Request Priority Access</div>
+
+          <div class="ea-field">
+            <label class="ea-label" for="eaLiquidity" data-i18n="ea.liq_label">Average Daily Liquidity</label>
+            <select class="ea-select" id="eaLiquidity">
+              <option value="" data-i18n="ea.liq_opt0">Select volume...</option>
+              <option value="lt5m">&lt; €5M</option>
+              <option value="5m50m">€5M – €50M</option>
+              <option value="50m200m">€50M – €200M</option>
+              <option value="200m+">€200M+</option>
+            </select>
+          </div>
+
+          <div class="ea-field">
+            <label class="ea-label" for="eaPooling" data-i18n="ea.pool_label">Current Pooling Setup</label>
+            <select class="ea-select" id="eaPooling">
+              <option value="" data-i18n="ea.pool_opt0">Select setup...</option>
+              <option value="physical">Physical Sweeping</option>
+              <option value="notional">Notional Pooling</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="none">Decentralized (None)</option>
+            </select>
+          </div>
+
+          <div class="ea-field">
+            <label class="ea-label" for="eaEmail" data-i18n="ea.email_label">Professional Email</label>
+            <input class="ea-field-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="treasury@yourcompany.com">
+          </div>
+
+          <button class="ea-submit-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Request Priority Access →</button>
+          <div class="ea-privacy" data-i18n="ea.privacy">🔒 Your data is strictly confidential.</div>
+        </div>
       </div>
 
-    </div>
-    <div class="ea-form-wrap">
-      <div class="ea-form">
-        <input class="ea-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="treasury@yourcompany.com">
-        <button class="ea-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Join Waitlist →</button>
-      </div>
-      <div class="ea-micro" data-i18n="ea.micro">No spam. Only professional treasury updates.</div>
     </div>
   </div>
 </section>
@@ -901,18 +955,19 @@ const translations = {
     'how.s2d': 'The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.',
     'how.s3t': 'Download the report',
     'how.s3d': 'Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.',
-    'ea.eyebrow': 'Early Access', 'ea.h2': 'Secure your priority access.',
-    'ea.sub': 'Join the waitlist to be the first to model your cash pool when we go live.',
-    'ea.c1t': 'Automated Simulation',
-    'ea.c1b1': 'Instant visibility into interest savings before any bank conversation',
-    'ea.c1b2': 'Complimentary basic report for early access members',
-    'ea.c1b3': 'Precision multi-currency netting across all group entities',
-    'ea.c2t': 'Premium Intelligence',
-    'ea.c2b1': 'Detailed PDF reports structured for CFO and board presentation',
-    'ea.c2b2': 'Sensitivity and risk modelling across rate and volatility scenarios',
-    'ea.c2b3': 'Expert consultations with independent treasury specialists',
-    'ea.placeholder': 'treasury@yourcompany.com', 'ea.btn': 'Join Waitlist →',
-    'ea.micro': 'No spam. Only professional treasury updates.',
+    'ea.eyebrow': 'Early Access',
+    'ea.h2': 'Unlock Independent Treasury Intelligence.',
+    'ea.sub': 'We are granting early access to a select group of corporate finance teams. Secure your spot to model your liquidity structure — before your next bank negotiation.',
+    'ea.f1t': 'Automated Simulation', 'ea.f1d': 'Instant visibility into multi-currency netting and interest optimization',
+    'ea.f2t': 'Board-Ready Intelligence', 'ea.f2d': 'Export comprehensive PDF reports with risk and sensitivity modeling',
+    'ea.f3t': 'Absolute Privacy', 'ea.f3d': 'Bank-grade security with a strict Zero Data Retention policy',
+    'ea.form_title': 'Request Priority Access',
+    'ea.liq_label': 'Average Daily Liquidity', 'ea.liq_opt0': 'Select volume...',
+    'ea.pool_label': 'Current Pooling Setup', 'ea.pool_opt0': 'Select setup...',
+    'ea.email_label': 'Professional Email',
+    'ea.placeholder': 'treasury@yourcompany.com',
+    'ea.btn': 'Request Priority Access →',
+    'ea.privacy': '🔒 Your data is strictly confidential.',
     'footer.swiss': 'Swiss-based advisory',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
@@ -945,18 +1000,19 @@ const translations = {
     'how.s2d': 'Das System modelliert Ihre Netting-Effizienz, Zinseinsparungen und Amortisationszeit in drei Szenarien — Basis, optimistisch und Stress. Stellen Sie dem KI-Analysten beliebige Fragen zu Ihren Zahlen in natürlicher Sprache.',
     'how.s3t': 'Bericht herunterladen',
     'how.s3d': 'Exportieren Sie ein board-fertiges PDF: Executive Summary mit GO/NO-GO-Empfehlung, vollständiger P&L-Vergleich, Sensitivitätsmatrix, Pool-Strukturdiagramm und Bank-Ausschreibungspaket. Bereit für Ihren CFO oder das nächste Bankgespräch.',
-    'ea.eyebrow': 'Früher Zugang', 'ea.h2': 'Sichern Sie sich Ihren Vorrangzugang.',
-    'ea.sub': 'Registrieren Sie sich auf der Warteliste, um als Erster Ihren Cash Pool zu modellieren.',
-    'ea.c1t': 'Automatisierte Simulation',
-    'ea.c1b1': 'Sofortige Übersicht über Zinseinsparungen vor jedem Bankgespräch',
-    'ea.c1b2': 'Kostenloser Basisbericht für Früh-Zugangs-Mitglieder',
-    'ea.c1b3': 'Präzises Multi-Währungs-Netting für alle Konzerneinheiten',
-    'ea.c2t': 'Premium-Intelligence',
-    'ea.c2b1': 'Detaillierte PDF-Berichte für CFO und Verwaltungsrat',
-    'ea.c2b2': 'Sensitivitäts- und Risikomodellierung für verschiedene Zinsszenarien',
-    'ea.c2b3': 'Expertenberatung mit unabhängigen Treasury-Spezialisten',
-    'ea.placeholder': 'treasury@ihrefirma.com', 'ea.btn': 'Zur Warteliste →',
-    'ea.micro': 'Kein Spam. Nur professionelle Treasury-Updates.',
+    'ea.eyebrow': 'Früher Zugang',
+    'ea.h2': 'Unabhängige Treasury-Intelligence freischalten.',
+    'ea.sub': 'Wir gewähren einer ausgewählten Gruppe von Unternehmensfinanzteams frühzeitigen Zugang. Sichern Sie sich Ihren Platz, um Ihre Liquiditätsstruktur zu modellieren — vor Ihrer nächsten Bankverhandlung.',
+    'ea.f1t': 'Automatisierte Simulation', 'ea.f1d': 'Sofortige Übersicht über Multi-Währungs-Netting und Zinsoptimierung',
+    'ea.f2t': 'Board-fähige Intelligence', 'ea.f2d': 'Umfassende PDF-Berichte mit Risiko- und Sensitivitätsmodellierung exportieren',
+    'ea.f3t': 'Absolute Vertraulichkeit', 'ea.f3d': 'Bankgrade-Sicherheit mit strikter Zero-Data-Retention-Policy',
+    'ea.form_title': 'Vorrangzugang anfragen',
+    'ea.liq_label': 'Durchschnittliche tägliche Liquidität', 'ea.liq_opt0': 'Volumen auswählen...',
+    'ea.pool_label': 'Aktuelles Pooling-Setup', 'ea.pool_opt0': 'Setup auswählen...',
+    'ea.email_label': 'Geschäftliche E-Mail',
+    'ea.placeholder': 'treasury@ihrefirma.com',
+    'ea.btn': 'Vorrangzugang anfragen →',
+    'ea.privacy': '🔒 Ihre Daten sind streng vertraulich.',
     'footer.swiss': 'Schweizer Treasury-Beratung',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
@@ -989,18 +1045,19 @@ const translations = {
     'how.s2d': 'Le moteur modélise votre efficacité de netting, les économies d\'intérêts et la période de retour sur investissement en trois scénarios — de base, optimiste et de stress. Posez toute question à l\'analyste IA sur vos chiffres en langage naturel.',
     'how.s3t': 'Télécharger le rapport',
     'how.s3d': 'Exportez un PDF prêt pour le conseil : résumé exécutif avec verdict GO/NO-GO, comparaison P&L complète, matrice de sensibilité, schéma de structure du pool et dossier d\'appel d\'offres bancaire. Prêt pour votre CFO ou votre prochaine réunion bancaire.',
-    'ea.eyebrow': 'Accès anticipé', 'ea.h2': 'Sécurisez votre accès prioritaire.',
-    'ea.sub': 'Rejoignez la liste d\'attente pour être le premier à modéliser votre cash pool à notre lancement.',
-    'ea.c1t': 'Simulation automatisée',
-    'ea.c1b1': 'Visibilité immédiate sur les économies d\'intérêts avant toute négociation bancaire',
-    'ea.c1b2': 'Rapport de base offert pour les membres en accès anticipé',
-    'ea.c1b3': 'Netting multi-devises précis pour toutes les entités du groupe',
-    'ea.c2t': 'Intelligence premium',
-    'ea.c2b1': 'Rapports PDF détaillés structurés pour le CFO et le conseil d\'administration',
-    'ea.c2b2': 'Modélisation de la sensibilité et des risques pour différents scénarios de taux',
-    'ea.c2b3': 'Consultations d\'experts avec des spécialistes indépendants en trésorerie',
-    'ea.placeholder': 'tresorerie@votreentreprise.com', 'ea.btn': 'Rejoindre la liste →',
-    'ea.micro': 'Pas de spam. Uniquement des actualités professionnelles en trésorerie.',
+    'ea.eyebrow': 'Accès anticipé',
+    'ea.h2': 'Déverrouillez une intelligence trésorerie indépendante.',
+    'ea.sub': 'Nous accordons un accès anticipé à un groupe sélectionné d\'équipes finance d\'entreprise. Réservez votre place pour modéliser votre structure de liquidité — avant votre prochaine négociation bancaire.',
+    'ea.f1t': 'Simulation automatisée', 'ea.f1d': 'Visibilité immédiate sur le netting multi-devises et l\'optimisation des intérêts',
+    'ea.f2t': 'Intelligence pour le conseil', 'ea.f2d': 'Exportez des rapports PDF complets avec modélisation des risques et de la sensibilité',
+    'ea.f3t': 'Confidentialité absolue', 'ea.f3d': 'Sécurité de niveau bancaire avec une politique stricte de zéro rétention de données',
+    'ea.form_title': 'Demander un accès prioritaire',
+    'ea.liq_label': 'Liquidité quotidienne moyenne', 'ea.liq_opt0': 'Sélectionner le volume...',
+    'ea.pool_label': 'Configuration de pooling actuelle', 'ea.pool_opt0': 'Sélectionner la configuration...',
+    'ea.email_label': 'Adresse e-mail professionnelle',
+    'ea.placeholder': 'tresorerie@votreentreprise.com',
+    'ea.btn': 'Demander un accès prioritaire →',
+    'ea.privacy': '🔒 Vos données sont strictement confidentielles.',
     'footer.swiss': 'Conseil suisse en trésorerie',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
@@ -1075,24 +1132,31 @@ function toggleMobileNav() {
   document.getElementById('navMobile').classList.toggle('open');
 }
 
-async function addToBrevo(email) {
+async function addToBrevo(email, attributes = {}) {
   try {
     await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, attributes })
     });
   } catch(e) { console.error(e); }
 }
 
 async function handleEarlyAccess() {
-  const e = document.getElementById('eaEmail').value;
+  const emailEl = document.getElementById('eaEmail');
+  const liqEl   = document.getElementById('eaLiquidity');
+  const poolEl  = document.getElementById('eaPooling');
+  const e = emailEl.value.trim();
   const t = translations[currentLang];
   if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
+  await addToBrevo(e, { LIQUIDITY: liqEl.value, POOLING: poolEl.value });
+  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', {
+    method: 'email',
+    liquidity_band: liqEl.value,
+    pooling_setup: poolEl.value,
+  });
   showToast(t['toast.success']);
-  document.getElementById('eaEmail').value = '';
+  emailEl.value = ''; liqEl.value = ''; poolEl.value = '';
 }
 
 async function handleWaitlist() {
