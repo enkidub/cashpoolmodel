@@ -103,7 +103,7 @@ a{color:inherit;text-decoration:none}
 .ph-sub{font-size:15px;color:var(--ink-mid);font-weight:300;max-width:46ch;line-height:1.65}
 
 /* MAIN GRID */
-.contact-grid{display:grid;grid-template-columns:1fr 290px;gap:clamp(28px,4vw,48px);padding:clamp(28px,4vw,44px) 0 clamp(44px,5.5vw,72px);align-items:start}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,48px);padding:clamp(28px,4vw,44px) 0 clamp(44px,5.5vw,72px);align-items:start}
 @media(max-width:720px){.contact-grid{grid-template-columns:1fr}}
 
 /* ── ADVISORY CARD ── */
@@ -238,7 +238,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
     </a>
     <div class="nav-links">
       <a class="nav-link" href="/blog.html" data-i18n="nav.blog">Blog</a>
-      <a class="nav-link active" href="/contact.html" data-i18n="nav.contact">Contact</a>
+      <a class="nav-link active" href="/contact.html" data-i18n="nav.contact">Book Advisory Session</a>
     </div>
     <div class="lang-sw">
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
@@ -247,7 +247,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <span class="lang-sep">·</span>
       <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
     </div>
-    <a class="nav-cta" href="/index.html#early-access" data-i18n="nav.cta">Get Early Access</a>
+    <a class="nav-cta" href="/index.html#early-access" data-i18n="nav.cta">Request Priority Access</a>
     <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -255,16 +255,16 @@ footer { background: var(--navy); padding: 52px 0 0; }
 </nav>
 <div class="nav-mobile" id="navMobile">
   <a href="/blog.html" data-i18n="nav.blog">Blog</a>
-  <a href="/contact.html" class="active" data-i18n="nav.contact">Contact</a>
-  <button class="nav-mobile-cta" onclick="window.location='/index.html#early-access'" data-i18n="nav.cta">Get Early Access</button>
+  <a href="/contact.html" class="active" data-i18n="nav.contact">Book Advisory Session</a>
+  <button class="nav-mobile-cta" onclick="window.location='/index.html#early-access'" data-i18n="nav.cta">Request Priority Access</button>
 </div>
 
 <!-- PAGE HEADER -->
 <div class="wrap">
   <div class="page-header">
     <div class="ph-eyebrow" data-i18n="ph.eyebrow">Contact & Advisory</div>
-    <h1 class="ph-title" data-i18n-html="ph.title">Book a session or<br>send a message.</h1>
-    <p class="ph-sub" data-i18n="ph.sub">Independent treasury advisory. Available for structured sessions via video call.</p>
+    <h1 class="ph-title" data-i18n="ph.title">Ready to optimize your group liquidity?</h1>
+    <p class="ph-sub" data-i18n="ph.sub">Groups modelled on CashPoolModel identify $200k–$800k in annual savings on average. Secure your spot in our priority access program or schedule a strategic session.</p>
   </div>
 </div>
 
@@ -272,10 +272,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <div class="wrap">
   <div class="contact-grid">
 
-    <!-- LEFT -->
+    <!-- LEFT: Advisory booking card -->
     <div>
-
-      <!-- Advisory booking card -->
       <div class="advisory-card">
         <div class="ac-body">
           <div class="ac-title" data-i18n="ac.title">Expert Strategy Call</div>
@@ -308,88 +306,32 @@ footer { background: var(--navy); padding: 52px 0 0; }
             data-cal-link="intercompany.io/30min"
             data-cal-config='{"layout":"month_view"}'
           >
-            <span data-i18n="ac.btn">Book a Session</span>
+            <span data-i18n="ac.btn">Book Advisory Session</span>
             <span class="cal-btn-sep">·</span>
             <span class="cal-btn-price">€249</span>
             →
           </button>
         </div>
       </div>
+    </div>
 
-      <!-- General enquiry form -->
+    <!-- RIGHT: General enquiry form -->
+    <div>
       <div class="form-card">
         <div class="form-title" data-i18n="form.title">Send a message</div>
         <div class="form-sub" data-i18n="form.sub">For general questions about the simulator or platform.</div>
         <div class="fg">
           <label for="email" data-i18n="form.label.email">Email</label>
-          <input type="email" id="email" data-i18n-ph="form.ph.email" placeholder="you@company.com">
+          <input type="email" id="email" data-i18n-ph="form.ph.email" placeholder="name@company.com">
         </div>
         <div class="fg">
           <label for="message" data-i18n="form.label.message">Message</label>
           <textarea id="message" data-i18n-ph="form.ph.message" placeholder="Briefly describe your situation or question..."></textarea>
         </div>
-        <button class="submit-btn" onclick="handleForm()" data-i18n="form.submit">Send →</button>
+        <button class="submit-btn" onclick="handleForm()" data-i18n="form.submit">Send Message to Treasury Experts</button>
         <div class="form-success" id="formSuccess" data-i18n="form.success">
           ✓ Message received. We will get back to you within 1–2 business days.
         </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT: sidebar -->
-    <div class="sidebar">
-      <div class="info-card">
-        <div class="ic-logo">IC</div>
-        <div class="ic-name">Intercompany.io</div>
-        <div class="ic-sub" data-i18n="ic.sub">Independent Treasury Advisory · Geneva, Switzerland</div>
-        <div class="ic-divider"></div>
-
-        <div class="ic-row">
-          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="8" cy="6.5" r="2.5"/>
-            <path d="M8 2a4.5 4.5 0 0 1 4.5 4.5c0 3.5-4.5 7.5-4.5 7.5S3.5 10 3.5 6.5A4.5 4.5 0 0 1 8 2z"/>
-          </svg>
-          <div>
-            <div class="ic-label" data-i18n="ic.label.address">Address</div>
-            Rue François-Perréard 19<br>1225 Chêne-Bourg, Switzerland
-          </div>
-        </div>
-
-        <div class="ic-row">
-          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 2h2l1 3-1.5 1.5a9 9 0 0 0 3 3L11 8l3 1v2a2 2 0 0 1-2 2A13 13 0 0 1 2 4a2 2 0 0 1 2-2z"/>
-          </svg>
-          <div>
-            <div class="ic-label" data-i18n="ic.label.phone">Phone</div>
-            <a href="tel:+41767763463" style="color:var(--gold)">+41 76 776 34 63</a>
-          </div>
-        </div>
-
-        <div class="ic-row">
-          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="4" width="14" height="9" rx="1.5"/>
-            <path d="m1.5 4.5 6.5 4.5 6.5-4.5"/>
-          </svg>
-          <div>
-            <div class="ic-label" data-i18n="ic.label.email">Email</div>
-            <a href="mailto:info@cashpoolmodel.com" style="color:var(--gold)">info@cashpoolmodel.com</a>
-          </div>
-        </div>
-
-        <div class="ic-row">
-          <svg class="ic-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="8" cy="8" r="6"/>
-            <circle cx="8" cy="8" r="2.5" fill="currentColor" stroke="none"/>
-          </svg>
-          <div>
-            <div class="ic-label" data-i18n="ic.label.avail">Availability</div>
-            <div style="display:flex;align-items:center;gap:7px;margin-top:1px">
-              <span id="availDot" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;display:inline-block"></span>
-              <span id="availText" style="font-size:13px;color:var(--ink-mid)" data-i18n="ic.offline">Responds within 24h</span>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -418,7 +360,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
         <div class="footer-col-title">Company</div>
         <a href="#">About Us</a>
         <a href="/blog.html">Blog</a>
-        <a href="/contact.html">Contact</a>
+        <a href="/contact.html">Book Advisory Session</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Trust &amp; Legal</div>
@@ -443,11 +385,11 @@ let currentLang = 'en';
 const T = {
   en: {
     'nav.blog': 'Blog',
-    'nav.contact': 'Contact',
-    'nav.cta': 'Get Early Access',
+    'nav.contact': 'Book Advisory Session',
+    'nav.cta': 'Request Priority Access',
     'ph.eyebrow': 'Contact & Advisory',
-    'ph.title': 'Book a session or<br>send a message.',
-    'ph.sub': 'Independent treasury advisory. Available for structured sessions via video call.',
+    'ph.title': 'Ready to optimize your group liquidity?',
+    'ph.sub': 'Groups modelled on CashPoolModel identify $200k–$800k in annual savings on average. Secure your spot in our priority access program or schedule a strategic session.',
     'ac.title': 'Expert Strategy Call',
     'ac.badge.duration': '30 min',
     'ac.badge.channel': 'Google Meet',
@@ -455,40 +397,32 @@ const T = {
     'ac.inc1': 'Complete review of your cash pool business case',
     'ac.inc2': 'Bank selection and structure recommendation',
     'ac.inc3': 'Written notes + two weeks of email support',
-    'ac.btn': 'Book a Session',
+    'ac.btn': 'Book Advisory Session',
     'form.title': 'Send a message',
     'form.sub': 'For general questions about the simulator or platform.',
     'form.label.email': 'Email',
-    'form.ph.email': 'you@company.com',
+    'form.ph.email': 'name@company.com',
     'form.label.message': 'Message',
     'form.ph.message': 'Briefly describe your situation or question...',
-    'form.submit': 'Send →',
+    'form.submit': 'Send Message to Treasury Experts',
     'form.success': '✓ Message received. We will get back to you within 1–2 business days.',
     'form.err.email': 'Please enter a valid email address.',
     'form.err.message': 'Please add a short message.',
-    'ic.sub': 'Independent Treasury Advisory · Geneva, Switzerland',
-    'ic.label.address': 'Address',
-    'ic.label.phone': 'Phone',
-    'ic.label.email': 'Email',
-    'ic.label.avail': 'Availability',
-    'ic.avail': 'Mon–Fri, CET timezone',
-    'ic.online': 'Available now',
-    'ic.offline': 'Responds within 24h',
     'footer.tagline': 'Independent Treasury Intelligence.',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Geneva, Switzerland',
     'footer.home': 'Home',
     'footer.blog': 'Blog',
-    'footer.contact': 'Contact',
+    'footer.contact': 'Book Advisory Session',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Not financial advice.',
   },
   de: {
     'nav.blog': 'Blog',
-    'nav.contact': 'Kontakt',
-    'nav.cta': 'Früher Zugang',
+    'nav.contact': 'Beratung buchen',
+    'nav.cta': 'Vorrangzugang anfragen',
     'ph.eyebrow': 'Kontakt & Beratung',
-    'ph.title': 'Session buchen oder<br>Nachricht senden.',
-    'ph.sub': 'Unabhängige Treasury-Beratung. Verfügbar für strukturierte Sessions per Videoanruf.',
+    'ph.title': 'Bereit, Ihre Konzernliquidität zu optimieren?',
+    'ph.sub': 'Auf CashPoolModel modellierte Konzerne identifizieren durchschnittlich $200k–$800k jährliche Einsparungen. Sichern Sie sich Ihren Platz im Prioritätszugang oder vereinbaren Sie eine strategische Beratungssitzung.',
     'ac.title': 'Expert Strategy Call',
     'ac.badge.duration': '30 Min.',
     'ac.badge.channel': 'Google Meet',
@@ -496,40 +430,32 @@ const T = {
     'ac.inc1': 'Vollständige Analyse Ihres Cashpool-Business Case',
     'ac.inc2': 'Bankauswahl und Strukturempfehlung',
     'ac.inc3': 'Schriftliche Notizen + zwei Wochen E-Mail-Support',
-    'ac.btn': 'Session buchen',
+    'ac.btn': 'Beratungssitzung buchen',
     'form.title': 'Nachricht senden',
     'form.sub': 'Für allgemeine Fragen zum Simulator oder zur Plattform.',
     'form.label.email': 'E-Mail',
-    'form.ph.email': 'sie@firma.com',
+    'form.ph.email': 'name@company.com',
     'form.label.message': 'Nachricht',
     'form.ph.message': 'Beschreiben Sie kurz Ihre Situation oder Frage ...',
-    'form.submit': 'Senden →',
+    'form.submit': 'Nachricht an Treasury-Experten senden',
     'form.success': '✓ Nachricht erhalten. Wir melden uns innerhalb von 1–2 Werktagen.',
     'form.err.email': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
     'form.err.message': 'Bitte fügen Sie eine kurze Nachricht hinzu.',
-    'ic.sub': 'Unabhängige Treasury-Beratung · Genf, Schweiz',
-    'ic.label.address': 'Adresse',
-    'ic.label.phone': 'Telefon',
-    'ic.label.email': 'E-Mail',
-    'ic.label.avail': 'Verfügbarkeit',
-    'ic.avail': 'Mo–Fr, MEZ-Zeitzone',
-    'ic.online': 'Jetzt verfügbar',
-    'ic.offline': 'Antwortet innerhalb 24h',
     'footer.tagline': 'Unabhängige Treasury-Intelligence.',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genf, Schweiz',
     'footer.home': 'Startseite',
     'footer.blog': 'Blog',
-    'footer.contact': 'Kontakt',
+    'footer.contact': 'Beratung buchen',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Keine Finanzberatung.',
   },
   fr: {
     'nav.blog': 'Blog',
-    'nav.contact': 'Contact',
-    'nav.cta': 'Accès anticipé',
+    'nav.contact': 'Réserver une session',
+    'nav.cta': 'Accès prioritaire',
     'ph.eyebrow': 'Contact & Conseil',
-    'ph.title': 'Réserver une session ou<br>envoyer un message.',
-    'ph.sub': 'Conseil en trésorerie indépendant. Disponible pour des sessions structurées par appel vidéo.',
+    'ph.title': 'Prêt à optimiser la liquidité de votre groupe ?',
+    'ph.sub': 'Les groupes modélisés sur CashPoolModel identifient en moyenne $200k–$800k d\'économies annuelles. Réservez votre place dans notre programme d\'accès prioritaire ou planifiez une session stratégique.',
     'ac.title': 'Expert Strategy Call',
     'ac.badge.duration': '30 min',
     'ac.badge.channel': 'Google Meet',
@@ -537,31 +463,23 @@ const T = {
     'ac.inc1': 'Revue complète de votre business case de cash pooling',
     'ac.inc2': 'Sélection bancaire et recommandation de structure',
     'ac.inc3': 'Notes écrites + deux semaines d\'assistance par e-mail',
-    'ac.btn': 'Réserver une session',
+    'ac.btn': 'Réserver une session de conseil',
     'form.title': 'Envoyer un message',
     'form.sub': 'Pour les questions générales sur le simulateur ou la plateforme.',
     'form.label.email': 'E-mail',
-    'form.ph.email': 'vous@entreprise.com',
+    'form.ph.email': 'name@company.com',
     'form.label.message': 'Message',
     'form.ph.message': 'Décrivez brièvement votre situation ou question ...',
-    'form.submit': 'Envoyer →',
+    'form.submit': 'Envoyer un message aux experts',
     'form.success': '✓ Message reçu. Nous vous répondrons dans 1 à 2 jours ouvrables.',
     'form.err.email': 'Veuillez entrer une adresse e-mail valide.',
     'form.err.message': 'Veuillez ajouter un court message.',
-    'ic.sub': 'Conseil en trésorerie indépendant · Genève, Suisse',
-    'ic.label.address': 'Adresse',
-    'ic.label.phone': 'Téléphone',
-    'ic.label.email': 'E-mail',
-    'ic.label.avail': 'Disponibilité',
-    'ic.avail': 'Lun–Ven, fuseau horaire CET',
-    'ic.online': 'Disponible maintenant',
-    'ic.offline': 'Répond sous 24h',
     'footer.tagline': 'Intelligence trésorerie indépendante.',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
     'footer.location': 'Genève, Suisse',
     'footer.home': 'Accueil',
     'footer.blog': 'Blog',
-    'footer.contact': 'Contact',
+    'footer.contact': 'Réserver une session',
     'footer.copy': '© 2025 Intercompany.io · CashPoolModel. Pas de conseil financier.',
   }
 };
