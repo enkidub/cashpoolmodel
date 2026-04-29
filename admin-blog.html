@@ -109,6 +109,19 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
 /* LOADING */
 .loading{text-align:center;padding:32px;color:var(--ink-fnt);font-size:13px}
+
+/* LOGIN OVERLAY */
+.login-overlay{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:500}
+.login-overlay.hidden{display:none}
+.login-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);padding:36px 32px;width:100%;max-width:400px}
+.login-logo{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--ink-fnt);margin-bottom:28px}
+.login-label{font-size:11px;font-weight:600;color:var(--ink-mid);display:block;margin-bottom:5px}
+.login-input{width:100%;padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none;transition:border-color .13s;margin-bottom:16px}
+.login-input:focus{border-color:var(--navy);background:var(--white)}
+.login-btn{width:100%;padding:11px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:background .14s}
+.login-btn:hover{background:var(--navy-h)}
+.login-err{font-size:12px;color:var(--red);margin-top:10px;display:none}
 </style>
 </head>
 <body>
@@ -116,9 +129,24 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 <nav class="nav">
   <div class="nav-i">
     <div class="logo">CashPoolModel <span style="font-family:var(--sans);font-size:11px;color:var(--ink-fnt);font-weight:400;margin-left:6px">/ Blog Admin</span></div>
-    <div class="nav-badge">Private — Admin Only</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="nav-badge">Private — Admin Only</div>
+      <button onclick="signOut()" style="font-size:11px;font-weight:600;color:var(--ink-fnt);background:none;border:none;cursor:pointer;font-family:var(--sans);padding:4px 0">Sign out</button>
+    </div>
   </div>
 </nav>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">CashPoolModel</div>
+    <div class="login-sub">Blog Admin — enter your GitHub token to continue</div>
+    <label class="login-label" for="loginToken">GitHub Personal Access Token</label>
+    <input class="login-input" type="password" id="loginToken" placeholder="github_pat_…" autocomplete="off">
+    <button class="login-btn" onclick="doLogin()">Unlock Admin →</button>
+    <div class="login-err" id="loginErr">Invalid token — please try again.</div>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="page-header">
@@ -215,19 +243,57 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
 <script>
 // ── CONFIG ──
-const GITHUB_TOKEN = ''; // TODO: set token at runtime — never commit secrets
 const REPO_OWNER   = 'enkidub';
 const REPO_NAME    = 'cashpoolmodel';
 const BRANCH       = 'main';
 const ARTICLES_DIR = 'articles';
 
-// ── GITHUB API ──
-const GH = {
-  headers: {
-    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+function getToken() { return sessionStorage.getItem('gh_admin_token') || ''; }
+function getHeaders() {
+  return {
+    'Authorization': `Bearer ${getToken()}`,
     'Accept': 'application/vnd.github.v3+json',
     'Content-Type': 'application/json',
-  },
+  };
+}
+
+// ── LOGIN ──
+async function doLogin() {
+  const token = document.getElementById('loginToken').value.trim();
+  if (!token) return;
+  // Verify token works by calling /user
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error('bad token');
+    sessionStorage.setItem('gh_admin_token', token);
+    document.getElementById('loginOverlay').classList.add('hidden');
+  } catch {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+function signOut() {
+  sessionStorage.removeItem('gh_admin_token');
+  document.getElementById('loginToken').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginOverlay').classList.remove('hidden');
+}
+
+// Show login if no token in session
+if (!getToken()) {
+  document.getElementById('loginOverlay').classList.remove('hidden');
+} else {
+  document.getElementById('loginOverlay').classList.add('hidden');
+}
+
+// Allow Enter key on token input
+document.getElementById('loginToken').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ── GITHUB API ──
+const GH = {
+  get headers() { return getHeaders(); },
 
   async getFile(path) {
     const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`, { headers: GH.headers });
