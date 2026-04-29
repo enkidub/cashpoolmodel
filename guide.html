@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Pool Setup Guide — CashPoolModel</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b1929;--navy-h:#132540;--ink:#0f172a;--ink-mid:#334155;
+  --ink-lt:#64748b;--ink-fnt:#94a3b8;--paper:#f9f8f5;--paper-w:#f1f5f9;
+  --rule:#ddd9d0;--white:#ffffff;--gold:#9a6e10;--gold-p:#fdf8ec;
+  --emerald:#059669;--emerald-lt:#d1fae5;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --max:780px;--sh:0 1px 3px rgba(15,23,42,.05),0 4px 16px rgba(15,23,42,.05);--r:6px;--rl:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6}
+
+/* ── Top bar ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50;print-color-adjust:exact}
+.topbar-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--navy);text-decoration:none}
+.logo-mark{width:24px;height:24px;border-radius:4px;background:var(--navy);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:12px;height:12px;fill:var(--gold)}
+.logo-sub{font-size:9px;color:var(--ink-fnt);font-weight:400;letter-spacing:.3px;font-family:var(--sans);margin-top:1px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.btn-print{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:var(--navy);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.3px;border:none;border-radius:var(--r);cursor:pointer;text-decoration:none}
+.btn-print:hover{background:var(--navy-h)}
+.btn-back{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border:1.5px solid var(--rule);border-radius:var(--r);font-size:12px;color:var(--ink-mid);text-decoration:none;font-weight:500}
+.btn-back:hover{border-color:var(--navy);color:var(--navy)}
+
+/* ── Page wrapper ── */
+.page{max-width:var(--max);margin:0 auto;padding:0 24px 80px}
+
+/* ── Cover ── */
+.cover{padding:48px 0 36px;border-bottom:1px solid var(--rule);margin-bottom:36px}
+.cover-badge{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;background:var(--gold-p);border:1px solid #e8d8b0;border-radius:20px;font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.5px;text-transform:uppercase;margin-bottom:18px}
+.cover h1{font-family:var(--serif);font-size:clamp(28px,4vw,42px);font-weight:700;color:var(--navy);letter-spacing:-.5px;line-height:1.15;margin-bottom:12px}
+.cover-sub{font-size:14px;color:var(--ink-lt);font-weight:300;line-height:1.7;max-width:560px}
+.cover-meta{display:flex;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid var(--rule);flex-wrap:wrap}
+.cover-meta-item{display:flex;flex-direction:column;gap:2px}
+.cover-meta-label{font-size:10px;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.cover-meta-val{font-size:13px;color:var(--ink-mid);font-weight:500}
+.cover-meta-val.highlight{color:var(--navy);font-weight:600}
+
+/* ── TOC ── */
+.toc{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);padding:20px 24px;margin-bottom:32px}
+.toc-title{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:12px}
+.toc-list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:4px 32px}
+@media(max-width:500px){.toc-list{grid-template-columns:1fr}}
+.toc-list li a{font-size:13px;color:var(--ink-mid);text-decoration:none;display:flex;align-items:center;gap:7px;padding:3px 0}
+.toc-list li a:hover{color:var(--navy)}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--ink-fnt);width:18px;flex-shrink:0}
+
+/* ── Section container ── */
+.guide-section{margin-bottom:40px;scroll-margin-top:70px}
+.sec-eyebrow{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sec-eyebrow::before{content:'';width:14px;height:1px;background:var(--ink-fnt)}
+.sec-heading{font-family:var(--serif);font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--navy);margin-bottom:14px;letter-spacing:-.3px}
+
+/* ── Prose ── */
+.prose p{font-size:14px;color:var(--ink-mid);line-height:1.75;margin-bottom:14px}
+.prose p:last-child{margin-bottom:0}
+.prose ol{padding-left:18px;margin-top:12px}
+.prose ol li{font-size:14px;color:var(--ink-mid);line-height:1.75;margin-bottom:10px}
+
+/* ── Pool type cards ── */
+.pool-cards{display:grid;grid-template-columns:1fr;gap:16px}
+.pool-card{background:var(--white);border:1.5px solid var(--rule);border-radius:var(--rl);overflow:hidden}
+.pool-card.recommended{border-color:var(--gold)}
+.pool-card-hd{padding:16px 20px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.pool-card-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);line-height:1.2}
+.pool-card-tag{font-size:10px;font-weight:600;color:var(--gold);background:var(--gold-p);padding:3px 9px;border-radius:12px;letter-spacing:.4px;white-space:nowrap;border:1px solid #e8d8b0}
+.pool-card-summary{padding:14px 20px 0;font-size:13px;color:var(--ink-mid);line-height:1.7}
+.pool-card-body{padding:14px 20px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.pool-card-body{grid-template-columns:1fr}}
+.pc-col-title{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:7px}
+.pc-list{list-style:none}
+.pc-list li{font-size:12.5px;color:var(--ink-mid);line-height:1.65;padding:3px 0 3px 14px;position:relative}
+.pc-list li::before{content:'•';position:absolute;left:0;color:var(--ink-fnt)}
+.pros li::before{color:var(--emerald)}
+.cons li::before{color:#dc2626}
+.pool-card-best{padding:10px 20px 14px;border-top:1px solid var(--rule);margin-top:6px}
+.best-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:4px}
+.best-text{font-size:12.5px;color:var(--ink-mid);line-height:1.65}
+
+/* ── Fields section ── */
+.fields-list{display:grid;gap:12px}
+.field-item{background:var(--white);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px}
+.field-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.field-label{font-size:13px;font-weight:600;color:var(--navy)}
+.field-id{font-family:var(--mono);font-size:10px;color:var(--ink-fnt);background:var(--paper);padding:2px 6px;border-radius:3px;border:1px solid var(--rule)}
+.field-tip{font-size:13px;color:var(--ink-mid);line-height:1.65;margin-bottom:8px}
+.field-detail{font-size:12px;color:var(--ink-lt);line-height:1.7;white-space:pre-line}
+.field-detail strong{color:var(--ink-mid);font-weight:600}
+
+/* ── Metrics/KPIs ── */
+.metrics-list{display:grid;gap:16px}
+.metric-item{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);overflow:hidden}
+.metric-hd{padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.metric-label{font-size:14px;font-weight:600;color:var(--navy)}
+.metric-tag{font-size:10px;font-weight:600;color:var(--ink-fnt);background:var(--paper);padding:3px 8px;border-radius:10px;border:1px solid var(--rule);white-space:nowrap}
+.metric-tip{padding:10px 18px 0;font-size:13px;color:var(--ink-mid);line-height:1.65;font-style:italic}
+.metric-detail{padding:10px 18px 16px;font-size:12px;color:var(--ink-lt);line-height:1.75;white-space:pre-line}
+.metric-detail strong{color:var(--ink-mid);font-weight:600}
+
+/* ── Personalisation banner ── */
+.personal-banner{background:var(--gold-p);border:1px solid #e8d8b0;border-radius:var(--r);padding:12px 16px;margin-bottom:28px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:#7a5508}
+.personal-banner svg{flex-shrink:0;width:16px;height:16px}
+
+/* ── Footer ── */
+.guide-footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:48px}
+.footer-inner{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footer-copy{font-size:11px;color:var(--ink-fnt);line-height:1.6}
+.footer-swiss{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-fnt)}
+.ch-flag{font-size:14px}
+
+/* ── Print styles ── */
+@media print{
+  .topbar,.toc,.personal-banner,.no-print{display:none!important}
+  body{background:#fff;font-size:12pt}
+  .page{padding:0;max-width:100%}
+  .cover{padding:32pt 0 24pt;page-break-after:always}
+  .cover h1{font-size:28pt}
+  .guide-section{page-break-inside:avoid;margin-bottom:28pt}
+  .pool-card,.field-item,.metric-item{page-break-inside:avoid;border:1pt solid #ccc}
+  .pool-card-body{grid-template-columns:1fr 1fr}
+  .guide-footer{display:block!important;font-size:9pt;color:#888;border-top:1pt solid #ccc}
+  a{color:inherit;text-decoration:none}
+  @page{margin:20mm 16mm;size:A4}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar (hidden on print) -->
+<div class="topbar no-print">
+  <div class="topbar-i">
+    <a href="/" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4"/></svg>
+      </div>
+      <div>
+        <div>CashPoolModel</div>
+        <div class="logo-sub">by Intercompany.io</div>
+      </div>
+    </a>
+    <div class="topbar-actions">
+      <a href="/simulator-input.html" class="btn-back">← Back to Simulator</a>
+      <button class="btn-print" onclick="window.print()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="1" width="10" height="7" rx="1"/><path d="M3 8H1v5a1 1 0 001 1h12a1 1 0 001-1V8h-2"/><rect x="4" y="10" width="8" height="4" rx=".5"/></svg>
+        Print / Save PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Cover -->
+  <div class="cover" id="section-cover">
+    <div class="cover-badge">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="var(--gold)"><circle cx="5" cy="5" r="4"/></svg>
+      Client Guide
+    </div>
+    <h1 id="coverTitle">Cash Pool Simulator<br>Setup &amp; Results Guide</h1>
+    <p class="cover-sub" id="coverSub">A field-by-field reference for setting up your simulation, understanding the pool structure options, and interpreting the output report for board or CFO presentation.</p>
+    <div class="cover-meta" id="coverMeta">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- Personalisation banner (shown when sim data found) -->
+  <div class="personal-banner" id="personalBanner" style="display:none">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+    <span id="personalText"></span>
+  </div>
+
+  <!-- TOC (hidden on print) -->
+  <div class="toc no-print" id="tocContainer">
+    <div class="toc-title">Contents</div>
+    <ul class="toc-list" id="tocList"></ul>
+  </div>
+
+  <!-- Sections rendered by JS -->
+  <div id="guideSections"></div>
+
+</div>
+
+<!-- Footer -->
+<div class="guide-footer">
+  <div class="footer-inner">
+    <div class="footer-copy" id="footerCopy"></div>
+    <div class="footer-swiss">
+      <span class="ch-flag">🇨🇭</span>
+      <span>Geneva, Switzerland</span>
+    </div>
+  </div>
+</div>
+
+<script src="/guide-data.js"></script>
+<script>
+(function(){
+  const G = window.GUIDE_DATA;
+  if (!G) { document.getElementById('guideSections').textContent = 'Guide data failed to load.'; return; }
+
+  /* ── Personalisation from localStorage ── */
+  let simData = null;
+  try { simData = JSON.parse(localStorage.getItem('cpm_sim')); } catch(e){}
+  const hasSimData = simData && simData.entities && simData.entities.length >= 2;
+
+  /* Cover meta */
+  const coverMeta = document.getElementById('coverMeta');
+  const metaItems = [
+    { label: 'Product', val: G.meta.product },
+    { label: 'Version', val: G.meta.version },
+    { label: 'Date', val: G.meta.date },
+  ];
+  if (hasSimData && simData.groupName) {
+    metaItems.push({ label: 'Prepared for', val: simData.groupName, highlight: true });
+  }
+  coverMeta.innerHTML = metaItems.map(m =>
+    `<div class="cover-meta-item">
+      <div class="cover-meta-label">${m.label}</div>
+      <div class="cover-meta-val${m.highlight ? ' highlight' : ''}">${esc(m.val)}</div>
+    </div>`
+  ).join('');
+
+  /* Personalisation banner */
+  if (hasSimData) {
+    const banner = document.getElementById('personalBanner');
+    const entities = simData.entities.length;
+    const name = simData.groupName || 'your group';
+    document.getElementById('personalText').textContent =
+      `This guide is personalised for ${name} — your simulation includes ${entities} entit${entities===1?'y':'ies'}.`;
+    banner.style.display = 'flex';
+  }
+
+  /* Footer */
+  document.getElementById('footerCopy').innerHTML =
+    `© ${new Date().getFullYear()} ${esc(G.meta.byline)} &nbsp;·&nbsp; Document version ${esc(G.meta.version)}`;
+
+  /* ── Render sections ── */
+  const container = document.getElementById('guideSections');
+  const tocList = document.getElementById('tocList');
+  let tocIdx = 0;
+
+  G.sections.forEach(function(sec){
+    tocIdx++;
+    const sectionId = 'sec-' + sec.id;
+
+    /* TOC entry */
+    tocList.insertAdjacentHTML('beforeend',
+      `<li><a href="#${sectionId}"><span class="toc-num">${String(tocIdx).padStart(2,'0')}</span>${esc(sec.title)}</a></li>`
+    );
+
+    /* Section wrapper */
+    const div = document.createElement('div');
+    div.className = 'guide-section';
+    div.id = sectionId;
+    div.innerHTML =
+      `<div class="sec-eyebrow">${String(tocIdx).padStart(2,'0')}</div>
+       <h2 class="sec-heading">${esc(sec.title)}</h2>`;
+
+    let body = '';
+
+    if (sec.type === 'prose') {
+      body = renderProse(sec);
+    } else if (sec.type === 'cards') {
+      body = renderCards(sec);
+    } else if (sec.type === 'fields') {
+      body = renderFields(sec);
+    } else if (sec.type === 'metrics') {
+      body = renderMetrics(sec);
+    }
+
+    div.insertAdjacentHTML('beforeend', body);
+    container.appendChild(div);
+  });
+
+  /* ── Renderers ── */
+
+  function renderProse(sec) {
+    const content = sec.content || [];
+    const html = content.map(function(para){
+      /* Detect numbered list ("1. ...") in next-steps */
+      if (/^\d+\./.test(para)) {
+        /* it's a lead-in sentence — wrap subsequent numbered items */
+        return `<p>${esc(para)}</p>`;
+      }
+      return `<p>${esc(para)}</p>`;
+    }).join('');
+    return `<div class="prose">${html}</div>`;
+  }
+
+  function renderCards(sec) {
+    return '<div class="pool-cards">' + sec.items.map(function(card){
+      const prosHtml = (card.pros||[]).map(p=>`<li>${esc(p)}</li>`).join('');
+      const consHtml = (card.cons||[]).map(c=>`<li>${esc(c)}</li>`).join('');
+      return `
+        <div class="pool-card">
+          <div class="pool-card-hd">
+            <div class="pool-card-title">${esc(card.label)}</div>
+            ${card.tag ? `<div class="pool-card-tag">${esc(card.tag)}</div>` : ''}
+          </div>
+          <div class="pool-card-summary">${esc(card.summary)}</div>
+          <div class="pool-card-body">
+            <div>
+              <div class="pc-col-title">Advantages</div>
+              <ul class="pc-list pros">${prosHtml}</ul>
+            </div>
+            <div>
+              <div class="pc-col-title">Considerations</div>
+              <ul class="pc-list cons">${consHtml}</ul>
+            </div>
+          </div>
+          <div class="pool-card-best">
+            <div class="best-label">Best for</div>
+            <div class="best-text">${esc(card.best_for)}</div>
+          </div>
+        </div>`;
+    }).join('') + '</div>';
+  }
+
+  function renderFields(sec) {
+    return '<div class="fields-list">' + sec.items.map(function(f){
+      return `
+        <div class="field-item">
+          <div class="field-hd">
+            <div class="field-label">${esc(f.label)}</div>
+            <div class="field-id">${esc(f.id)}</div>
+          </div>
+          <div class="field-tip">${esc(f.tip)}</div>
+          ${f.detail ? `<div class="field-detail">${esc(f.detail)}</div>` : ''}
+        </div>`;
+    }).join('') + '</div>';
+  }
+
+  function renderMetrics(sec) {
+    return '<div class="metrics-list">' + sec.items.map(function(m){
+      return `
+        <div class="metric-item">
+          <div class="metric-hd">
+            <div class="metric-label">${esc(m.label)}</div>
+            ${m.tag ? `<div class="metric-tag">${esc(m.tag)}</div>` : ''}
+          </div>
+          <div class="metric-tip">${esc(m.tip)}</div>
+          ${m.detail ? `<div class="metric-detail">${esc(m.detail)}</div>` : ''}
+        </div>`;
+    }).join('') + '</div>';
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+})();
+</script>
+</body>
+</html>
