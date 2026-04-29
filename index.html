@@ -238,6 +238,96 @@ h1 em { font-style: normal; color: var(--gold); }
   font-size: 12px; color: var(--ink-lt); font-weight: 400; letter-spacing: .1px;
 }
 
+/* ── LIQUIDITY CALCULATOR ── */
+.calc-card {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: 14px; padding: 24px 24px 20px;
+  margin-top: 32px; max-width: 500px;
+  box-shadow: 0 2px 16px rgba(11,25,41,.07);
+}
+.calc-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.calc-eyebrow::before { content:''; width:12px; height:1px; background:var(--ink-fnt); }
+.calc-row { margin-bottom: 18px; }
+.calc-label-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 9px;
+}
+.calc-label {
+  font-size: 11.5px; font-weight: 600; color: var(--ink-mid);
+  display: flex; align-items: center; gap: 6px;
+}
+.calc-val {
+  font-family: var(--mono); font-size: 12px; color: var(--navy); font-weight: 500;
+}
+.calc-curr {
+  font-size: 10px; font-weight: 600; padding: 2px 6px;
+  border: 1.5px solid var(--rule); border-radius: 4px;
+  background: var(--paper); color: var(--ink-mid); cursor: pointer;
+  font-family: var(--sans); outline: none; appearance: none;
+  -webkit-appearance: none; padding-right: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%2394a3b8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 4px center;
+}
+.calc-curr:focus { border-color: var(--navy); }
+.calc-tip-icon {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--paper-w); border: 1px solid var(--rule);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 8px; color: var(--ink-fnt); cursor: help; flex-shrink: 0;
+  position: relative;
+}
+.calc-tip-icon::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); background: var(--navy); color: #fff;
+  font-size: 10px; padding: 5px 9px; border-radius: 4px;
+  pointer-events: none; opacity: 0; transition: opacity .14s; z-index: 200;
+  white-space: normal; text-align: center; line-height: 1.4;
+  min-width: 180px; max-width: 220px; font-weight: 400;
+}
+.calc-tip-icon:hover::after { opacity: 1; }
+.calc-range {
+  width: 100%; -webkit-appearance: none; appearance: none;
+  height: 3px; border-radius: 2px; outline: none; cursor: pointer;
+  background: linear-gradient(to right, var(--navy) var(--pct, 0%), var(--rule) var(--pct, 0%));
+}
+.calc-range::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px;
+  border-radius: 50%; background: var(--white);
+  border: 2px solid var(--navy); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(11,25,41,.18); transition: box-shadow .13s;
+}
+.calc-range::-webkit-slider-thumb:hover { box-shadow: 0 2px 8px rgba(11,25,41,.3); }
+.calc-range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--navy);
+  cursor: pointer; box-shadow: 0 1px 4px rgba(11,25,41,.18);
+}
+.calc-divider { border: none; border-top: 1px solid var(--rule); margin: 4px 0 16px; }
+.calc-output-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 4px;
+}
+.calc-output-val {
+  font-family: var(--serif); font-size: clamp(34px, 5vw, 46px);
+  font-weight: 700; color: var(--navy); line-height: 1;
+  letter-spacing: -1px; margin-bottom: 8px;
+}
+.calc-micro {
+  font-size: 10.5px; color: var(--ink-fnt); line-height: 1.55; max-width: 44ch; margin-bottom: 16px;
+}
+.calc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.calc-benchmark {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 11px; color: var(--ink-fnt); line-height: 1.5; padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.calc-benchmark svg { flex-shrink: 0; margin-top: 1px; }
+
 /* ── SECTION ── */
 .section { padding: clamp(44px, 5.5vw, 72px) 0; }
 .section-alt { background: var(--paper-w); }
@@ -546,12 +636,56 @@ h1              { animation-delay: .11s; }
     <div class="eyebrow" data-i18n="hero.eyebrow">Independent Cash Pooling Intelligence</div>
     <h1 data-i18n="hero.h1">See how much your company could save with cash pooling.</h1>
     <p class="hero-sub" data-i18n="hero.sub">Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.</p>
-    <div class="actions">
-      <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Run your simulation →</a>
-      <a class="btn btn-outline" href="/dashboard-preview.html" data-i18n="hero.cta2">See a sample report</a>
-    </div>
-    <div style="margin-top:20px; display:inline-flex; align-items:flex-start; padding:9px 14px; border-radius:var(--r); background:var(--gold-p); border-left:2px solid var(--gold); max-width:100%;">
-      <span style="font-size:12.5px; color:var(--ink-mid); line-height:1.5;" data-i18n="hero.benchmark">Groups modelled on CashPoolModel typically identify €200k–€800k in annual savings.</span>
+    <!-- Liquidity Opportunity Calculator -->
+    <div class="calc-card">
+      <div class="calc-eyebrow">Liquidity Opportunity Calculator</div>
+
+      <!-- Slider A: Total Group Liquidity -->
+      <div class="calc-row">
+        <div class="calc-label-row">
+          <label class="calc-label" for="calcLiq">
+            Total Group Liquidity
+            <select class="calc-curr" id="calcCurr" onchange="calcUpdate()">
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CHF">CHF</option>
+            </select>
+          </label>
+          <span class="calc-val" id="calcLiqVal">$50M</span>
+        </div>
+        <input class="calc-range" type="range" id="calcLiq" min="1" max="500" step="1" value="50" oninput="calcUpdate()">
+      </div>
+
+      <!-- Slider B: Estimated Interest Spread -->
+      <div class="calc-row">
+        <div class="calc-label-row">
+          <label class="calc-label" for="calcSpread">
+            Estimated Interest Spread
+            <span class="calc-tip-icon" data-tip="Difference between your group's borrowing and lending rates.">?</span>
+          </label>
+          <span class="calc-val" id="calcSpreadVal">2.5%</span>
+        </div>
+        <input class="calc-range" type="range" id="calcSpread" min="0.5" max="5.0" step="0.1" value="2.5" oninput="calcUpdate()">
+      </div>
+
+      <!-- Output -->
+      <hr class="calc-divider">
+      <div class="calc-output-label">Potential Annual Optimization</div>
+      <div class="calc-output-val" id="calcOutputVal">$437,500</div>
+      <p class="calc-micro">Rough estimate based on a standard 35% netting efficiency. For precise entity-level modelling, generate your full report.</p>
+
+      <!-- CTAs -->
+      <div class="calc-actions">
+        <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Calculate My Savings →</a>
+        <a class="btn btn-outline" href="/dashboard-preview.html" data-i18n="hero.cta2">View Sample Report</a>
+      </div>
+
+      <!-- Trust line -->
+      <div class="calc-benchmark">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1.5L8.5 5H12L9 7.5l1 3.5L7 9l-3 2 1-3.5L2 5h3.5z" fill="#c8a84b" opacity=".8"/></svg>
+        <span data-i18n="hero.benchmark">Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.</span>
+      </div>
     </div>
   </div>
 </section>
@@ -691,8 +825,8 @@ const translations = {
     'hero.eyebrow': 'Independent Cash Pooling Intelligence',
     'hero.h1': 'See how much your company could save with cash pooling.',
     'hero.sub': 'Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.',
-    'hero.cta1': 'Run your simulation →', 'hero.cta2': 'See a sample report',
-    'hero.benchmark': 'Groups modelled on CashPoolModel typically identify €200k–€800k in annual savings.',
+    'hero.cta1': 'Calculate My Savings →', 'hero.cta2': 'View Sample Report',
+    'hero.benchmark': 'Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.',
     'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
     'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
     'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
@@ -735,8 +869,8 @@ const translations = {
     'hero.eyebrow': 'Unabhängige Cash-Pooling-Intelligence',
     'hero.h1': 'Ermitteln Sie, wie viel Ihr Unternehmen mit Cash Pooling sparen könnte.',
     'hero.sub': 'Die meisten Treasury-Teams erfahren das Einsparpotenzial erst nach der Unterschrift bei einer Bank. CashPoolModel gibt Ihnen in wenigen Minuten eine klare, unabhängige Sicht — vor jeder Bindung.',
-    'hero.cta1': 'Simulation starten →', 'hero.cta2': 'Beispielbericht ansehen',
-    'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise €200k–€800k jährliche Einsparungen.',
+    'hero.cta1': 'Einsparungen berechnen →', 'hero.cta2': 'Beispielbericht ansehen',
+    'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise $200k–$800k jährliche Einsparungen.',
     'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
     'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
     'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
@@ -779,8 +913,8 @@ const translations = {
     'hero.eyebrow': 'Intelligence indépendante en cash pooling',
     'hero.h1': 'Découvrez combien votre entreprise pourrait économiser avec le cash pooling.',
     'hero.sub': 'La plupart des équipes trésorerie découvrent le potentiel d\'économies seulement après avoir signé avec une banque. CashPoolModel vous offre une vision claire et indépendante en quelques minutes — avant tout engagement.',
-    'hero.cta1': 'Lancer votre simulation →', 'hero.cta2': 'Voir un exemple de rapport',
-    'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement €200k–€800k d\'économies annuelles.',
+    'hero.cta1': 'Calculer mes économies →', 'hero.cta2': 'Voir un exemple de rapport',
+    'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement $200k–$800k d\'économies annuelles.',
     'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
     'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
     'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
@@ -848,6 +982,36 @@ function setLang(lang) {
 (function() {
   const saved = localStorage.getItem('cpm_lang');
   if (saved && translations[saved]) setLang(saved);
+})();
+
+/* ── Liquidity Opportunity Calculator ── */
+(function initCalc() {
+  const SYMBOLS = { USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ' };
+
+  function updateSliderBg(el) {
+    const pct = ((parseFloat(el.value) - parseFloat(el.min)) / (parseFloat(el.max) - parseFloat(el.min))) * 100;
+    el.style.setProperty('--pct', pct.toFixed(1) + '%');
+  }
+
+  window.calcUpdate = function() {
+    const liqEl = document.getElementById('calcLiq');
+    const spreadEl = document.getElementById('calcSpread');
+    const currEl = document.getElementById('calcCurr');
+    if (!liqEl) return;
+    const liq = parseFloat(liqEl.value);
+    const spread = parseFloat(spreadEl.value);
+    const sym = SYMBOLS[currEl.value] || currEl.value + ' ';
+    const saving = liq * 1e6 * (spread / 100) * 0.35;
+    document.getElementById('calcLiqVal').textContent = sym + liq.toLocaleString('en') + 'M';
+    document.getElementById('calcSpreadVal').textContent = spread.toFixed(1) + '%';
+    document.getElementById('calcOutputVal').textContent = sym + Math.round(saving).toLocaleString('en');
+    updateSliderBg(liqEl);
+    updateSliderBg(spreadEl);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    window.calcUpdate();
+  });
 })();
 
 function toggleMobileNav() {
