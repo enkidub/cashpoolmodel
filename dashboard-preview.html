@@ -108,11 +108,29 @@ const KPIS = [
   { label:'Avg. Yield Spread',    value:'+1.2%',  badge:'+120 bp', sub:'over pool benchmark rate',     ring:null },
 ];
 
+// ─── Date helpers ─────────────────────────────────────────────────────────
+const NOW = new Date();
+const fmtMonthYear = (d) => d.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
+const fmtFullDate  = (d) => d.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const fmtDateTime  = (d) => d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+function genLastQuarters(n) {
+  const curQ  = Math.floor(NOW.getMonth() / 3);
+  const year  = NOW.getFullYear();
+  const result = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const totalQ = curQ - i;
+    const yr = year + Math.floor(totalQ / 4);
+    const q  = ((totalQ % 4) + 4) % 4;
+    result.push(`Q${q + 1} ${yr}`);
+  }
+  return result;
+}
+const CHART_PERIODS = genLastQuarters(4);
 const CHART = [
-  { period:'Q1 2025', without:285, pooled:142 },
-  { period:'Q2 2025', without:312, pooled:156 },
-  { period:'Q3 2025', without:298, pooled:149 },
-  { period:'Q4 2025', without:327, pooled:163 },
+  { period: CHART_PERIODS[0], without:285, pooled:142 },
+  { period: CHART_PERIODS[1], without:312, pooled:156 },
+  { period: CHART_PERIODS[2], without:298, pooled:149 },
+  { period: CHART_PERIODS[3], without:327, pooled:163 },
 ];
 const CH = 200, CMAX = 380;
 
@@ -178,7 +196,7 @@ function BarChart() {
             Interest Cost: Before vs. After Pooling
           </div>
           <div className="text-slate-400 mt-0.5" style={{ fontSize:11 }}>
-            Quarterly interest expense · EUR thousands · illustrative simulation output
+            Quarterly interest expense · EUR thousands · {CHART_PERIODS[0]}–{CHART_PERIODS[3]}
           </div>
         </div>
         <div style={{ display:'flex', gap:20, alignItems:'center' }}>
@@ -441,7 +459,7 @@ function Sidebar({ active, onNav, groupName, totalEnt, ctaVisible }) {
           Active Simulation
         </div>
         <div style={{ fontSize:12, fontWeight:600, color:'#1e293b', marginBottom:2 }}>{groupName}</div>
-        <div style={{ fontSize:10, color:'#94a3b8' }}>{totalEnt} entities · Apr 2025</div>
+        <div style={{ fontSize:10, color:'#94a3b8' }}>{totalEnt} entities · {fmtMonthYear(NOW)}</div>
       </div>
 
       {/* Nav */}
@@ -551,11 +569,11 @@ function sensColor(v) {
 
 // ─── Live rates state ─────────────────────────────────────────────────────
 const RATES = [
-  { name:'€STR',        val:'3.91%', chg:'−0.02%', pos:false, src:'ECB' },
-  { name:'SOFR',        val:'5.32%', chg:'+0.01%', pos:true,  src:'NY Fed' },
-  { name:'SONIA',       val:'5.19%', chg:'0.00%',  pos:null,  src:'Bank of England' },
-  { name:'PRIBOR 3M',   val:'3.74%', chg:'−0.05%', pos:false, src:'ČNB' },
-  { name:'SARON',       val:'1.48%', chg:'+0.02%', pos:true,  src:'SIX Swiss Exchange' },
+  { name:'€STR',        val:'2.15%', chg:'−0.05%', pos:false, src:'ECB' },
+  { name:'SOFR',        val:'4.30%', chg:'0.00%',  pos:null,  src:'NY Fed' },
+  { name:'SONIA',       val:'4.25%', chg:'−0.03%', pos:false, src:'Bank of England' },
+  { name:'PRIBOR 3M',   val:'3.45%', chg:'−0.08%', pos:false, src:'ČNB' },
+  { name:'SARON',       val:'0.35%', chg:'0.00%',  pos:null,  src:'SIX Swiss Exchange' },
 ];
 
 function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
@@ -569,7 +587,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
           <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
-            Pool Hierarchy — Daily Sweep Structure
+            Pool Hierarchy — Daily Sweep Structure · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
           </div>
           <div style={{ display:'flex', gap:6 }}>
             {[
@@ -762,7 +780,7 @@ function PnL() {
         <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
             <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Before vs. After Pooling — Detailed P&L</div>
-            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>12-month horizon · EUR · base scenario</div>
+            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>12-month horizon · EUR · as of {fmtMonthYear(NOW)}</div>
           </div>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
@@ -945,7 +963,7 @@ function ExportSection() {
     const t = setTimeout(() => {
       setRates(RATES);
       const now = new Date();
-      setSyncTime(`Last sync: ${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`);
+      setSyncTime(`Indicative reference rates · as of ${now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}`);
       setLoaded(true);
     }, 900);
     return () => clearTimeout(t);
@@ -1100,7 +1118,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         <div style={{ display:'flex', alignItems:'center', gap:8, paddingTop:4 }}>
           <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:11, color:'#94a3b8', marginRight:4 }}>
             <Ico name="clock" size={12} color="#94a3b8"/>
-            Generated April 2026
+            Generated {fmtDateTime(NOW)}
           </div>
           <div style={{ width:1, height:16, background:'#e2e8f0' }} />
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600,
