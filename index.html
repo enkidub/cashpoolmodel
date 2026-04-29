@@ -499,29 +499,22 @@ h2 {
 }
 .ea-sp-label {
   font-size: 9px; font-weight: 700; letter-spacing: 1.8px;
-  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 11px;
-}
-.ea-sp-logos {
-  /* Replace <span> children with <img> logos when available */
-  display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 13px;
-}
-.ea-sp-co {
-  font-size: 11px; color: var(--ink-lt); font-weight: 500;
-  background: var(--paper-w); border: 1px solid var(--rule);
-  border-radius: 4px; padding: 3px 9px; white-space: nowrap;
-  letter-spacing: .1px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 9px;
 }
 .ea-sp-stat {
-  font-size: 11.5px; color: var(--ink-fnt); line-height: 1.65;
+  font-family: var(--serif);
+  font-size: clamp(16px, 2vw, 19px); font-weight: 600;
+  color: var(--navy); line-height: 1.25; letter-spacing: -.25px;
+  margin-bottom: 9px;
 }
-.ea-sp-stat strong { color: var(--ink-mid); font-weight: 600; }
+.ea-sp-stat em { font-style: normal; color: var(--gold); }
+.ea-sp-companies {
+  font-size: 12px; color: var(--ink-fnt); line-height: 1.8;
+  font-weight: 400;
+}
 .ea-sp-cohort {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10.5px; color: var(--gold); font-weight: 500; margin-top: 6px;
-}
-.ea-sp-cohort::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--gold); opacity: .7; flex-shrink: 0;
+  margin-top: 10px; font-size: 10.5px;
+  color: var(--ink-fnt); opacity: .75; letter-spacing: .1px;
 }
 .ea-qual-card {
   background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl);
@@ -891,19 +884,16 @@ footer {
           </li>
         </ul>
 
-        <!-- Social proof — replace <span> with <img> logos when available -->
         <div class="ea-social-proof">
-          <div class="ea-sp-label">Trusted by early teams at</div>
-          <div class="ea-sp-logos">
-            <span class="ea-sp-co">Global Manufacturing Group</span>
-            <span class="ea-sp-co">European SaaS Company</span>
-            <span class="ea-sp-co">Logistics &amp; Supply Chain Leader</span>
-            <span class="ea-sp-co">Mid-Cap Industrial Group</span>
+          <div class="ea-sp-label">Trusted by early treasury teams</div>
+          <div class="ea-sp-stat">Teams managing <em>€50M – €2bn</em> in liquidity</div>
+          <div class="ea-sp-companies">
+            Global manufacturing group &thinsp;·&thinsp; European SaaS company<br>
+            Logistics &amp; supply chain leader &thinsp;·&thinsp; Mid-cap industrial group
           </div>
-          <div class="ea-sp-stat">
-            Used by treasury teams managing <strong>€50M – €2bn</strong> in group liquidity
-          </div>
-          <div class="ea-sp-cohort">Limited early access cohort · No bank connection required</div>
+          <!-- logos go here when available -->
+          <div class="logos" style="display:none"></div>
+          <div class="ea-sp-cohort">Limited early cohort &thinsp;·&thinsp; No bank connection required</div>
         </div>
 
       </div>
