@@ -109,43 +109,52 @@ a { color: inherit; text-decoration: none; }
 
 /* ── ABOUT HERO ── */
 .about-hero {
-  padding: clamp(52px, 7vw, 88px) 0 clamp(44px, 5.5vw, 68px);
+  padding: clamp(48px, 6.5vw, 80px) 0 clamp(40px, 5vw, 64px);
   border-bottom: 1px solid var(--rule);
 }
+.ah-inner {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+}
+@media (max-width: 700px) { .ah-inner { grid-template-columns: 1fr; gap: 28px; } }
+.ah-left {}
+.ah-right {}
 .ah-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--gold); margin-bottom: 22px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
 }
 .ah-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
 .ah-title {
   font-family: var(--serif);
-  font-size: clamp(28px, 4.5vw, 52px);
-  font-weight: 600; line-height: 1.08;
-  letter-spacing: -1.2px; color: var(--navy);
-  margin-bottom: 22px; max-width: 22ch;
+  font-size: clamp(24px, 3.2vw, 40px);
+  font-weight: 600; line-height: 1.12;
+  letter-spacing: -1px; color: var(--navy);
+  margin-bottom: 0;
 }
 .ah-sub {
   font-size: 15px; color: var(--ink-mid); font-weight: 300;
-  line-height: 1.72; max-width: 58ch; margin-bottom: 36px;
+  line-height: 1.72; margin-bottom: 28px;
 }
 .ah-quote {
   border-left: 3px solid var(--gold);
-  padding: 8px 0 8px 24px;
-  margin: 0; max-width: 54ch; position: relative;
+  padding: 10px 0 10px 22px;
+  margin: 0; position: relative;
 }
 .ah-quote::before {
   content: '\201C';
-  font-family: var(--serif); font-size: 64px; line-height: 1;
-  color: var(--gold); opacity: .18;
-  position: absolute; left: 24px; top: -10px;
+  font-family: var(--serif); font-size: 56px; line-height: 1;
+  color: var(--gold); opacity: .15;
+  position: absolute; left: 22px; top: -8px;
   pointer-events: none;
 }
 .ah-quote p {
   font-family: var(--serif);
-  font-size: clamp(17px, 2.2vw, 22px);
+  font-size: clamp(15px, 1.8vw, 18px);
   font-style: italic; font-weight: 400;
-  color: var(--navy); line-height: 1.55; letter-spacing: -.1px;
+  color: var(--navy); line-height: 1.6; letter-spacing: -.1px;
   position: relative; z-index: 1;
 }
 .ah-quote cite {
@@ -156,32 +165,37 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── FOUNDER ── */
-.founder-section { padding: clamp(52px, 6.5vw, 80px) 0; }
+.founder-section { padding: clamp(44px, 5.5vw, 72px) 0; }
 .founder-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(36px, 6vw, 80px); align-items: start;
+  display: grid; grid-template-columns: 220px 1fr;
+  gap: clamp(28px, 4vw, 52px); align-items: start;
 }
-@media (max-width: 700px) { .founder-grid { grid-template-columns: 1fr; } }
+@media (max-width: 680px) {
+  .founder-grid { grid-template-columns: 1fr; }
+  .founder-img-col { display: flex; align-items: flex-start; gap: 20px; }
+}
 
 .founder-img-col { position: relative; }
 .founder-img-wrap {
-  position: relative; overflow: hidden;
-  aspect-ratio: 4 / 5;
-  background: var(--paper-w);
-  border: 1px solid var(--rule);
+  width: 220px; height: 220px;
+  border-radius: 12px; overflow: hidden;
+  background: var(--paper-w); border: 1px solid var(--rule);
+  flex-shrink: 0;
 }
+@media (max-width: 680px) { .founder-img-wrap { width: 120px; height: 120px; border-radius: 8px; } }
 .founder-img {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center top;
   filter: grayscale(100%) contrast(1.04) brightness(.97);
   display: block; transition: filter .4s;
 }
-.founder-img-wrap:hover .founder-img { filter: grayscale(85%) contrast(1.03) brightness(.99); }
+.founder-img-wrap:hover .founder-img { filter: grayscale(80%) contrast(1.02) brightness(.99); }
 .founder-img-caption {
-  margin-top: 14px; font-size: 11px; color: var(--ink-fnt);
-  display: flex; align-items: center; gap: 8px;
+  margin-top: 12px; font-size: 11px; color: var(--ink-fnt);
+  display: flex; align-items: center; gap: 8px; line-height: 1.45;
 }
 .founder-img-caption::before { content: ''; width: 14px; height: 1px; background: var(--rule); }
+@media (max-width: 680px) { .founder-img-caption { display: none; } }
 
 .founder-bio { padding-top: 4px; }
 .founder-eyebrow {
@@ -365,10 +379,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-.about-hero .ah-eyebrow { animation: fadeUp .35s ease both; }
-.about-hero .ah-title   { animation: fadeUp .4s ease .07s both; }
-.about-hero .ah-sub     { animation: fadeUp .4s ease .14s both; }
-.about-hero .ah-quote   { animation: fadeUp .4s ease .22s both; }
+.about-hero .ah-left  { animation: fadeUp .4s ease .05s both; }
+.about-hero .ah-right { animation: fadeUp .4s ease .18s both; }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5SX745CBEE"></script>
 <script>
@@ -425,13 +437,24 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <!-- HERO / HEADER -->
 <section class="about-hero">
   <div class="wrap">
-    <div class="ah-eyebrow">About &amp; Trust</div>
-    <h1 class="ah-title">Independent Treasury Intelligence. Built by Practitioners, Engineered for CFOs.</h1>
-    <p class="ah-sub">CashPoolModel is the proprietary simulation engine developed by Intercompany.io, an independent treasury advisory firm based in Switzerland. We provide the missing link in group finance: an objective, mathematical simulator that puts negotiation power back into the hands of the CFO.</p>
-    <blockquote class="ah-quote">
-      <p>We are not a bank. We are your data advantage. No software lock-ins, no hidden commissions — just pure treasury intelligence.</p>
-      <cite>— Jakub Houser, Founder</cite>
-    </blockquote>
+    <div class="ah-inner">
+
+      <!-- Left: eyebrow + headline -->
+      <div class="ah-left">
+        <div class="ah-eyebrow">About &amp; Trust</div>
+        <h1 class="ah-title">Independent Treasury Intelligence. Built by Practitioners, Engineered for CFOs.</h1>
+      </div>
+
+      <!-- Right: sub-text + quote -->
+      <div class="ah-right">
+        <p class="ah-sub">CashPoolModel is the proprietary simulation engine developed by Intercompany.io, an independent treasury advisory firm based in Switzerland. We provide the missing link in group finance: an objective, mathematical simulator that puts negotiation power back into the hands of the CFO.</p>
+        <blockquote class="ah-quote">
+          <p>We are not a bank. We are your data advantage. No software lock-ins, no hidden commissions — just pure treasury intelligence.</p>
+          <cite>— Jakub Houser, Founder</cite>
+        </blockquote>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -469,8 +492,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
         </a>
         <div class="founder-bio-text">
           <p>With over a decade of experience bridging corporate treasury, banking, and consulting, Jakub founded Intercompany.io to eliminate the information asymmetry between banks and corporations. His expertise spans across optimizing liquidity for traditional global enterprises to navigating the complexities of Web3 and DeFi stablecoin treasuries.</p>
-          <p>Jakub's deep analytical approach is rooted in his academic research, having dedicated his Master's Thesis to cash pooling simulations and efficiency from both the corporate and commercial banking perspectives — the direct intellectual foundation of CashPoolModel.</p>
-          <p>He also served as a Teaching Assistant for Blockchain at the University of Nicosia, underscoring his commitment to the future of decentralized finance and its intersection with enterprise treasury operations.</p>
+          <p>Jakub's deep analytical approach is rooted in his academic research, having dedicated his Master's Thesis to cash pooling simulations and efficiency from both the corporate and commercial banking perspectives. He also served as a Teaching Assistant for Blockchain at the prestigious University of Nicosia, underscoring his commitment to the future of decentralized finance.</p>
         </div>
         <div class="founder-tags">
           <span class="founder-tag">Cash Pooling Architecture</span>
