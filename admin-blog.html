@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Admin — CashPoolModel</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0b1929;--navy-h:#132540;--ink:#0f172a;--ink-mid:#334155;
+  --ink-lt:#64748b;--ink-fnt:#94a3b8;--paper:#f8fafc;--paper-w:#f1f5f9;
+  --rule:#e2e8f0;--white:#ffffff;--gold:#9a6e10;
+  --emerald:#059669;--emerald-lt:#d1fae5;
+  --red:#dc2626;--red-lt:#fee2e2;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --max:860px;--r:6px;--rl:10px;
+  --sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5}
+
+.nav{background:var(--white);border-bottom:1px solid var(--rule)}
+.nav-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--navy)}
+.nav-badge{font-size:10px;font-weight:600;color:var(--red);background:var(--red-lt);border:1px solid #fca5a5;padding:3px 10px;border-radius:20px}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:24px}
+
+.page-header{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--rule)}
+.page-header h1{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.page-header p{font-size:13px;color:var(--ink-fnt)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--paper-w);padding:3px;border-radius:var(--r);margin-bottom:24px;width:fit-content}
+.tab{padding:7px 18px;border-radius:5px;border:none;background:transparent;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .13s}
+.tab.on{background:var(--white);color:var(--navy);box-shadow:var(--sh)}
+
+/* FORM */
+.form-card{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);padding:24px;margin-bottom:16px}
+.form-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:11px;font-weight:600;color:var(--ink-mid)}
+.fg input,.fg select,.fg textarea{padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .13s;width:100%}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--navy);background:var(--white)}
+.fg textarea{resize:vertical;min-height:320px;line-height:1.7;font-family:var(--mono);font-size:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.tb-btn{padding:5px 10px;border-radius:4px;border:1px solid var(--rule);background:var(--paper-w);color:var(--ink-mid);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--mono);transition:all .12s}
+.tb-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper)}
+
+/* PREVIEW */
+.preview-pane{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);padding:28px 32px;min-height:200px;display:none}
+.preview-pane.show{display:block}
+.preview-pane h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);margin:28px 0 10px}
+.preview-pane p{font-size:14px;color:var(--ink-mid);line-height:1.8;margin-bottom:16px;font-weight:300}
+.preview-pane strong{color:var(--ink);font-weight:600}
+.preview-pane ul{padding-left:20px;margin-bottom:16px}
+.preview-pane li{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:6px}
+.callout{background:#fdf8ec;border-left:3px solid var(--gold);padding:14px 18px;border-radius:0 5px 5px 0;margin:20px 0}
+.callout p{margin-bottom:0}
+
+/* ACTIONS */
+.form-actions{display:flex;gap:10px;align-items:center;padding-top:16px;border-top:1px solid var(--rule);margin-top:4px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .14s}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy-h)}
+.btn-navy:disabled{background:var(--ink-fnt);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink-mid);border:1.5px solid var(--rule)}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
+.btn-danger{background:transparent;color:var(--red);border:1.5px solid #fca5a5}
+.btn-danger:hover{background:var(--red-lt)}
+.save-status{font-size:12px;color:var(--ink-fnt);font-family:var(--mono)}
+.save-status.ok{color:var(--emerald)}
+.save-status.err{color:var(--red)}
+
+/* ARTICLE LIST */
+.article-list{display:flex;flex-direction:column;gap:10px}
+.article-row{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);padding:14px 18px;display:flex;align-items:center;gap:16px;box-shadow:var(--sh)}
+.ar-tag{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;background:#fef3c7;padding:2px 8px;border-radius:20px;flex-shrink:0}
+.ar-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--navy);flex:1}
+.ar-date{font-size:10px;color:var(--ink-fnt);font-family:var(--mono);flex-shrink:0}
+.ar-actions{display:flex;gap:6px;flex-shrink:0}
+.ar-btn{padding:4px 12px;border-radius:4px;border:1px solid var(--rule);background:transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .13s}
+.ar-btn.edit{color:var(--navy)}
+.ar-btn.edit:hover{border-color:var(--navy);background:var(--paper-w)}
+.ar-btn.del{color:var(--red)}
+.ar-btn.del:hover{border-color:var(--red);background:var(--red-lt)}
+.empty-state{text-align:center;padding:48px 24px;color:var(--ink-fnt)}
+.empty-state p{font-size:14px;margin-bottom:4px}
+.empty-state small{font-size:11px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:0 8px 40px rgba(15,23,42,.2);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:300;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+
+/* SPINNER */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.spinner.show{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOADING */
+.loading{text-align:center;padding:32px;color:var(--ink-fnt);font-size:13px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-i">
+    <div class="logo">CashPoolModel <span style="font-family:var(--sans);font-size:11px;color:var(--ink-fnt);font-weight:400;margin-left:6px">/ Blog Admin</span></div>
+    <div class="nav-badge">Private — Admin Only</div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-header">
+    <h1>Blog Admin</h1>
+    <p>Write and publish articles to cashpoolmodel.com/blog.html · Only you have this URL</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('write',this)">Write article</button>
+    <button class="tab" onclick="switchTab('list',this)">Published articles</button>
+  </div>
+
+  <!-- WRITE TAB -->
+  <div id="tabWrite">
+    <div class="form-card">
+      <div class="form-title">
+        <span id="formMode">New article</span>
+        <button class="btn-ghost btn" onclick="resetForm()" style="padding:5px 12px;font-size:11px">Clear form</button>
+      </div>
+      <input type="hidden" id="editSlug">
+
+      <div class="row2">
+        <div class="fg">
+          <label>Title</label>
+          <input type="text" id="artTitle" placeholder="Why Netting Efficiency Is the Only Number That Matters">
+        </div>
+        <div class="fg">
+          <label>Category</label>
+          <input type="text" id="artTag" list="tagList" placeholder="e.g. Liquidity, Strategy…">
+          <datalist id="tagList">
+            <option value="Liquidity">
+            <option value="Transfer Pricing">
+            <option value="Regulatory">
+            <option value="Banking">
+            <option value="Structure">
+            <option value="Technology">
+            <option value="Strategy">
+            <option value="Markets">
+            <option value="Operations">
+          </datalist>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label>Date</label>
+          <input type="text" id="artDate" placeholder="Apr 2025">
+        </div>
+        <div class="fg">
+          <label>URL slug (auto-generated)</label>
+          <input type="text" id="artSlug" placeholder="netting-efficiency" style="font-family:var(--mono);font-size:12px">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Excerpt (shown on blog card)</label>
+        <input type="text" id="artExcerpt" placeholder="One sentence that captures why someone should read this.">
+      </div>
+
+      <div class="fg">
+        <label>Body — use ## for headings, **bold**, > for callout blocks</label>
+        <div class="toolbar">
+          <button class="tb-btn" onclick="insert('## ','')">H2</button>
+          <button class="tb-btn" onclick="insert('**','**')">Bold</button>
+          <button class="tb-btn" onclick="insert('\n> ','')">Callout</button>
+          <button class="tb-btn" onclick="insert('\n- ','')">List</button>
+          <button class="tb-btn" onclick="togglePreview()">Preview ↗</button>
+        </div>
+        <textarea id="artBody" placeholder="Write your article here...&#10;&#10;## First section heading&#10;&#10;Your paragraph text...&#10;&#10;> Key insight or callout block&#10;&#10;## Second section&#10;&#10;More text..."></textarea>
+      </div>
+
+      <div class="preview-pane" id="previewPane"></div>
+
+      <div class="form-actions">
+        <button class="btn btn-navy" onclick="publishArticle()" id="publishBtn">
+          <div class="spinner" id="pubSpinner"></div>
+          <span id="publishLabel">Publish article →</span>
+        </button>
+        <button class="btn btn-ghost" onclick="togglePreview()">Preview</button>
+        <span class="save-status" id="saveStatus"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST TAB -->
+  <div id="tabList" style="display:none">
+    <div id="articleList" class="article-list">
+      <div class="loading">Loading articles…</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const GITHUB_TOKEN = ''; // TODO: set token at runtime — never commit secrets
+const REPO_OWNER   = 'enkidub';
+const REPO_NAME    = 'cashpoolmodel';
+const BRANCH       = 'main';
+const ARTICLES_DIR = 'articles';
+
+// ── GITHUB API ──
+const GH = {
+  headers: {
+    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
+  },
+
+  async getFile(path) {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`, { headers: GH.headers });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`GitHub error: ${res.status}`);
+    return res.json();
+  },
+
+  async putFile(path, content, sha = null, message) {
+    const body = {
+      message: message || `Blog: update ${path}`,
+      content: btoa(unescape(encodeURIComponent(content))),
+      branch: BRANCH,
+    };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+      method: 'PUT', headers: GH.headers, body: JSON.stringify(body),
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'GitHub write error'); }
+    return res.json();
+  },
+
+  async deleteFile(path, sha, message) {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+      method: 'DELETE',
+      headers: GH.headers,
+      body: JSON.stringify({ message: message || `Blog: delete ${path}`, sha, branch: BRANCH }),
+    });
+    if (!res.ok) throw new Error('Delete failed');
+  },
+
+  async listDir(path) {
+    const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`, { headers: GH.headers });
+    if (res.status === 404) return [];
+    if (!res.ok) throw new Error(`GitHub error: ${res.status}`);
+    return res.json();
+  },
+};
+
+// ── INDEX FILE ──
+async function loadIndex() {
+  const file = await GH.getFile(`${ARTICLES_DIR}/index.json`);
+  if (!file) return [];
+  return JSON.parse(decodeURIComponent(escape(atob(file.content))));
+}
+
+async function saveIndex(articles) {
+  const existing = await GH.getFile(`${ARTICLES_DIR}/index.json`);
+  const content = JSON.stringify(articles, null, 2);
+  await GH.putFile(`${ARTICLES_DIR}/index.json`, content, existing?.sha, 'Blog: update article index');
+}
+
+// ── SLUG GENERATION ──
+function toSlug(title) {
+  return title.toLowerCase()
+    .replace(/[áäà]/g, 'a').replace(/[éěë]/g, 'e').replace(/[íî]/g, 'i')
+    .replace(/[óö]/g, 'o').replace(/[úůü]/g, 'u').replace(/[č]/g, 'c')
+    .replace(/[š]/g, 's').replace(/[ž]/g, 'z').replace(/[ř]/g, 'r')
+    .replace(/[ý]/g, 'y').replace(/[ň]/g, 'n').replace(/[ď]/g, 'd')
+    .replace(/[ť]/g, 't').replace(/[&]/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+document.getElementById('artTitle').addEventListener('input', function() {
+  const slug = document.getElementById('editSlug').value;
+  if (!slug) {
+    document.getElementById('artSlug').value = toSlug(this.value);
+  }
+});
+
+// ── MARKDOWN → HTML ──
+function mdToHtml(md) {
+  return md
+    .split('\n\n').map(block => {
+      block = block.trim();
+      if (!block) return '';
+      if (block.startsWith('## ')) return `<h2>${block.slice(3)}</h2>`;
+      if (block.startsWith('> ')) return `<div class="callout"><p>${block.slice(2)}</p></div>`;
+      if (block.startsWith('- ')) {
+        const items = block.split('\n').filter(l=>l.startsWith('- ')).map(l=>`<li>${l.slice(2)}</li>`).join('');
+        return `<ul>${items}</ul>`;
+      }
+      const inline = block
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>');
+      return `<p>${inline}</p>`;
+    }).join('\n');
+}
+
+// ── PREVIEW ──
+let previewVisible = false;
+function togglePreview() {
+  previewVisible = !previewVisible;
+  const pane = document.getElementById('previewPane');
+  pane.classList.toggle('show', previewVisible);
+  if (previewVisible) {
+    const html = mdToHtml(document.getElementById('artBody').value);
+    pane.innerHTML = `<div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">${document.getElementById('artTitle').value || 'Preview'}</div>` + html;
+  }
+}
+
+// ── TOOLBAR ──
+function insert(before, after) {
+  const ta = document.getElementById('artBody');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end);
+  ta.value = ta.value.substring(0, start) + before + sel + after + ta.value.substring(end);
+  ta.focus();
+  ta.selectionStart = start + before.length;
+  ta.selectionEnd   = start + before.length + sel.length;
+}
+
+// ── PUBLISH ──
+async function publishArticle() {
+  const title   = document.getElementById('artTitle').value.trim();
+  const tag     = document.getElementById('artTag').value;
+  const date    = document.getElementById('artDate').value.trim() || new Date().toLocaleDateString('en-GB',{month:'short',year:'numeric'});
+  const excerpt = document.getElementById('artExcerpt').value.trim();
+  const body    = document.getElementById('artBody').value.trim();
+  const editSlug= document.getElementById('editSlug').value;
+  const slug    = document.getElementById('artSlug').value || toSlug(title);
+
+  if (!title)   { toast('Please add a title.', true); return; }
+  if (!body)    { toast('Please write the article body.', true); return; }
+  if (!excerpt) { toast('Please add an excerpt.', true); return; }
+
+  setLoading(true);
+
+  try {
+    // 1. Save article JSON
+    const article = { slug, title, tag, date, excerpt, body };
+    const path = `${ARTICLES_DIR}/${slug}.json`;
+    const existing = await GH.getFile(path);
+    await GH.putFile(path, JSON.stringify(article, null, 2), existing?.sha, `Blog: ${editSlug ? 'update' : 'add'} "${title}"`);
+
+    // 2. Update index
+    let index = await loadIndex();
+    const idx = index.findIndex(a => a.slug === (editSlug || slug));
+    const meta = { slug, title, tag, date, excerpt };
+    if (idx >= 0) index[idx] = meta;
+    else index.unshift(meta);
+    await saveIndex(index);
+
+    toast(editSlug ? 'Article updated ✓' : 'Article published ✓');
+    resetForm();
+    setStatus('Published successfully', true);
+  } catch(e) {
+    toast('Error: ' + e.message, true);
+    setStatus('Failed: ' + e.message, false);
+  }
+  setLoading(false);
+}
+
+// ── LIST ARTICLES ──
+async function loadArticleList() {
+  const list = document.getElementById('articleList');
+  list.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const index = await loadIndex();
+    if (!index.length) {
+      list.innerHTML = '<div class="empty-state"><p>No articles yet.</p><small>Write your first article in the Write tab.</small></div>';
+      return;
+    }
+    list.innerHTML = index.map(a => `
+      <div class="article-row">
+        <span class="ar-tag">${a.tag}</span>
+        <span class="ar-title">${a.title}</span>
+        <span class="ar-date">${a.date}</span>
+        <div class="ar-actions">
+          <button class="ar-btn edit" onclick="editArticle('${a.slug}')">Edit</button>
+          <button class="ar-btn del" onclick="deleteArticle('${a.slug}','${a.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = `<div class="empty-state"><p>Error loading articles.</p><small>${e.message}</small></div>`;
+  }
+}
+
+async function editArticle(slug) {
+  setStatus('Loading article…', null);
+  try {
+    const file = await GH.getFile(`${ARTICLES_DIR}/${slug}.json`);
+    if (!file) { toast('Article not found', true); return; }
+    const a = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+    document.getElementById('artTitle').value   = a.title;
+    document.getElementById('artTag').value     = a.tag;
+    document.getElementById('artDate').value    = a.date;
+    document.getElementById('artSlug').value    = a.slug;
+    document.getElementById('artExcerpt').value = a.excerpt;
+    document.getElementById('artBody').value    = a.body;
+    document.getElementById('editSlug').value   = a.slug;
+    document.getElementById('formMode').textContent = 'Edit article';
+    switchTab('write', document.querySelector('.tab'));
+    window.scrollTo({top:0,behavior:'smooth'});
+    setStatus('Editing: ' + a.title, true);
+  } catch(e) { toast('Error: ' + e.message, true); }
+}
+
+async function deleteArticle(slug, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  try {
+    const file = await GH.getFile(`${ARTICLES_DIR}/${slug}.json`);
+    if (file) await GH.deleteFile(`${ARTICLES_DIR}/${slug}.json`, file.sha, `Blog: delete "${title}"`);
+    let index = await loadIndex();
+    index = index.filter(a => a.slug !== slug);
+    await saveIndex(index);
+    toast('Article deleted');
+    loadArticleList();
+  } catch(e) { toast('Error: ' + e.message, true); }
+}
+
+// ── HELPERS ──
+function resetForm() {
+  ['artTitle','artExcerpt','artBody','artSlug','editSlug'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('artDate').value = '';
+  document.getElementById('formMode').textContent = 'New article';
+  document.getElementById('previewPane').classList.remove('show');
+  previewVisible = false;
+  setStatus('');
+}
+
+function setLoading(on) {
+  document.getElementById('pubSpinner').classList.toggle('show', on);
+  document.getElementById('publishBtn').disabled = on;
+  document.getElementById('publishLabel').textContent = on ? 'Publishing…' : 'Publish article →';
+}
+
+function setStatus(msg, ok) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = msg;
+  el.className = 'save-status' + (ok === true ? ' ok' : ok === false ? ' err' : '');
+}
+
+function toast(msg, err = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err ? ' err' : '') + ' show';
+  setTimeout(() => t.className = 'toast' + (err ? ' err' : ''), 3000);
+}
+
+function switchTab(tab, btn) {
+  document.getElementById('tabWrite').style.display = tab === 'write' ? 'block' : 'none';
+  document.getElementById('tabList').style.display  = tab === 'list'  ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (tab === 'list') loadArticleList();
+}
+</script>
+</body>
+</html>
