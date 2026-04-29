@@ -454,24 +454,57 @@ h2 {
 /* ── HOW IT WORKS ── */
 .how {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--rule);
-  border: 1px solid var(--rule); border-radius: var(--rl);
-  overflow: hidden; box-shadow: var(--sh); margin-top: 36px;
+  gap: 0; margin-top: 36px;
+  border-top: 1px solid var(--rule);
 }
-@media (max-width: 640px) { .how { grid-template-columns: 1fr; } }
-.how-step { background: var(--white); padding: 32px 26px; transition: background .15s; }
-.how-step:hover { background: var(--paper-w); }
+.how-step {
+  padding: 28px; position: relative; transition: background .15s;
+}
+.how-step:not(:first-child) { border-left: 1px solid var(--rule); }
+.how-step:hover { background: rgba(255,255,255,.55); }
 .how-n {
-  font-family: var(--serif); font-size: 54px; font-weight: 600;
-  color: var(--paper-w); line-height: 1; margin-bottom: 16px; transition: color .15s;
-  border: 1px solid var(--rule); border-radius: var(--r);
   display: inline-flex; align-items: center; justify-content: center;
-  width: 56px; height: 56px; font-size: 22px; color: var(--ink-fnt);
-  background: var(--paper-w);
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  font-family: var(--mono); font-size: 11px; font-weight: 400;
+  color: var(--ink-fnt); letter-spacing: .3px; flex-shrink: 0;
+  transition: all .18s;
 }
-.how-step:hover .how-n { background: var(--navy); color: #fff; border-color: var(--navy); }
-.how-t { font-size: 14px; font-weight: 600; color: var(--navy); margin: 14px 0 8px; }
-.how-d { font-size: 13px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; }
+.how-step:hover .how-n { border-color: var(--navy); background: var(--navy); color: #fff; }
+.how-content {}
+.how-t {
+  font-size: 13.5px; font-weight: 600; color: var(--navy);
+  margin: 12px 0 6px; line-height: 1.35;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.how-d { font-size: 12.5px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
+/* Step 03 — final output prominence */
+.how-final .how-n { border-color: rgba(154,110,16,.4); color: var(--gold); }
+.how-final:hover .how-n { background: var(--gold); border-color: var(--gold); color: #fff; }
+.how-final-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
+  border-radius: 3px; padding: 2px 7px; line-height: 1; white-space: nowrap; flex-shrink: 0;
+}
+/* Mobile: minimalist vertical stepper */
+@media (max-width: 640px) {
+  .how { display: flex; flex-direction: column; border-top: none; }
+  .how-step {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 0 0 20px 0;
+  }
+  .how-step:not(:first-child) { border-left: none; }
+  .how-step:last-child { padding-bottom: 0; }
+  .how-step:hover { background: transparent; }
+  .how-step:not(:last-child)::after {
+    content: ''; position: absolute;
+    left: 15px; top: 32px; bottom: 0;
+    width: 1px; background: var(--rule);
+  }
+  .how-content { padding-top: 4px; }
+  .how-t { margin-top: 0; font-size: 13px; }
+  .how-d { font-size: 12px; }
+}
 
 /* ── EARLY ACCESS ── */
 .ea-2col {
@@ -879,21 +912,34 @@ footer { background: var(--navy); padding: 52px 0 0; }
     <div class="sec-eyebrow" data-i18n="how.eyebrow">How it works</div>
     <h2 data-i18n="how.h2">From data to board decision<br>in three steps.</h2>
     <div class="how">
+
       <div class="how-step">
         <div class="how-n">01</div>
-        <div class="how-t" data-i18n="how.s1t">Enter your group structure</div>
-        <div class="how-d" data-i18n="how.s1d">Upload your bank statements and AI extracts entity names, balances, and currencies in seconds. Or enter data manually and adjust anything. CFOs typically complete setup in under five minutes.</div>
+        <div class="how-content">
+          <div class="how-t" data-i18n="how.s1t">Upload &amp; Map Entities</div>
+          <div class="how-d" data-i18n="how.s1d">AI extracts balances and structure from statements in seconds. Manual entry available.</div>
+        </div>
       </div>
+
       <div class="how-step">
         <div class="how-n">02</div>
-        <div class="how-t" data-i18n="how.s2t">Run the simulation</div>
-        <div class="how-d" data-i18n="how.s2d">The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.</div>
+        <div class="how-content">
+          <div class="how-t" data-i18n="how.s2t">Model Scenarios</div>
+          <div class="how-d" data-i18n="how.s2d">Run base, optimistic, and stress-test simulations. Analyze netting efficiency and P&amp;L impact.</div>
+        </div>
       </div>
-      <div class="how-step">
+
+      <div class="how-step how-final">
         <div class="how-n">03</div>
-        <div class="how-t" data-i18n="how.s3t">Download the report</div>
-        <div class="how-d" data-i18n="how.s3d">Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&amp;L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.</div>
+        <div class="how-content">
+          <div class="how-t">
+            <span data-i18n="how.s3t">Export Board-Ready Intelligence</span>
+            <span class="how-final-badge">Output</span>
+          </div>
+          <div class="how-d" data-i18n="how.s3d">Download a comprehensive PDF with sensitivity matrices and bank RFP specifications.</div>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -1039,12 +1085,12 @@ const translations = {
     'preview.matrix_label': 'Sensitivity Matrix — Net Benefit (rate × volatility)',
     'preview.note': 'Illustrative data. Actual report generated from your inputs.',
     'how.eyebrow': 'How it works', 'how.h2': 'From data to board decision<br>in three steps.',
-    'how.s1t': 'Enter your group structure',
-    'how.s1d': 'Upload your bank statements and AI extracts entity names, balances, and currencies in seconds. Or enter data manually and adjust anything. CFOs typically complete setup in under five minutes.',
-    'how.s2t': 'Run the simulation',
-    'how.s2d': 'The engine models your netting efficiency, interest savings, and payback period across three scenarios — base, optimistic, and stress. Ask the AI analyst any question about your numbers in plain language.',
-    'how.s3t': 'Download the report',
-    'how.s3d': 'Export a board-ready PDF: executive summary with GO/NO-GO verdict, full P&L comparison, sensitivity matrix, pool structure diagram, and bank RFP package. Ready for your CFO or next bank meeting.',
+    'how.s1t': 'Upload &amp; Map Entities',
+    'how.s1d': 'AI extracts balances and structure from statements in seconds. Manual entry available.',
+    'how.s2t': 'Model Scenarios',
+    'how.s2d': 'Run base, optimistic, and stress-test simulations. Analyze netting efficiency and P&amp;L impact.',
+    'how.s3t': 'Export Board-Ready Intelligence',
+    'how.s3d': 'Download a comprehensive PDF with sensitivity matrices and bank RFP specifications.',
     'ea.eyebrow': 'Early Access',
     'ea.h2': 'Unlock Independent Treasury Intelligence.',
     'ea.sub': 'We are granting early access to a select group of corporate finance teams. Secure your spot to model your liquidity structure — before your next bank negotiation.',
@@ -1085,12 +1131,12 @@ const translations = {
     'preview.matrix_label': 'Sensitivitätsmatrix — Nettonutzen (Zinssatz × Volatilität)',
     'preview.note': 'Illustrative Daten. Der tatsächliche Bericht wird aus Ihren Eingaben erstellt.',
     'how.eyebrow': 'So funktioniert es', 'how.h2': 'Von den Daten zur Entscheidung —<br>in drei Schritten.',
-    'how.s1t': 'Konzernstruktur eingeben',
-    'how.s1d': 'Laden Sie Ihre Kontoauszüge hoch — KI extrahiert Entitätsnamen, Salden und Währungen in Sekunden. Oder geben Sie Daten manuell ein. CFOs schließen die Einrichtung typischerweise in unter fünf Minuten ab.',
-    'how.s2t': 'Simulation ausführen',
-    'how.s2d': 'Das System modelliert Ihre Netting-Effizienz, Zinseinsparungen und Amortisationszeit in drei Szenarien — Basis, optimistisch und Stress. Stellen Sie dem KI-Analysten beliebige Fragen zu Ihren Zahlen in natürlicher Sprache.',
-    'how.s3t': 'Bericht herunterladen',
-    'how.s3d': 'Exportieren Sie ein board-fertiges PDF: Executive Summary mit GO/NO-GO-Empfehlung, vollständiger P&L-Vergleich, Sensitivitätsmatrix, Pool-Strukturdiagramm und Bank-Ausschreibungspaket. Bereit für Ihren CFO oder das nächste Bankgespräch.',
+    'how.s1t': 'Entitäten hochladen &amp; zuordnen',
+    'how.s1d': 'KI extrahiert Salden und Struktur aus Kontoauszügen in Sekunden. Manuelle Eingabe verfügbar.',
+    'how.s2t': 'Szenarien modellieren',
+    'how.s2d': 'Basis-, optimistische und Stress-Simulationen ausführen. Netting-Effizienz und P&amp;L-Auswirkung analysieren.',
+    'how.s3t': 'Board-fähige Intelligence exportieren',
+    'how.s3d': 'Laden Sie ein umfassendes PDF mit Sensitivitätsmatrizen und Bank-Ausschreibungsspezifikationen herunter.',
     'ea.eyebrow': 'Früher Zugang',
     'ea.h2': 'Unabhängige Treasury-Intelligence freischalten.',
     'ea.sub': 'Wir gewähren einer ausgewählten Gruppe von Unternehmensfinanzteams frühzeitigen Zugang. Sichern Sie sich Ihren Platz, um Ihre Liquiditätsstruktur zu modellieren — vor Ihrer nächsten Bankverhandlung.',
@@ -1131,12 +1177,12 @@ const translations = {
     'preview.matrix_label': 'Matrice de sensibilité — Bénéfice net (taux × volatilité)',
     'preview.note': 'Données illustratives. Le rapport réel est généré à partir de vos données.',
     'how.eyebrow': 'Comment ça fonctionne', 'how.h2': 'Des données à la décision du conseil —<br>en trois étapes.',
-    'how.s1t': 'Saisir la structure du groupe',
-    'how.s1d': 'Importez vos relevés bancaires et l\'IA extrait les noms d\'entités, soldes et devises en quelques secondes. Ou saisissez les données manuellement. Les CFO terminent généralement la configuration en moins de cinq minutes.',
-    'how.s2t': 'Lancer la simulation',
-    'how.s2d': 'Le moteur modélise votre efficacité de netting, les économies d\'intérêts et la période de retour sur investissement en trois scénarios — de base, optimiste et de stress. Posez toute question à l\'analyste IA sur vos chiffres en langage naturel.',
-    'how.s3t': 'Télécharger le rapport',
-    'how.s3d': 'Exportez un PDF prêt pour le conseil : résumé exécutif avec verdict GO/NO-GO, comparaison P&L complète, matrice de sensibilité, schéma de structure du pool et dossier d\'appel d\'offres bancaire. Prêt pour votre CFO ou votre prochaine réunion bancaire.',
+    'how.s1t': 'Importer &amp; cartographier les entités',
+    'how.s1d': 'L\'IA extrait les soldes et la structure des relevés en quelques secondes. Saisie manuelle disponible.',
+    'how.s2t': 'Modéliser les scénarios',
+    'how.s2d': 'Exécutez des simulations de base, optimiste et de stress. Analysez l\'efficacité de netting et l\'impact sur le P&amp;L.',
+    'how.s3t': 'Exporter l\'intelligence board-ready',
+    'how.s3d': 'Téléchargez un PDF complet avec matrices de sensibilité et spécifications d\'appel d\'offres bancaire.',
     'ea.eyebrow': 'Accès anticipé',
     'ea.h2': 'Déverrouillez une intelligence trésorerie indépendante.',
     'ea.sub': 'Nous accordons un accès anticipé à un groupe sélectionné d\'équipes finance d\'entreprise. Réservez votre place pour modéliser votre structure de liquidité — avant votre prochaine négociation bancaire.',
