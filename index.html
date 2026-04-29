@@ -203,9 +203,9 @@ a { color: inherit; text-decoration: none; }
 
 h1 {
   font-family: var(--serif);
-  font-size: clamp(36px, 5.5vw, 72px);
-  font-weight: 600; line-height: 1.08;
-  letter-spacing: -2px; color: var(--navy);
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 600; line-height: 1.1;
+  letter-spacing: -1.5px; color: var(--navy);
   margin-bottom: 20px;
 }
 h1 em { font-style: normal; color: var(--gold); }
@@ -531,7 +531,7 @@ h2 {
   font-family: var(--serif); font-size: 20px; font-weight: 600;
   color: var(--navy); letter-spacing: -.3px; margin-bottom: 24px; line-height: 1.2;
 }
-.ea-field { margin-bottom: 14px; }
+.ea-field { margin-bottom: 20px; }
 .ea-label {
   display: block; font-size: 11.5px; font-weight: 600;
   color: var(--ink-mid); margin-bottom: 6px; letter-spacing: .1px;
@@ -559,7 +559,19 @@ h2 {
   transition: background .16s, transform .16s; letter-spacing: .1px;
 }
 .ea-submit-btn:hover { background: #162e4a; transform: translateY(-1px); }
-.ea-privacy { text-align: center; font-size: 11.5px; color: var(--ink-fnt); }
+.ea-anchor {
+  background: var(--gold-p); border: 1px solid rgba(154,110,16,.15);
+  border-radius: var(--r); padding: 11px 14px;
+  font-size: 11.5px; color: var(--ink-mid); line-height: 1.65; margin-bottom: 22px;
+}
+.ea-anchor strong { color: var(--navy); font-weight: 600; }
+.ea-privacy {
+  font-size: 11px; color: var(--ink-fnt); line-height: 1.65; text-align: center;
+}
+.ea-zdr {
+  color: var(--gold); text-decoration: underline;
+  text-underline-offset: 2px; font-weight: 500; cursor: pointer;
+}
 
 /* ── WAITLIST ── */
 .wl {
@@ -778,7 +790,7 @@ footer {
 
       <!-- CTAs -->
       <div class="calc-actions">
-        <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Calculate My Savings →</a>
+        <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Get Precision Report →</a>
         <a class="calc-link" href="/dashboard-preview.html" data-i18n="hero.cta2">
           <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="0.5" width="9" height="11" rx="1"/><path d="M3.5 3.5h5M3.5 5.5h5M3.5 7.5h3"/></svg>
           View Sample Report
@@ -910,6 +922,7 @@ footer {
         <div class="ea-qual-card">
           <div class="ea-qual-eyebrow">Waitlist Application</div>
           <div class="ea-qual-title" data-i18n="ea.form_title">Request Priority Access</div>
+          <div class="ea-anchor">Join the early cohort and receive a complimentary <strong>Professional Report</strong> (standard value <strong>$749</strong>) upon launch.</div>
 
           <div class="ea-field">
             <label class="ea-label" for="eaLiquidity" data-i18n="ea.liq_label">Average Daily Liquidity</label>
@@ -935,11 +948,11 @@ footer {
 
           <div class="ea-field">
             <label class="ea-label" for="eaEmail" data-i18n="ea.email_label">Professional Email</label>
-            <input class="ea-field-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="treasury@yourcompany.com">
+            <input class="ea-field-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="name@company.com">
           </div>
 
           <button class="ea-submit-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Request Priority Access →</button>
-          <div class="ea-privacy" data-i18n="ea.privacy">🔒 Your data is strictly confidential.</div>
+          <div class="ea-privacy">🔒 Bank-grade security. Strict '<span class="ea-zdr">Zero Data Retention</span>' policy. Your data never leaves your session.</div>
         </div>
       </div>
 
@@ -980,7 +993,7 @@ const translations = {
     'hero.eyebrow': 'Independent Cash Pooling Intelligence',
     'hero.h1': 'See how much your company could save with cash pooling.',
     'hero.sub': 'Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.',
-    'hero.cta1': 'Calculate My Savings →', 'hero.cta2': 'View Sample Report',
+    'hero.cta1': 'Get Precision Report →', 'hero.cta2': 'View Sample Report',
     'hero.benchmark': 'Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.',
     'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
     'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
@@ -1010,7 +1023,7 @@ const translations = {
     'ea.liq_label': 'Average Daily Liquidity', 'ea.liq_opt0': 'Select volume...',
     'ea.pool_label': 'Current Pooling Setup', 'ea.pool_opt0': 'Select setup...',
     'ea.email_label': 'Professional Email',
-    'ea.placeholder': 'treasury@yourcompany.com',
+    'ea.placeholder': 'name@company.com',
     'ea.btn': 'Request Priority Access →',
     'ea.privacy': '🔒 Your data is strictly confidential.',
     'footer.swiss': 'Swiss-based advisory',
@@ -1025,7 +1038,7 @@ const translations = {
     'hero.eyebrow': 'Unabhängige Cash-Pooling-Intelligence',
     'hero.h1': 'Ermitteln Sie, wie viel Ihr Unternehmen mit Cash Pooling sparen könnte.',
     'hero.sub': 'Die meisten Treasury-Teams erfahren das Einsparpotenzial erst nach der Unterschrift bei einer Bank. CashPoolModel gibt Ihnen in wenigen Minuten eine klare, unabhängige Sicht — vor jeder Bindung.',
-    'hero.cta1': 'Einsparungen berechnen →', 'hero.cta2': 'Beispielbericht ansehen',
+    'hero.cta1': 'Präzisionsbericht anfordern →', 'hero.cta2': 'Beispielbericht ansehen',
     'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise $200k–$800k jährliche Einsparungen.',
     'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
     'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
@@ -1055,7 +1068,7 @@ const translations = {
     'ea.liq_label': 'Durchschnittliche tägliche Liquidität', 'ea.liq_opt0': 'Volumen auswählen...',
     'ea.pool_label': 'Aktuelles Pooling-Setup', 'ea.pool_opt0': 'Setup auswählen...',
     'ea.email_label': 'Geschäftliche E-Mail',
-    'ea.placeholder': 'treasury@ihrefirma.com',
+    'ea.placeholder': 'name@company.com',
     'ea.btn': 'Vorrangzugang anfragen →',
     'ea.privacy': '🔒 Ihre Daten sind streng vertraulich.',
     'footer.swiss': 'Schweizer Treasury-Beratung',
@@ -1070,7 +1083,7 @@ const translations = {
     'hero.eyebrow': 'Intelligence indépendante en cash pooling',
     'hero.h1': 'Découvrez combien votre entreprise pourrait économiser avec le cash pooling.',
     'hero.sub': 'La plupart des équipes trésorerie découvrent le potentiel d\'économies seulement après avoir signé avec une banque. CashPoolModel vous offre une vision claire et indépendante en quelques minutes — avant tout engagement.',
-    'hero.cta1': 'Calculer mes économies →', 'hero.cta2': 'Voir un exemple de rapport',
+    'hero.cta1': 'Obtenir un rapport précis →', 'hero.cta2': 'Voir un exemple de rapport',
     'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement $200k–$800k d\'économies annuelles.',
     'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
     'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
@@ -1100,7 +1113,7 @@ const translations = {
     'ea.liq_label': 'Liquidité quotidienne moyenne', 'ea.liq_opt0': 'Sélectionner le volume...',
     'ea.pool_label': 'Configuration de pooling actuelle', 'ea.pool_opt0': 'Sélectionner la configuration...',
     'ea.email_label': 'Adresse e-mail professionnelle',
-    'ea.placeholder': 'tresorerie@votreentreprise.com',
+    'ea.placeholder': 'name@company.com',
     'ea.btn': 'Demander un accès prioritaire →',
     'ea.privacy': '🔒 Vos données sont strictement confidentielles.',
     'footer.swiss': 'Conseil suisse en trésorerie',
