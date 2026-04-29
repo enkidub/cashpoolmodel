@@ -492,29 +492,31 @@ h2 {
 }
 .ea-feature-body span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
 
-/* Social proof */
-.ea-social-proof {
-  margin-top: 24px; padding-top: 20px;
+/* ── SOCIAL PROOF BAND ── */
+.sp {
+  padding: clamp(36px, 4.5vw, 56px) 0;
+  background: var(--paper-w);
   border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  text-align: center;
 }
-.ea-sp-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.8px;
-  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 9px;
+.sp-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 12px;
 }
-.ea-sp-stat {
+.sp-stat {
   font-family: var(--serif);
-  font-size: clamp(16px, 2vw, 19px); font-weight: 600;
-  color: var(--navy); line-height: 1.25; letter-spacing: -.25px;
-  margin-bottom: 9px;
+  font-size: clamp(22px, 3vw, 30px); font-weight: 600;
+  color: var(--navy); letter-spacing: -.4px; line-height: 1.2;
+  margin-bottom: 14px;
 }
-.ea-sp-stat em { font-style: normal; color: var(--gold); }
-.ea-sp-companies {
-  font-size: 12px; color: var(--ink-fnt); line-height: 1.8;
-  font-weight: 400;
+.sp-stat em { font-style: normal; color: var(--gold); }
+.sp-companies {
+  font-size: 13px; color: var(--ink-lt); line-height: 2;
+  font-weight: 400; max-width: 600px; margin: 0 auto 12px;
 }
-.ea-sp-cohort {
-  margin-top: 10px; font-size: 10.5px;
-  color: var(--ink-fnt); opacity: .75; letter-spacing: .1px;
+.sp-micro {
+  font-size: 10.5px; color: var(--ink-fnt); opacity: .65; letter-spacing: .15px;
 }
 .ea-qual-card {
   background: var(--white); border: 1px solid var(--rule); border-radius: var(--rl);
@@ -794,6 +796,23 @@ footer {
   </div>
 </section>
 
+<!-- SOCIAL PROOF -->
+<section class="sp">
+  <div class="wrap">
+    <div class="sp-eyebrow">Trusted by early treasury teams</div>
+    <div class="sp-stat">Teams managing <em>€50M – €2bn</em> in liquidity</div>
+    <div class="sp-companies">
+      Global manufacturing group &thinsp;·&thinsp; European SaaS company
+      &thinsp;·&thinsp; Logistics &amp; supply chain leader &thinsp;·&thinsp; Mid-cap industrial group
+    </div>
+    <!-- Future Logo Grid — uncomment and populate when logos are available
+    <div class="sp-logos">
+    </div>
+    -->
+    <div class="sp-micro">Limited early cohort &thinsp;·&thinsp; No bank connection required</div>
+  </div>
+</section>
+
 <!-- REPORT PREVIEW -->
 <section class="section section-bt">
   <div class="wrap">
@@ -883,18 +902,6 @@ footer {
             </div>
           </li>
         </ul>
-
-        <div class="ea-social-proof">
-          <div class="ea-sp-label">Trusted by early treasury teams</div>
-          <div class="ea-sp-stat">Teams managing <em>€50M – €2bn</em> in liquidity</div>
-          <div class="ea-sp-companies">
-            Global manufacturing group &thinsp;·&thinsp; European SaaS company<br>
-            Logistics &amp; supply chain leader &thinsp;·&thinsp; Mid-cap industrial group
-          </div>
-          <!-- logos go here when available -->
-          <div class="logos" style="display:none"></div>
-          <div class="ea-sp-cohort">Limited early cohort &thinsp;·&thinsp; No bank connection required</div>
-        </div>
 
       </div>
 
