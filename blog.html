@@ -272,33 +272,6 @@ a { color: inherit; text-decoration: none; }
 .more-title { font-family: var(--serif); font-size: 14px; font-weight: 600; color: var(--navy); line-height: 1.3; letter-spacing: -.1px; }
 .more-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 4px; }
 
-/* Newsletter strip */
-.nl-strip {
-  background: var(--navy); padding: clamp(32px, 5vw, 52px) 0;
-}
-.nl-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 24px; flex-wrap: wrap;
-}
-.nl-text {}
-.nl-title { font-family: var(--serif); font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 5px; letter-spacing: -.3px; }
-.nl-sub { font-size: 13px; color: rgba(255,255,255,.42); font-weight: 300; max-width: 38ch; line-height: 1.55; }
-.nl-form { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
-.nl-input {
-  padding: 10px 14px; border-radius: var(--r);
-  border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.07);
-  color: #fff; font-family: var(--sans); font-size: 13px; outline: none;
-  min-width: 200px; transition: border-color .14s;
-}
-.nl-input::placeholder { color: rgba(255,255,255,.3); }
-.nl-input:focus { border-color: rgba(255,255,255,.3); }
-.nl-btn {
-  padding: 10px 20px; border-radius: var(--r); background: var(--gold); color: #fff;
-  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
-  font-family: var(--sans); transition: background .14s; white-space: nowrap;
-}
-.nl-btn:hover { background: var(--gold-h); }
-
 /* Footer */
 footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 36px 0 24px; }
 .footer-i { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -524,21 +497,6 @@ footer { background: var(--navy); color: rgba(255,255,255,.4); padding: 36px 0 2
     </div>
   </div>
 
-  <!-- Newsletter strip -->
-  <div class="nl-strip">
-    <div class="wrap">
-      <div class="nl-inner">
-        <div class="nl-text">
-          <div class="nl-title">Treasury Notes</div>
-          <div class="nl-sub">When something worth reading happens in treasury — we write about it.</div>
-        </div>
-        <div class="nl-form">
-          <input class="nl-input" type="email" id="nlEmail" placeholder="your@email.com">
-          <button class="nl-btn" onclick="handleNewsletter()">Subscribe</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </div><!-- /list-view -->
 
@@ -721,13 +679,6 @@ function showList() {
   document.title = 'Treasury Insights — CashPoolModel';
 }
 
-function handleNewsletter() {
-  const e = document.getElementById('nlEmail').value;
-  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  addToBrevo(e);
-  showToast('Subscribed. When something worth reading happens — you will hear from us.');
-  document.getElementById('nlEmail').value = '';
-}
 async function addToBrevo(email) {
   try {
     await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
