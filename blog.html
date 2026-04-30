@@ -435,13 +435,13 @@ function renderList(posts) {
   }
 
   container.innerHTML = posts.map(p => `
-    <div class="article-card" onclick="showPost('\${p.id}')">
+    <div class="article-card" onclick="showPost('${p.id}')">
       <div class="ac-meta-top">
-        <span class="ac-tag">\${p.tag || 'Article'}</span>
-        <span class="ac-date">\${formatDate(p.date)}</span>
+        <span class="ac-tag">${p.tag || 'Article'}</span>
+        <span class="ac-date">${formatDate(p.date)}</span>
       </div>
-      <div class="ac-title">\${p.title}</div>
-      <div class="ac-excerpt">\${p.excerpt || ''}</div>
+      <div class="ac-title">${p.title}</div>
+      <div class="ac-excerpt">${p.excerpt || ''}</div>
       <div class="ac-read">Read article</div>
     </div>
   `).join('');
