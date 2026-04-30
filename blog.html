@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog — CashPoolModel</title>
+<title>Treasury Insights — CashPoolModel</title>
 <meta name="description" content="Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not vendors.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@ a { color: inherit; text-decoration: none; }
 /* ── NAV ── */
 .nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
+  background: rgba(249,248,245,.95); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--rule);
 }
 .nav-i {
@@ -73,205 +73,121 @@ a { color: inherit; text-decoration: none; }
 
 /* ── PAGE HEADER ── */
 .page-header {
-  padding: clamp(44px, 7vw, 80px) 0 clamp(32px, 5vw, 52px);
+  padding: clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px);
   border-bottom: 1px solid var(--rule);
+  text-align: center;
 }
 .ph-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
   text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
 }
-.ph-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
 .ph-title {
   font-family: var(--serif);
-  font-size: clamp(32px, 5vw, 52px);
+  font-size: clamp(36px, 6vw, 56px);
   font-weight: 600; letter-spacing: -1.2px; color: var(--navy);
-  line-height: 1.08; margin-bottom: 14px;
+  line-height: 1.08; margin-bottom: 20px;
 }
 .ph-sub {
-  font-size: 15px; color: var(--ink-mid); font-weight: 300;
-  max-width: 46ch; line-height: 1.65;
+  font-size: 16px; color: var(--ink-mid); font-weight: 300;
+  max-width: 50ch; line-height: 1.65; margin: 0 auto;
 }
 
 /* ── BLOG LIST VIEW ── */
-.blog-list { padding: clamp(36px, 5vw, 60px) 0; }
-
-/* Featured article — top */
-.featured-article {
-  display: grid; grid-template-columns: 1fr 420px;
-  gap: 0; border: 1px solid var(--rule); border-radius: var(--rl);
-  overflow: hidden; background: var(--white); box-shadow: var(--sh);
-  cursor: pointer; transition: box-shadow .18s, transform .18s;
-  margin-bottom: 28px;
-}
-.featured-article:hover { box-shadow: var(--sh-lg); transform: translateY(-2px); }
-@media (max-width: 720px) { .featured-article { grid-template-columns: 1fr; } }
-
-.fa-visual {
-  background: var(--navy);
-  display: flex; align-items: center; justify-content: center;
-  min-height: 280px; padding: 40px;
-  position: relative; overflow: hidden;
-}
-.fa-visual::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 70% at 30% 40%, rgba(29,78,216,.18) 0%, transparent 65%);
-}
-.fa-body { padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; justify-content: center; }
-.fa-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-.fa-title {
-  font-family: var(--serif);
-  font-size: clamp(20px, 2.5vw, 28px);
-  font-weight: 600; color: var(--navy); line-height: 1.25;
-  letter-spacing: -.4px; margin-bottom: 12px;
-}
-.fa-excerpt { font-size: 14px; color: var(--ink-mid); line-height: 1.65; font-weight: 300; margin-bottom: 20px; flex: 1; }
-.fa-meta { display: flex; align-items: center; justify-content: space-between; }
-.fa-date { font-size: 11px; color: var(--ink-fnt); font-family: var(--mono); }
-.fa-read {
-  font-size: 12px; font-weight: 600; color: var(--navy);
-  display: flex; align-items: center; gap: 5px;
-  padding: 7px 14px; border: 1.5px solid var(--rule); border-radius: var(--r);
-  transition: all .14s;
-}
-.featured-article:hover .fa-read { border-color: var(--navy); background: var(--paper-w); }
-.fa-read::after { content: '→'; transition: transform .14s; }
-.featured-article:hover .fa-read::after { transform: translateX(3px); }
-
-/* Article grid */
+.blog-list { padding: clamp(40px, 8vw, 80px) 0; }
 .articles-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  display: flex; flex-direction: column;
+  gap: clamp(40px, 6vw, 60px);
+  max-width: 680px; margin: 0 auto;
 }
-@media (max-width: 740px) { .articles-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .articles-grid { grid-template-columns: 1fr; } }
 
 .article-card {
-  border: 1px solid var(--rule); border-radius: var(--rl);
-  background: var(--white); overflow: hidden;
-  box-shadow: var(--sh); cursor: pointer;
   display: flex; flex-direction: column;
-  transition: box-shadow .18s, transform .18s;
+  cursor: pointer;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--rule);
 }
-.article-card:hover { box-shadow: var(--sh-lg); transform: translateY(-3px); }
+.article-card:last-child { border-bottom: none; }
 
-.ac-visual {
-  height: 140px; position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+.ac-meta-top {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
 }
-.ac-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
-.ac-tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.ac-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--ink-fnt);
+}
+.ac-date {
+  font-size: 11px; color: var(--ink-fnt); font-family: var(--mono);
+}
 .ac-title {
-  font-family: var(--serif); font-size: 16px; font-weight: 600;
-  color: var(--navy); line-height: 1.3; margin-bottom: 8px; letter-spacing: -.1px;
-  flex: 1;
+  font-family: var(--serif); font-size: clamp(24px, 4vw, 32px); font-weight: 600;
+  color: var(--navy); line-height: 1.2; margin-bottom: 12px; letter-spacing: -.4px;
+  transition: color .2s ease;
 }
-.ac-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
-.ac-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); }
-.ac-read { font-size: 11px; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 3px; }
-.ac-read::after { content: '→'; transition: transform .14s; }
-.article-card:hover .ac-read::after { transform: translateX(3px); }
-
-/* ── SVG THUMBNAILS ── */
-
-/* Netting — two overlapping circles */
-.thumb-netting {
-  background: linear-gradient(135deg, #0b1929 0%, #1a3a6b 100%);
+.ac-excerpt {
+  font-size: 16px; color: var(--ink-mid); font-weight: 300;
+  line-height: 1.65; margin-bottom: 16px; flex: 1;
 }
-.thumb-netting svg { width: 100px; height: 100px; opacity: .85; }
-
-/* Transfer pricing — scales */
-.thumb-tp {
-  background: linear-gradient(135deg, #1a2a1a 0%, #1f4a2a 100%);
+.ac-read {
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.thumb-tp svg { width: 100px; height: 100px; opacity: .85; }
-
-/* CEE / regulatory — shield/map */
-.thumb-reg {
-  background: linear-gradient(135deg, #1a1a2e 0%, #2d1f4a 100%);
-}
-.thumb-reg svg { width: 100px; height: 100px; opacity: .85; }
-
-/* RFP — document stack */
-.thumb-rfp {
-  background: linear-gradient(135deg, #1a2a1a 0%, #0d3a3a 100%);
-}
-.thumb-rfp svg { width: 100px; height: 100px; opacity: .85; }
-
-/* ZB vs Notional — branching flow */
-.thumb-zb {
-  background: linear-gradient(135deg, #1a1a0d 0%, #2d2a0a 100%);
-}
-.thumb-zb svg { width: 100px; height: 100px; opacity: .85; }
-
-/* TMS — system nodes */
-.thumb-tms {
-  background: linear-gradient(135deg, #0d1a2a 0%, #0a2a3a 100%);
-}
-.thumb-tms svg { width: 100px; height: 100px; opacity: .85; }
-
-/* Featured article visual */
-.thumb-featured {
-  background: linear-gradient(135deg, #0b1929 0%, #1a3a6b 100%);
-  width: 100%; height: 100%; min-height: 280px;
-  display: flex; align-items: center; justify-content: center;
-}
-.thumb-featured svg { width: 140px; height: 140px; opacity: .9; }
+.ac-read::after { content: '→'; transition: transform .2s ease; }
+.article-card:hover .ac-read::after { transform: translateX(4px); }
+.article-card:hover .ac-title { color: var(--navy-h); }
 
 /* ── POST VIEW ── */
 .post-view { display: none; }
 .post-view.open { display: block; }
 .list-view.hidden { display: none; }
 
-.post-header-wrap { padding: clamp(48px, 8vw, 88px) 0 clamp(28px, 4vw, 44px); border-bottom: 1px solid var(--rule); }
+.post-header-wrap { padding: clamp(60px, 10vw, 100px) 0 clamp(40px, 8vw, 80px); border-bottom: 1px solid var(--rule); text-align: center; }
 .post-wrap { max-width: 680px; margin: 0 auto; padding: 0 var(--pad); }
-
-.post-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.post-tag { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; color: var(--gold); text-transform: uppercase; }
-.post-date { font-size: 11px; color: var(--ink-fnt); font-family: var(--mono); }
-.post-title {
-  font-family: var(--serif);
-  font-size: clamp(28px, 4.5vw, 50px);
-  font-weight: 600; line-height: 1.1; letter-spacing: -.8px;
-  color: var(--navy); max-width: 18ch; margin-bottom: 16px;
-}
-.post-lead { font-size: 16px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
-
-.post-body { padding: clamp(28px, 5vw, 52px) 0; }
-.post-body h2 { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--navy); letter-spacing: -.3px; margin: 34px 0 12px; }
-.post-body p { font-size: 15px; color: var(--ink-mid); line-height: 1.82; margin-bottom: 18px; font-weight: 300; }
-.post-body strong { color: var(--ink); font-weight: 600; }
-.post-body ul { padding-left: 20px; margin-bottom: 18px; }
-.post-body li { font-size: 15px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 7px; font-weight: 300; }
-.post-callout {
-  background: #fdf8ec; border-left: 3px solid var(--gold);
-  border-radius: 0 var(--r) var(--r) 0;
-  padding: 16px 20px; margin: 26px 0;
-}
-.post-callout p { margin-bottom: 0; color: var(--ink); }
 
 .back-btn {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; color: var(--ink-lt); font-weight: 500;
-  cursor: pointer; transition: color .14s; margin-bottom: 24px;
+  cursor: pointer; transition: color .14s; margin-bottom: 32px;
 }
 .back-btn:hover { color: var(--navy); }
+.back-btn::after { content: ''; }
 .back-btn::before { content: '←'; }
 
-/* More articles */
-.more-articles { padding: clamp(36px, 5vw, 56px) 0; border-top: 1px solid var(--rule); }
-.more-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 20px; }
-.more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-@media (max-width: 640px) { .more-grid { grid-template-columns: 1fr; } }
-.more-card {
-  padding: 16px; border: 1px solid var(--rule); border-radius: var(--rl);
-  background: var(--white); cursor: pointer; transition: all .15s;
-  display: flex; flex-direction: column; gap: 6px;
+.post-meta-top {
+  display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px;
 }
-.more-card:hover { border-color: #c8c3ba; background: var(--paper-w); transform: translateY(-2px); }
-.more-tag { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
-.more-title { font-family: var(--serif); font-size: 14px; font-weight: 600; color: var(--navy); line-height: 1.3; letter-spacing: -.1px; }
-.more-date { font-size: 10px; color: var(--ink-fnt); font-family: var(--mono); margin-top: 4px; }
+.post-title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 600; line-height: 1.1; letter-spacing: -.8px;
+  color: var(--navy); margin-bottom: 24px;
+}
+.post-lead {
+  font-size: 18px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; margin: 0 auto;
+}
+
+.post-body { padding: clamp(40px, 8vw, 80px) 0; }
+.post-body h2 { font-family: var(--serif); font-size: 26px; font-weight: 600; color: var(--navy); letter-spacing: -.4px; margin: 48px 0 16px; }
+.post-body h3 { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--navy); letter-spacing: -.2px; margin: 32px 0 12px; }
+.post-body p { font-size: 16px; color: var(--ink-mid); line-height: 1.8; margin-bottom: 24px; font-weight: 300; }
+.post-body strong { color: var(--ink); font-weight: 600; }
+.post-body ul { padding-left: 20px; margin-bottom: 24px; }
+.post-body li { font-size: 16px; color: var(--ink-mid); line-height: 1.8; margin-bottom: 8px; font-weight: 300; }
+.post-callout {
+  background: var(--paper-w); border-left: 2px solid var(--navy);
+  padding: 24px 32px; margin: 36px 0; border-radius: 0 8px 8px 0;
+}
+.post-callout p { margin-bottom: 0; color: var(--ink); font-style: italic; }
+
+/* Loader */
+.loader { display: flex; justify-content: center; align-items: center; padding: 80px 0; }
+.loader-spinner {
+  width: 30px; height: 30px; border: 2px solid var(--rule);
+  border-top-color: var(--navy); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-msg { text-align: center; color: #ef4444; padding: 40px; font-size: 14px; }
 
 /* Footer */
 footer { background: var(--navy); padding: 52px 0 0; }
@@ -294,27 +210,6 @@ footer { background: var(--navy); padding: 52px 0 0; }
 .footer-bottom a:hover { color: rgba(255,255,255,.8); }
 @media (max-width: 680px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; } .footer-brand-col { grid-column: 1 / -1; } .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; } }
 @media (max-width: 360px) { .footer-grid { grid-template-columns: 1fr; } }
-
-/* Buttons */
-.btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 11px 22px; border-radius: var(--r);
-  font-family: var(--sans); font-size: 13px; font-weight: 600;
-  cursor: pointer; border: none; transition: all .16s;
-}
-.btn-navy { background: var(--navy); color: #fff; }
-.btn-navy:hover { background: var(--navy-h); transform: translateY(-1px); }
-.btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--rule); }
-.btn-outline:hover { border-color: var(--navy); background: var(--paper-w); }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
-  background: var(--navy); color: #fff; padding: 11px 22px; border-radius: var(--r);
-  font-size: 13px; font-weight: 500; box-shadow: var(--sh-lg);
-  transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .page-header { animation: fadeUp .4s ease forwards; }
@@ -358,156 +253,20 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <!-- ═══════════ LIST VIEW ═══════════ -->
 <div class="list-view" id="listView">
 
-  <div class="blog-list">
-    <div class="wrap">
+  <div class="page-header wrap">
+    <div class="ph-eyebrow">Insights</div>
+    <h1 class="ph-title">Treasury Intelligence</h1>
+    <p class="ph-sub">Practical articles on cash pooling, liquidity strategy, and treasury transformation. Written by practitioners, not vendors.</p>
+  </div>
 
-      <!-- FEATURED -->
-      <div class="featured-article" onclick="showPost('netting')">
-        <div class="fa-visual thumb-featured">
-          <!-- Netting: two overlapping circles with flow arrows -->
-          <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="52" cy="70" r="36" stroke="rgba(147,197,253,.5)" stroke-width="1.5" fill="rgba(29,78,216,.08)"/>
-            <circle cx="88" cy="70" r="36" stroke="rgba(147,197,253,.5)" stroke-width="1.5" fill="rgba(29,78,216,.08)"/>
-            <path d="M70 48 C76 56 76 84 70 92" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-            <path d="M70 48 C64 56 64 84 70 92" stroke="#93c5fd" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-            <circle cx="70" cy="70" r="3" fill="#60a5fa"/>
-            <text x="36" y="74" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-family="DM Mono, monospace">SURPLUS</text>
-            <text x="104" y="74" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="8" font-family="DM Mono, monospace">DEFICIT</text>
-            <path d="M58 70 L82 70" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M77 66 L82 70 L77 74" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
-        </div>
-        <div class="fa-body">
-          <div class="fa-tag">Liquidity · Featured</div>
-          <div class="fa-title">Why Netting Efficiency Is the Only Number That Matters in Cashpooling</div>
-          <div class="fa-excerpt">Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is something different — and most simulators barely mention it.</div>
-          <div class="fa-meta">
-            <span class="fa-date">Apr 2025</span>
-            <span class="fa-read">Read article</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- GRID -->
-      <div class="articles-grid">
-
-        <!-- Transfer Pricing -->
-        <div class="article-card" onclick="showPost('tp')">
-          <div class="ac-visual thumb-tp">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="50" y1="20" x2="50" y2="80" stroke="rgba(134,239,172,.4)" stroke-width="1.5"/>
-              <line x1="20" y1="50" x2="80" y2="50" stroke="rgba(134,239,172,.4)" stroke-width="1.5"/>
-              <rect x="28" y="28" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
-              <rect x="52" y="28" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
-              <rect x="28" y="52" width="20" height="20" rx="2" stroke="rgba(134,239,172,.6)" stroke-width="1.2" fill="rgba(134,239,172,.06)"/>
-              <rect x="52" y="52" width="20" height="20" rx="2" stroke="rgba(134,239,172,.3)" stroke-width="1.2" fill="none"/>
-              <text x="38" y="40" text-anchor="middle" fill="rgba(134,239,172,.7)" font-size="7" font-family="DM Mono, monospace">arm's</text>
-              <text x="38" y="49" text-anchor="middle" fill="rgba(134,239,172,.7)" font-size="7" font-family="DM Mono, monospace">length</text>
-            </svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag">Transfer Pricing</div>
-            <div class="ac-title">Intercompany Interest Rates: What the OECD Actually Says</div>
-            <div class="ac-meta"><span class="ac-date">Mar 2025</span><span class="ac-read">Read</span></div>
-          </div>
-        </div>
-
-        <!-- Regulatory -->
-        <div class="article-card" onclick="showPost('reg')">
-          <div class="ac-visual thumb-reg">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M50 15 L75 25 L75 50 C75 65 63 78 50 82 C37 78 25 65 25 50 L25 25 Z" stroke="rgba(196,181,253,.5)" stroke-width="1.5" fill="rgba(124,58,237,.08)"/>
-              <polyline points="38,50 45,57 62,42" stroke="rgba(196,181,253,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              <text x="50" y="93" text-anchor="middle" fill="rgba(196,181,253,.4)" font-size="6.5" font-family="DM Mono, monospace">COMPLIANCE</text>
-            </svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag">Regulatory</div>
-            <div class="ac-title">Cash Pooling Across Borders: What's Actually Allowed</div>
-            <div class="ac-meta"><span class="ac-date">Feb 2025</span><span class="ac-read">Read</span></div>
-          </div>
-        </div>
-
-        <!-- RFP -->
-        <div class="article-card" onclick="showPost('rfp')">
-          <div class="ac-visual thumb-rfp">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="22" y="18" width="36" height="46" rx="2" stroke="rgba(94,234,212,.4)" stroke-width="1.2" fill="rgba(20,184,166,.06)"/>
-              <rect x="30" y="26" width="36" height="46" rx="2" stroke="rgba(94,234,212,.5)" stroke-width="1.2" fill="rgba(20,184,166,.08)"/>
-              <line x1="36" y1="38" x2="56" y2="38" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
-              <line x1="36" y1="44" x2="56" y2="44" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
-              <line x1="36" y1="50" x2="48" y2="50" stroke="rgba(94,234,212,.5)" stroke-width="1"/>
-              <text x="50" y="86" text-anchor="middle" fill="rgba(94,234,212,.35)" font-size="6.5" font-family="DM Mono, monospace">BANK RFP</text>
-            </svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag">Banking</div>
-            <div class="ac-title">How to Run a Cashpool Bank RFP Without Leaving Money on the Table</div>
-            <div class="ac-meta"><span class="ac-date">Jan 2025</span><span class="ac-read">Read</span></div>
-          </div>
-        </div>
-
-        <!-- ZB vs Notional -->
-        <div class="article-card" onclick="showPost('zb')">
-          <div class="ac-visual thumb-zb">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="32" r="8" stroke="rgba(253,224,71,.5)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
-              <line x1="50" y1="40" x2="32" y2="58" stroke="rgba(253,224,71,.4)" stroke-width="1.2"/>
-              <line x1="50" y1="40" x2="68" y2="58" stroke="rgba(253,224,71,.4)" stroke-width="1.2"/>
-              <rect x="22" y="58" width="20" height="14" rx="2" stroke="rgba(253,224,71,.55)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
-              <rect x="58" y="58" width="20" height="14" rx="2" stroke="rgba(253,224,71,.55)" stroke-width="1.2" fill="rgba(234,179,8,.07)"/>
-              <text x="32" y="68" text-anchor="middle" fill="rgba(253,224,71,.55)" font-size="5.5" font-family="DM Mono, monospace">ZBA</text>
-              <text x="68" y="68" text-anchor="middle" fill="rgba(253,224,71,.55)" font-size="5.5" font-family="DM Mono, monospace">NOT.</text>
-            </svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag">Structure</div>
-            <div class="ac-title">Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?</div>
-            <div class="ac-meta"><span class="ac-date">Dec 2024</span><span class="ac-read">Read</span></div>
-          </div>
-        </div>
-
-        <!-- TMS -->
-        <div class="article-card" onclick="showPost('tms')">
-          <div class="ac-visual thumb-tms">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="10" stroke="rgba(125,211,252,.6)" stroke-width="1.3" fill="rgba(14,165,233,.08)"/>
-              <circle cx="22" cy="35" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
-              <circle cx="78" cy="35" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
-              <circle cx="22" cy="65" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
-              <circle cx="78" cy="65" r="7" stroke="rgba(125,211,252,.4)" stroke-width="1.2" fill="rgba(14,165,233,.06)"/>
-              <line x1="29" y1="38" x2="41" y2="45" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
-              <line x1="71" y1="38" x2="59" y2="45" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
-              <line x1="29" y1="62" x2="41" y2="55" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
-              <line x1="71" y1="62" x2="59" y2="55" stroke="rgba(125,211,252,.3)" stroke-width="1"/>
-              <text x="50" y="54" text-anchor="middle" fill="rgba(125,211,252,.7)" font-size="6" font-family="DM Mono, monospace">TMS</text>
-            </svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag">Technology</div>
-            <div class="ac-title">Kyriba, SAP, or Cobase? Choosing a TMS for Your Group</div>
-            <div class="ac-meta"><span class="ac-date">Nov 2024</span><span class="ac-read">Read</span></div>
-          </div>
-        </div>
-
-        <!-- Placeholder — coming soon -->
-        <div class="article-card" style="opacity:.5;cursor:default;pointer-events:none;">
-          <div class="ac-visual" style="background:var(--paper-w);height:140px;display:flex;align-items:center;justify-content:center;">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="var(--rule)" stroke-width="1.5"><circle cx="20" cy="20" r="14"/><line x1="20" y1="12" x2="20" y2="20"/><line x1="20" y1="20" x2="26" y2="20"/></svg>
-          </div>
-          <div class="ac-body">
-            <div class="ac-tag" style="color:var(--ink-fnt)">Coming soon</div>
-            <div class="ac-title" style="color:var(--ink-fnt)">New article in preparation</div>
-            <div class="ac-meta"><span class="ac-date">—</span></div>
-          </div>
-        </div>
-
-      </div>
+  <div class="blog-list wrap">
+    <div id="articlesContainer" class="articles-grid">
+      <!-- Loader while fetching from Sanity -->
+      <div class="loader"><div class="loader-spinner"></div></div>
     </div>
   </div>
 
-
-</div><!-- /list-view -->
+</div>
 
 <!-- ═══════════ POST VIEW ═══════════ -->
 <div class="post-view" id="postView">
@@ -515,9 +274,9 @@ footer { background: var(--navy); padding: 52px 0 0; }
   <div class="post-header-wrap">
     <div class="post-wrap">
       <span class="back-btn" onclick="showList()">All articles</span>
-      <div class="post-eyebrow">
-        <span class="post-tag" id="postTag"></span>
-        <span class="post-date" id="postDate"></span>
+      <div class="post-meta-top">
+        <span class="ac-tag" id="postTag"></span>
+        <span class="ac-date" id="postDate"></span>
       </div>
       <h1 class="post-title" id="postTitle"></h1>
       <p class="post-lead" id="postLead"></p>
@@ -528,16 +287,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
     <div class="post-body" id="postBody"></div>
   </div>
 
-  <!-- More articles -->
-  <div class="wrap">
-    <div class="more-articles">
-      <div class="more-label">More articles</div>
-      <div class="more-grid" id="moreGrid"></div>
-    </div>
-  </div>
-
-
-</div><!-- /post-view -->
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -564,10 +314,10 @@ footer { background: var(--navy); padding: 52px 0 0; }
         <a href="/contact.html">Book Advisory Session</a>
       </div>
       <div class="footer-col">
-        <div class="footer-col-title">Trust &amp; Legal</div>
-        <a href="/security.html">Security &amp; Privacy</a>
+        <div class="footer-col-title">Trust & Legal</div>
+        <a href="/security.html">Security & Privacy</a>
         <a href="#">Privacy Policy</a>
-        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Terms & Conditions</a>
         <a href="/guide.html">Guide</a>
       </div>
     </div>
@@ -578,122 +328,146 @@ footer { background: var(--navy); padding: 52px 0 0; }
   </div>
 </footer>
 
-<div class="toast" id="toast"></div>
-
 <script>
-const POSTS = {
-  netting: {
-    tag: 'Liquidity', date: 'April 2025',
-    title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling',
-    lead: 'Most treasury teams fixate on the interest rate spread. The real driver of cashpool ROI is netting efficiency — and most simulators barely mention it.',
-    body: `<h2>What netting efficiency actually measures</h2>
-<p>Netting efficiency is the ratio of the offset between your group's surplus and deficit balances. A group with €5M in surpluses and €3M in deficits has a netting offset of €3M — meaning €3M of deficit is funded internally instead of through external borrowing.</p>
-<p>A group with 80% netting efficiency gets most of its pool value from internal funding, regardless of what the bank charges. A group with 20% efficiency is essentially just getting a marginally better rate on external borrowing.</p>
-<div class="post-callout"><p><strong>Rule of thumb:</strong> below 30% netting efficiency, cashpooling delivers modest returns. Above 60%, the business case holds across almost all rate environments.</p></div>
-<h2>What drives netting efficiency</h2>
-<p>Group structure matters more than rates. Groups where some entities are consistently cash-rich and others consistently cash-poor have naturally high netting efficiency. Groups where all entities move in the same direction — all flush in Q4, all dry in Q2 — see low netting efficiency because there is nothing to offset.</p>
-<p>The practical implication: before modelling pool rates, model the <strong>direction and seasonality of your entities' cash flows</strong>.</p>
-<h2>How to improve netting efficiency structurally</h2>
-<p>Several choices increase netting efficiency: broadening pool participation to include more entities, adjusting payment terms to move surplus and deficit peaks out of phase, and restructuring which entity holds which assets. These are changes identified before the pool is live — not after.</p>`
-  },
-  tp: {
-    tag: 'Transfer Pricing', date: 'March 2025',
-    title: 'Intercompany Interest Rates: What the OECD Actually Says',
-    lead: 'Setting the wrong intercompany interest rate on pooling arrangements is one of the most common and most expensive compliance gaps in cross-border treasury structures.',
-    body: `<h2>The arm's length principle applied to pools</h2>
-<p>The OECD Transfer Pricing Guidelines require that intercompany transactions — including cash pool balances — be priced as if between unrelated parties. The rate paid to a surplus entity and charged to a deficit entity must reflect what a bank would offer for comparable standalone transactions.</p>
-<div class="post-callout"><p><strong>The correct framework:</strong> the pool participant rate should reflect the entity's standalone creditworthiness adjusted for the benefit of group membership — not the group's blended rate alone.</p></div>
-<h2>Safe harbour rates across jurisdictions</h2>
-<p>Several countries have safe harbour provisions for intercompany loans. Outside safe harbours, you need comparables analysis — a Refinitiv or Bloomberg search for comparable third-party loans, documented and retained for at least five years.</p>
-<h2>The audit risk is real</h2>
-<p>Tax authorities have significantly increased scrutiny of intercompany financial transactions, driven by ATAD II and OECD Pillar Two. The most common finding: group companies in deficit positions being charged below-market rates by the pool leader, effectively subsidising profitable entities in low-tax jurisdictions.</p>`
-  },
-  reg: {
-    tag: 'Regulatory', date: 'February 2025',
-    title: "Cash Pooling Across Borders: What's Actually Allowed",
-    lead: 'Regulatory restrictions on cross-border cash pooling differ significantly by jurisdiction. What works seamlessly in one market may require central bank approval — or may not be permitted — across the border.',
-    body: `<h2>The core question: physical or notional?</h2>
-<p>Most regulatory restrictions target the physical movement of cash across borders — zero-balancing structures — rather than notional pooling, where balances stay in place and only the interest calculation is centralised. This distinction is critical when evaluating feasibility in restrictive markets.</p>
-<h2>Common restriction patterns</h2>
-<p>Several markets impose <strong>thin capitalisation rules</strong> that limit the deductibility of intercompany interest, effectively increasing the cost of cross-border pool participation. Others require documentation of economic substance — the arrangement must be demonstrably rational for each participating entity, not just for the group as a whole.</p>
-<div class="post-callout"><p><strong>Key point:</strong> "The group benefits" is not a sufficient justification in most jurisdictions. Each entity's participation must stand on its own economic merits.</p></div>
-<h2>Withholding tax on intercompany interest</h2>
-<p>Interest payments between group entities — which are the mechanism through which a cash pool allocates costs and benefits — are typically treated as taxable income in the recipient's jurisdiction. Withholding tax rates vary significantly, and double tax treaties may reduce or eliminate them. This analysis must be completed before the pool structure is finalised.</p>
-<h2>Practical recommendation</h2>
-<p>Obtain local legal and tax opinions before going live in any jurisdiction where you have doubts. The implementation cost of proper advice is trivial compared to the reassessment risk on several years of intercompany interest. The regulatory compliance matrix in the CashPoolModel report provides a structured starting point for this analysis.</p>`
-  },
-  rfp: {
-    tag: 'Banking', date: 'January 2025',
-    title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table',
-    lead: 'Most corporate treasury teams run bank RFPs the same way their predecessors did a decade ago. The process needs to evolve.',
-    body: `<h2>What banks actually respond to</h2>
-<p>Banks price cash pooling mandates based on two things: the net interest position of the pool and the ancillary wallet — FX, payments, trade finance — they expect to win. A group with a structural surplus pool and significant FX flows receives dramatically better pricing than a group with a deficit pool and no ancillary business.</p>
-<div class="post-callout"><p><strong>Practical insight:</strong> groups that share their current wallet breakdown with bidding banks typically receive pricing 30 to 50 basis points tighter than groups that keep this information confidential.</p></div>
-<h2>Structuring the tender</h2>
-<p>A well-structured cashpool RFP includes: group structure overview, current account count and balances by entity, expected transaction volumes by type, current banking relationships, evaluation criteria and weighting, and a standardised pricing template that forces banks to quote in comparable formats.</p>
-<p>The pricing template is critical. Banks will quote rates in different formats — spread over benchmark, flat rate, tiered — unless you force standardisation. A good RFP template normalises quotes to a common basis, making real comparison possible.</p>
-<h2>What to evaluate beyond price</h2>
-<p>Implementation timeline, quality of the connectivity to your ERP or TMS, the bank's footprint in the jurisdictions you need, and the quality of the local relationship teams in each market. Price is the starting point, not the finish line.</p>`
-  },
-  zb: {
-    tag: 'Structure', date: 'December 2024',
-    title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?',
-    lead: 'The debate between physical and notional pooling comes up in almost every treasury project. The right answer depends on factors most advice articles ignore.',
-    body: `<h2>The standard comparison is misleading</h2>
-<p>Most articles compare zero-balancing and notional pooling on a simple axis: physical movement of funds versus virtual offset. This misses the real decision criteria, which are legal, tax, and operational.</p>
-<h2>When zero-balancing wins</h2>
-<p>Zero-balancing (physical sweep) is cleaner from a tax perspective because the intercompany funding is explicit: funds move, loans are created, interest is charged and paid. This makes arm's length pricing visible and auditable. It also works in more jurisdictions — notional pooling requires banks with offsetting balance capabilities, which not all local banks provide.</p>
-<h2>When notional pooling wins</h2>
-<p>Notional pooling avoids the operational complexity of daily sweep transactions and the associated intercompany loan accounting. For groups where subsidiaries are operationally autonomous and local management resists the optics of cash being swept to a holding company, notional preserves the legal ownership of balances while achieving the interest offset.</p>
-<div class="post-callout"><p><strong>Bottom line:</strong> if your group operates in markets where zero-balancing is well-supported by local banks, and you have a cooperative legal and tax team, zero-balancing usually delivers cleaner outcomes. For distributed groups across many markets with varying local bank relationships, notional is often more pragmatic.</p></div>`
-  },
-  tms: {
-    tag: 'Technology', date: 'November 2024',
-    title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group',
-    lead: 'The TMS market has changed significantly over the past few years. Cloud-native challengers are winning deals that used to go automatically to established names.',
-    body: `<h2>What a TMS needs to do for a cash pool</h2>
-<p>For cash pooling specifically, the TMS needs to: receive balance data from pool banks, calculate intercompany interest allocations, post accounting entries to each entity's ledger, and produce reporting for treasury and finance. Everything else is secondary.</p>
-<h2>Kyriba</h2>
-<p>Kyriba remains a strong choice for complex multi-bank, multi-currency pool structures. Its cash pooling module handles both zero-balancing and notional structures with solid intercompany accounting capabilities. The weakness is implementation time — typically four to eight months for full cash management — and pricing, which has increased significantly in recent years.</p>
-<h2>SAP TRM</h2>
-<p>If your group runs SAP for ERP, SAP Treasury and Risk Management is the natural choice. The integration is seamless and intercompany accounting flows directly into the general ledger. For groups on S/4HANA, the module has improved substantially and is worth serious evaluation.</p>
-<h2>Cloud-native challengers</h2>
-<p>Platforms such as Cobase, Nomentia, and TreasuryXpress are increasingly viable for groups with five to twenty pool entities and a single primary bank relationship. They implement faster — six to twelve weeks is realistic — and cost significantly less. The trade-off is depth: complex multi-currency netting engines and sophisticated intercompany allocation logic are still maturing on these platforms.</p>`
-  }
-};
+// --- SANITY CMS INTEGRATION ---
+// 1. Set up your Sanity project ID and dataset here
+const SANITY_PROJECT_ID = 'jsvy02iu'; // <-- REPLACE WITH YOUR SANITY PROJECT ID
+const SANITY_DATASET = 'production';
+const SANITY_API_VERSION = '2024-04-30'; // API version date
 
-const ALL_POSTS = [
-  { id: 'netting', tag: 'Liquidity',         date: 'Apr 2025', title: 'Why Netting Efficiency Is the Only Number That Matters in Cashpooling' },
-  { id: 'tp',      tag: 'Transfer Pricing',   date: 'Mar 2025', title: 'Intercompany Interest Rates: What the OECD Actually Says' },
-  { id: 'reg',     tag: 'Regulatory',         date: 'Feb 2025', title: 'Cash Pooling Across Borders: What\'s Actually Allowed' },
-  { id: 'rfp',     tag: 'Banking',            date: 'Jan 2025', title: 'How to Run a Cashpool Bank RFP Without Leaving Money on the Table' },
-  { id: 'zb',      tag: 'Structure',          date: 'Dec 2024', title: 'Zero-Balancing vs. Notional Pooling: Which One Is Actually Better?' },
-  { id: 'tms',     tag: 'Technology',         date: 'Nov 2024', title: 'Kyriba, SAP, or Cobase? Choosing a TMS for Your Group' },
+// GROQ Query to fetch posts
+const QUERY = encodeURIComponent('*[_type == "post"] | order(publishedAt desc) { "id": slug.current, title, "tag": category->title, "date": publishedAt, excerpt, body }');
+
+// Placeholder dummy data if Sanity is not configured yet.
+const DUMMY_POSTS = [
+  {
+    id: 'setup-sanity',
+    title: 'Connecting Sanity CMS to Your Blog',
+    tag: 'Platform',
+    date: new Date().toISOString(),
+    excerpt: 'This is a placeholder post. To start writing real posts, configure your Sanity project ID in the blog.html source code and create your first post in the Sanity Studio.',
+    body: [
+      {
+        _type: 'block',
+        style: 'normal',
+        children: [{ _type: 'span', text: 'Once your Sanity project is set up and the Project ID is added to the script, this page will automatically fetch and display your articles. The design is kept clean, minimalist, and deeply aligned with the Swiss professional aesthetic. To add real posts, log in to your Sanity Studio and start publishing!' }]
+      }
+    ]
+  },
+  {
+    id: 'swiss-design',
+    title: 'The Principles of Swiss Treasury Design',
+    tag: 'Design',
+    date: new Date(Date.now() - 86400000 * 5).toISOString(),
+    excerpt: 'Clarity, precision, and the absence of decorative noise. How we apply International Typographic Style to financial interfaces.',
+    body: [
+      {
+        _type: 'block',
+        style: 'normal',
+        children: [{ _type: 'span', text: 'Financial software is traditionally cluttered. By applying Swiss design principles, we prioritize the data itself. High contrast, precise typography, and negative space help users focus on what matters: the numbers.' }]
+      }
+    ]
+  }
 ];
 
-function showPost(id) {
-  const p = POSTS[id];
-  if (!p) return;
-  document.getElementById('postTag').textContent = p.tag;
-  document.getElementById('postDate').textContent = p.date;
-  document.getElementById('postTitle').textContent = p.title;
-  document.getElementById('postLead').textContent = p.lead;
-  document.getElementById('postBody').innerHTML = p.body;
+let allPosts = [];
 
-  // More articles — show 3 others
-  const others = ALL_POSTS.filter(a => a.id !== id).slice(0, 3);
-  document.getElementById('moreGrid').innerHTML = others.map(a => `
-    <div class="more-card" onclick="showPost('${a.id}')">
-      <div class="more-tag">${a.tag}</div>
-      <div class="more-title">${a.title}</div>
-      <div class="more-date">${a.date}</div>
+// Very simple PortableText to HTML parser for basic Sanity blocks
+function portableTextToHTML(blocks) {
+  if (!blocks || !Array.isArray(blocks)) return '';
+  return blocks.map(block => {
+    if (block._type !== 'block') return '';
+    
+    let html = '';
+    if (block.children) {
+      block.children.forEach(child => {
+        let text = child.text || '';
+        if (child.marks && child.marks.includes('strong')) text = '<strong>' + text + '</strong>';
+        if (child.marks && child.marks.includes('em')) text = '<em>' + text + '</em>';
+        html += text;
+      });
+    }
+
+    if (block.style === 'h2') return '<h2>' + html + '</h2>';
+    if (block.style === 'h3') return '<h3>' + html + '</h3>';
+    if (block.style === 'blockquote') return '<div class="post-callout"><p>' + html + '</p></div>';
+    
+    // Default to paragraph
+    return '<p>' + html + '</p>';
+  }).join('');
+}
+
+function formatDate(isoString) {
+  if (!isoString) return '';
+  const d = new Date(isoString);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+}
+
+async function fetchPosts() {
+  if (SANITY_PROJECT_ID === 'your_project_id_here') {
+    // If not configured, use dummy data
+    renderList(DUMMY_POSTS);
+    allPosts = DUMMY_POSTS;
+    checkHash();
+    return;
+  }
+
+  const url = 'https://' + SANITY_PROJECT_ID + '.api.sanity.io/v' + SANITY_API_VERSION + '/data/query/' + SANITY_DATASET + '?query=' + QUERY;
+  
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch from Sanity');
+    const data = await res.json();
+    allPosts = data.result || [];
+    renderList(allPosts);
+    checkHash();
+  } catch (error) {
+    console.error(error);
+    document.getElementById('articlesContainer').innerHTML = '<div class="error-msg">Unable to load articles at this time. Please try again later.</div>';
+  }
+}
+
+function renderList(posts) {
+  const container = document.getElementById('articlesContainer');
+  if (posts.length === 0) {
+    container.innerHTML = '<div class="error-msg">No articles published yet.</div>';
+    return;
+  }
+
+  container.innerHTML = posts.map(p => `
+    <div class="article-card" onclick="showPost('\${p.id}')">
+      <div class="ac-meta-top">
+        <span class="ac-tag">\${p.tag || 'Article'}</span>
+        <span class="ac-date">\${formatDate(p.date)}</span>
+      </div>
+      <div class="ac-title">\${p.title}</div>
+      <div class="ac-excerpt">\${p.excerpt || ''}</div>
+      <div class="ac-read">Read article</div>
     </div>
   `).join('');
+}
+
+function showPost(id) {
+  const p = allPosts.find(x => x.id === id);
+  if (!p) return;
+  
+  document.getElementById('postTag').textContent = p.tag || 'Article';
+  document.getElementById('postDate').textContent = formatDate(p.date);
+  document.getElementById('postTitle').textContent = p.title;
+  document.getElementById('postLead').textContent = p.excerpt || '';
+  
+  // Convert portable text or direct HTML
+  if (Array.isArray(p.body)) {
+    document.getElementById('postBody').innerHTML = portableTextToHTML(p.body);
+  } else {
+    document.getElementById('postBody').innerHTML = p.body || '';
+  }
 
   document.getElementById('listView').classList.add('hidden');
   document.getElementById('postView').classList.add('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
   document.title = p.title + ' — CashPoolModel';
+  window.history.pushState(null, null, '#' + id);
 }
 
 function showList() {
@@ -701,26 +475,22 @@ function showList() {
   document.getElementById('postView').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
   document.title = 'Treasury Insights — CashPoolModel';
+  window.history.pushState(null, null, window.location.pathname);
 }
 
-async function addToBrevo(email) {
-  try {
-    await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-  } catch(e) { console.error(e); }
-}
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+function checkHash() {
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    showPost(hash);
+  } else {
+    showList();
+  }
 }
 
-// Handle direct URL with hash e.g. blog.html#netting
-const hash = window.location.hash.slice(1);
-if (hash && POSTS[hash]) showPost(hash);
+// Initial fetch
+fetchPosts();
+
+window.addEventListener('popstate', checkHash);
 </script>
 </body>
 </html>
