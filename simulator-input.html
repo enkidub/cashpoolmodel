@@ -93,12 +93,15 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .ac-item strong{color:var(--navy)}
 
 /* ENTITY CARDS */
-.entity-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.entity-cards-wrap{position:relative;margin-bottom:10px}
+.entity-cards-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,var(--white));pointer-events:none;border-radius:0 0 var(--rl) var(--rl)}
+.entity-cards{display:flex;flex-direction:column;gap:8px;max-height:316px;overflow-y:auto;padding-right:3px;scroll-behavior:smooth}
 .entity-card{border:1px solid var(--rule);border-radius:var(--rl);overflow:hidden;background:var(--white);transition:border-color .13s}
 .entity-card:hover{border-color:#c8c3ba}
-.ec-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper-w);border-bottom:1px solid var(--rule)}
-.ec-flag{flex-shrink:0;width:22px;height:16px;border-radius:2px}
+.ec-header{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--paper-w);border-bottom:1px solid var(--rule)}
 .ec-ac-item .fi{width:16px;height:12px;border-radius:1px;flex-shrink:0}
+.ec-parent-select{font-size:10px;color:var(--ink-fnt);border:none;background:transparent;cursor:pointer;font-family:var(--sans);outline:none;padding:2px 2px;border-radius:3px;max-width:110px;transition:background .12s;flex-shrink:0}
+.ec-parent-select:hover{background:var(--rule)}
 .ec-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
 .ec-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0}
 .ec-badge.pos{background:var(--emerald-lt);color:var(--emerald-dk)}
@@ -346,7 +349,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         <div class="sec-body">
           <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
           <div class="warning-box" id="warnBox"></div>
-          <div class="entity-cards" id="entityCards"></div>
+          <div class="entity-cards-wrap"><div class="entity-cards" id="entityCards"></div></div>
         </div>
       </div>
 
@@ -653,7 +656,7 @@ const EXAMPLE_ENTITIES=[
 ];
 
 function addEntity(){
-  entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1,parentIdx:null});
+  entities.unshift({name:`Entity ${entities.length+1}`,country:'',cc:'EUR',balance:0,accounts:1,parentIdx:null});
   renderEntities(); recalc();
 }
 function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
@@ -663,26 +666,30 @@ function renderEntities(){
   const container=g('entityCards');
   if(!entities.length){container.innerHTML='<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px">No entities added yet.</div>';return}
   container.innerHTML=entities.map((e,i)=>{
-    const co=COUNTRIES.find(c=>c.code===e.country)||{flag:'🏢',name:e.country,code:e.country};
+    const co=COUNTRIES.find(c=>c.code===e.country)||{code:e.country||'',name:e.country||'Select country…'};
     const cu=CURRENCIES.find(c=>c.code===e.cc)||{code:e.cc,name:e.cc};
     const surplus=e.balance>0,deficit=e.balance<0;
     const badgeClass=surplus?'pos':deficit?'neg':'zero';
     const badgeText=surplus?'↑ Surplus':deficit?'↓ Deficit':'Neutral';
+    const parentName=e.parentIdx!==null&&e.parentIdx!==undefined&&entities[e.parentIdx]?entities[e.parentIdx].name:'';
     return `
     <div class="entity-card">
       <div class="ec-header">
-        <span class="ec-flag fi fi-${co.code.toLowerCase()}"></span>
-        <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()"
-          style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans)">
+        <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;renderEntities();recalc()"
+          style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans);min-width:0">
         <span class="ec-badge ${badgeClass}">${badgeText}</span>
+        <select class="ec-parent-select" title="Parent account" onchange="entities[${i}].parentIdx=this.value===''?null:parseInt(this.value);renderEntities();recalc()">
+          <option value="" ${e.parentIdx===null||e.parentIdx===undefined?'selected':''}>↳ master</option>
+          ${entities.map((oth,j)=>j!==i?`<option value="${j}" ${String(e.parentIdx)===String(j)?'selected':''}>${oth.name}</option>`:'').join('')}
+        </select>
         <button class="ec-del" onclick="removeEntity(${i})">✕</button>
       </div>
       <div class="ec-body">
         <div class="ec-field">
           <div class="ec-field-label">Country</div>
           <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'country')" type="button">
-            <span class="fi fi-${co.code.toLowerCase()}" style="width:16px;height:12px;border-radius:1px;flex-shrink:0"></span>
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${co.name}</span>
+            ${co.code?`<span class="fi fi-${co.code.toLowerCase()}" style="width:16px;height:12px;border-radius:1px;flex-shrink:0"></span>`:''}
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${co.code?'inherit':'var(--ink-fnt)'}">${co.name}</span>
             <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
           </button>
         </div>
@@ -694,18 +701,11 @@ function renderEntities(){
             <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
           </button>
         </div>
-        <div class="ec-field">
+        <div class="ec-field" style="border-right:none">
           <div class="ec-field-label">Avg. daily balance</div>
           <input type="number" class="bal ${e.balance>0?'pos':e.balance<0?'neg':''}"
             value="${e.balance}" step="50000"
             onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='bal '+(entities[${i}].balance>0?'pos':entities[${i}].balance<0?'neg':'');renderEntities();recalc()">
-        </div>
-        <div class="ec-field ec-field-wide">
-          <div class="ec-field-label">Parent account</div>
-          <select onchange="entities[${i}].parentIdx=this.value===''?null:parseInt(this.value);recalc()">
-            <option value="" ${e.parentIdx===null||e.parentIdx===undefined?'selected':''}>↳ Direct to master</option>
-            ${entities.map((oth,j)=>j!==i?`<option value="${j}" ${String(e.parentIdx)===String(j)?'selected':''}>${oth.name}</option>`:'').join('')}
-          </select>
         </div>
       </div>
     </div>`;
