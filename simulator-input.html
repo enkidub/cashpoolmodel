@@ -214,7 +214,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       <div class="sec">
         <div class="sec-hd">
           <div class="sec-icon">🏢</div>
-          <div><div class="sec-title">Pool Setup</div><div class="sec-sub">Pool type, currency, bank and day count convention</div></div>
+          <div><div class="sec-title">Pool Setup</div></div>
         </div>
         <div class="sec-body">
           <div class="row">
@@ -288,16 +288,15 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       <div class="sec">
         <div class="sec-hd">
           <div class="sec-icon">🏦</div>
-          <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Pool hierarchy — accounts, balances, target balances and sweep structure</div></div>
+          <div><div class="sec-title">Entity Accounts</div></div>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="add-btn" onclick="addEntity()">+ Add account</button>
+            <button class="preset-btn" onclick="loadExample()">Load example structure</button>
+          </div>
         </div>
         <div class="sec-body">
-          <div class="note">Click any account row to expand and edit details. Positive balance = surplus, negative = deficit. TBA = minimum balance retained before sweep. Sub-accounts inherit their parent's pool structure.</div>
           <div class="warning-box" id="warnBox"></div>
           <div class="entity-cards" id="entityCards"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-            <button class="add-btn" onclick="addEntity()">+ Add entity</button>
-            <button class="preset-btn" onclick="loadExample()" style="margin-left:8px">Load example structure</button>
-          </div>
         </div>
       </div>
 
@@ -398,22 +397,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         <div class="sp-label">Live Analysis</div>
         <div class="sp-title" id="sp-saving">—</div>
         <div class="sp-sub">estimated annual interest saving</div>
-
-        <!-- Netting visual -->
-        <div style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">
-          Netting efficiency
-          <div class="tt" style="display:inline-flex;margin-left:4px"><div class="tt-icon">?</div><span>The fraction of group surpluses and deficits that offset each other internally. Higher = better pool ROI.</span></div>
-        </div>
-        <div class="netting-vis">
-          <div class="netting-bar-bg">
-            <div class="netting-bar-fill" id="nettingBar" style="width:0%"></div>
-          </div>
-          <div class="netting-labels">
-            <span>0%</span>
-            <span id="nettingPct">—</span>
-            <span>100%</span>
-          </div>
-        </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
           <div style="background:var(--paper-w);border-radius:var(--r);padding:8px 10px">
@@ -1060,7 +1043,6 @@ function recalc(){
   if(pcr <= cr)  warnings.push('Pool credit rate ≤ bilateral deposit — no uplift on surplus');
   if(dr > 0.20)  warnings.push('Debit rate >20% — please verify');
   if(cr > pcr)   warnings.push('Bilateral deposit rate > pool credit rate — unusual');
-  if(nettingEff < 10 && totalBal > 0) warnings.push('Netting efficiency <10% — all entities move in same direction');
 
   const warnBox=g('warnBox');
   if(warnings.length){
