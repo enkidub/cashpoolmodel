@@ -1229,7 +1229,7 @@ function ExportSection() {
 
 function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBenefit,
   interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities,
-  poolBank, fmtK, fmtM, sim, calc, currencies, poolLabel, nettingLabel }) {
+  poolBank, fmtK, fmtM, sim, calc }) {
   const title = SECTION_TITLES[active] || 'Executive Summary';
   const currencies = [...new Set((dynEntities||ENTITIES).map(e=>e.cc))];
   const nettingLabel = nettingEff+'%';
