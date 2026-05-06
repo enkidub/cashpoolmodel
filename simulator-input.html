@@ -597,13 +597,13 @@ function setPreset(k){
 // ── ENTITY TABLE ──
 const EXAMPLE_ENTITIES = [
   { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      iban:'', accounts:1, parentId:null,  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000, tba:500000, iban:'', accounts:3, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e2', name:'France HoldCo',        country:'FR', cc:'EUR', balance:1500000, tba:200000, iban:'', accounts:2, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e3', name:'France SAS',           country:'FR', cc:'EUR', balance:2300000, tba:100000, iban:'', accounts:1, parentId:'e2',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e4', name:'France Retail',        country:'FR', cc:'EUR', balance:800000,  tba:50000,  iban:'', accounts:1, parentId:'e2',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000, tba:500000, iban:'', accounts:3, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e2', name:'France HoldCo',        country:'FR', cc:'EUR', balance:1500000, tba:200000, iban:'', accounts:2, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e3', name:'France SAS',           country:'FR', cc:'EUR', balance:2300000, tba:100000, iban:'', accounts:1, parentId:'e2',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e4', name:'France Retail',        country:'FR', cc:'EUR', balance:800000,  tba:50000,  iban:'', accounts:1, parentId:'e2',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
   { id:'e5', name:'UK Ltd',               country:'GB', cc:'GBP', balance:-400000, tba:0,      iban:'', accounts:2, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:0.05, isExpanded:false },
-  { id:'e6', name:'CEE HoldCo',           country:'CZ', cc:'EUR', balance:600000,  tba:100000, iban:'', accounts:1, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e7', name:'Czech s.r.o.',         country:'CZ', cc:'CZK', balance:900000,  tba:50000,  iban:'', accounts:1, parentId:'e6',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e6', name:'CEE HoldCo',           country:'CZ', cc:'EUR', balance:600000,  tba:100000, iban:'', accounts:1, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e7', name:'Czech s.r.o.',         country:'CZ', cc:'CZK', balance:900000,  tba:50000,  iban:'', accounts:1, parentId:'e6',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
 ];
 
 function getEntityLevel(entity, allEntities) {
@@ -640,6 +640,8 @@ function updateEntity(id, field, value) {
   const e = entities.find(x => x.id === id);
   if (!e) return;
   e[field] = value;
+  if (field === 'tba' && parseFloat(value) > 0 && e.sweepType === 'zba') e.sweepType = 'tba';
+  if (field === 'tba' && (parseFloat(value) === 0 || value === '') && e.sweepType === 'tba') e.sweepType = 'zba';
   renderEntities();
   recalc();
 }
@@ -665,6 +667,11 @@ function removeEntity(id) {
   entities = entities.filter(e => e.id !== id);
   renderEntities();
   recalc();
+}
+
+function fmtInputNum(val) {
+  if (!val && val !== 0) return '';
+  return Number(val).toLocaleString('en-US');
 }
 
 function renderEntities() {
@@ -770,6 +777,7 @@ function renderEntities() {
       ${e.isExpanded ? `
       <!-- Section A: Account Details -->
       <div style="padding:14px 16px;background:var(--white);border-top:1px solid var(--rule)">
+        <div style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Account details</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Entity name</label>
@@ -796,7 +804,10 @@ function renderEntities() {
 
       <!-- Section B: Pool Parameters -->
       <div style="padding:14px 16px;background:var(--paper);border-top:1px solid var(--rule)">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Pool parameters</div>
+
+        <!-- Balance + TBA -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           ${isRoot ? `
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Avg. daily balance</label>
@@ -805,8 +816,9 @@ function renderEntities() {
           ` : `
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Avg. daily balance (EUR eq.)</label>
-            <input type="number" value="${e.balance}" step="50000"
-              onchange="updateEntity('${e.id}','balance',parseFloat(this.value)||0)"
+            <input type="text" value="${e.balance !== 0 ? Number(e.balance).toLocaleString('en-US') : ''}"
+              onchange="updateEntity('${e.id}','balance',parseFloat(this.value.replace(/,/g,''))||0)"
+              placeholder="e.g. 1,500,000"
               style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);outline:none"
               onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
           </div>
@@ -816,51 +828,52 @@ function renderEntities() {
               Target Balance (TBA)
               <span style="margin-left:4px;width:12px;height:12px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt);cursor:help" title="Minimum balance retained before sweep. Leave 0 to use group default.">?</span>
             </label>
-            <input type="number" value="${e.tba||0}" step="10000" min="0"
-              onchange="updateEntity('${e.id}','tba',parseFloat(this.value)||0)"
-              placeholder="0 = use group default"
+            <input type="text" value="${e.tba > 0 ? Number(e.tba).toLocaleString('en-US') : ''}"
+              onchange="updateEntity('${e.id}','tba',parseFloat(this.value.replace(/,/g,''))||0)"
+              placeholder="0 = full sweep"
               style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
               onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
           </div>
-          ${!isRoot ? `
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Effective sweep amount</label>
-            <div style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper-w);font-family:var(--mono);font-size:12px;font-weight:700;color:${effectiveSweep>0?'var(--emerald)':'var(--ink-fnt)'}">${effectiveSweep >= 1e6 ? '€'+(effectiveSweep/1e6).toFixed(2)+'M' : effectiveSweep >= 1e3 ? '€'+Math.round(effectiveSweep/1e3)+'k' : '€'+Math.round(effectiveSweep)}</div>
-          </div>
-          ` : '<div></div>'}
         </div>
 
+        <!-- IBAN -->
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
+          <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">IBAN</label>
+          <input value="${e.iban||''}" onchange="updateEntity('${e.id}','iban',this.value)"
+            placeholder="DE89 3704 0044…"
+            style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;letter-spacing:.5px"
+            onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+        </div>
+
+        <!-- Reports to + Sweep type -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          ${isRoot ? `
           <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">IBAN (optional)</label>
-            <input value="${e.iban||''}" onchange="updateEntity('${e.id}','iban',this.value)"
-              placeholder="DE89 3704 0044…"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;letter-spacing:.5px"
-              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+            <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Pool position</label>
+            <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt)">L1 — Pool master (top level)</div>
           </div>
+          ` : `
           <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Sweep type</label>
+            <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Reports to</label>
+            <select onchange="updateEntity('${e.id}','parentId',this.value);renderEntities();recalc()"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
+              ${parentOpts}
+            </select>
+          </div>
+          `}
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Sweep type</label>
             <select onchange="updateEntity('${e.id}','sweepType',this.value)"
               style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
-              <option value="zba" ${e.sweepType==='zba'?'selected':''}>ZBA — physical sweep</option>
-              <option value="notional" ${e.sweepType==='notional'?'selected':''}>Notional — virtual</option>
-              <option value="none" ${e.sweepType==='none'?'selected':''}>None — observer only</option>
+              <option value="zba" ${e.sweepType==='zba'?'selected':''}>ZBA — Zero Balancing</option>
+              <option value="tba" ${e.sweepType==='tba'?'selected':''}>TBA — Target Balancing</option>
+              <option value="notional" ${e.sweepType==='notional'?'selected':''}>Notional Pooling</option>
+              <option value="none" ${e.sweepType==='none'?'selected':''}>None — Observer Only</option>
             </select>
           </div>
         </div>
 
-        ${isRoot ? `
-        <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt);margin-bottom:10px">L1 — Pool master (top of hierarchy)</div>
-        ` : `
-        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
-          <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Reports to (parent account)</label>
-          <select onchange="updateEntity('${e.id}','parentId',this.value);renderEntities();recalc()"
-            style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
-            ${parentOpts}
-          </select>
-        </div>
-        `}
-
+        <!-- Advanced overrides -->
         <div style="margin-top:4px">
           <button onclick="toggleAdvanced('${e.id}')"
             style="display:flex;align-items:center;gap:6px;padding:0;border:none;background:transparent;font-family:var(--sans);font-size:10px;font-weight:600;color:var(--ink-fnt);cursor:pointer;text-transform:uppercase;letter-spacing:.8px">
