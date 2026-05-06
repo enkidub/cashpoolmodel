@@ -111,7 +111,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 /* SIDEBAR PANELS */
 .sidebar-panel{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:14px;padding:16px}
 .sp-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-fnt);margin-bottom:10px}
-.sp-title{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;letter-spacing:-.2px}
+.sp-title{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--navy);margin-bottom:2px;letter-spacing:-.5px}
 .sp-sub{font-size:11px;color:var(--ink-lt);font-weight:300;line-height:1.55;margin-bottom:12px}
 
 /* NETTING VISUAL */
@@ -214,7 +214,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           <div><div class="sec-title">Pool Setup</div></div>
         </div>
         <div class="sec-body">
-          <div class="row">
+          <div class="row" style="margin-bottom:8px">
             <div class="fg">
               <label>Group name</label>
               <input type="text" id="groupName" placeholder="Acme Manufacturing Group" oninput="recalc()">
@@ -229,7 +229,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <input type="hidden" id="poolBank" value="ING Bank">
             </div>
           </div>
-          <div class="row">
+          <div class="row" style="margin-bottom:8px">
             <div class="fg">
               <label>Pool type</label>
               <select id="poolType" onchange="onPoolTypeChange()">
@@ -248,23 +248,34 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <input type="hidden" id="selectedCurrency" value="EUR">
             </div>
           </div>
-          <div class="row" style="margin-bottom:0">
-            <div class="fg">
-              <label>Day count convention
-                <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, GBP, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
-              </label>
-              <select id="dayCount" onchange="recalc()">
-                <option value="360">ACT/360 — EUR, USD, CHF standard</option>
-                <option value="365">ACT/365 — GBP domestic</option>
-              </select>
-            </div>
-            <div class="fg" id="defaultTbaRow" style="display:none">
-              <label>Default Target Balance (TBA)
-                <div class="tt"><div class="tt-icon">?</div>
-                  <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. 0 = full sweep.</span>
+          <div style="margin-top:2px">
+            <button onclick="togglePoolAdvanced()"
+              style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;padding:0;font-family:var(--sans);font-size:10px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;margin-bottom:0">
+              <svg id="poolAdvChevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transition:transform .2s;transform:rotate(0deg)">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+              Advanced settings
+            </button>
+            <div id="poolAdvPanel" style="display:none;margin-top:8px">
+              <div class="row" style="margin-bottom:0">
+                <div class="fg">
+                  <label>Day count convention
+                    <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, USD, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
+                  </label>
+                  <select id="dayCount" onchange="recalc()">
+                    <option value="360">ACT/360 — EUR, USD, CHF standard</option>
+                    <option value="365">ACT/365 — GBP domestic</option>
+                  </select>
                 </div>
-              </label>
-              <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="applyDefaultTba()">
+                <div class="fg" id="defaultTbaRow" style="display:none">
+                  <label>Default Target Balance (TBA)
+                    <div class="tt"><div class="tt-icon">?</div>
+                      <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. 0 = full sweep.</span>
+                    </div>
+                  </label>
+                  <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="applyDefaultTba()">
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -359,7 +370,9 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
           <div style="background:var(--paper-w);border-radius:var(--r);padding:8px 10px">
-            <div style="font-size:9px;color:var(--ink-fnt);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">Payback</div>
+            <div style="font-size:9px;color:var(--ink-fnt);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px;display:flex;align-items:center;gap:4px">Payback
+              <div class="tt"><div class="tt-icon">?</div><span>&lt;18 mo = green (GO); 18–36 mo = amber (CONSIDER); &gt;36 mo or negative benefit = red (NO-GO).</span></div>
+            </div>
             <div class="rs-val" id="sp-payback" style="font-size:15px">—</div>
           </div>
           <div style="background:var(--paper-w);border-radius:var(--r);padding:8px 10px">
@@ -392,13 +405,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Debit (overdraft) %
                 <span style="cursor:help" title="Rate your bank charges entities in overdraft today.">ⓘ</span>
               </div>
-              <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="25" inputmode="decimal" oninput="recalc()"
+              <input type="text" id="debitRate" value="5.50" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" oninput="recalc()" onchange="recalc()"
                 style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
                 onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
             </div>
             <div>
               <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Credit (deposit) %</div>
-              <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" inputmode="decimal" oninput="recalc()"
+              <input type="text" id="creditRate" value="2.80" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" oninput="recalc()" onchange="recalc()"
                 style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
                 onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
             </div>
@@ -407,13 +420,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
             <div style="font-size:8px;font-weight:700;color:var(--emerald-dk);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Pool offer</div>
             <div style="margin-bottom:6px">
               <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Pool debit rate %</div>
-              <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="20" inputmode="decimal" oninput="recalc()"
+              <input type="text" id="poolDebit" value="3.20" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" oninput="recalc()" onchange="recalc()"
                 style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
                 onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
             </div>
             <div>
               <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Pool credit rate %</div>
-              <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" inputmode="decimal" oninput="recalc()"
+              <input type="text" id="poolCredit" value="4.00" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*" oninput="recalc()" onchange="recalc()"
                 style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
                 onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
             </div>
@@ -623,10 +636,10 @@ document.addEventListener('scroll',closeEcPortal,true);
 function setPreset(k) {
   const p = PRESETS[k];
   if (!p) return;
-  g('debitRate').value  = p.debit;
-  g('creditRate').value = p.credit;
-  g('poolDebit').value  = p.poolDebit;
-  g('poolCredit').value = p.poolCredit;
+  g('debitRate').value  = parseFloat(p.debit).toFixed(2);
+  g('creditRate').value = parseFloat(p.credit).toFixed(2);
+  g('poolDebit').value  = parseFloat(p.poolDebit).toFixed(2);
+  g('poolCredit').value = parseFloat(p.poolCredit).toFixed(2);
   recalc();
   const display = g('refRateDisplay');
   const name    = g('refRateName');
@@ -698,6 +711,14 @@ function toggleSidePanel(contentId, chevronId) {
   content.style.display = isOpen ? 'none' : 'flex';
   content.style.flexDirection = 'column';
   chevron.textContent = isOpen ? '∨' : '∧';
+}
+
+function togglePoolAdvanced() {
+  const panel = g('poolAdvPanel'), chevron = g('poolAdvChevron');
+  if (!panel) return;
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? '' : 'none';
+  if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 
 function onPoolTypeChange() {
@@ -1042,10 +1063,14 @@ function closeEcPortal(){const p=g('ecDropPortal');if(p)p.style.display='none';_
 
 // ── CORE CALCULATION ENGINE (corrected) ──
 function recalc(){
-  const dr  = parseFloat(g('debitRate').value)/100  || 0;
-  const cr  = parseFloat(g('creditRate').value)/100 || 0;
-  const pdr = parseFloat(g('poolDebit').value)/100  || 0;
-  const pcr = parseFloat(g('poolCredit').value)/100 || 0;
+  const parseRate = (id) => {
+    const val = (g(id)?.value || '0').replace(',', '.');
+    return parseFloat(val) / 100 || 0;
+  };
+  const dr  = parseRate('debitRate');
+  const cr  = parseRate('creditRate');
+  const pdr = parseRate('poolDebit');
+  const pcr = parseRate('poolCredit');
   const impl= parseFloat((g('implCost').value||'').replace(/,/g,''))  || 0;
   const fees= parseFloat((g('bankFees').value||'').replace(/,/g,''))  || 0;
   const adm = parseFloat((g('adminCost').value||'').replace(/,/g,'')) || 0;
@@ -1188,15 +1213,15 @@ function recalc(){
     } else if (netBenefit > annualCosts * 2 && paybackMo < 24) {
       vBox.className = 'verdict-box go';
       vLabel.textContent = 'GO';
-      vText.textContent = `Strong business case. Payback in ${paybackMo.toFixed(1)} months.`;
+      vText.textContent = `Payback in ${paybackMo.toFixed(1)} mo — saving ${fmt(netInterestSaving).replace('+','')} p.a., net ${fmt(netBenefit).replace('+','')} after ${fmt(annualCosts).replace('+','')} costs.`;
     } else if (netBenefit > 0 && paybackMo < 48) {
       vBox.className = 'verdict-box consider';
       vLabel.textContent = 'CONSIDER';
-      vText.textContent = 'Positive but marginal. Negotiate better pool rates.';
+      vText.textContent = `Marginal case — ${fmt(netBenefit).replace('+','')} net p.a. Payback ${paybackMo.toFixed(1)} mo. Negotiate pool rates to improve.`;
     } else {
       vBox.className = 'verdict-box nogo';
       vLabel.textContent = 'NO-GO';
-      vText.textContent = 'Pool costs exceed benefits at current rates.';
+      vText.textContent = `Pool costs (${fmt(annualCosts).replace('+','')}/yr) exceed ${fmt(netInterestSaving).replace('+','')} interest saving. Renegotiate or reduce costs.`;
     }
   }
 
