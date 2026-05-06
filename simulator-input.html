@@ -114,6 +114,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .ec-field input.bal.pos{color:var(--emerald)}
 .ec-field input.bal.neg{color:var(--red)}
 
+.add-entity-hd-btn{padding:5px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--navy);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .13s;margin-left:auto;flex-shrink:0}
+.add-entity-hd-btn:hover{border-color:var(--navy);background:var(--paper-w)}
+.ec-ac-trigger{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:4px;border:1.5px solid transparent;background:transparent;cursor:pointer;font-size:12px;color:var(--ink);transition:all .12s;min-height:30px;width:100%;text-align:left}
+.ec-ac-trigger:hover{border-color:var(--rule);background:var(--white)}
+.ec-ac-item{padding:6px 10px;font-size:12px;cursor:pointer;color:var(--ink-mid);border-bottom:1px solid var(--paper-w);display:flex;align-items:center;gap:8px}
+.ec-ac-item:hover{background:var(--paper-w);color:var(--navy)}
+
 .add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1.5px dashed var(--rule);background:transparent;color:var(--ink-lt);font-size:11px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
 .add-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
 .preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -319,16 +326,12 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         <div class="sec-hd">
           <div class="sec-icon">🏦</div>
           <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Average daily balance per entity</div></div>
+          <button class="add-entity-hd-btn" onclick="addEntity()">+ Add entity</button>
         </div>
         <div class="sec-body">
           <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
           <div class="warning-box" id="warnBox"></div>
           <div class="entity-cards" id="entityCards"></div>
-          <button class="add-btn" onclick="addEntity()">+ Add entity</button>
-          <div class="preset-btns">
-            <button class="preset-btn" onclick="loadTemplate('western')">Western Europe</button>
-            <button class="preset-btn" onclick="loadTemplate('cee')">CEE template</button>
-          </div>
         </div>
       </div>
 
@@ -496,12 +499,19 @@ const CURRENCIES=[
   {code:'CHF',name:'Swiss Franc'},{code:'CZK',name:'Czech Koruna'},{code:'PLN',name:'Polish Zloty'},
   {code:'HUF',name:'Hungarian Forint'},{code:'SEK',name:'Swedish Krona'},{code:'NOK',name:'Norwegian Krone'},
   {code:'DKK',name:'Danish Krone'},{code:'RON',name:'Romanian Leu'},{code:'BGN',name:'Bulgarian Lev'},
-  {code:'JPY',name:'Japanese Yen'},{code:'CNY',name:'Chinese Yuan'},{code:'AUD',name:'Australian Dollar'},
-  {code:'CAD',name:'Canadian Dollar'},{code:'SGD',name:'Singapore Dollar'},{code:'HKD',name:'Hong Kong Dollar'},
-  {code:'INR',name:'Indian Rupee'},{code:'BRL',name:'Brazilian Real'},{code:'MXN',name:'Mexican Peso'},
-  {code:'ZAR',name:'South African Rand'},{code:'TRY',name:'Turkish Lira'},{code:'AED',name:'UAE Dirham'},
-  {code:'THB',name:'Thai Baht'},{code:'MYR',name:'Malaysian Ringgit'},{code:'ILS',name:'Israeli Shekel'},
-  {code:'KRW',name:'South Korean Won'},{code:'TWD',name:'Taiwan Dollar'},{code:'SAR',name:'Saudi Riyal'},
+  {code:'HRK',name:'Croatian Kuna'},{code:'RSD',name:'Serbian Dinar'},{code:'ISK',name:'Icelandic Króna'},
+  {code:'JPY',name:'Japanese Yen'},{code:'CNY',name:'Chinese Yuan'},{code:'KRW',name:'South Korean Won'},
+  {code:'TWD',name:'Taiwan Dollar'},{code:'HKD',name:'Hong Kong Dollar'},{code:'SGD',name:'Singapore Dollar'},
+  {code:'AUD',name:'Australian Dollar'},{code:'NZD',name:'New Zealand Dollar'},
+  {code:'CAD',name:'Canadian Dollar'},{code:'INR',name:'Indian Rupee'},{code:'THB',name:'Thai Baht'},
+  {code:'MYR',name:'Malaysian Ringgit'},{code:'IDR',name:'Indonesian Rupiah'},{code:'PHP',name:'Philippine Peso'},
+  {code:'VND',name:'Vietnamese Dong'},{code:'BRL',name:'Brazilian Real'},{code:'MXN',name:'Mexican Peso'},
+  {code:'ARS',name:'Argentine Peso'},{code:'CLP',name:'Chilean Peso'},{code:'COP',name:'Colombian Peso'},
+  {code:'PEN',name:'Peruvian Sol'},{code:'AED',name:'UAE Dirham'},{code:'SAR',name:'Saudi Riyal'},
+  {code:'QAR',name:'Qatari Riyal'},{code:'KWD',name:'Kuwaiti Dinar'},{code:'ILS',name:'Israeli Shekel'},
+  {code:'ZAR',name:'South African Rand'},{code:'NGN',name:'Nigerian Naira'},{code:'KES',name:'Kenyan Shilling'},
+  {code:'EGP',name:'Egyptian Pound'},{code:'TRY',name:'Turkish Lira'},{code:'UAH',name:'Ukrainian Hryvnia'},
+  {code:'MAD',name:'Moroccan Dirham'},
 ];
 
 // ── BANKS ──
@@ -515,13 +525,45 @@ const BANKS=[
   'Intesa Sanpaolo','BBVA','CaixaBank','Crédit Agricole','Commerzbank','DZ Bank','Other',
 ];
 
-// ── FLAGS ──
-const FLAGS={DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',
-  PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸',RO:'🇷🇴',
-  SG:'🇸🇬',HK:'🇭🇰',NO:'🇳🇴',DK:'🇩🇰',BG:'🇧🇬',HR:'🇭🇷',RS:'🇷🇸',PT:'🇵🇹',
-  FI:'🇫🇮',IE:'🇮🇪',LU:'🇱🇺',TR:'🇹🇷',AE:'🇦🇪',JP:'🇯🇵',CN:'🇨🇳',AU:'🇦🇺',CA:'🇨🇦',
-};
-const COUNTRIES=Object.entries(FLAGS).map(([k,v])=>({code:k,flag:v}));
+// ── COUNTRIES ──
+const COUNTRIES=[
+  {code:'AT',flag:'🇦🇹',name:'Austria'},{code:'BE',flag:'🇧🇪',name:'Belgium'},
+  {code:'BG',flag:'🇧🇬',name:'Bulgaria'},{code:'HR',flag:'🇭🇷',name:'Croatia'},
+  {code:'CY',flag:'🇨🇾',name:'Cyprus'},{code:'CZ',flag:'🇨🇿',name:'Czech Republic'},
+  {code:'DK',flag:'🇩🇰',name:'Denmark'},{code:'EE',flag:'🇪🇪',name:'Estonia'},
+  {code:'FI',flag:'🇫🇮',name:'Finland'},{code:'FR',flag:'🇫🇷',name:'France'},
+  {code:'DE',flag:'🇩🇪',name:'Germany'},{code:'GR',flag:'🇬🇷',name:'Greece'},
+  {code:'HU',flag:'🇭🇺',name:'Hungary'},{code:'IE',flag:'🇮🇪',name:'Ireland'},
+  {code:'IT',flag:'🇮🇹',name:'Italy'},{code:'LV',flag:'🇱🇻',name:'Latvia'},
+  {code:'LT',flag:'🇱🇹',name:'Lithuania'},{code:'LU',flag:'🇱🇺',name:'Luxembourg'},
+  {code:'MT',flag:'🇲🇹',name:'Malta'},{code:'NL',flag:'🇳🇱',name:'Netherlands'},
+  {code:'PL',flag:'🇵🇱',name:'Poland'},{code:'PT',flag:'🇵🇹',name:'Portugal'},
+  {code:'RO',flag:'🇷🇴',name:'Romania'},{code:'SK',flag:'🇸🇰',name:'Slovakia'},
+  {code:'SI',flag:'🇸🇮',name:'Slovenia'},{code:'ES',flag:'🇪🇸',name:'Spain'},
+  {code:'SE',flag:'🇸🇪',name:'Sweden'},{code:'CH',flag:'🇨🇭',name:'Switzerland'},
+  {code:'GB',flag:'🇬🇧',name:'United Kingdom'},{code:'NO',flag:'🇳🇴',name:'Norway'},
+  {code:'IS',flag:'🇮🇸',name:'Iceland'},{code:'LI',flag:'🇱🇮',name:'Liechtenstein'},
+  {code:'RS',flag:'🇷🇸',name:'Serbia'},{code:'UA',flag:'🇺🇦',name:'Ukraine'},
+  {code:'MK',flag:'🇲🇰',name:'North Macedonia'},{code:'AL',flag:'🇦🇱',name:'Albania'},
+  {code:'TR',flag:'🇹🇷',name:'Turkey'},
+  {code:'US',flag:'🇺🇸',name:'United States'},{code:'CA',flag:'🇨🇦',name:'Canada'},
+  {code:'MX',flag:'🇲🇽',name:'Mexico'},{code:'BR',flag:'🇧🇷',name:'Brazil'},
+  {code:'AR',flag:'🇦🇷',name:'Argentina'},{code:'CL',flag:'🇨🇱',name:'Chile'},
+  {code:'CO',flag:'🇨🇴',name:'Colombia'},{code:'PE',flag:'🇵🇪',name:'Peru'},
+  {code:'CN',flag:'🇨🇳',name:'China'},{code:'JP',flag:'🇯🇵',name:'Japan'},
+  {code:'KR',flag:'🇰🇷',name:'South Korea'},{code:'TW',flag:'🇹🇼',name:'Taiwan'},
+  {code:'HK',flag:'🇭🇰',name:'Hong Kong'},{code:'SG',flag:'🇸🇬',name:'Singapore'},
+  {code:'IN',flag:'🇮🇳',name:'India'},{code:'AU',flag:'🇦🇺',name:'Australia'},
+  {code:'NZ',flag:'🇳🇿',name:'New Zealand'},{code:'MY',flag:'🇲🇾',name:'Malaysia'},
+  {code:'TH',flag:'🇹🇭',name:'Thailand'},{code:'ID',flag:'🇮🇩',name:'Indonesia'},
+  {code:'PH',flag:'🇵🇭',name:'Philippines'},{code:'VN',flag:'🇻🇳',name:'Vietnam'},
+  {code:'AE',flag:'🇦🇪',name:'UAE'},{code:'SA',flag:'🇸🇦',name:'Saudi Arabia'},
+  {code:'QA',flag:'🇶🇦',name:'Qatar'},{code:'KW',flag:'🇰🇼',name:'Kuwait'},
+  {code:'IL',flag:'🇮🇱',name:'Israel'},{code:'EG',flag:'🇪🇬',name:'Egypt'},
+  {code:'ZA',flag:'🇿🇦',name:'South Africa'},{code:'NG',flag:'🇳🇬',name:'Nigeria'},
+  {code:'KE',flag:'🇰🇪',name:'Kenya'},{code:'MA',flag:'🇲🇦',name:'Morocco'},
+];
+const FLAGS=Object.fromEntries(COUNTRIES.map(c=>[c.code,c.flag]));
 
 // ── PRESETS ──
 const PRESETS={
@@ -530,23 +572,6 @@ const PRESETS={
   usd:{debit:6.50,credit:3.80,poolDebit:4.50,poolCredit:5.20},
   gbp:{debit:5.75,credit:3.20,poolDebit:4.00,poolCredit:4.80},
   chf:{debit:2.20,credit:0.80,poolDebit:1.00,poolCredit:1.30},
-};
-const TEMPLATES={
-  western:[
-    {name:'Germany GmbH',  country:'DE',cc:'EUR',balance:4200000,accounts:3},
-    {name:'France SAS',    country:'FR',cc:'EUR',balance:3800000,accounts:2},
-    {name:'UK Ltd',        country:'GB',cc:'GBP',balance:2100000,accounts:2},
-    {name:'Netherlands BV',country:'NL',cc:'EUR',balance:1900000,accounts:1},
-    {name:'Switzerland AG',country:'CH',cc:'CHF',balance:-400000,accounts:1},
-    {name:'Austria GmbH',  country:'AT',cc:'EUR',balance:800000, accounts:1},
-  ],
-  cee:[
-    {name:'HoldCo Prague', country:'CZ',cc:'CZK',balance:2500000,accounts:2},
-    {name:'OpCo Slovakia', country:'SK',cc:'EUR',balance:-450000, accounts:1},
-    {name:'Sales Poland',  country:'PL',cc:'PLN',balance:800000,  accounts:1},
-    {name:'Logistics HU',  country:'HU',cc:'HUF',balance:-300000, accounts:1},
-    {name:'Services AT',   country:'AT',cc:'EUR',balance:600000,  accounts:1},
-  ],
 };
 
 let currency='EUR', entities=[];
@@ -590,7 +615,9 @@ document.addEventListener('click',e=>{
     g('currencyList').classList.remove('open');
     g('bankList').classList.remove('open');
   }
+  if(!e.target.closest('#ecDropPortal')&&!e.target.closest('.ec-ac-trigger')) closeEcPortal();
 });
+document.addEventListener('scroll',closeEcPortal,true);
 
 // ── PRESETS ──
 function setPreset(k){
@@ -599,9 +626,6 @@ function setPreset(k){
   g('poolDebit').value=p.poolDebit; g('poolCredit').value=p.poolCredit;
   recalc();
 }
-
-// ── TEMPLATES ──
-function loadTemplate(k){entities=TEMPLATES[k].map(e=>({...e}));renderEntities();recalc()}
 
 // ── ENTITY CARDS ──
 function addEntity(){
@@ -614,14 +638,15 @@ function renderEntities(){
   const container=g('entityCards');
   if(!entities.length){container.innerHTML='<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px">No entities added yet.</div>';return}
   container.innerHTML=entities.map((e,i)=>{
-    const flag=FLAGS[e.country]||'🏢';
+    const co=COUNTRIES.find(c=>c.code===e.country)||{flag:'🏢',name:e.country,code:e.country};
+    const cu=CURRENCIES.find(c=>c.code===e.cc)||{code:e.cc,name:e.cc};
     const surplus=e.balance>0,deficit=e.balance<0;
     const badgeClass=surplus?'pos':deficit?'neg':'zero';
     const badgeText=surplus?'↑ Surplus':deficit?'↓ Deficit':'Neutral';
     return `
     <div class="entity-card">
       <div class="ec-header">
-        <span class="ec-flag">${flag}</span>
+        <span class="ec-flag">${co.flag}</span>
         <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()"
           style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans)">
         <span class="ec-badge ${badgeClass}">${badgeText}</span>
@@ -630,15 +655,19 @@ function renderEntities(){
       <div class="ec-body">
         <div class="ec-field">
           <div class="ec-field-label">Country</div>
-          <select class="ec-field-sel" onchange="entities[${i}].country=this.value;renderEntities();recalc()">
-            ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code}</option>`).join('')}
-          </select>
+          <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'country')" type="button">
+            <span>${co.flag}</span>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${co.name}</span>
+            <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
+          </button>
         </div>
         <div class="ec-field">
           <div class="ec-field-label">Currency</div>
-          <select class="ec-field-sel" onchange="entities[${i}].cc=this.value;recalc()">
-            ${CURRENCIES.slice(0,12).map(c=>`<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code}</option>`).join('')}
-          </select>
+          <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'currency')" type="button">
+            <span style="font-family:var(--mono);font-weight:600">${cu.code}</span>
+            <span style="color:var(--ink-fnt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${cu.name}</span>
+            <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
+          </button>
         </div>
         <div class="ec-field">
           <div class="ec-field-label">Avg. daily balance</div>
@@ -650,6 +679,45 @@ function renderEntities(){
     </div>`;
   }).join('');
 }
+
+// ── ENTITY AC PORTAL ──
+let _ecPortalState=null;
+function openEcAC(evt,i,field){
+  evt.stopPropagation();
+  const btn=evt.currentTarget;
+  const rect=btn.getBoundingClientRect();
+  const portal=g('ecDropPortal');
+  _ecPortalState={i,field};
+  g('ecPortalSearch').value='';
+  g('ecPortalSearch').placeholder=field==='country'?'Search country…':'Search currency…';
+  populateEcPortal('');
+  portal.style.left=rect.left+'px';
+  portal.style.top=(rect.bottom+4)+'px';
+  portal.style.minWidth=Math.max(rect.width,200)+'px';
+  portal.style.display='block';
+  setTimeout(()=>g('ecPortalSearch').focus(),30);
+}
+function populateEcPortal(val){
+  if(!_ecPortalState) return;
+  const q=val.trim().toLowerCase();
+  const {i,field}=_ecPortalState;
+  if(field==='country'){
+    const items=COUNTRIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
+    g('ecPortalItems').innerHTML=items.map(c=>`<div class="ec-ac-item" onclick="selectEcCountry(${i},'${c.code}')">
+      <span>${c.flag}</span><span style="flex:1">${c.name}</span>
+      <span style="font-size:10px;color:var(--ink-fnt);font-family:var(--mono)">${c.code}</span>
+    </div>`).join('');
+  } else {
+    const items=CURRENCIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
+    g('ecPortalItems').innerHTML=items.map(c=>`<div class="ec-ac-item" onclick="selectEcCurrency(${i},'${c.code}')">
+      <span style="font-family:var(--mono);font-weight:600;color:var(--navy);min-width:36px">${c.code}</span>
+      <span>${c.name}</span>
+    </div>`).join('');
+  }
+}
+function selectEcCountry(i,code){entities[i].country=code;closeEcPortal();renderEntities();recalc()}
+function selectEcCurrency(i,code){entities[i].cc=code;closeEcPortal();renderEntities();recalc()}
+function closeEcPortal(){const p=g('ecDropPortal');if(p)p.style.display='none';_ecPortalState=null}
 
 // ── CORE CALCULATION ENGINE (corrected) ──
 function recalc(){
@@ -888,9 +956,20 @@ function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
 
 // ── INIT ──
 g('poolBankInput').value='ING Bank';
-loadTemplate('western');
-g('groupName').value='Acme Manufacturing Group';
+entities=[
+  {name:'Entity 1',country:'DE',cc:'EUR',balance:0,accounts:1},
+  {name:'Entity 2',country:'FR',cc:'EUR',balance:0,accounts:1},
+];
+renderEntities();
+g('groupName').value='';
 recalc();
 </script>
+
+<div id="ecDropPortal" style="position:fixed;display:none;z-index:9999;background:var(--white);border:1.5px solid var(--navy);border-radius:var(--r);box-shadow:0 8px 24px rgba(15,23,42,.14);min-width:220px;overflow:hidden">
+  <input id="ecPortalSearch" type="text"
+    oninput="populateEcPortal(this.value)" onclick="event.stopPropagation()"
+    style="width:100%;padding:7px 12px;border:none;border-bottom:1px solid var(--rule);font-size:12px;outline:none;font-family:var(--sans);background:var(--paper-w);display:block">
+  <div id="ecPortalItems" style="max-height:200px;overflow-y:auto"></div>
+</div>
 </body>
 </html>
