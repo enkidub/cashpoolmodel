@@ -292,6 +292,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           <div style="margin-left:auto;display:flex;gap:6px">
             <button class="add-btn" onclick="addEntity()">+ Add account</button>
             <button class="preset-btn" onclick="loadExample()">Load example structure</button>
+            <button class="preset-btn" onclick="clearEntities()" style="color:var(--red);border-color:var(--red-lt)">Clear</button>
           </div>
         </div>
         <div class="sec-body">
@@ -606,6 +607,14 @@ function hasChildren(entityId, allEntities) {
 function loadExample() {
   if (entities.length > 1 && !confirm('This will replace your current entities. Continue?')) return;
   entities = EXAMPLE_ENTITIES.map(e => ({...e}));
+  renderEntities();
+  recalc();
+}
+
+function clearEntities() {
+  if (entities.filter(e => e.parentId !== null).length === 0) return;
+  if (!confirm('Remove all accounts except the master? This cannot be undone.')) return;
+  entities = entities.filter(e => e.parentId === null);
   renderEntities();
   recalc();
 }
