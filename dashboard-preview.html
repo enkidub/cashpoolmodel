@@ -1012,18 +1012,6 @@ function Sensitivity({ netBenefit, fmtK, calc }) {
           { label:'Break-even',       value:'€'+breakEven+'k', badge:'Pool costs',    sub:'minimum to cover annual pool costs', ring:null },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
-  const [hov, setHov] = React.useState(null);
-  return (
-    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
-        {[
-          { label:'Base Case Saving',  value:'€842k',  badge:'12-month',      sub:'at current rates & balances',      ring:null },
-          { label:'Best Case',         value:'€1,510k', badge:'+79.3%',       sub:'+1.0% rates, +20% balance',        ring:null },
-          { label:'Worst Case',        value:'€390k',  badge:'Still positive', sub:'−1.0% rates, −20% balance',        ring:null },
-          { label:'Break-even',        value:'€140k',  badge:'Pool costs',    sub:'minimum to cover operating costs',  ring:null },
-        ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
-      </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
         <div style={{ fontSize:13, fontWeight:600, color:'#1e293b', marginBottom:4 }}>
