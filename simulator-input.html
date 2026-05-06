@@ -27,7 +27,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 
 /* NAV */
 .nav{background:var(--white);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50}
-.nav-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.nav-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--navy);text-decoration:none}
 .logo-mark{width:24px;height:24px;border-radius:4px;background:var(--navy);display:flex;align-items:center;justify-content:center}
 .logo-sub{font-size:9px;color:var(--ink-fnt);font-weight:400;letter-spacing:.3px;font-family:var(--sans);margin-top:1px}
@@ -169,7 +169,20 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       </div>
       <div><div>CashPoolModel</div><div class="logo-sub">by Intercompany.io</div></div>
     </a>
-    <div class="nav-pill">Simulator — Beta</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="nav-pill">Simulator — Beta</div>
+      <button onclick="document.getElementById('uploadModal').style.display='flex'"
+        style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .13s"
+        onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+        onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--ink-lt)'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Upload statements
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -183,32 +196,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
   <div class="layout">
     <!-- LEFT COLUMN -->
     <div>
-
-      <!-- AI UPLOAD -->
-      <div class="sec">
-        <div class="sec-hd">
-          <div class="sec-icon">✦</div>
-          <div><div class="sec-title">AI Data Extraction</div><div class="sec-sub">Optional — upload statements to auto-fill entities</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="upload-zone" onclick="document.getElementById('fileInput').click()"
-            ondragover="event.preventDefault();this.classList.add('drag')"
-            ondragleave="this.classList.remove('drag')"
-            ondrop="handleDrop(event)">
-            <input type="file" id="fileInput" accept=".pdf,.csv,.xlsx" multiple onchange="handleFileSelect(this.files)">
-            <div class="upload-title">Drop bank statements or click to browse</div>
-            <div class="upload-sub">PDF · CSV · Excel · Data stays in your browser</div>
-          </div>
-          <div class="ai-processing" id="aiProcessing">
-            <div class="ai-spinner"></div>
-            <div><div style="font-size:12px;font-weight:600;color:var(--navy)">Extracting data…</div>
-            <div style="font-size:10px;color:var(--ink-fnt)" id="aiStatus">Reading file</div></div>
-          </div>
-          <div class="ai-result" id="aiResult">
-            <div style="font-size:11px;font-weight:600;color:var(--emerald-dk)" id="aiResultText"></div>
-          </div>
-        </div>
-      </div>
 
       <!-- POOL SETUP -->
       <div class="sec">
@@ -301,64 +288,11 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         </div>
       </div>
 
-      <!-- RATES -->
-      <div class="sec">
-        <div class="sec-hd">
-          <div class="sec-icon">%</div>
-          <div><div class="sec-title">Interest Rates</div><div class="sec-sub">Bilateral vs. pool — annual percentage</div></div>
-        </div>
-        <div class="sec-body">
-          <div class="rate-compare">
-            <div class="rate-col">
-              <div class="rate-col-label">Without pool — bilateral</div>
-              <div class="fg" style="margin-bottom:8px">
-                <label>Debit rate (overdraft) %
-                  <div class="tt"><div class="tt-icon">?</div><span>Rate your bank charges entities in overdraft today.</span></div>
-                </label>
-                <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="25" oninput="recalc()">
-              </div>
-              <div class="fg">
-                <label>Credit rate (deposit) %</label>
-                <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" oninput="recalc()">
-              </div>
-            </div>
-            <div class="rate-col">
-              <div class="rate-col-label pool">With pool — bank offer</div>
-              <div class="fg" style="margin-bottom:8px">
-                <label>Pool debit rate %
-                  <div class="tt"><div class="tt-icon">?</div><span>Rate the pool bank charges deficit entities. Should be lower than bilateral debit.</span></div>
-                </label>
-                <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="20" oninput="recalc()">
-              </div>
-              <div class="fg">
-                <label>Pool credit rate %
-                  <div class="tt"><div class="tt-icon">?</div><span>Rate the pool bank pays surplus entities. Should be higher than bilateral deposit.</span></div>
-                </label>
-                <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" oninput="recalc()">
-              </div>
-            </div>
-          </div>
-          <div class="rate-spread" id="spreadRow">
-            <span>Interest spread:</span>
-            <span class="spread-val" id="spreadVal">—</span>
-            <span style="color:var(--ink-fnt)">· debit saving:</span>
-            <span class="spread-val" id="debitSpreadVal">—</span>
-          </div>
-          <div class="preset-btns" style="margin-top:10px">
-            <button class="preset-btn" onclick="setPreset('eur')">ECB / EUR</button>
-            <button class="preset-btn" onclick="setPreset('czk')">ČNB / CZK</button>
-            <button class="preset-btn" onclick="setPreset('usd')">Fed / USD</button>
-            <button class="preset-btn" onclick="setPreset('gbp')">BoE / GBP</button>
-            <button class="preset-btn" onclick="setPreset('chf')">SNB / CHF</button>
-          </div>
-        </div>
-      </div>
-
       <!-- COSTS -->
       <div class="sec">
         <div class="sec-hd">
           <div class="sec-icon">💼</div>
-          <div><div class="sec-title">Costs</div><div class="sec-sub">Implementation and annual operating</div></div>
+          <div><div class="sec-title">Costs</div><div class="sec-sub">One-off setup and annual pool running costs</div></div>
         </div>
         <div class="sec-body">
           <div class="row">
@@ -366,17 +300,17 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <label>Implementation cost (one-off)
                 <div class="tt"><div class="tt-icon">?</div><span>Legal, TMS integration, bank onboarding. Typically €80k–€350k.</span></div>
               </label>
-              <input type="number" id="implCost" value="150000" step="5000" oninput="recalc()">
+              <input type="text" id="implCost" value="150,000" placeholder="e.g. 150,000" oninput="recalc()" onchange="recalc()">
             </div>
             <div class="fg">
               <label>Annual bank fees</label>
-              <input type="number" id="bankFees" value="30000" step="1000" oninput="recalc()">
+              <input type="text" id="bankFees" value="30,000" placeholder="e.g. 30,000" oninput="recalc()" onchange="recalc()">
             </div>
           </div>
           <div class="row">
             <div class="fg">
               <label>Annual admin / TMS cost</label>
-              <input type="number" id="adminCost" value="40000" step="1000" oninput="recalc()">
+              <input type="text" id="adminCost" value="40,000" placeholder="e.g. 40,000" oninput="recalc()" onchange="recalc()">
             </div>
             <div class="fg">
               <label>WHT rate on interest %
@@ -423,19 +357,85 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         </a>
       </div>
 
-      <!-- POOL BREAKDOWN -->
+      <!-- INTEREST RATES SIDEBAR PANEL -->
       <div class="sidebar-panel">
-        <div class="sp-label">Pool Breakdown</div>
-        <div style="display:flex;flex-direction:column;gap:6px" id="poolBreakdown">
-          <div style="font-size:12px;color:var(--ink-fnt)">Enter entities to see breakdown</div>
+        <div class="sp-label">Interest Rates</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border-radius:var(--r);overflow:hidden;margin-bottom:10px">
+          <div style="background:var(--white);padding:10px 10px 8px">
+            <div style="font-size:8px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Bilateral</div>
+            <div style="margin-bottom:6px">
+              <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Debit (overdraft) %
+                <span style="cursor:help" title="Rate your bank charges entities in overdraft today.">ⓘ</span>
+              </div>
+              <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="25" oninput="recalc()"
+                style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+            </div>
+            <div>
+              <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Credit (deposit) %</div>
+              <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" oninput="recalc()"
+                style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+            </div>
+          </div>
+          <div style="background:var(--white);padding:10px 10px 8px">
+            <div style="font-size:8px;font-weight:700;color:var(--emerald-dk);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Pool offer</div>
+            <div style="margin-bottom:6px">
+              <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Pool debit rate %</div>
+              <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="20" oninput="recalc()"
+                style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+            </div>
+            <div>
+              <div style="font-size:9px;color:var(--ink-fnt);margin-bottom:3px">Pool credit rate %</div>
+              <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" oninput="recalc()"
+                style="width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--paper-w);border-radius:var(--r);padding:6px 10px;font-size:11px;color:var(--ink-mid);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap">
+          <span>Spread: <strong id="spreadVal" style="color:var(--emerald)">—</strong></span>
+          <span style="color:var(--rule)">·</span>
+          <span>Debit saving: <strong id="debitSpreadVal" style="color:var(--emerald)">—</strong></span>
+        </div>
+
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button onclick="setPreset('eur')" class="preset-btn">ECB/EUR</button>
+          <button onclick="setPreset('czk')" class="preset-btn">ČNB/CZK</button>
+          <button onclick="setPreset('usd')" class="preset-btn">Fed/USD</button>
+          <button onclick="setPreset('gbp')" class="preset-btn">BoE/GBP</button>
+          <button onclick="setPreset('chf')" class="preset-btn">SNB/CHF</button>
         </div>
       </div>
 
-      <!-- RATE VALIDATION -->
+      <!-- RATE ANALYSIS -->
       <div class="sidebar-panel" id="rateValidation">
-        <div class="sp-label">Rate Sanity Check</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="sp-label" style="margin-bottom:0">Rate Analysis</div>
+          <button onclick="toggleSidePanel('rateChecks','rateChecksChevron')"
+            style="border:none;background:transparent;cursor:pointer;color:var(--ink-fnt);font-size:11px;display:flex;align-items:center;gap:3px;font-family:var(--sans)">
+            <span id="rateChecksChevron">∧</span>
+          </button>
+        </div>
         <div style="display:flex;flex-direction:column;gap:6px" id="rateChecks">
-          <div style="font-size:12px;color:var(--ink-fnt)">Enter rates to see validation</div>
+          <div style="font-size:12px;color:var(--ink-fnt)">Enter rates to see analysis</div>
+        </div>
+      </div>
+
+      <!-- POOL BREAKDOWN -->
+      <div class="sidebar-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="sp-label" style="margin-bottom:0">Pool Breakdown</div>
+          <button onclick="toggleSidePanel('poolBreakdown','poolBreakdownChevron')"
+            style="border:none;background:transparent;cursor:pointer;color:var(--ink-fnt);font-size:11px;display:flex;align-items:center;gap:3px;font-family:var(--sans)">
+            <span id="poolBreakdownChevron">∨</span>
+          </button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="poolBreakdown">
+          <div style="font-size:12px;color:var(--ink-fnt)">Enter entities to see breakdown</div>
         </div>
       </div>
 
@@ -627,6 +627,16 @@ function toggleEntity(id) {
 function toggleAdvanced(id) {
   const el = document.getElementById('adv-' + id);
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleSidePanel(contentId, chevronId) {
+  const content = document.getElementById(contentId);
+  const chevron = document.getElementById(chevronId);
+  if (!content || !chevron) return;
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'flex';
+  content.style.flexDirection = 'column';
+  chevron.textContent = isOpen ? '∨' : '∧';
 }
 
 function onPoolTypeChange() {
@@ -985,9 +995,9 @@ function recalc(){
   const cr  = parseFloat(g('creditRate').value)/100 || 0;
   const pdr = parseFloat(g('poolDebit').value)/100  || 0;
   const pcr = parseFloat(g('poolCredit').value)/100 || 0;
-  const impl= parseFloat(g('implCost').value)        || 0;
-  const fees= parseFloat(g('bankFees').value)        || 0;
-  const adm = parseFloat(g('adminCost').value)       || 0;
+  const impl= parseFloat((g('implCost').value||'').replace(/,/g,''))  || 0;
+  const fees= parseFloat((g('bankFees').value||'').replace(/,/g,''))  || 0;
+  const adm = parseFloat((g('adminCost').value||'').replace(/,/g,'')) || 0;
   const wht = parseFloat(g('whtRate').value)/100     || 0;
   const days= parseInt(g('dayCount').value)          || 360;
 
@@ -1122,18 +1132,27 @@ function recalc(){
     </div>`).join('');
   }
 
-  // Rate sanity
+  // Rate analysis
   const rc=g('rateChecks');
   if(rc){
+    const poolMakesSense = debitSpread > 0 && creditSpread > 0;
+    const ratesVerdict = debitSpread > 0.01 && creditSpread > 0.005
+      ? '✓ Pool makes sense'
+      : poolMakesSense
+      ? '△ Marginal benefit'
+      : '✗ Rates unfavourable';
+    const verdictOk  = debitSpread > 0.01 && creditSpread > 0.005;
+    const verdictWarn= poolMakesSense && !verdictOk;
     const checks=[
-      {label:'Debit saving',val:fmtPct(debitSpread*100),ok:debitSpread>0},
-      {label:'Credit uplift',val:fmtPct(creditSpread*100),ok:creditSpread>0},
-      {label:'Day count',val:days+' days',ok:true},
-      {label:'WHT impact',val:wht>0?'−'+fmt(whtCost).replace('+',''):'None',ok:wht===0},
+      {label:'Pool verdict',  val:ratesVerdict, ok:verdictOk, warn:verdictWarn},
+      {label:'Debit saving',  val:fmtPct(debitSpread*100),  ok:debitSpread>0,   warn:false},
+      {label:'Credit uplift', val:fmtPct(creditSpread*100), ok:creditSpread>0,  warn:false},
+      {label:'Day count',     val:days+' days',              ok:true,            warn:false},
+      {label:'WHT impact',    val:wht>0?'−'+fmt(whtCost).replace('+',''):'None', ok:wht===0, warn:wht>0},
     ];
     rc.innerHTML=checks.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
       <span style="font-size:11px;color:var(--ink-lt)">${c.label}</span>
-      <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${c.ok?'var(--emerald)':'var(--amber)'}">${c.val}</span>
+      <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${c.ok?'var(--emerald)':c.warn?'var(--amber)':'var(--red)'}">${c.val}</span>
     </div>`).join('');
   }
 
@@ -1210,6 +1229,7 @@ async function processFiles(files){
       renderEntities();recalc();
       g('aiResultText').textContent=`✓ ${extracted.length} entities extracted from ${file.name}. Review and adjust below.`;
       g('aiResult').classList.add('show');
+      setTimeout(() => { document.getElementById('uploadModal').style.display='none'; }, 2000);
     } else {
       g('aiResultText').textContent='Could not extract data. Please enter manually.';
       g('aiResult').classList.add('show');
@@ -1235,7 +1255,48 @@ entities = [
 updateMasterCountryTrigger();
 renderEntities();
 onPoolTypeChange();
+// Pool breakdown starts collapsed
+const _pb = document.getElementById('poolBreakdown');
+if (_pb) { _pb.style.display = 'none'; }
 </script>
+
+<!-- AI UPLOAD MODAL -->
+<div id="uploadModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:200;align-items:center;justify-content:center"
+  onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--white);border-radius:var(--rl);padding:28px;width:min(520px,90vw);box-shadow:0 20px 60px rgba(15,23,42,.2);position:relative">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--navy)">AI Data Extraction</div>
+        <div style="font-size:11px;color:var(--ink-fnt);margin-top:2px">Upload bank statements — AI fills in entity data automatically</div>
+      </div>
+      <button onclick="document.getElementById('uploadModal').style.display='none'"
+        style="width:28px;height:28px;border-radius:50%;border:1px solid var(--rule);background:transparent;cursor:pointer;font-size:14px;color:var(--ink-fnt);display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)">
+      <input type="file" id="fileInput" accept=".pdf,.csv,.xlsx" multiple onchange="handleFileSelect(this.files)">
+      <div style="font-size:24px;margin-bottom:8px">📄</div>
+      <div class="upload-title">Drop bank statements or click to browse</div>
+      <div class="upload-sub">PDF · CSV · Excel · Data stays in your browser</div>
+    </div>
+    <div class="ai-processing" id="aiProcessing">
+      <div class="ai-spinner"></div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--navy)">Extracting data…</div>
+        <div style="font-size:10px;color:var(--ink-fnt)" id="aiStatus">Reading file</div>
+      </div>
+    </div>
+    <div class="ai-result" id="aiResult">
+      <div style="font-size:11px;font-weight:600;color:var(--emerald-dk)" id="aiResultText"></div>
+      <button onclick="document.getElementById('uploadModal').style.display='none'"
+        style="margin-top:10px;padding:5px 12px;border-radius:var(--r);border:1px solid var(--emerald);background:transparent;color:var(--emerald);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans)">
+        Review extracted data →
+      </button>
+    </div>
+  </div>
+</div>
 
 <div id="ecDropPortal" style="position:fixed;display:none;z-index:9999;background:var(--white);border:1.5px solid var(--navy);border-radius:var(--r);box-shadow:0 8px 24px rgba(15,23,42,.14);min-width:220px;overflow:hidden">
   <input id="ecPortalSearch" type="text"
