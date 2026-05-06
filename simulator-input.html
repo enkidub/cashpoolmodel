@@ -7,6 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css">
 <style>
 :root{
   --navy:#0b1929;--navy-h:#132540;--ink:#0f172a;--ink-mid:#334155;
@@ -96,7 +97,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .entity-card{border:1px solid var(--rule);border-radius:var(--rl);overflow:hidden;background:var(--white);transition:border-color .13s}
 .entity-card:hover{border-color:#c8c3ba}
 .ec-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper-w);border-bottom:1px solid var(--rule)}
-.ec-flag{font-size:16px;flex-shrink:0}
+.ec-flag{flex-shrink:0;width:22px;height:16px;border-radius:2px}
+.ec-ac-item .fi{width:16px;height:12px;border-radius:1px;flex-shrink:0}
 .ec-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
 .ec-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0}
 .ec-badge.pos{background:var(--emerald-lt);color:var(--emerald-dk)}
@@ -309,14 +311,25 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <input type="hidden" id="poolBank" value="ING Bank">
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0">
-            <label>Day count convention
-              <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, GBP, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
-            </label>
-            <select id="dayCount" onchange="recalc()">
-              <option value="360">ACT/360 — EUR, USD, CHF standard</option>
-              <option value="365">ACT/365 — GBP domestic</option>
-            </select>
+          <div class="row" style="margin-bottom:0">
+            <div class="fg">
+              <label>HQ Country</label>
+              <button class="ec-ac-trigger" id="masterCountryTrigger" onclick="openMasterCountryAC(event)" type="button"
+                style="padding:7px 10px;border:1.5px solid var(--rule);background:var(--paper);border-radius:var(--r);min-height:36px">
+                <span class="fi fi-de" style="width:18px;height:13px;border-radius:2px;flex-shrink:0"></span>
+                <span id="masterCountryName" style="flex:1">Germany</span>
+                <span style="color:var(--ink-fnt);font-size:9px">▾</span>
+              </button>
+            </div>
+            <div class="fg">
+              <label>Day count convention
+                <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, GBP, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
+              </label>
+              <select id="dayCount" onchange="recalc()">
+                <option value="360">ACT/360 — EUR, USD, CHF standard</option>
+                <option value="365">ACT/365 — GBP domestic</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -327,6 +340,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           <div class="sec-icon">🏦</div>
           <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Average daily balance per entity</div></div>
           <button class="add-entity-hd-btn" onclick="addEntity()">+ Add entity</button>
+          <button class="add-entity-hd-btn" onclick="clearEntities()" style="border-color:transparent;color:var(--ink-fnt)">Clear</button>
         </div>
         <div class="sec-body">
           <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
@@ -628,11 +642,20 @@ function setPreset(k){
 }
 
 // ── ENTITY CARDS ──
+const EXAMPLE_ENTITIES=[
+  {name:'Acme GmbH',         country:'DE',cc:'EUR',balance: 4200000,accounts:3},
+  {name:'Acme France SAS',   country:'FR',cc:'EUR',balance: 3800000,accounts:2},
+  {name:'Acme UK Ltd',       country:'GB',cc:'GBP',balance:-1500000,accounts:2},
+  {name:'Acme Benelux BV',   country:'NL',cc:'EUR',balance: 1900000,accounts:1},
+  {name:'Acme CEE s.r.o.',   country:'CZ',cc:'CZK',balance:-600000, accounts:1},
+];
+
 function addEntity(){
   entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1});
   renderEntities(); recalc();
 }
 function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
+function clearEntities(){entities=[];renderEntities();recalc()}
 
 function renderEntities(){
   const container=g('entityCards');
@@ -646,7 +669,7 @@ function renderEntities(){
     return `
     <div class="entity-card">
       <div class="ec-header">
-        <span class="ec-flag">${co.flag}</span>
+        <span class="ec-flag fi fi-${co.code.toLowerCase()}"></span>
         <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()"
           style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans)">
         <span class="ec-badge ${badgeClass}">${badgeText}</span>
@@ -656,7 +679,7 @@ function renderEntities(){
         <div class="ec-field">
           <div class="ec-field-label">Country</div>
           <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'country')" type="button">
-            <span>${co.flag}</span>
+            <span class="fi fi-${co.code.toLowerCase()}" style="width:16px;height:12px;border-radius:1px;flex-shrink:0"></span>
             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${co.name}</span>
             <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
           </button>
@@ -682,12 +705,12 @@ function renderEntities(){
 
 // ── ENTITY AC PORTAL ──
 let _ecPortalState=null;
-function openEcAC(evt,i,field){
-  evt.stopPropagation();
-  const btn=evt.currentTarget;
-  const rect=btn.getBoundingClientRect();
+let _masterCountry='DE';
+
+function _openPortal(evt,field,cb){
+  const rect=evt.currentTarget.getBoundingClientRect();
   const portal=g('ecDropPortal');
-  _ecPortalState={i,field};
+  _ecPortalState={field,cb,items:[]};
   g('ecPortalSearch').value='';
   g('ecPortalSearch').placeholder=field==='country'?'Search country…':'Search currency…';
   populateEcPortal('');
@@ -697,26 +720,47 @@ function openEcAC(evt,i,field){
   portal.style.display='block';
   setTimeout(()=>g('ecPortalSearch').focus(),30);
 }
+function openEcAC(evt,i,field){
+  evt.stopPropagation();
+  const cb=field==='country'
+    ?code=>{entities[i].country=code;closeEcPortal();renderEntities();recalc()}
+    :code=>{entities[i].cc=code;closeEcPortal();renderEntities();recalc()};
+  _openPortal(evt,field,cb);
+}
+function openMasterCountryAC(evt){
+  evt.stopPropagation();
+  _openPortal(evt,'country',code=>{_masterCountry=code;closeEcPortal();updateMasterCountryTrigger();recalc()});
+}
+function updateMasterCountryTrigger(){
+  const co=COUNTRIES.find(c=>c.code===_masterCountry)||{code:_masterCountry,name:_masterCountry};
+  const btn=g('masterCountryTrigger');
+  if(!btn) return;
+  btn.innerHTML=`<span class="fi fi-${co.code.toLowerCase()}" style="width:18px;height:13px;border-radius:2px;flex-shrink:0"></span><span style="flex:1">${co.name}</span><span style="color:var(--ink-fnt);font-size:9px">▾</span>`;
+}
 function populateEcPortal(val){
   if(!_ecPortalState) return;
   const q=val.trim().toLowerCase();
-  const {i,field}=_ecPortalState;
+  const {field,cb}=_ecPortalState;
+  let items;
   if(field==='country'){
-    const items=COUNTRIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
-    g('ecPortalItems').innerHTML=items.map(c=>`<div class="ec-ac-item" onclick="selectEcCountry(${i},'${c.code}')">
-      <span>${c.flag}</span><span style="flex:1">${c.name}</span>
+    items=COUNTRIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
+    g('ecPortalItems').innerHTML=items.map((c,idx)=>`<div class="ec-ac-item" onmousedown="event.preventDefault();_ecPortalSelect(${idx})">
+      <span class="fi fi-${c.code.toLowerCase()}"></span><span style="flex:1">${c.name}</span>
       <span style="font-size:10px;color:var(--ink-fnt);font-family:var(--mono)">${c.code}</span>
     </div>`).join('');
   } else {
-    const items=CURRENCIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
-    g('ecPortalItems').innerHTML=items.map(c=>`<div class="ec-ac-item" onclick="selectEcCurrency(${i},'${c.code}')">
+    items=CURRENCIES.filter(c=>!q||c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,30);
+    g('ecPortalItems').innerHTML=items.map((c,idx)=>`<div class="ec-ac-item" onmousedown="event.preventDefault();_ecPortalSelect(${idx})">
       <span style="font-family:var(--mono);font-weight:600;color:var(--navy);min-width:36px">${c.code}</span>
       <span>${c.name}</span>
     </div>`).join('');
   }
+  _ecPortalState.items=items;
 }
-function selectEcCountry(i,code){entities[i].country=code;closeEcPortal();renderEntities();recalc()}
-function selectEcCurrency(i,code){entities[i].cc=code;closeEcPortal();renderEntities();recalc()}
+function _ecPortalSelect(idx){
+  if(!_ecPortalState||!_ecPortalState.items[idx]) return;
+  _ecPortalState.cb(_ecPortalState.items[idx].code);
+}
 function closeEcPortal(){const p=g('ecDropPortal');if(p)p.style.display='none';_ecPortalState=null}
 
 // ── CORE CALCULATION ENGINE (corrected) ──
@@ -956,12 +1000,10 @@ function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
 
 // ── INIT ──
 g('poolBankInput').value='ING Bank';
-entities=[
-  {name:'Entity 1',country:'DE',cc:'EUR',balance:0,accounts:1},
-  {name:'Entity 2',country:'FR',cc:'EUR',balance:0,accounts:1},
-];
+entities=EXAMPLE_ENTITIES.map(e=>({...e}));
 renderEntities();
-g('groupName').value='';
+g('groupName').value='Acme Manufacturing Group';
+updateMasterCountryTrigger();
 recalc();
 </script>
 
