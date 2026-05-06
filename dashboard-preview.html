@@ -677,7 +677,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
   function renderLevel(nodes, depth) {
     if (!nodes.length) return null;
     return (
-      <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginTop: depth === 0 ? 36 : 28 }}>
+      <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginTop: depth === 0 ? 0 : 28 }}>
         {nodes.map(({ e, i }) => {
           const children = getChildren(i);
           return (
@@ -708,10 +708,6 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
                 border:`1px solid ${zbaColor}55`, borderRadius:6, padding:'4px 10px', cursor:'default' }}>
               <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>ZBA Efficiency</span>
               <span style={{ fontSize:11, fontWeight:700, color: zbaColor, fontFamily:'DM Mono,monospace' }}>{zbaLabel}</span>
-            </div>
-            <div style={{ display:'flex', alignItems:'center', gap:5, background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px' }}>
-              <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>Net Balance</span>
-              <span style={{ fontSize:11, fontWeight:700, color:'#1e293b', fontFamily:'DM Mono,monospace' }}>{poolBalance||'+€12.3M'}</span>
             </div>
           </div>
         </div>
@@ -756,6 +752,12 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Vertical connector */}
+          <div style={{ display:'flex', justifyContent:'center', height:32 }}>
+            <div style={{ width:2, height:'100%',
+              background:'repeating-linear-gradient(to bottom,#cbd5e1 0,#cbd5e1 5px,transparent 5px,transparent 10px)' }}/>
           </div>
 
           {/* Entity tree */}
@@ -819,7 +821,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
             <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Intercompany Funding Matrix</div>
-            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>Daily sweep positions via master · EUR-equivalent</div>
+            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>Net daily intercompany positions · EUR equivalent</div>
           </div>
           <div style={{ fontSize:10, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff',
             border:'1px solid #c7d2fe', borderRadius:99, padding:'3px 10px', flexShrink:0 }}>
@@ -827,14 +829,12 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
           </div>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
-          {['Entity','Position','Pool Rate p.a.','Est. Annual Interest'].map(h => (
+          {['Entity','Sweep type','Pool Rate p.a.','Est. Annual Interest'].map(h => (
             <span key={h} style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em' }}>{h}</span>
           ))}
         </div>
         {entityList.map((e, i) => {
-          const accent2  = e.surplus ? '#059669' : '#dc2626';
           const domCode2 = (e.domicile || e.country || '').toLowerCase();
-          const dispBal2 = fmtBal(e.balance, e.surplus);
           const isSub    = !isRoot(e);
           return (
             <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr',
@@ -858,8 +858,20 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
                   </div>
                 </div>
               </div>
-              <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, fontWeight:700, color: accent2 }}>
-                {dispBal2}
+              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke={e.surplus ? '#059669' : '#dc2626'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    {e.surplus
+                      ? <><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></>
+                      : <><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></>
+                    }
+                  </svg>
+                  <span style={{ fontSize:12, fontWeight:600, color: e.surplus ? '#059669' : '#dc2626' }}>
+                    {e.surplus ? 'Sweeps ↑' : 'Funded ↓'}
+                  </span>
+                </div>
+                <span style={{ fontSize:10, color:'#94a3b8' }}>ZBA daily</span>
               </div>
               <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#475569' }}>
                 {e.interestRate}
