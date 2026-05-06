@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cash Pool Simulator — CashPoolModel</title>
-<link rel="icon" type="image/png" href="/logo.png">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,104 +13,172 @@
   --ink-lt:#64748b;--ink-fnt:#94a3b8;--paper:#f8fafc;--paper-w:#f1f5f9;
   --rule:#e2e8f0;--white:#ffffff;--gold:#9a6e10;
   --emerald:#059669;--emerald-lt:#d1fae5;--emerald-dk:#065f46;
-  --red:#dc2626;--red-lt:#fee2e2;--blue:#2563eb;--blue-lt:#dbeafe;
+  --red:#dc2626;--red-lt:#fee2e2;--amber:#d97706;--amber-lt:#fef3c7;
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'DM Sans',system-ui,sans-serif;
   --mono:'DM Mono',monospace;
-  --max:860px;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);--r:6px;--rl:10px;
+  --max:900px;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 16px rgba(15,23,42,.06);
+  --r:6px;--rl:10px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;-webkit-font-smoothing:antialiased}
 body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5}
+
+/* NAV */
 .nav{background:var(--white);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:50}
 .nav-i{max-width:var(--max);margin:0 auto;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:600;color:var(--navy);text-decoration:none}
 .logo-mark{width:24px;height:24px;border-radius:4px;background:var(--navy);display:flex;align-items:center;justify-content:center}
 .logo-sub{font-size:9px;color:var(--ink-fnt);font-weight:400;letter-spacing:.3px;font-family:var(--sans);margin-top:1px}
 .nav-pill{font-size:10px;font-weight:600;color:var(--gold);background:#fef3c7;border:1px solid #fde68a;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
-.hero{padding:28px 0 20px;border-bottom:1px solid var(--rule);margin-bottom:24px}
-.hero-ey{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.hero-ey::before{content:'';width:14px;height:1px;background:var(--ink-fnt)}
-.hero h1{font-family:var(--serif);font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:6px}
-.hero-sub{font-size:13px;color:var(--ink-lt);font-weight:300;line-height:1.65}
-.sec{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
-.sec-hd{padding:13px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px}
-.sec-icon{width:26px;height:26px;border-radius:5px;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.sec-title{font-size:13px;font-weight:600;color:var(--navy)}
-.sec-sub{font-size:10px;color:var(--ink-fnt);margin-top:1px}
-.sec-body{padding:18px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.row.three{grid-template-columns:1fr 1fr 1fr}
-@media(max-width:540px){.row,.row.three{grid-template-columns:1fr}}
-.fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:11px;font-weight:600;color:var(--ink-mid);display:flex;align-items:center;gap:5px}
-.fg input,.fg select{padding:8px 11px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .13s;width:100%}
-.fg input:focus,.fg select:focus{border-color:var(--navy);background:var(--white)}
 
-/* Autocomplete dropdown */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+/* HERO */
+.hero{padding:24px 0 18px;border-bottom:1px solid var(--rule);margin-bottom:20px}
+.hero-ey{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ink-fnt);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.hero-ey::before{content:'';width:14px;height:1px;background:var(--ink-fnt)}
+.hero h1{font-family:var(--serif);font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--navy);letter-spacing:-.4px;margin-bottom:4px}
+.hero-sub{font-size:12px;color:var(--ink-lt);font-weight:300}
+
+/* LIVE RESULTS STRIP */
+.results-strip{
+  background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);
+  padding:16px 20px;margin-bottom:20px;box-shadow:var(--sh);
+  display:grid;grid-template-columns:repeat(5,1fr) auto;
+  gap:0;align-items:center;
+}
+.rs-divider{width:1px;height:32px;background:var(--rule);margin:0 4px}
+.rs-kpi{padding:0 16px;border-right:1px solid var(--rule)}
+.rs-kpi:first-child{padding-left:0}
+.rs-kpi:last-of-type{border-right:none}
+.rs-label{font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.rs-val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink)}
+.rs-val.pos{color:var(--emerald)}
+.rs-val.neg{color:var(--red)}
+.rs-val.warn{color:var(--amber)}
+.rs-btn{margin-left:16px;padding:10px 20px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;transition:background .14s;flex-shrink:0}
+.rs-btn:hover{background:var(--navy-h)}
+@media(max-width:700px){.results-strip{grid-template-columns:1fr 1fr;gap:12px}.rs-kpi{border-right:none;padding:0}}
+
+/* TWO COLUMN LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+@media(max-width:780px){.layout{grid-template-columns:1fr}}
+
+/* SECTIONS */
+.sec{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+.sec-hd{padding:11px 16px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:9px}
+.sec-icon{width:22px;height:22px;border-radius:4px;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.sec-title{font-size:12px;font-weight:600;color:var(--navy)}
+.sec-sub{font-size:10px;color:var(--ink-fnt);margin-top:1px}
+.sec-body{padding:16px}
+
+/* FORM ELEMENTS */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+@media(max-width:500px){.row{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:10px;font-weight:600;color:var(--ink-mid);display:flex;align-items:center;gap:5px}
+.fg input,.fg select{padding:7px 10px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .13s;width:100%}
+.fg input:focus,.fg select:focus{border-color:var(--navy);background:var(--white)}
+.fg input.warn-input{border-color:var(--amber)}
+
+/* AUTOCOMPLETE */
 .ac-wrap{position:relative}
-.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--navy);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:200px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 24px rgba(15,23,42,.12)}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--navy);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:180px;overflow-y:auto;z-index:100;display:none;box-shadow:0 8px 24px rgba(15,23,42,.12)}
 .ac-list.open{display:block}
-.ac-item{padding:7px 11px;font-size:13px;color:var(--ink-mid);cursor:pointer;border-bottom:1px solid var(--paper-w)}
+.ac-item{padding:6px 10px;font-size:12px;color:var(--ink-mid);cursor:pointer;border-bottom:1px solid var(--paper-w)}
 .ac-item:last-child{border-bottom:none}
-.ac-item:hover,.ac-item.selected{background:var(--paper-w);color:var(--navy)}
+.ac-item:hover{background:var(--paper-w);color:var(--navy)}
 .ac-item strong{color:var(--navy)}
 
-.cc-pills{display:flex;gap:6px;flex-wrap:wrap}
-.cc-pill{padding:5px 12px;border-radius:20px;border:1.5px solid var(--rule);background:var(--paper);font-size:12px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .13s;font-family:var(--sans)}
-.cc-pill.on{border-color:var(--navy);background:var(--navy);color:#fff}
-.preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.preset-btn{padding:5px 11px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--ink-lt);font-size:11px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
-.preset-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
-.et-wrap{overflow-x:auto;margin-bottom:10px}
-table.et{width:100%;border-collapse:collapse;font-size:12px}
-table.et th{padding:7px 10px;background:var(--paper-w);border-bottom:2px solid var(--rule);font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap}
-table.et th:nth-child(n+3){text-align:right}
-table.et td{padding:5px 6px;border-bottom:1px solid var(--paper-w);vertical-align:middle}
-table.et td:nth-child(n+3){text-align:right}
-table.et tr:hover td{background:var(--paper)}
-.et-inp{width:100%;padding:5px 7px;border-radius:4px;border:1.5px solid transparent;background:transparent;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none}
-.et-inp:focus{border-color:var(--navy);background:var(--white)}
-.et-inp.num{font-family:var(--mono);text-align:right}
-.et-inp.pos{color:var(--emerald)}
-.et-inp.neg{color:var(--red)}
+/* ENTITY CARDS */
+.entity-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.entity-card{border:1px solid var(--rule);border-radius:var(--rl);overflow:hidden;background:var(--white);transition:border-color .13s}
+.entity-card:hover{border-color:#c8c3ba}
+.ec-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper-w);border-bottom:1px solid var(--rule)}
+.ec-flag{font-size:16px;flex-shrink:0}
+.ec-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
+.ec-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0}
+.ec-badge.pos{background:var(--emerald-lt);color:var(--emerald-dk)}
+.ec-badge.neg{background:var(--red-lt);color:var(--red)}
+.ec-badge.zero{background:var(--paper-w);color:var(--ink-fnt)}
+.ec-del{padding:3px 8px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;transition:all .12s;flex-shrink:0}
+.ec-del:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+.ec-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.ec-field{padding:8px 14px;border-right:1px solid var(--paper-w)}
+.ec-field:last-child{border-right:none}
+.ec-field-label{font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.ec-field input,.ec-field select{padding:5px 8px;border-radius:4px;border:1.5px solid transparent;background:transparent;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none;width:100%;transition:all .12s}
+.ec-field input:focus,.ec-field select:focus{border-color:var(--navy);background:var(--white)}
+.ec-field input.bal{font-family:var(--mono);font-weight:700}
+.ec-field input.bal.pos{color:var(--emerald)}
+.ec-field input.bal.neg{color:var(--red)}
+
 .add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1.5px dashed var(--rule);background:transparent;color:var(--ink-lt);font-size:11px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
 .add-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
-.del-btn{padding:2px 7px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;transition:all .13s}
-.del-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
-.note{background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 13px;font-size:11px;color:#1e40af;line-height:1.55;margin-bottom:14px}
-.rate-group-label{font-size:10px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+.preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.preset-btn{padding:4px 10px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--ink-lt);font-size:10px;font-weight:500;cursor:pointer;transition:all .13s;font-family:var(--sans)}
+.preset-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--paper-w)}
+
+/* RATE COMPARISON */
+.rate-compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.rate-col{background:var(--white);padding:10px 12px}
+.rate-col-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;color:var(--ink-fnt)}
+.rate-col-label.pool{color:var(--emerald-dk)}
+.rate-spread{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:8px;background:var(--paper-w);border-radius:var(--r);font-size:11px;color:var(--ink-mid)}
+.spread-val{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--emerald)}
+
+/* VALIDATION WARNING */
+.warning-box{background:var(--amber-lt);border:1px solid #fcd34d;border-radius:var(--r);padding:8px 12px;font-size:11px;color:#92400e;margin-bottom:10px;display:none}
+.warning-box.show{display:block}
+
+/* NOTES */
+.note{background:var(--paper-w);border-left:3px solid var(--rule);border-radius:0 var(--r) var(--r) 0;padding:8px 12px;font-size:11px;color:var(--ink-lt);margin-bottom:12px;line-height:1.55}
+
+/* SIDEBAR PANELS */
+.sidebar-panel{background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);box-shadow:var(--sh);margin-bottom:14px;padding:16px}
+.sp-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-fnt);margin-bottom:10px}
+.sp-title{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;letter-spacing:-.2px}
+.sp-sub{font-size:11px;color:var(--ink-lt);font-weight:300;line-height:1.55;margin-bottom:12px}
+
+/* NETTING VISUAL */
+.netting-vis{position:relative;height:60px;margin:12px 0}
+.netting-bar-bg{position:absolute;inset:20px 0;background:var(--paper-w);border-radius:4px;overflow:hidden}
+.netting-bar-fill{position:absolute;top:0;left:0;height:100%;background:linear-gradient(90deg,var(--emerald),#34d399);border-radius:4px;transition:width .5s ease}
+.netting-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--ink-fnt);font-family:var(--mono);margin-top:2px}
+
+/* VERDICT */
+.verdict-box{border-radius:var(--r);padding:10px 14px;text-align:center;margin-top:4px}
+.verdict-box.go{background:var(--emerald-lt);border:1px solid #a7f3d0}
+.verdict-box.consider{background:var(--amber-lt);border:1px solid #fcd34d}
+.verdict-box.nogo{background:var(--red-lt);border:1px solid #fca5a5}
+.verdict-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.verdict-box.go .verdict-label{color:var(--emerald-dk)}
+.verdict-box.consider .verdict-label{color:#92400e}
+.verdict-box.nogo .verdict-label{color:var(--red)}
+.verdict-text{font-size:11px;color:var(--ink-mid);font-weight:300}
+
+/* AI UPLOAD */
+.upload-zone{border:2px dashed var(--rule);border-radius:var(--rl);padding:20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper)}
+.upload-zone:hover{border-color:var(--navy);background:var(--paper-w)}
+.upload-zone input{display:none}
+.upload-title{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.upload-sub{font-size:10px;color:var(--ink-fnt)}
+.ai-processing{display:none;background:var(--paper-w);border:1px solid var(--rule);border-radius:var(--r);padding:12px 16px;margin-top:10px}
+.ai-processing.show{display:flex;align-items:center;gap:10px}
+.ai-spinner{width:16px;height:16px;border:2px solid var(--rule);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-result{display:none;background:var(--emerald-lt);border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;margin-top:10px}
+.ai-result.show{display:block}
+
+/* TOOLTIP */
 .tt{position:relative;display:inline-flex;cursor:help}
-.tt-icon{width:13px;height:13px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt)}
-.tt span{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:4px;pointer-events:none;opacity:0;transition:opacity .14s;z-index:200;font-weight:400;max-width:200px;white-space:normal;text-align:center;line-height:1.4;min-width:160px}
+.tt-icon{width:12px;height:12px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt)}
+.tt span{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:5px 9px;border-radius:4px;pointer-events:none;opacity:0;transition:opacity .14s;z-index:200;font-weight:400;max-width:180px;white-space:normal;text-align:center;line-height:1.4;min-width:140px}
 .tt:hover span{opacity:1}
 
-/* AI Upload section */
-.upload-zone{border:2px dashed var(--rule);border-radius:var(--rl);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--paper)}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--navy);background:var(--paper-w)}
-.upload-zone input{display:none}
-.upload-icon{font-size:28px;margin-bottom:8px}
-.upload-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
-.upload-sub{font-size:11px;color:var(--ink-fnt)}
-.ai-processing{display:none;background:var(--paper-w);border:1px solid var(--rule);border-radius:var(--rl);padding:16px 20px}
-.ai-processing.show{display:flex;align-items:center;gap:12px}
-.ai-spinner{width:20px;height:20px;border:2px solid var(--rule);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ai-result{display:none;background:var(--emerald-lt);border:1px solid #a7f3d0;border-radius:var(--rl);padding:14px 18px}
-.ai-result.show{display:block}
-.mode-toggle{display:flex;gap:8px;margin-bottom:18px}
-.mode-btn{flex:1;padding:10px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .14s;text-align:center}
-.mode-btn.on{border-color:var(--navy);background:var(--navy);color:#fff}
-
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .14s;white-space:nowrap}
-.btn-navy{background:var(--navy);color:#fff}
+.btn-navy{display:inline-flex;align-items:center;gap:6px;padding:11px 28px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:background .14s}
 .btn-navy:hover{background:var(--navy-h)}
-.btn-ghost{background:transparent;color:var(--ink-mid);border:1.5px solid var(--rule)}
-.btn-ghost:hover{border-color:var(--navy);color:var(--navy)}
-.prog-bar{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin-bottom:20px}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--blue));border-radius:2px;transition:width .4s ease}
-
 </style>
 </head>
 <body>
@@ -129,9 +196,7 @@ table.et tr:hover td{background:var(--paper)}
       </div>
       <div><div>CashPoolModel</div><div class="logo-sub">by Intercompany.io</div></div>
     </a>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="nav-pill">Simulator — Beta</div>
-    </div>
+    <div class="nav-pill">Simulator — Beta</div>
   </div>
 </nav>
 
@@ -139,397 +204,326 @@ table.et tr:hover td{background:var(--paper)}
   <div class="hero">
     <div class="hero-ey">Cash Pool Simulator</div>
     <h1>Configure your group structure.</h1>
-    <p class="hero-sub">Enter your data manually, upload bank statements for AI extraction, or combine both. Results update in real time.</p>
-    <div style="margin-top:10px">
-      <a href="/guide.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-fnt);text-decoration:none;padding:4px 0;border-bottom:1px dashed var(--rule)">
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="10" height="12" rx="1.5"/><path d="M4 4.5h6M4 7h6M4 9.5h4"/></svg>
-        Setup &amp; Interpretation Guide
-      </a>
-    </div>
+    <p class="hero-sub">Enter entity balances and rates — results update in real time. Upload bank statements to auto-fill.</p>
   </div>
 
-  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-
-  <!-- AI UPLOAD -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-icon">✦</div>
-      <div><div class="sec-title">AI Data Extraction</div><div class="sec-sub">Upload bank statements — AI fills in entity data automatically</div></div>
+  <!-- LIVE RESULTS STRIP -->
+  <div class="results-strip">
+    <div class="rs-kpi">
+      <div class="rs-label">Interest saving</div>
+      <div class="rs-val pos" id="r-interest">—</div>
     </div>
-    <div class="sec-body">
-      <div class="mode-toggle">
-        <button class="mode-btn on" id="modeManual" onclick="setMode('manual')">✎ Enter manually</button>
-        <button class="mode-btn" id="modeAI" onclick="setMode('ai')">✦ Upload statements</button>
-      </div>
+    <div class="rs-kpi">
+      <div class="rs-label">Netting efficiency</div>
+      <div class="rs-val" id="r-netting">—</div>
+    </div>
+    <div class="rs-kpi">
+      <div class="rs-label">Net benefit p.a.</div>
+      <div class="rs-val pos" id="r-benefit">—</div>
+    </div>
+    <div class="rs-kpi">
+      <div class="rs-label">Payback period</div>
+      <div class="rs-val" id="r-payback">—</div>
+    </div>
+    <div class="rs-kpi">
+      <div class="rs-label">Pool balance</div>
+      <div class="rs-val" id="r-pool">—</div>
+    </div>
+    <button class="rs-btn" onclick="viewReport()">View Full Report →</button>
+  </div>
 
-      <div id="aiSection" style="display:none">
-        <div class="note" style="background:#fefce8;border-color:#fde68a;color:#92400e">⚠ AI extraction is in private beta. <a href="/contact.html" style="color:#92400e;font-weight:600;text-decoration:underline">Contact us</a> to enable it for your account — or enter data manually below.</div>
-        <div class="note">Upload PDF or CSV bank statements. AI will extract entity names, currencies, average balances, and account counts. You can review and edit everything before proceeding.</div>
-        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
-          ondragover="event.preventDefault();this.classList.add('drag')"
-          ondragleave="this.classList.remove('drag')"
-          ondrop="handleDrop(event)">
-          <input type="file" id="fileInput" accept=".pdf,.csv,.xlsx" multiple onchange="handleFileSelect(this.files)">
-          <div class="upload-icon">📄</div>
-          <div class="upload-title">Drop bank statements here or click to browse</div>
-          <div class="upload-sub">PDF, CSV or Excel · Multiple files supported · Data stays in your browser</div>
+  <div class="layout">
+    <!-- LEFT COLUMN -->
+    <div>
+
+      <!-- AI UPLOAD -->
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-icon">✦</div>
+          <div><div class="sec-title">AI Data Extraction</div><div class="sec-sub">Optional — upload statements to auto-fill entities</div></div>
         </div>
-
-        <div class="ai-processing" id="aiProcessing">
-          <div class="ai-spinner"></div>
-          <div>
-            <div style="font-size:13px;font-weight:600;color:var(--navy)">Extracting data…</div>
-            <div style="font-size:11px;color:var(--ink-fnt)" id="aiStatus">Reading file structure</div>
+        <div class="sec-body">
+          <div class="upload-zone" onclick="document.getElementById('fileInput').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="handleDrop(event)">
+            <input type="file" id="fileInput" accept=".pdf,.csv,.xlsx" multiple onchange="handleFileSelect(this.files)">
+            <div class="upload-title">Drop bank statements or click to browse</div>
+            <div class="upload-sub">PDF · CSV · Excel · Data stays in your browser</div>
+          </div>
+          <div class="ai-processing" id="aiProcessing">
+            <div class="ai-spinner"></div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--navy)">Extracting data…</div>
+            <div style="font-size:10px;color:var(--ink-fnt)" id="aiStatus">Reading file</div></div>
+          </div>
+          <div class="ai-result" id="aiResult">
+            <div style="font-size:11px;font-weight:600;color:var(--emerald-dk)" id="aiResultText"></div>
           </div>
         </div>
+      </div>
 
-        <div class="ai-result" id="aiResult">
-          <div style="font-size:12px;font-weight:600;color:var(--emerald-dk);margin-bottom:4px">✓ Extraction complete</div>
-          <div style="font-size:11px;color:var(--emerald-dk)" id="aiResultText"></div>
-          <button onclick="setMode('manual')" style="margin-top:10px;padding:5px 12px;border-radius:var(--r);border:1px solid #059669;background:transparent;color:var(--emerald);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans)">Review & edit extracted data →</button>
+      <!-- GROUP INFO -->
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-icon">🏢</div>
+          <div><div class="sec-title">Group Information</div></div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- GROUP INFO -->
-  <div class="sec" id="manualSection">
-    <div class="sec-hd">
-      <div class="sec-icon">🏢</div>
-      <div><div class="sec-title">Group Information</div><div class="sec-sub">Name, pool type, base currency</div></div>
-    </div>
-    <div class="sec-body">
-      <div class="row">
-        <div class="fg">
-          <label>Group name</label>
-          <input type="text" id="groupName" placeholder="Acme Manufacturing Group" oninput="recalc()">
-        </div>
-        <div class="fg">
-          <label>Pool type</label>
-          <select id="poolType" onchange="onPoolTypeChange()">
-            <option value="zba">Zero-Balancing (Physical ZBA)</option>
-            <option value="notional">Notional Pooling</option>
-            <option value="target">Target Balancing</option>
-          </select>
-        </div>
-      </div>
-      <div class="row" id="targetBalRow" style="display:none">
-        <div class="fg">
-          <label>Minimum retained balance per entity (EUR) <div class="tt"><div class="tt-icon">?</div><span>Each entity sweeps only the amount above this threshold. Entities keep this buffer for operational liquidity.</span></div></label>
-          <input type="number" id="targetBal" value="200000" step="50000" oninput="recalc()">
-        </div>
-        <div class="fg"></div>
-      </div>
-      <div class="row">
-        <div class="fg">
-          <label>Base currency</label>
-          <div class="ac-wrap">
-            <input type="text" id="currencyInput" placeholder="EUR — Euro" oninput="filterCurrencies(this.value)" autocomplete="off" value="EUR — Euro">
-            <div class="ac-list" id="currencyList"></div>
-          </div>
-          <input type="hidden" id="selectedCurrency" value="EUR">
-        </div>
-        <div class="fg">
-          <label>Pool bank</label>
-          <div class="ac-wrap">
-            <input type="text" id="poolBankInput" placeholder="Start typing bank name…" oninput="filterBanks(this.value)" autocomplete="off">
-            <div class="ac-list" id="bankList"></div>
-          </div>
-          <input type="hidden" id="poolBank" value="ING Bank">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ENTITIES -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-icon">🏦</div>
-      <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Each subsidiary with average daily balance</div></div>
-    </div>
-    <div class="sec-body">
-      <div class="note">Positive balance = surplus (sweeps to pool) · Negative = deficit (funded by pool) · Enter EUR equivalent for non-EUR entities</div>
-      <div class="et-wrap">
-        <table class="et">
-          <thead>
-            <tr>
-              <th style="text-align:left;min-width:140px">Entity name</th>
-              <th style="text-align:left;min-width:80px">Country</th>
-              <th style="min-width:100px">Currency</th>
-              <th style="min-width:150px">Avg. daily balance (EUR)</th>
-              <th style="min-width:70px">Accounts</th>
-              <th style="width:30px"></th>
-            </tr>
-          </thead>
-          <tbody id="entityBody"></tbody>
-        </table>
-      </div>
-      <button class="add-btn" onclick="addEntity()">+ Add entity</button>
-      <div id="entitySummary" style="display:flex;gap:20px;flex-wrap:wrap;padding:10px 2px 4px;font-size:12px;border-top:1px solid var(--rule);margin-top:8px"></div>
-      <div class="preset-btns">
-        <button class="preset-btn" onclick="loadTemplate('western')">🌍 Western Europe</button>
-        <button class="preset-btn" onclick="loadTemplate('cee')">🌐 CEE template</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- RATES -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-icon">%</div>
-      <div><div class="sec-title">Interest Rates</div><div class="sec-sub">Current bilateral rates vs. proposed pool rates</div></div>
-    </div>
-    <div class="sec-body">
-      <div class="rate-group-label">Without pool — current bilateral</div>
-      <div class="row">
-        <div class="fg">
-          <label>Debit rate (overdraft) % p.a. <div class="tt"><div class="tt-icon">?</div><span>What your bank charges entities in overdraft without a pool.</span></div></label>
-          <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="20" oninput="recalc()">
-        </div>
-        <div class="fg">
-          <label>Credit rate (deposit) % p.a.</label>
-          <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" oninput="recalc()">
-        </div>
-      </div>
-      <div class="rate-group-label" style="margin-top:16px">With pool — bank offer</div>
-      <div class="row">
-        <div class="fg">
-          <label>Pool debit rate % p.a.</label>
-          <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="15" oninput="recalc()">
-        </div>
-        <div class="fg">
-          <label>Pool credit rate % p.a.</label>
-          <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" oninput="recalc()">
-        </div>
-      </div>
-      <div class="preset-btns">
-        <button class="preset-btn" onclick="setPreset('eur')">ECB / EUR</button>
-        <button class="preset-btn" onclick="setPreset('czk')">ČNB / CZK</button>
-        <button class="preset-btn" onclick="setPreset('usd')">Fed / USD</button>
-        <button class="preset-btn" onclick="setPreset('gbp')">BoE / GBP</button>
-        <button class="preset-btn" onclick="setPreset('chf')">SNB / CHF</button>
-      </div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule)">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="whtApplies" onchange="toggleWht()" style="accent-color:var(--navy);width:14px;height:14px;flex-shrink:0">
-          <span style="font-size:12px;font-weight:500;color:var(--ink-mid)">Cross-border pool — withholding tax (WHT) on intercompany interest</span>
-          <div class="tt"><div class="tt-icon">?</div><span>WHT is deducted when the pool header pays interest to surplus entities in other jurisdictions. Most relevant for ZBA. Notional pooling avoids this.</span></div>
-        </label>
-        <div id="whtRateRow" style="display:none;margin-top:10px">
+        <div class="sec-body">
           <div class="row">
             <div class="fg">
-              <label>Effective WHT rate (%) <div class="tt"><div class="tt-icon">?</div><span>Check your bilateral tax treaty. Common rates: 5%, 10%, 15%. Applied to annual credit interest paid from header to surplus entities.</span></div></label>
-              <input type="number" id="whtRate" value="5" step="0.5" min="0" max="35" oninput="recalc()">
+              <label>Group name</label>
+              <input type="text" id="groupName" placeholder="Acme Manufacturing Group" oninput="recalc()">
             </div>
-            <div class="fg"></div>
+            <div class="fg">
+              <label>Pool type</label>
+              <select id="poolType" onchange="recalc()">
+                <option value="zba">Zero-Balancing (Physical ZBA)</option>
+                <option value="notional">Notional Pooling</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg">
+              <label>Base currency</label>
+              <div class="ac-wrap">
+                <input type="text" id="currencyInput" placeholder="EUR — Euro"
+                  oninput="filterCurrencies(this.value)" autocomplete="off" value="EUR — Euro">
+                <div class="ac-list" id="currencyList"></div>
+              </div>
+              <input type="hidden" id="selectedCurrency" value="EUR">
+            </div>
+            <div class="fg">
+              <label>Pool bank</label>
+              <div class="ac-wrap">
+                <input type="text" id="poolBankInput" placeholder="ING Bank, Citi…"
+                  oninput="filterBanks(this.value)" autocomplete="off">
+                <div class="ac-list" id="bankList"></div>
+              </div>
+              <input type="hidden" id="poolBank" value="ING Bank">
+            </div>
+          </div>
+          <div class="fg" style="margin-bottom:0">
+            <label>Day count convention
+              <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, GBP, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
+            </label>
+            <select id="dayCount" onchange="recalc()">
+              <option value="360">ACT/360 — EUR, USD, CHF standard</option>
+              <option value="365">ACT/365 — GBP domestic</option>
+            </select>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- COSTS -->
-  <div class="sec">
-    <div class="sec-hd">
-      <div class="sec-icon">💼</div>
-      <div><div class="sec-title">Costs</div><div class="sec-sub">Implementation and annual operating costs</div></div>
-    </div>
-    <div class="sec-body">
-      <div class="row">
-        <div class="fg">
-          <label>Implementation cost (EUR, one-off) <div class="tt"><div class="tt-icon">?</div><span>Legal setup, TMS integration, bank onboarding. Typically €100k–€400k.</span></div></label>
-          <input type="number" id="implCost" value="150000" step="5000" oninput="recalc()">
+      <!-- ENTITIES -->
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-icon">🏦</div>
+          <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Average daily balance per entity</div></div>
         </div>
-        <div class="fg">
-          <label>Annual bank fees (EUR/year)</label>
-          <input type="number" id="bankFees" value="30000" step="1000" oninput="recalc()">
+        <div class="sec-body">
+          <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
+          <div class="warning-box" id="warnBox"></div>
+          <div class="entity-cards" id="entityCards"></div>
+          <button class="add-btn" onclick="addEntity()">+ Add entity</button>
+          <div class="preset-btns">
+            <button class="preset-btn" onclick="loadTemplate('western')">Western Europe</button>
+            <button class="preset-btn" onclick="loadTemplate('cee')">CEE template</button>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="fg">
-          <label>Annual admin cost (EUR/year)</label>
-          <input type="number" id="adminCost" value="40000" step="1000" oninput="recalc()">
+
+      <!-- RATES -->
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-icon">%</div>
+          <div><div class="sec-title">Interest Rates</div><div class="sec-sub">Bilateral vs. pool — annual percentage</div></div>
         </div>
-        <div class="fg">
-          <label>Annual FX volume (EUR M) <div class="tt"><div class="tt-icon">?</div><span>Total group payment volume per year. Used for FX saving estimate.</span></div></label>
-          <input type="number" id="fxVolume" value="500" step="10" oninput="recalc()">
+        <div class="sec-body">
+          <div class="rate-compare">
+            <div class="rate-col">
+              <div class="rate-col-label">Without pool — bilateral</div>
+              <div class="fg" style="margin-bottom:8px">
+                <label>Debit rate (overdraft) %
+                  <div class="tt"><div class="tt-icon">?</div><span>Rate your bank charges entities in overdraft today.</span></div>
+                </label>
+                <input type="number" id="debitRate" value="5.50" step="0.05" min="0" max="25" oninput="recalc()">
+              </div>
+              <div class="fg">
+                <label>Credit rate (deposit) %</label>
+                <input type="number" id="creditRate" value="2.80" step="0.05" min="0" max="15" oninput="recalc()">
+              </div>
+            </div>
+            <div class="rate-col">
+              <div class="rate-col-label pool">With pool — bank offer</div>
+              <div class="fg" style="margin-bottom:8px">
+                <label>Pool debit rate %
+                  <div class="tt"><div class="tt-icon">?</div><span>Rate the pool bank charges deficit entities. Should be lower than bilateral debit.</span></div>
+                </label>
+                <input type="number" id="poolDebit" value="3.20" step="0.05" min="0" max="20" oninput="recalc()">
+              </div>
+              <div class="fg">
+                <label>Pool credit rate %
+                  <div class="tt"><div class="tt-icon">?</div><span>Rate the pool bank pays surplus entities. Should be higher than bilateral deposit.</span></div>
+                </label>
+                <input type="number" id="poolCredit" value="4.00" step="0.05" min="0" max="12" oninput="recalc()">
+              </div>
+            </div>
+          </div>
+          <div class="rate-spread" id="spreadRow">
+            <span>Interest spread:</span>
+            <span class="spread-val" id="spreadVal">—</span>
+            <span style="color:var(--ink-fnt)">· debit saving:</span>
+            <span class="spread-val" id="debitSpreadVal">—</span>
+          </div>
+          <div class="preset-btns" style="margin-top:10px">
+            <button class="preset-btn" onclick="setPreset('eur')">ECB / EUR</button>
+            <button class="preset-btn" onclick="setPreset('czk')">ČNB / CZK</button>
+            <button class="preset-btn" onclick="setPreset('usd')">Fed / USD</button>
+            <button class="preset-btn" onclick="setPreset('gbp')">BoE / GBP</button>
+            <button class="preset-btn" onclick="setPreset('chf')">SNB / CHF</button>
+          </div>
         </div>
       </div>
+
+      <!-- COSTS -->
+      <div class="sec">
+        <div class="sec-hd">
+          <div class="sec-icon">💼</div>
+          <div><div class="sec-title">Costs</div><div class="sec-sub">Implementation and annual operating</div></div>
+        </div>
+        <div class="sec-body">
+          <div class="row">
+            <div class="fg">
+              <label>Implementation cost (one-off)
+                <div class="tt"><div class="tt-icon">?</div><span>Legal, TMS integration, bank onboarding. Typically €80k–€350k.</span></div>
+              </label>
+              <input type="number" id="implCost" value="150000" step="5000" oninput="recalc()">
+            </div>
+            <div class="fg">
+              <label>Annual bank fees</label>
+              <input type="number" id="bankFees" value="30000" step="1000" oninput="recalc()">
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg">
+              <label>Annual admin / TMS cost</label>
+              <input type="number" id="adminCost" value="40000" step="1000" oninput="recalc()">
+            </div>
+            <div class="fg">
+              <label>WHT rate on interest %
+                <div class="tt"><div class="tt-icon">?</div><span>Withholding tax on intercompany interest. 0% within EU (Interest & Royalties Directive). Up to 20% for non-EU.</span></div>
+              </label>
+              <input type="number" id="whtRate" value="0" step="1" min="0" max="35" oninput="recalc()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW REPORT -->
+      <div style="padding:8px 0 48px;text-align:center">
+        <button class="btn-navy" onclick="viewReport()">View Full Report →</button>
+        <div style="margin-top:8px;font-size:11px;color:var(--ink-fnt)">All inputs are saved automatically</div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div>
+
+      <!-- VERDICT -->
+      <div class="sidebar-panel">
+        <div class="sp-label">Live Analysis</div>
+        <div class="sp-title" id="sp-saving">—</div>
+        <div class="sp-sub">estimated annual interest saving</div>
+
+        <!-- Netting visual -->
+        <div style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">
+          Netting efficiency
+          <div class="tt" style="display:inline-flex;margin-left:4px"><div class="tt-icon">?</div><span>The fraction of group surpluses and deficits that offset each other internally. Higher = better pool ROI.</span></div>
+        </div>
+        <div class="netting-vis">
+          <div class="netting-bar-bg">
+            <div class="netting-bar-fill" id="nettingBar" style="width:0%"></div>
+          </div>
+          <div class="netting-labels">
+            <span>0%</span>
+            <span id="nettingPct">—</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div style="background:var(--paper-w);border-radius:var(--r);padding:8px 10px">
+            <div style="font-size:9px;color:var(--ink-fnt);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">Payback</div>
+            <div class="rs-val" id="sp-payback" style="font-size:15px">—</div>
+          </div>
+          <div style="background:var(--paper-w);border-radius:var(--r);padding:8px 10px">
+            <div style="font-size:9px;color:var(--ink-fnt);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px">Net p.a.</div>
+            <div class="rs-val pos" id="sp-net" style="font-size:15px">—</div>
+          </div>
+        </div>
+
+        <div class="verdict-box go" id="verdictBox">
+          <div class="verdict-label" id="verdictLabel">—</div>
+          <div class="verdict-text" id="verdictText">Enter data to see recommendation</div>
+        </div>
+      </div>
+
+      <!-- POOL BREAKDOWN -->
+      <div class="sidebar-panel">
+        <div class="sp-label">Pool Breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="poolBreakdown">
+          <div style="font-size:12px;color:var(--ink-fnt)">Enter entities to see breakdown</div>
+        </div>
+      </div>
+
+      <!-- RATE VALIDATION -->
+      <div class="sidebar-panel" id="rateValidation">
+        <div class="sp-label">Rate Sanity Check</div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="rateChecks">
+          <div style="font-size:12px;color:var(--ink-fnt)">Enter rates to see validation</div>
+        </div>
+      </div>
+
     </div>
   </div>
-
-  <!-- VIEW REPORT BUTTON -->
-  <div style="padding:24px 0 48px;text-align:center">
-    <button class="btn btn-navy" id="viewReportBtn" style="padding:13px 36px;font-size:14px;border-radius:8px;opacity:.45;cursor:not-allowed" onclick="viewReport()" disabled>
-      View Full Report →
-    </button>
-    <div style="margin-top:10px;font-size:11px;color:var(--ink-fnt)" id="reportBtnNote">Add at least 2 entities to generate your report.</div>
-  </div>
-
 </div>
 
-<!-- DATALISTS -->
-<datalist id="countryList">
-  <option value="AT">🇦🇹 Austria</option><option value="BE">🇧🇪 Belgium</option>
-  <option value="CZ">🇨🇿 Czech Republic</option><option value="DE">🇩🇪 Germany</option>
-  <option value="ES">🇪🇸 Spain</option><option value="FR">🇫🇷 France</option>
-  <option value="GB">🇬🇧 United Kingdom</option><option value="HU">🇭🇺 Hungary</option>
-  <option value="IT">🇮🇹 Italy</option><option value="NL">🇳🇱 Netherlands</option>
-  <option value="PL">🇵🇱 Poland</option><option value="RO">🇷🇴 Romania</option>
-  <option value="SE">🇸🇪 Sweden</option><option value="SK">🇸🇰 Slovakia</option>
-  <option value="CH">🇨🇭 Switzerland</option><option value="US">🇺🇸 United States</option>
-  <option value="SG">🇸🇬 Singapore</option><option value="HK">🇭🇰 Hong Kong</option>
-</datalist>
-
 <script>
-// ── WORLD CURRENCIES (ISO 4217) ──
-const CURRENCIES = [
-  {code:'EUR',name:'Euro'},
-  {code:'USD',name:'US Dollar'},
-  {code:'GBP',name:'British Pound'},
-  {code:'CHF',name:'Swiss Franc'},
-  {code:'CZK',name:'Czech Koruna'},
-  {code:'PLN',name:'Polish Zloty'},
-  {code:'HUF',name:'Hungarian Forint'},
-  {code:'SEK',name:'Swedish Krona'},
-  {code:'NOK',name:'Norwegian Krone'},
-  {code:'DKK',name:'Danish Krone'},
-  {code:'RON',name:'Romanian Leu'},
-  {code:'BGN',name:'Bulgarian Lev'},
-  {code:'HRK',name:'Croatian Kuna'},
-  {code:'RSD',name:'Serbian Dinar'},
-  {code:'JPY',name:'Japanese Yen'},
-  {code:'CNY',name:'Chinese Yuan'},
-  {code:'AUD',name:'Australian Dollar'},
-  {code:'CAD',name:'Canadian Dollar'},
-  {code:'NZD',name:'New Zealand Dollar'},
-  {code:'SGD',name:'Singapore Dollar'},
-  {code:'HKD',name:'Hong Kong Dollar'},
-  {code:'INR',name:'Indian Rupee'},
-  {code:'BRL',name:'Brazilian Real'},
-  {code:'MXN',name:'Mexican Peso'},
-  {code:'ZAR',name:'South African Rand'},
-  {code:'TRY',name:'Turkish Lira'},
-  {code:'AED',name:'UAE Dirham'},
-  {code:'SAR',name:'Saudi Riyal'},
-  {code:'THB',name:'Thai Baht'},
-  {code:'MYR',name:'Malaysian Ringgit'},
-  {code:'IDR',name:'Indonesian Rupiah'},
-  {code:'PHP',name:'Philippine Peso'},
-  {code:'KRW',name:'South Korean Won'},
-  {code:'TWD',name:'Taiwan Dollar'},
-  {code:'UAH',name:'Ukrainian Hryvnia'},
-  {code:'RUB',name:'Russian Ruble'},
-  {code:'ILS',name:'Israeli Shekel'},
-  {code:'EGP',name:'Egyptian Pound'},
-  {code:'NGN',name:'Nigerian Naira'},
-  {code:'KES',name:'Kenyan Shilling'},
-  {code:'GHS',name:'Ghanaian Cedi'},
-  {code:'PKR',name:'Pakistani Rupee'},
-  {code:'BDT',name:'Bangladeshi Taka'},
-  {code:'CLP',name:'Chilean Peso'},
-  {code:'COP',name:'Colombian Peso'},
-  {code:'PEN',name:'Peruvian Sol'},
-  {code:'ARS',name:'Argentine Peso'},
-  {code:'VND',name:'Vietnamese Dong'},
-  {code:'QAR',name:'Qatari Riyal'},
-  {code:'KWD',name:'Kuwaiti Dinar'},
+// ── CURRENCIES ──
+const CURRENCIES=[
+  {code:'EUR',name:'Euro'},{code:'USD',name:'US Dollar'},{code:'GBP',name:'British Pound'},
+  {code:'CHF',name:'Swiss Franc'},{code:'CZK',name:'Czech Koruna'},{code:'PLN',name:'Polish Zloty'},
+  {code:'HUF',name:'Hungarian Forint'},{code:'SEK',name:'Swedish Krona'},{code:'NOK',name:'Norwegian Krone'},
+  {code:'DKK',name:'Danish Krone'},{code:'RON',name:'Romanian Leu'},{code:'BGN',name:'Bulgarian Lev'},
+  {code:'JPY',name:'Japanese Yen'},{code:'CNY',name:'Chinese Yuan'},{code:'AUD',name:'Australian Dollar'},
+  {code:'CAD',name:'Canadian Dollar'},{code:'SGD',name:'Singapore Dollar'},{code:'HKD',name:'Hong Kong Dollar'},
+  {code:'INR',name:'Indian Rupee'},{code:'BRL',name:'Brazilian Real'},{code:'MXN',name:'Mexican Peso'},
+  {code:'ZAR',name:'South African Rand'},{code:'TRY',name:'Turkish Lira'},{code:'AED',name:'UAE Dirham'},
+  {code:'THB',name:'Thai Baht'},{code:'MYR',name:'Malaysian Ringgit'},{code:'ILS',name:'Israeli Shekel'},
+  {code:'KRW',name:'South Korean Won'},{code:'TWD',name:'Taiwan Dollar'},{code:'SAR',name:'Saudi Riyal'},
 ];
 
-// ── WORLD BANKS ──
-const BANKS = [
-  'ING Bank','Citi','Deutsche Bank','BNP Paribas','HSBC','Barclays',
-  'Société Générale','UniCredit','Santander','Erste Group','Raiffeisen Bank International',
-  'Komerční banka','ČSOB','Česká spořitelna','OTP Bank','PKO Bank Polski',
-  'Bank Pekao','mBank','ING Bank Śląski','Tatra banka','VÚB banka',
-  'Slovenská sporiteľňa','Volksbank','Oberbank','BAWAG','Bank Austria',
-  'ABN AMRO','Rabobank','KBC','Belfius','Credit Suisse','UBS','PostFinance',
-  'Zürich Cantonal Bank','J.P. Morgan','Bank of America','Wells Fargo',
-  'Goldman Sachs','Morgan Stanley','Standard Chartered','DBS Bank',
-  'OCBC Bank','UOB','Bank of China','ICBC','CCB','Agricultural Bank of China',
-  'Mizuho','MUFG','SMBC','Nordea','SEB','Swedbank','Handelsbanken',
-  'DNB','Danske Bank','Nykredit','Intesa Sanpaolo','Mediobanca',
-  'BBVA','CaixaBank','Sabadell','Crédit Agricole','Natixis','La Banque Postale',
-  'Commerzbank','DZ Bank','Landesbank Baden-Württemberg','Helaba',
-  'NBG','Piraeus Bank','Alpha Bank','Eurobank','Other',
+// ── BANKS ──
+const BANKS=[
+  'ING Bank','Citi','Deutsche Bank','BNP Paribas','HSBC','Barclays','Société Générale',
+  'UniCredit','Santander','Erste Group','Raiffeisen Bank International','Komerční banka',
+  'ČSOB','Česká spořitelna','OTP Bank','PKO Bank Polski','Bank Pekao','mBank',
+  'Tatra banka','VÚB banka','Slovenská sporiteľňa','ABN AMRO','Rabobank','KBC','Belfius',
+  'Credit Suisse','UBS','J.P. Morgan','Bank of America','Goldman Sachs','Standard Chartered',
+  'DBS Bank','Nordea','SEB','Swedbank','Handelsbanken','DNB','Danske Bank',
+  'Intesa Sanpaolo','BBVA','CaixaBank','Crédit Agricole','Commerzbank','DZ Bank','Other',
 ];
 
-// ── CURRENCY AUTOCOMPLETE ──
-function filterCurrencies(val) {
-  const list = document.getElementById('currencyList');
-  if (!val || val.length < 1) { list.classList.remove('open'); return; }
-  const q = val.toLowerCase();
-  const matches = CURRENCIES.filter(c =>
-    c.code.toLowerCase().startsWith(q) || c.name.toLowerCase().includes(q)
-  ).slice(0, 8);
-  if (!matches.length) { list.classList.remove('open'); return; }
-  list.innerHTML = matches.map(c =>
-    `<div class="ac-item" onclick="selectCurrency('${c.code}','${c.name}')"><strong>${c.code}</strong> — ${c.name}</div>`
-  ).join('');
-  list.classList.add('open');
-}
-function selectCurrency(code, name) {
-  document.getElementById('currencyInput').value = code + ' — ' + name;
-  document.getElementById('selectedCurrency').value = code;
-  currency = code;
-  document.getElementById('currencyList').classList.remove('open');
-  recalc();
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('#currencyList') && !e.target.closest('#currencyInput'))
-    document.getElementById('currencyList').classList.remove('open');
-});
-function filterBanks(val) {
-  const list = document.getElementById('bankList');
-  if (!val || val.length < 1) { list.classList.remove('open'); return; }
-  const matches = BANKS.filter(b => b.toLowerCase().includes(val.toLowerCase())).slice(0, 8);
-  if (!matches.length) { list.classList.remove('open'); return; }
-  list.innerHTML = matches.map(b =>
-    `<div class="ac-item" onclick="selectBank('${b}')">${b.replace(new RegExp(val,'gi'), m => '<strong>'+m+'</strong>')}</div>`
-  ).join('');
-  list.classList.add('open');
-}
-function selectBank(name) {
-  document.getElementById('poolBankInput').value = name;
-  document.getElementById('poolBank').value = name;
-  document.getElementById('bankList').classList.remove('open');
-  recalc();
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('.ac-wrap')) document.getElementById('bankList').classList.remove('open');
-});
+// ── FLAGS ──
+const FLAGS={DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',
+  PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸',RO:'🇷🇴',
+  SG:'🇸🇬',HK:'🇭🇰',NO:'🇳🇴',DK:'🇩🇰',BG:'🇧🇬',HR:'🇭🇷',RS:'🇷🇸',PT:'🇵🇹',
+  FI:'🇫🇮',IE:'🇮🇪',LU:'🇱🇺',TR:'🇹🇷',AE:'🇦🇪',JP:'🇯🇵',CN:'🇨🇳',AU:'🇦🇺',CA:'🇨🇦',
+};
+const COUNTRIES=Object.entries(FLAGS).map(([k,v])=>({code:k,flag:v}));
 
-// ── CURRENCY AUTOCOMPLETE in entity rows ──
-function makeCurrencySelect(selected) {
-  return `<select class="et-inp" style="min-width:90px;font-family:var(--mono)" onchange="updateEntityField(this)">
-    ${CURRENCIES.map(c => `<option value="${c.code}" ${c.code===selected?'selected':''}>${c.code} — ${c.name}</option>`).join('')}
-  </select>`;
-}
-
-// ── COUNTRIES ──
-const COUNTRIES = [
-  {code:'DE',flag:'🇩🇪',name:'Germany'},
-  {code:'FR',flag:'🇫🇷',name:'France'},
-  {code:'GB',flag:'🇬🇧',name:'United Kingdom'},
-  {code:'NL',flag:'🇳🇱',name:'Netherlands'},
-  {code:'CH',flag:'🇨🇭',name:'Switzerland'},
-  {code:'AT',flag:'🇦🇹',name:'Austria'},
-  {code:'CZ',flag:'🇨🇿',name:'Czech Republic'},
-  {code:'SK',flag:'🇸🇰',name:'Slovakia'},
-  {code:'PL',flag:'🇵🇱',name:'Poland'},
-  {code:'HU',flag:'🇭🇺',name:'Hungary'},
-  {code:'US',flag:'🇺🇸',name:'United States'},
-  {code:'BE',flag:'🇧🇪',name:'Belgium'},
-  {code:'SE',flag:'🇸🇪',name:'Sweden'},
-  {code:'IT',flag:'🇮🇹',name:'Italy'},
-  {code:'ES',flag:'🇪🇸',name:'Spain'},
-  {code:'RO',flag:'🇷🇴',name:'Romania'},
-  {code:'SG',flag:'🇸🇬',name:'Singapore'},
-  {code:'HK',flag:'🇭🇰',name:'Hong Kong'},
-  {code:'NO',flag:'🇳🇴',name:'Norway'},
-  {code:'DK',flag:'🇩🇰',name:'Denmark'},
-];
-
+// ── PRESETS ──
 const PRESETS={
   eur:{debit:4.15,credit:2.40,poolDebit:2.65,poolCredit:3.50},
   czk:{debit:5.50,credit:2.80,poolDebit:3.20,poolCredit:4.00},
@@ -555,325 +549,348 @@ const TEMPLATES={
   ],
 };
 
-let currency='EUR';
-let entities=[];
+let currency='EUR', entities=[];
 
 function g(id){return document.getElementById(id)}
-function setPreset(k){const p=PRESETS[k];g('debitRate').value=p.debit;g('creditRate').value=p.credit;g('poolDebit').value=p.poolDebit;g('poolCredit').value=p.poolCredit;recalc()}
-function setCurrency(cc,btn){currency=cc;document.querySelectorAll('.cc-pill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');recalc()}
+
+// ── AUTOCOMPLETE ──
+function filterCurrencies(val){
+  const list=g('currencyList');
+  if(!val){list.classList.remove('open');return}
+  const q=val.toLowerCase();
+  const m=CURRENCIES.filter(c=>c.code.toLowerCase().startsWith(q)||c.name.toLowerCase().includes(q)).slice(0,7);
+  if(!m.length){list.classList.remove('open');return}
+  list.innerHTML=m.map(c=>`<div class="ac-item" onclick="selectCurrency('${c.code}','${c.name}')"><strong>${c.code}</strong> — ${c.name}</div>`).join('');
+  list.classList.add('open');
+}
+function selectCurrency(code,name){
+  g('currencyInput').value=code+' — '+name;
+  g('selectedCurrency').value=code;
+  currency=code;
+  g('currencyList').classList.remove('open');
+  recalc();
+}
+
+function filterBanks(val){
+  const list=g('bankList');
+  if(!val){list.classList.remove('open');return}
+  const m=BANKS.filter(b=>b.toLowerCase().includes(val.toLowerCase())).slice(0,7);
+  if(!m.length){list.classList.remove('open');return}
+  list.innerHTML=m.map(b=>`<div class="ac-item" onclick="selectBank('${b}')">${b.replace(new RegExp(val,'gi'),m=>'<strong>'+m+'</strong>')}</div>`).join('');
+  list.classList.add('open');
+}
+function selectBank(name){
+  g('poolBankInput').value=name;
+  g('poolBank').value=name;
+  g('bankList').classList.remove('open');
+  recalc();
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.ac-wrap')){
+    g('currencyList').classList.remove('open');
+    g('bankList').classList.remove('open');
+  }
+});
+
+// ── PRESETS ──
+function setPreset(k){
+  const p=PRESETS[k];
+  g('debitRate').value=p.debit; g('creditRate').value=p.credit;
+  g('poolDebit').value=p.poolDebit; g('poolCredit').value=p.poolCredit;
+  recalc();
+}
+
+// ── TEMPLATES ──
 function loadTemplate(k){entities=TEMPLATES[k].map(e=>({...e}));renderEntities();recalc()}
-function addEntity(){entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1});renderEntities();recalc()}
+
+// ── ENTITY CARDS ──
+function addEntity(){
+  entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1});
+  renderEntities(); recalc();
+}
 function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
 
-function updateEntityField(el) {
-  const row = el.closest('tr');
-  const rows = Array.from(document.querySelectorAll('#entityBody tr'));
-  const i = rows.indexOf(row);
-  if (i < 0) return;
-  const cells = row.querySelectorAll('td');
-  entities[i].name     = cells[0].querySelector('input')?.value ?? entities[i].name;
-  entities[i].country  = cells[1].querySelector('select')?.value ?? entities[i].country;
-  entities[i].cc       = cells[2].querySelector('select')?.value ?? entities[i].cc;
-  const balInp = cells[3].querySelector('input');
-  if (balInp) { entities[i].balance = parseFloat(balInp.value)||0; }
-  const accInp = cells[4].querySelector('input');
-  if (accInp) { entities[i].accounts = parseInt(accInp.value)||1; }
-  recalc();
-}
-
-function fmtBal(n) {
-  if (!n && n !== 0) return '';
-  const abs = Math.abs(n);
-  const sign = n < 0 ? '−' : '+';
-  if (abs >= 1e6) return sign + '€' + (abs/1e6).toFixed(2) + 'M';
-  if (abs >= 1e3) return sign + '€' + Math.round(abs/1000) + 'k';
-  return (n < 0 ? '−' : '') + '€' + abs;
-}
-
 function renderEntities(){
-  g('entityBody').innerHTML = entities.map((e,i) => `
-    <tr>
-      <td><input class="et-inp" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()" style="text-align:left;min-width:130px"></td>
-      <td>
-        <select class="et-inp" onchange="entities[${i}].country=this.value;recalc()" style="text-align:left;min-width:120px">
-          ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.name}</option>`).join('')}
-        </select>
-      </td>
-      <td>
-        <select class="et-inp" style="min-width:100px;font-family:var(--mono);font-size:11px" onchange="entities[${i}].cc=this.value;recalc()">
-          ${CURRENCIES.map(c=>`<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('')}
-        </select>
-      </td>
-      <td>
-        <input class="et-inp num ${e.balance>=0?'pos':'neg'}" type="number" value="${e.balance}" step="50000"
-          onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='et-inp num '+(entities[${i}].balance>=0?'pos':'neg');renderSummary();recalc()"
-          style="min-width:130px">
-        <div style="font-size:9px;color:var(--ink-fnt);text-align:right;margin-top:1px">${fmtBal(e.balance)}</div>
-      </td>
-      <td><input class="et-inp num" type="number" value="${e.accounts}" min="1" max="20"
-        onchange="entities[${i}].accounts=parseInt(this.value)||1;recalc()" style="min-width:55px"
-        title="Number of bank accounts for this entity — used for per-account fee calculation"></td>
-      <td><button class="del-btn" onclick="removeEntity(${i})">✕</button></td>
-    </tr>
-  `).join('');
-  renderSummary();
+  const container=g('entityCards');
+  if(!entities.length){container.innerHTML='<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px">No entities added yet.</div>';return}
+  container.innerHTML=entities.map((e,i)=>{
+    const flag=FLAGS[e.country]||'🏢';
+    const surplus=e.balance>0,deficit=e.balance<0;
+    const badgeClass=surplus?'pos':deficit?'neg':'zero';
+    const badgeText=surplus?'↑ Surplus':deficit?'↓ Deficit':'Neutral';
+    return `
+    <div class="entity-card">
+      <div class="ec-header">
+        <span class="ec-flag">${flag}</span>
+        <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;recalc()"
+          style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans)">
+        <span class="ec-badge ${badgeClass}">${badgeText}</span>
+        <button class="ec-del" onclick="removeEntity(${i})">✕</button>
+      </div>
+      <div class="ec-body">
+        <div class="ec-field">
+          <div class="ec-field-label">Country</div>
+          <select class="ec-field-sel" onchange="entities[${i}].country=this.value;renderEntities();recalc()">
+            ${COUNTRIES.map(c=>`<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code}</option>`).join('')}
+          </select>
+        </div>
+        <div class="ec-field">
+          <div class="ec-field-label">Currency</div>
+          <select class="ec-field-sel" onchange="entities[${i}].cc=this.value;recalc()">
+            ${CURRENCIES.slice(0,12).map(c=>`<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code}</option>`).join('')}
+          </select>
+        </div>
+        <div class="ec-field">
+          <div class="ec-field-label">Avg. daily balance</div>
+          <input type="number" class="bal ${e.balance>0?'pos':e.balance<0?'neg':''}"
+            value="${e.balance}" step="50000"
+            onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='bal '+(entities[${i}].balance>0?'pos':entities[${i}].balance<0?'neg':'');renderEntities();recalc()">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function renderSummary() {
-  const el = g('entitySummary');
-  if (!el) return;
-  const surplus = entities.filter(e=>e.balance>0).reduce((s,e)=>s+e.balance,0);
-  const deficit = entities.filter(e=>e.balance<0).reduce((s,e)=>s+Math.abs(e.balance),0);
-  const net = surplus - deficit;
-  if (!entities.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `
-    <span style="color:var(--emerald)">Surplus <strong>${fmtBal(surplus)}</strong></span>
-    <span style="color:var(--red)">Deficit <strong>${fmtBal(-deficit)}</strong></span>
-    <span style="color:${net>=0?'var(--emerald)':'var(--red)'}">Net <strong>${fmtBal(net)}</strong></span>
-    <span style="color:var(--ink-fnt)">${entities.length} ${entities.length===1?'entity':'entities'} · ${entities.reduce((s,e)=>s+e.accounts,0)} accounts</span>
-  `;
-}
-
-// ── POOL TYPE / WHT TOGGLES ──
-function onPoolTypeChange() {
-  const pt = g('poolType').value;
-  const targetRow = g('targetBalRow');
-  if (targetRow) targetRow.style.display = pt === 'target' ? '' : 'none';
-  recalc();
-}
-function toggleWht() {
-  const row = g('whtRateRow');
-  if (row) row.style.display = g('whtApplies').checked ? '' : 'none';
-  recalc();
-}
-
-// ── MODE TOGGLE ──
-function setMode(mode) {
-  g('modeManual').classList.toggle('on', mode==='manual');
-  g('modeAI').classList.toggle('on', mode==='ai');
-  g('aiSection').style.display = mode==='ai' ? 'block' : 'none';
-}
-
-// ── AI FILE UPLOAD ──
-function handleDrop(e) {
-  e.preventDefault();
-  g('uploadZone').classList.remove('drag');
-  processFiles(e.dataTransfer.files);
-}
-function handleFileSelect(files) { processFiles(files); }
-
-async function processFiles(files) {
-  if (!files.length) return;
-  g('aiProcessing').classList.add('show');
-  g('aiResult').classList.remove('show');
-
-  const statuses = ['Reading file structure…','Identifying entities…','Extracting balances…','Detecting currencies…','Finalising data…'];
-  let si = 0;
-  const ticker = setInterval(() => { if(si<statuses.length-1){g('aiStatus').textContent=statuses[++si];} }, 700);
-
-  try {
-    // Read file as base64
-    const file = files[0];
-    const base64 = await fileToBase64(file);
-    const isCSV = file.name.endsWith('.csv');
-
-    const prompt = isCSV
-      ? `This is a bank statement CSV. Extract: entity/company names, currencies, average daily balances (or closing balances), number of accounts. Return ONLY valid JSON array: [{"name":"...","country":"XX","cc":"XXX","balance":number,"accounts":number}]. Country = 2-letter ISO. Balance positive=surplus negative=deficit in EUR equivalent. No explanation, just JSON.`
-      : `This is a bank statement document. Extract treasury data: entity/subsidiary names, account currencies (ISO codes), average daily balances or account totals (convert to EUR equivalent if needed), number of accounts per entity. Return ONLY a valid JSON array: [{"name":"string","country":"XX","cc":"XXX","balance":number,"accounts":number}]. country=2-letter ISO code. balance=positive for surplus, negative for deficit. No markdown, no explanation, just the JSON array.`;
-
-    const body = isCSV
-      ? { model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[{type:'text',text:base64},{type:'text',text:prompt}]}] }
-      : { model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]}] };
-
-    const res  = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if (!res.ok) {
-      throw new Error(`API error ${res.status} — extraction requires backend configuration. Please enter data manually.`);
-    }
-    const data = await res.json();
-    const text = data.content?.find(b=>b.type==='text')?.text||'[]';
-    const clean= text.replace(/```[a-z]*\n?/g,'').replace(/```/g,'').trim();
-    const extracted = JSON.parse(clean);
-
-    clearInterval(ticker);
-    g('aiProcessing').classList.remove('show');
-
-    if (extracted.length) {
-      entities = extracted.map(e=>({
-        name: e.name||'Entity',
-        country: e.country||'DE',
-        cc: e.cc||'EUR',
-        balance: typeof e.balance==='number'?e.balance:0,
-        accounts: e.accounts||1,
-      }));
-      renderEntities();
-      recalc();
-      g('aiResultText').textContent = `${extracted.length} entities extracted from ${file.name}. Review and edit below.`;
-      g('aiResult').classList.add('show');
-    } else {
-      g('aiResultText').textContent = 'Could not extract structured data. Please enter manually.';
-      g('aiResult').classList.add('show');
-    }
-  } catch(err) {
-    clearInterval(ticker);
-    g('aiProcessing').classList.remove('show');
-    g('aiResultText').textContent = 'Extraction failed. Please enter data manually.';
-    g('aiResult').classList.add('show');
-    console.error(err);
-  }
-}
-
-function fileToBase64(file) {
-  return new Promise((res,rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-// ── CALCULATION ──
+// ── CORE CALCULATION ENGINE (corrected) ──
 function recalc(){
-  const dr  = parseFloat(g('debitRate').value)/100  || 0.055;
-  const cr  = parseFloat(g('creditRate').value)/100 || 0.028;
-  const pdr = parseFloat(g('poolDebit').value)/100  || 0.032;
-  const pcr = parseFloat(g('poolCredit').value)/100 || 0.040;
-  const impl= parseFloat(g('implCost').value)        || 150000;
-  const fees= parseFloat(g('bankFees').value)        || 30000;
-  const adm = parseFloat(g('adminCost').value)       || 40000;
-  const fxv = parseFloat(g('fxVolume').value)        || 500;
-  const poolType   = g('poolType').value;
-  const targetBal  = poolType === 'target' ? (parseFloat(g('targetBal')?.value) || 200000) : 0;
-  const whtApplies = g('whtApplies')?.checked || false;
-  const whtRate    = whtApplies ? (parseFloat(g('whtRate')?.value || 5) / 100) : 0;
+  const dr  = parseFloat(g('debitRate').value)/100  || 0;
+  const cr  = parseFloat(g('creditRate').value)/100 || 0;
+  const pdr = parseFloat(g('poolDebit').value)/100  || 0;
+  const pcr = parseFloat(g('poolCredit').value)/100 || 0;
+  const impl= parseFloat(g('implCost').value)        || 0;
+  const fees= parseFloat(g('bankFees').value)        || 0;
+  const adm = parseFloat(g('adminCost').value)       || 0;
+  const wht = parseFloat(g('whtRate').value)/100     || 0;
+  const days= parseInt(g('dayCount').value)          || 360;
 
-  // Target Balancing: entities only sweep amounts above their retained minimum
-  const calcEnt = poolType === 'target'
-    ? entities.map(e => ({...e,
-        balance: e.balance > 0 ? Math.max(0, e.balance - targetBal) : Math.min(0, e.balance + targetBal)
-      }))
-    : entities;
+  // Day count factor (ACT/360 vs ACT/365)
+  const dcf = 365 / days;
 
-  let surplus=0, deficit=0, intCostBef=0, intIncBef=0;
-  calcEnt.forEach(e=>{
-    const b=e.balance;
-    if(b>0){surplus+=b; intIncBef+=b*cr;}
-    else if(b<0){deficit+=Math.abs(b); intCostBef+=Math.abs(b)*dr;}
+  // Entity balances
+  let surplus=0, deficit=0;
+  entities.forEach(e=>{
+    if(e.balance>0) surplus+=e.balance;
+    else if(e.balance<0) deficit+=Math.abs(e.balance);
   });
+  const totalBal = surplus + deficit;
+  const poolBal  = surplus - deficit;
 
-  const netting    = Math.min(surplus,deficit);
-  const nettingEff = (surplus+deficit)>0 ? netting/Math.max(surplus,deficit)*100 : 0;
+  // ── INTEREST SAVING (corrected formula) ──
+  // 1. Debit saving: deficit entities pay pool rate instead of bilateral debit
+  const debitSaving = deficit * (dr - pdr) * dcf;
 
-  // After pool: bank sees NET position (both ZBA and notional pool the cash/notionally)
-  // Applying pool rates to each entity separately overstates savings (ignores netting benefit)
-  // and adding nettingSave on top double-counts the debit spread improvement.
-  const netBal     = surplus - deficit;
-  const intIncAft  = netBal > 0 ? netBal * pcr : 0;
-  const intCostAft = netBal < 0 ? Math.abs(netBal) * pdr : 0;
-  const interestSaving = (intCostBef - intCostAft) + (intIncAft - intIncBef);
+  // 2. Credit uplift: surplus entities earn pool rate instead of bilateral deposit
+  const creditUplift = surplus * (pcr - cr) * dcf;
 
-  // Pool-type adjustments:
-  // Notional: no physical sweeps → no IC loans, but bank charges ~20% premium on fees
-  // ZBA + WHT: WHT deducted on IC interest paid from header to surplus entities in other jurisdictions
-  const notionalFeePremium = poolType === 'notional' ? fees * 0.20 : 0;
-  const whtCost = (whtApplies && poolType !== 'notional') ? intIncAft * whtRate : 0;
+  // 3. Netting saving: internal offset avoids external borrowing entirely
+  //    Netting = min(surplus, deficit) — the portion that cancels out
+  const netting = Math.min(surplus, deficit);
+  //    These funds don't need to be funded externally — save full bilateral debit rate
+  const nettingSaving = netting * pdr * dcf;
 
-  const fxSaving   = fxv*1e6*0.0008;
-  const opSaving   = fxSaving+fxv*1e6*0.0003;
-  const annualCosts= fees+adm+notionalFeePremium+whtCost;
-  const netBenefit = interestSaving+opSaving-annualCosts;
-  const poolBalance= calcEnt.reduce((s,e)=>s+e.balance,0);
-  const paybackMo  = netBenefit>0 ? impl/netBenefit*12 : 999;
-  const groupName  = g('groupName').value || 'Sample Group';
-  const poolBank   = g('poolBank').value  || 'ING Bank';
-  const currencyVal= g('selectedCurrency')?.value || currency;
+  const grossInterestSaving = debitSaving + creditUplift + nettingSaving;
 
-  // Progress bar — fixed: doesn't require deficit (all-surplus groups are valid)
-  const checks=[groupName.length>2, entities.length>=2, (surplus+deficit)>0, dr>0, impl>0];
-  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
-  if(g('progFill')) g('progFill').style.width=pct+'%';
+  // 4. WHT impact on intercompany interest (reduces benefit)
+  const whtCost = netting * pdr * dcf * wht;
 
-  // View Report button — enable when ≥2 entities
-  const btn = g('viewReportBtn');
-  if (btn) {
-    const ready = entities.length >= 2;
-    btn.disabled = !ready;
-    btn.style.opacity = ready ? '1' : '0.45';
-    btn.style.cursor = ready ? 'pointer' : 'not-allowed';
-    const note = g('reportBtnNote');
-    if (note) note.textContent = ready
-      ? 'Results calculated from your inputs above.'
-      : 'Add at least 2 entities to generate your report.';
+  const netInterestSaving = grossInterestSaving - whtCost;
+
+  // ── NETTING EFFICIENCY (corrected) ──
+  // Standard definition: netting / total pool volume
+  const nettingEff = totalBal > 0 ? (netting / totalBal) * 100 : 0;
+
+  // ── COSTS ──
+  const annualCosts = fees + adm;
+
+  // ── NET BENEFIT ──
+  const netBenefit = netInterestSaving - annualCosts;
+
+  // ── PAYBACK ──
+  const paybackMo = netBenefit > 0 ? (impl / netBenefit) * 12 : 999;
+
+  // ── RATE SPREAD ──
+  const creditSpread = pcr - cr;   // uplift on deposits
+  const debitSpread  = dr  - pdr;  // saving on overdraft
+
+  // ── VALIDATION WARNINGS ──
+  const warnings = [];
+  if(pdr >= dr)  warnings.push('Pool debit rate ≥ bilateral debit — no saving on overdraft');
+  if(pcr <= cr)  warnings.push('Pool credit rate ≤ bilateral deposit — no uplift on surplus');
+  if(dr > 0.20)  warnings.push('Debit rate >20% — please verify');
+  if(cr > pcr)   warnings.push('Bilateral deposit rate > pool credit rate — unusual');
+  if(nettingEff < 10 && totalBal > 0) warnings.push('Netting efficiency <10% — all entities move in same direction');
+
+  const warnBox=g('warnBox');
+  if(warnings.length){
+    warnBox.innerHTML=warnings.map(w=>`⚠ ${w}`).join('<br>');
+    warnBox.classList.add('show');
+  } else {
+    warnBox.classList.remove('show');
   }
 
+  // ── FORMAT ──
+  const fmt=(n,sym='€')=>{
+    const a=Math.abs(n),s=n<0?'−':'+';
+    if(a>=1e6) return s+sym+(a/1e6).toFixed(2)+'M';
+    if(a>=1e3) return s+sym+Math.round(a/1e3)+'k';
+    return s+sym+Math.round(a);
+  };
+  const fmtPct=n=>n.toFixed(1)+'%';
+
+  // ── UPDATE RESULTS STRIP ──
+  const setEl=(id,val,cls)=>{const e=g(id);if(e){e.textContent=val;if(cls)e.className='rs-val '+cls}};
+  setEl('r-interest', netInterestSaving>0?fmt(netInterestSaving):'—', netInterestSaving>0?'pos':netInterestSaving<0?'neg':'');
+  setEl('r-netting',  totalBal>0?fmtPct(nettingEff):'—', nettingEff>50?'pos':nettingEff>20?'warn':'neg');
+  setEl('r-benefit',  netBenefit!==0?fmt(netBenefit):'—', netBenefit>0?'pos':netBenefit<0?'neg':'');
+  setEl('r-payback',  paybackMo<120?paybackMo.toFixed(1)+' mo':netBenefit<=0?'N/A':'—', paybackMo<18?'pos':paybackMo<36?'warn':'neg');
+  const poolBalEl=g('r-pool');
+  if(poolBalEl){poolBalEl.textContent=totalBal>0?fmt(poolBal):'—';poolBalEl.className='rs-val '+(poolBal>=0?'pos':'neg')}
+
+  // ── UPDATE SIDEBAR ──
+  const spSaving=g('sp-saving');
+  if(spSaving) spSaving.textContent=netInterestSaving>0?fmt(netInterestSaving).replace('+',''):'—';
+
+  const nb=g('nettingBar');
+  if(nb) nb.style.width=Math.min(nettingEff,100)+'%';
+  const np=g('nettingPct');
+  if(np) np.textContent=totalBal>0?fmtPct(nettingEff):'—';
+
+  const spPay=g('sp-payback');
+  if(spPay){spPay.textContent=paybackMo<120?paybackMo.toFixed(1)+' mo':'N/A';spPay.className='rs-val '+(paybackMo<18?'pos':paybackMo<36?'warn':'neg')}
+  const spNet=g('sp-net');
+  if(spNet){spNet.textContent=netBenefit!==0?fmt(netBenefit):'—';spNet.className='rs-val '+(netBenefit>0?'pos':'neg')}
+
+  // Verdict
+  const vBox=g('verdictBox'), vLabel=g('verdictLabel'), vText=g('verdictText');
+  if(vBox&&vLabel&&vText&&totalBal>0){
+    if(netBenefit>annualCosts*2&&paybackMo<24){
+      vBox.className='verdict-box go';vLabel.textContent='GO';
+      vText.textContent=`Strong business case. Payback in ${paybackMo.toFixed(1)} months.`;
+    } else if(netBenefit>0&&paybackMo<48){
+      vBox.className='verdict-box consider';vLabel.textContent='CONSIDER';
+      vText.textContent='Positive but marginal. Negotiate better pool rates.';
+    } else {
+      vBox.className='verdict-box nogo';vLabel.textContent='NO-GO';
+      vText.textContent='Pool costs exceed benefits at current rates.';
+    }
+  }
+
+  // Pool breakdown
+  const bd=g('poolBreakdown');
+  if(bd&&entities.length){
+    bd.innerHTML=[
+      {label:'Surplus entities',val:fmt(surplus).replace('+',''),col:'var(--emerald)'},
+      {label:'Deficit entities',val:fmt(-deficit).replace('+',''),col:'var(--red)'},
+      {label:'Netting offset', val:fmt(netting).replace('+',''),col:'var(--navy)'},
+    ].map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
+      <span style="font-size:11px;color:var(--ink-lt)">${r.label}</span>
+      <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${r.col}">${r.val}</span>
+    </div>`).join('');
+  }
+
+  // Rate sanity
+  const rc=g('rateChecks');
+  if(rc){
+    const checks=[
+      {label:'Debit saving',val:fmtPct(debitSpread*100),ok:debitSpread>0},
+      {label:'Credit uplift',val:fmtPct(creditSpread*100),ok:creditSpread>0},
+      {label:'Day count',val:days+' days',ok:true},
+      {label:'WHT impact',val:wht>0?'−'+fmt(whtCost).replace('+',''):'None',ok:wht===0},
+    ];
+    rc.innerHTML=checks.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
+      <span style="font-size:11px;color:var(--ink-lt)">${c.label}</span>
+      <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${c.ok?'var(--emerald)':'var(--amber)'}">${c.val}</span>
+    </div>`).join('');
+  }
+
+  // Spread display
+  const sv=g('spreadVal'),dv=g('debitSpreadVal');
+  if(sv) sv.textContent=creditSpread>0?'+'+fmtPct(creditSpread*100):fmtPct(creditSpread*100);
+  if(dv) dv.textContent=debitSpread>0?'+'+fmtPct(debitSpread*100):fmtPct(debitSpread*100);
+
+  // ── SAVE TO LOCALSTORAGE ──
+  const groupName  = g('groupName').value  || 'Sample Group';
+  const poolBank   = g('poolBank').value   || 'ING Bank';
+  const currencyVal= g('selectedCurrency')?.value || currency;
   try {
     localStorage.setItem('cpm_sim', JSON.stringify({
-      groupName, poolBank, currency: currencyVal,
-      poolType,
+      groupName, poolBank, currency:currencyVal,
+      poolType: g('poolType').value,
       totalEntities: entities.length,
-      totalAccounts: entities.reduce((s,e)=>s+e.accounts,0),
-      surplus, deficit, netting,
-      nettingEff: Math.round(nettingEff*10)/10,
-      interestSaving: Math.round(interestSaving),
-      opSaving: Math.round(opSaving),
+      totalAccounts: entities.reduce((s,e)=>s+(e.accounts||1),0),
+      surplus, deficit, netting, nettingEff: Math.round(nettingEff*10)/10,
+      interestSaving: Math.round(netInterestSaving),
+      opSaving: 0,
       netBenefit: Math.round(netBenefit),
-      poolBalance: Math.round(poolBalance),
+      poolBalance: Math.round(poolBal),
       paybackMo: Math.round(paybackMo*10)/10,
       debitRate:dr, creditRate:cr, poolDebit:pdr, poolCredit:pcr,
-      implCost:impl, bankFees:fees, adminCost:adm, fxVolume:fxv,
+      whtRate:wht, dayCount:days,
+      implCost:impl, bankFees:fees, adminCost:adm,
       entities: entities.map(e=>({...e})),
       nettingPct: Math.round(nettingEff),
-      spreadBps: Math.round((pcr-pdr)*10000),
-      yieldSpread: ((pcr-cr)*100).toFixed(2),
-      intCostBef:Math.round(intCostBef), intIncBef:Math.round(intIncBef),
-      intCostAft:Math.round(intCostAft), intIncAft:Math.round(intIncAft),
-      nettingSave:0, fxSaving:Math.round(fxSaving),
-      whtCost:Math.round(whtCost), notionalFeePremium:Math.round(notionalFeePremium),
+      spreadBps: Math.round(creditSpread*10000),
+      yieldSpread: (creditSpread*100).toFixed(2),
+      debitSpread: Math.round(debitSpread*10000),
       annualCosts, ts:Date.now(),
     }));
   } catch(e){}
 }
 
-function viewReport(){ recalc(); window.location.href='/dashboard-preview.html'; }
+// ── AI UPLOAD ──
+function handleDrop(e){e.preventDefault();processFiles(e.dataTransfer.files)}
+function handleFileSelect(files){processFiles(files)}
 
-// Init — restore previous session or load demo template
-(function init() {
-  const saved = (() => { try { return JSON.parse(localStorage.getItem('cpm_sim')); } catch(e){} return null; })();
-  if (saved && saved.entities && saved.entities.length > 0) {
-    if (saved.groupName) g('groupName').value = saved.groupName;
-    if (saved.poolBank)  { g('poolBankInput').value = saved.poolBank; g('poolBank').value = saved.poolBank; }
-    if (saved.currency)  {
-      const c = CURRENCIES.find(x => x.code === saved.currency);
-      if (c) { g('currencyInput').value = c.code + ' — ' + c.name; g('selectedCurrency').value = c.code; currency = c.code; }
+async function processFiles(files){
+  if(!files.length) return;
+  g('aiProcessing').classList.add('show');
+  g('aiResult').classList.remove('show');
+  const statuses=['Reading file…','Identifying entities…','Extracting balances…','Detecting currencies…','Done'];
+  let si=0;
+  const tick=setInterval(()=>{if(si<statuses.length-1)g('aiStatus').textContent=statuses[++si]},700);
+  try{
+    const file=files[0];
+    const base64=await fileToBase64(file);
+    const isCSV=file.name.endsWith('.csv');
+    const prompt=`Extract treasury entity data. Return ONLY valid JSON array: [{"name":"string","country":"2-letter ISO","cc":"ISO currency code","balance":number,"accounts":number}]. Balance positive=surplus negative=deficit in base currency equivalent. No markdown.`;
+    const body={
+      model:'claude-sonnet-4-20250514',max_tokens:800,
+      messages:[{role:'user',content:isCSV
+        ?[{type:'text',text:base64},{type:'text',text:prompt}]
+        :[{type:'document',source:{type:'base64',media_type:'application/pdf',data:base64}},{type:'text',text:prompt}]
+      }]
+    };
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    const text=data.content?.find(b=>b.type==='text')?.text||'[]';
+    const extracted=JSON.parse(text.replace(/```[a-z]*\n?/g,'').replace(/```/g,'').trim());
+    clearInterval(tick);g('aiProcessing').classList.remove('show');
+    if(extracted.length){
+      entities=extracted.map(e=>({name:e.name||'Entity',country:e.country||'DE',cc:e.cc||'EUR',balance:+e.balance||0,accounts:e.accounts||1}));
+      renderEntities();recalc();
+      g('aiResultText').textContent=`✓ ${extracted.length} entities extracted from ${file.name}. Review and adjust below.`;
+      g('aiResult').classList.add('show');
+    } else {
+      g('aiResultText').textContent='Could not extract data. Please enter manually.';
+      g('aiResult').classList.add('show');
     }
-    if (saved.poolType) { g('poolType').value = saved.poolType; onPoolTypeChange(); }
-    if (saved.debitRate  !== undefined) g('debitRate').value  = (saved.debitRate*100).toFixed(2);
-    if (saved.creditRate !== undefined) g('creditRate').value = (saved.creditRate*100).toFixed(2);
-    if (saved.poolDebit  !== undefined) g('poolDebit').value  = (saved.poolDebit*100).toFixed(2);
-    if (saved.poolCredit !== undefined) g('poolCredit').value = (saved.poolCredit*100).toFixed(2);
-    if (saved.implCost   !== undefined) g('implCost').value   = saved.implCost;
-    if (saved.bankFees   !== undefined) g('bankFees').value   = saved.bankFees;
-    if (saved.adminCost  !== undefined) g('adminCost').value  = saved.adminCost;
-    if (saved.fxVolume   !== undefined) g('fxVolume').value   = saved.fxVolume;
-    entities = (saved.entities || []).map(e => ({...e}));
-    renderEntities();
-  } else {
-    g('poolBankInput').value = 'ING Bank';
-    loadTemplate('western');
-    g('groupName').value = 'Acme Manufacturing Group';
+  } catch(err){
+    clearInterval(tick);g('aiProcessing').classList.remove('show');
+    g('aiResultText').textContent='Extraction failed — enter data manually.';
+    g('aiResult').classList.add('show');
   }
-  recalc();
-})();
-</script>
-<script src="guide-data.js"></script>
-<script>
-/* Wire tooltip text from GUIDE_DATA once it's loaded */
-(function wireTooltips(){
-  if (!window.GUIDE_DATA) return;
-  document.querySelectorAll('[data-tip-id]').forEach(function(el){
-    const text = GUIDE_DATA.tip(el.getAttribute('data-tip-id'));
-    if (text) { const span = el.querySelector('span'); if (span) span.textContent = text; }
-  });
-})();
+}
+function fileToBase64(file){
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);});
+}
+
+function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
+
+// ── INIT ──
+g('poolBankInput').value='ING Bank';
+loadTemplate('western');
+g('groupName').value='Acme Manufacturing Group';
+recalc();
 </script>
 </body>
 </html>
