@@ -125,6 +125,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .verdict-box.go{background:var(--emerald-lt);border:1px solid #a7f3d0}
 .verdict-box.consider{background:var(--amber-lt);border:1px solid #fcd34d}
 .verdict-box.nogo{background:var(--red-lt);border:1px solid #fca5a5}
+.verdict-box.neutral{background:var(--paper-w);border:1px solid var(--rule)}
+.verdict-box.neutral .verdict-label{color:var(--ink-fnt)}
 .verdict-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
 .verdict-box.go .verdict-label{color:var(--emerald-dk)}
 .verdict-box.consider .verdict-label{color:#92400e}
@@ -200,7 +202,14 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       <!-- POOL SETUP -->
       <div class="sec">
         <div class="sec-hd">
-          <div class="sec-icon">🏢</div>
+          <div class="sec-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink-mid)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              <line x1="12" y1="12" x2="12" y2="16"/>
+              <line x1="10" y1="14" x2="14" y2="14"/>
+            </svg>
+          </div>
           <div><div class="sec-title">Pool Setup</div></div>
         </div>
         <div class="sec-body">
@@ -208,27 +217,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
             <div class="fg">
               <label>Group name</label>
               <input type="text" id="groupName" placeholder="Acme Manufacturing Group" oninput="recalc()">
-            </div>
-            <div class="fg">
-              <label>Pool type</label>
-              <select id="poolType" onchange="onPoolTypeChange()">
-                <option value="zba">Zero-Balancing (ZBA) — physical sweep</option>
-                <option value="tba">TBA — Target Balancing</option>
-                <option value="notional">Notional Pooling — virtual offset</option>
-                <option value="hybrid">Hybrid — ZBA + Notional</option>
-                <option value="tbd">To Be Determined</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="fg">
-              <label>Base currency</label>
-              <div class="ac-wrap">
-                <input type="text" id="currencyInput" placeholder="EUR — Euro"
-                  oninput="filterCurrencies(this.value)" autocomplete="off" value="EUR — Euro">
-                <div class="ac-list" id="currencyList"></div>
-              </div>
-              <input type="hidden" id="selectedCurrency" value="EUR">
             </div>
             <div class="fg">
               <label>Pool bank</label>
@@ -242,14 +230,26 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           </div>
           <div class="row">
             <div class="fg">
-              <label>HQ Country</label>
-              <button class="ec-ac-trigger" id="masterCountryTrigger" onclick="openMasterCountryAC(event)" type="button"
-                style="padding:7px 10px;border:1.5px solid var(--rule);background:var(--paper);border-radius:var(--r);min-height:36px">
-                <span class="fi fi-de" style="width:18px;height:13px;border-radius:2px;flex-shrink:0"></span>
-                <span id="masterCountryName" style="flex:1">Germany</span>
-                <span style="color:var(--ink-fnt);font-size:9px">▾</span>
-              </button>
+              <label>Pool type</label>
+              <select id="poolType" onchange="onPoolTypeChange()">
+                <option value="zba">Zero-Balancing (ZBA) — physical sweep</option>
+                <option value="tba">TBA — Target Balancing</option>
+                <option value="notional">Notional Pooling — virtual offset</option>
+                <option value="hybrid">Hybrid — ZBA + Notional</option>
+                <option value="tbd">To Be Determined</option>
+              </select>
             </div>
+            <div class="fg">
+              <label>Base currency</label>
+              <div class="ac-wrap">
+                <input type="text" id="currencyInput" placeholder="EUR — Euro"
+                  oninput="filterCurrencies(this.value)" autocomplete="off" value="EUR — Euro">
+                <div class="ac-list" id="currencyList"></div>
+              </div>
+              <input type="hidden" id="selectedCurrency" value="EUR">
+            </div>
+          </div>
+          <div class="row" style="margin-bottom:0">
             <div class="fg">
               <label>Day count convention
                 <div class="tt"><div class="tt-icon">?</div><span>ACT/360 is standard for EUR, GBP, CHF. ACT/365 for GBP domestic. Affects interest by ~1.4%.</span></div>
@@ -259,27 +259,52 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
                 <option value="365">ACT/365 — GBP domestic</option>
               </select>
             </div>
-          </div>
-          <div class="fg" id="defaultTbaRow" style="margin-bottom:0;margin-top:10px;display:none">
-            <label>Default Target Balance Amount (TBA)
-              <div class="tt"><div class="tt-icon">?</div>
-                <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. Leave 0 for full sweep.</span>
-              </div>
-            </label>
-            <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="applyDefaultTba()">
+            <div class="fg" id="defaultTbaRow" style="display:none">
+              <label>Default Target Balance (TBA)
+                <div class="tt"><div class="tt-icon">?</div>
+                  <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. 0 = full sweep.</span>
+                </div>
+              </label>
+              <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="applyDefaultTba()">
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ENTITIES -->
       <div class="sec">
-        <div class="sec-hd">
-          <div class="sec-icon">🏦</div>
-          <div><div class="sec-title">Entity Accounts</div></div>
-          <div style="margin-left:auto;display:flex;gap:6px">
-            <button class="add-btn" onclick="addEntity()">+ Add account</button>
-            <button class="preset-btn" onclick="loadExample()">Load example structure</button>
-            <button class="preset-btn" onclick="clearEntities()" style="color:var(--red);border-color:var(--red-lt)">Clear</button>
+        <div class="sec-hd" style="justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div class="sec-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink-mid)" stroke-width="1.8" stroke-linecap="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 21V9"/>
+              </svg>
+            </div>
+            <div>
+              <div class="sec-title">Entity Accounts</div>
+              <div class="sec-sub">Pool hierarchy — click any account to expand</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="addEntity()"
+              style="padding:5px 12px;border-radius:var(--r);border:1.5px dashed var(--rule);background:transparent;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .13s"
+              onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+              onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--ink-lt)'">
+              + Add account
+            </button>
+            <button onclick="loadExample()"
+              style="padding:5px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--ink-lt);cursor:pointer;transition:all .13s"
+              onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
+              onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--ink-lt)'">
+              Load example
+            </button>
+            <button onclick="clearEntities()"
+              style="padding:5px 10px;border-radius:var(--r);border:none;background:transparent;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--ink-fnt);cursor:pointer;transition:color .13s"
+              onmouseover="this.style.color='var(--red)'"
+              onmouseout="this.style.color='var(--ink-fnt)'">
+              Clear
+            </button>
           </div>
         </div>
         <div class="sec-body">
@@ -344,13 +369,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           </div>
         </div>
 
-        <div class="verdict-box go" id="verdictBox">
-          <div class="verdict-label" id="verdictLabel">—</div>
-          <div class="verdict-text" id="verdictText">Enter data to see recommendation</div>
+        <div class="verdict-box neutral" id="verdictBox">
+          <div class="verdict-label" id="verdictLabel"></div>
+          <div class="verdict-text" id="verdictText">Enter entity balances to see verdict</div>
         </div>
-        <a href="/dashboard-preview.html"
+        <a id="reportBtn" href="/dashboard-preview.html"
           onclick="recalc()"
-          style="display:block;margin-top:12px;padding:10px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;text-align:center;text-decoration:none;transition:background .14s"
+          style="display:block;margin-top:12px;padding:10px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;text-align:center;text-decoration:none;transition:background .14s;opacity:0.45;pointer-events:none"
           onmouseover="this.style.background='var(--navy-h)'"
           onmouseout="this.style.background='var(--navy)'">
           View Full Report →
@@ -749,7 +774,7 @@ function renderEntities() {
     const tbaDisplay = effectiveTBA > 0 ? `≥${effectiveTBA >= 1e6 ? (effectiveTBA/1e6).toFixed(1)+'M' : Math.round(effectiveTBA/1000)+'k'}` : '';
 
     const balAbs = Math.abs(e.balance);
-    const balStr = isRoot ? 'Σ auto' : (balAbs >= 1e6 ? (surplus?'+':'−')+'€'+(balAbs/1e6).toFixed(2)+'M' : balAbs >= 1e3 ? (surplus?'+':'−')+'€'+Math.round(balAbs/1e3)+'k' : (surplus?'+':'−')+'€'+Math.round(balAbs));
+    const balStr = isRoot ? '<span title="Balance calculated automatically as sum of all sub-accounts" style="cursor:help;color:var(--ink-fnt);font-size:11px">Auto</span>' : (balAbs >= 1e6 ? (surplus?'+':'−')+'€'+(balAbs/1e6).toFixed(2)+'M' : balAbs >= 1e3 ? (surplus?'+':'−')+'€'+Math.round(balAbs/1e3)+'k' : (surplus?'+':'−')+'€'+Math.round(balAbs));
 
     const countryOpts = COUNTRIES.map(c => `<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${countryNames[c.code]||c.code}</option>`).join('');
     const ccOpts = CURRENCIES.slice(0,20).map(c => `<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('');
@@ -953,16 +978,6 @@ function openEcAC(evt,i,field){
     :code=>{entities[i].cc=code;closeEcPortal();renderEntities();recalc()};
   _openPortal(evt,field,cb);
 }
-function openMasterCountryAC(evt){
-  evt.stopPropagation();
-  _openPortal(evt,'country',code=>{_masterCountry=code;closeEcPortal();updateMasterCountryTrigger();recalc()});
-}
-function updateMasterCountryTrigger(){
-  const co=COUNTRIES.find(c=>c.code===_masterCountry)||{code:_masterCountry,name:_masterCountry};
-  const btn=g('masterCountryTrigger');
-  if(!btn) return;
-  btn.innerHTML=`<span class="fi fi-${co.code.toLowerCase()}" style="width:18px;height:13px;border-radius:2px;flex-shrink:0"></span><span style="flex:1">${co.name}</span><span style="color:var(--ink-fnt);font-size:9px">▾</span>`;
-}
 function populateEcPortal(val){
   if(!_ecPortalState) return;
   const q=val.trim().toLowerCase();
@@ -1098,23 +1113,54 @@ function recalc(){
   const np=g('nettingPct');
   if(np) np.textContent=totalBal>0?fmtPct(nettingEff):'—';
 
-  const spPay=g('sp-payback');
-  if(spPay){spPay.textContent=paybackMo<120?paybackMo.toFixed(1)+' mo':'N/A';spPay.className='rs-val '+(paybackMo<18?'pos':paybackMo<36?'warn':'neg')}
-  const spNet=g('sp-net');
-  if(spNet){spNet.textContent=netBenefit!==0?fmt(netBenefit):'—';spNet.className='rs-val '+(netBenefit>0?'pos':'neg')}
+  const hasData = entities.filter(e => e.parentId !== null && e.balance !== 0).length > 0;
+
+  const spPay = g('sp-payback');
+  if (spPay) {
+    if (!hasData) {
+      spPay.textContent = '—';
+      spPay.className = 'rs-val';
+    } else {
+      spPay.textContent = paybackMo < 120 ? paybackMo.toFixed(1) + ' mo' : 'N/A';
+      spPay.className = 'rs-val ' + (paybackMo < 18 ? 'pos' : paybackMo < 36 ? 'warn' : 'neg');
+    }
+  }
+  const spNet = g('sp-net');
+  if (spNet) {
+    if (!hasData) {
+      spNet.textContent = '—';
+      spNet.className = 'rs-val';
+    } else {
+      spNet.textContent = fmt(netBenefit);
+      spNet.className = 'rs-val ' + (netBenefit > 0 ? 'pos' : 'neg');
+    }
+  }
+
+  const reportBtn = document.getElementById('reportBtn');
+  if (reportBtn) {
+    reportBtn.style.opacity = hasData ? '1' : '0.45';
+    reportBtn.style.pointerEvents = hasData ? 'all' : 'none';
+  }
 
   // Verdict
-  const vBox=g('verdictBox'), vLabel=g('verdictLabel'), vText=g('verdictText');
-  if(vBox&&vLabel&&vText&&totalBal>0){
-    if(netBenefit>annualCosts*2&&paybackMo<24){
-      vBox.className='verdict-box go';vLabel.textContent='GO';
-      vText.textContent=`Strong business case. Payback in ${paybackMo.toFixed(1)} months.`;
-    } else if(netBenefit>0&&paybackMo<48){
-      vBox.className='verdict-box consider';vLabel.textContent='CONSIDER';
-      vText.textContent='Positive but marginal. Negotiate better pool rates.';
+  const vBox = g('verdictBox'), vLabel = g('verdictLabel'), vText = g('verdictText');
+  if (vBox && vLabel && vText) {
+    if (!hasData) {
+      vBox.className = 'verdict-box neutral';
+      vLabel.textContent = '';
+      vText.textContent = 'Enter entity balances to see verdict';
+    } else if (netBenefit > annualCosts * 2 && paybackMo < 24) {
+      vBox.className = 'verdict-box go';
+      vLabel.textContent = 'GO';
+      vText.textContent = `Strong business case. Payback in ${paybackMo.toFixed(1)} months.`;
+    } else if (netBenefit > 0 && paybackMo < 48) {
+      vBox.className = 'verdict-box consider';
+      vLabel.textContent = 'CONSIDER';
+      vText.textContent = 'Positive but marginal. Negotiate better pool rates.';
     } else {
-      vBox.className='verdict-box nogo';vLabel.textContent='NO-GO';
-      vText.textContent='Pool costs exceed benefits at current rates.';
+      vBox.className = 'verdict-box nogo';
+      vLabel.textContent = 'NO-GO';
+      vText.textContent = 'Pool costs exceed benefits at current rates.';
     }
   }
 
@@ -1252,7 +1298,6 @@ g('groupName').value = 'Acme Manufacturing Group';
 entities = [
   { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0, tba:0, iban:'', accounts:1, parentId:null, sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false }
 ];
-updateMasterCountryTrigger();
 renderEntities();
 onPoolTypeChange();
 // Pool breakdown starts collapsed
