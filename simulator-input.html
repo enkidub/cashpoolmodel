@@ -224,8 +224,9 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
             </div>
             <div class="fg">
               <label>Pool type</label>
-              <select id="poolType" onchange="recalc()">
+              <select id="poolType" onchange="onPoolTypeChange()">
                 <option value="zba">Zero-Balancing (ZBA) — physical sweep</option>
+                <option value="tba">TBA — Target Balancing</option>
                 <option value="notional">Notional Pooling — virtual offset</option>
                 <option value="hybrid">Hybrid — ZBA + Notional</option>
                 <option value="tbd">To Be Determined</option>
@@ -272,13 +273,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               </select>
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0;margin-top:10px">
+          <div class="fg" id="defaultTbaRow" style="margin-bottom:0;margin-top:10px;display:none">
             <label>Default Target Balance Amount (TBA)
               <div class="tt"><div class="tt-icon">?</div>
                 <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. Leave 0 for full sweep.</span>
               </div>
             </label>
-            <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="recalc()">
+            <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="applyDefaultTba()">
           </div>
         </div>
       </div>
@@ -634,6 +635,19 @@ function toggleEntity(id) {
 function toggleAdvanced(id) {
   const el = document.getElementById('adv-' + id);
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function onPoolTypeChange() {
+  const row = document.getElementById('defaultTbaRow');
+  if (row) row.style.display = g('poolType').value === 'tba' ? '' : 'none';
+  recalc();
+}
+
+function applyDefaultTba() {
+  const val = parseFloat(g('defaultTBA').value) || 0;
+  entities.forEach(e => { e.tba = val; });
+  renderEntities();
+  recalc();
 }
 
 function updateEntity(id, field, value) {
@@ -1229,7 +1243,7 @@ entities = [
 ];
 updateMasterCountryTrigger();
 renderEntities();
-recalc();
+onPoolTypeChange();
 </script>
 
 <div id="ecDropPortal" style="position:fixed;display:none;z-index:9999;background:var(--white);border:1.5px solid var(--navy);border-radius:var(--r);box-shadow:0 8px 24px rgba(15,23,42,.14);min-width:220px;overflow:hidden">
