@@ -92,33 +92,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .ac-item:hover{background:var(--paper-w);color:var(--navy)}
 .ac-item strong{color:var(--navy)}
 
-/* ENTITY CARDS */
-.entity-cards-wrap{position:relative;margin-bottom:10px}
-.entity-cards-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,var(--white));pointer-events:none;border-radius:0 0 var(--rl) var(--rl)}
-.entity-cards{display:flex;flex-direction:column;gap:8px;max-height:316px;overflow-y:auto;padding-right:3px;scroll-behavior:smooth}
-.entity-card{border:1px solid var(--rule);border-radius:var(--rl);overflow:hidden;background:var(--white);transition:border-color .13s}
-.entity-card:hover{border-color:#c8c3ba}
-.ec-header{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--paper-w);border-bottom:1px solid var(--rule)}
-.ec-ac-item .fi{width:16px;height:12px;border-radius:1px;flex-shrink:0}
-.ec-parent-select{font-size:10px;color:var(--ink-fnt);border:none;background:transparent;cursor:pointer;font-family:var(--sans);outline:none;padding:2px 2px;border-radius:3px;max-width:110px;transition:background .12s;flex-shrink:0}
-.ec-parent-select:hover{background:var(--rule)}
-.ec-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
-.ec-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0}
-.ec-badge.pos{background:var(--emerald-lt);color:var(--emerald-dk)}
-.ec-badge.neg{background:var(--red-lt);color:var(--red)}
-.ec-badge.zero{background:var(--paper-w);color:var(--ink-fnt)}
-.ec-del{padding:3px 8px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;transition:all .12s;flex-shrink:0}
-.ec-del:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
-.ec-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
-.ec-field{padding:8px 14px;border-right:1px solid var(--paper-w)}
-.ec-field:last-child{border-right:none}
-.ec-field-label{font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
-.ec-field input,.ec-field select{padding:5px 8px;border-radius:4px;border:1.5px solid transparent;background:transparent;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none;width:100%;transition:all .12s}
-.ec-field input:focus,.ec-field select:focus{border-color:var(--navy);background:var(--white)}
-.ec-field input.bal{font-family:var(--mono);font-weight:700}
-.ec-field input.bal.pos{color:var(--emerald)}
-.ec-field input.bal.neg{color:var(--red)}
-.ec-field-wide{grid-column:1/-1;border-right:none;border-top:1px solid var(--paper-w)}
+/* ENTITY TABLE */
+.entity-cards{margin-bottom:10px}
 
 .add-entity-hd-btn{padding:5px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--navy);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .13s;margin-left:auto;flex-shrink:0}
 .add-entity-hd-btn:hover{border-color:var(--navy);background:var(--paper-w)}
@@ -343,13 +318,15 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         <div class="sec-hd">
           <div class="sec-icon">🏦</div>
           <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Average daily balance per entity</div></div>
-          <button class="add-entity-hd-btn" onclick="addEntity()">+ Add entity</button>
+          <button class="add-entity-hd-btn" onclick="loadTemplate('western')">Western Europe</button>
+          <button class="add-entity-hd-btn" onclick="loadTemplate('cee')">CEE</button>
+          <button class="add-entity-hd-btn" onclick="addEntity()">+ Add</button>
           <button class="add-entity-hd-btn" onclick="clearEntities()" style="border-color:transparent;color:var(--ink-fnt)">Clear</button>
         </div>
         <div class="sec-body">
           <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
           <div class="warning-box" id="warnBox"></div>
-          <div class="entity-cards-wrap"><div class="entity-cards" id="entityCards"></div></div>
+          <div class="entity-cards" id="entityCards"></div>
         </div>
       </div>
 
@@ -645,71 +622,143 @@ function setPreset(k){
   recalc();
 }
 
-// ── ENTITY CARDS ──
-const EXAMPLE_ENTITIES=[
-  {name:'Acme GmbH',           country:'DE',cc:'EUR',balance: 4200000,accounts:3},
-  {name:'Acme France SAS',     country:'FR',cc:'EUR',balance: 3800000,accounts:2},
-  {name:'Acme France Retail',  country:'FR',cc:'EUR',balance:  800000,accounts:1,parentIdx:1},
-  {name:'Acme UK Ltd',         country:'GB',cc:'GBP',balance:-1500000,accounts:2},
-  {name:'Acme Benelux BV',     country:'NL',cc:'EUR',balance: 1900000,accounts:1},
-  {name:'Acme CEE s.r.o.',     country:'CZ',cc:'CZK',balance: -600000,accounts:1},
-];
+// ── ENTITY TABLE ──
+const TEMPLATES = {
+  western: [
+    { name:'Germany GmbH',   country:'DE', cc:'EUR', balance: 4200000, accounts:3 },
+    { name:'France SAS',     country:'FR', cc:'EUR', balance: 3800000, accounts:2 },
+    { name:'UK Ltd',         country:'GB', cc:'GBP', balance: 2100000, accounts:2 },
+    { name:'Netherlands BV', country:'NL', cc:'EUR', balance: 1900000, accounts:1 },
+    { name:'Switzerland AG', country:'CH', cc:'CHF', balance: -400000, accounts:1 },
+    { name:'Austria GmbH',   country:'AT', cc:'EUR', balance:  800000, accounts:1 },
+  ],
+  cee: [
+    { name:'HoldCo Prague',  country:'CZ', cc:'CZK', balance: 2500000, accounts:2 },
+    { name:'OpCo Slovakia',  country:'SK', cc:'EUR', balance: -450000, accounts:1 },
+    { name:'Sales Poland',   country:'PL', cc:'PLN', balance:  800000, accounts:1 },
+    { name:'Logistics HU',   country:'HU', cc:'HUF', balance: -300000, accounts:1 },
+    { name:'Services AT',    country:'AT', cc:'EUR', balance:  600000, accounts:1 },
+  ],
+};
 
-function addEntity(){
-  entities.unshift({name:`Entity ${entities.length+1}`,country:'',cc:'EUR',balance:0,accounts:1,parentIdx:null});
-  renderEntities(); recalc();
+function loadTemplate(key) {
+  const t = TEMPLATES[key];
+  if (!t) return;
+  entities = t.map(e => ({...e}));
+  renderEntities();
+  recalc();
 }
-function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
-function clearEntities(){entities=[];renderEntities();recalc()}
 
-function renderEntities(){
-  const container=g('entityCards');
-  if(!entities.length){container.innerHTML='<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px">No entities added yet.</div>';return}
-  container.innerHTML=entities.map((e,i)=>{
-    const co=COUNTRIES.find(c=>c.code===e.country)||{code:e.country||'',name:e.country||'Select country…'};
-    const cu=CURRENCIES.find(c=>c.code===e.cc)||{code:e.cc,name:e.cc};
-    const surplus=e.balance>0,deficit=e.balance<0;
-    const badgeClass=surplus?'pos':deficit?'neg':'zero';
-    const badgeText=surplus?'↑ Surplus':deficit?'↓ Deficit':'Neutral';
-    const parentName=e.parentIdx!==null&&e.parentIdx!==undefined&&entities[e.parentIdx]?entities[e.parentIdx].name:'';
-    return `
-    <div class="entity-card">
-      <div class="ec-header">
-        <input class="ec-name" value="${e.name}" onchange="entities[${i}].name=this.value;renderEntities();recalc()"
-          style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--navy);outline:none;flex:1;font-family:var(--sans);min-width:0">
-        <span class="ec-badge ${badgeClass}">${badgeText}</span>
-        <select class="ec-parent-select" title="Parent account" onchange="entities[${i}].parentIdx=this.value===''?null:parseInt(this.value);renderEntities();recalc()">
-          <option value="" ${e.parentIdx===null||e.parentIdx===undefined?'selected':''}>↳ master</option>
-          ${entities.map((oth,j)=>j!==i?`<option value="${j}" ${String(e.parentIdx)===String(j)?'selected':''}>${oth.name}</option>`:'').join('')}
-        </select>
-        <button class="ec-del" onclick="removeEntity(${i})">✕</button>
-      </div>
-      <div class="ec-body">
-        <div class="ec-field">
-          <div class="ec-field-label">Country</div>
-          <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'country')" type="button">
-            ${co.code?`<span class="fi fi-${co.code.toLowerCase()}" style="width:16px;height:12px;border-radius:1px;flex-shrink:0"></span>`:''}
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${co.code?'inherit':'var(--ink-fnt)'}">${co.name}</span>
-            <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
-          </button>
-        </div>
-        <div class="ec-field">
-          <div class="ec-field-label">Currency</div>
-          <button class="ec-ac-trigger" onclick="openEcAC(event,${i},'currency')" type="button">
-            <span style="font-family:var(--mono);font-weight:600">${cu.code}</span>
-            <span style="color:var(--ink-fnt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px">${cu.name}</span>
-            <span style="margin-left:auto;color:var(--ink-fnt);font-size:9px">▾</span>
-          </button>
-        </div>
-        <div class="ec-field" style="border-right:none">
-          <div class="ec-field-label">Avg. daily balance</div>
-          <input type="number" class="bal ${e.balance>0?'pos':e.balance<0?'neg':''}"
-            value="${e.balance}" step="50000"
-            onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='bal '+(entities[${i}].balance>0?'pos':entities[${i}].balance<0?'neg':'');renderEntities();recalc()">
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+function addEntity() {
+  entities.push({ name:'New Entity', country:'DE', cc:'EUR', balance:0, accounts:1 });
+  renderEntities();
+  recalc();
+}
+function removeEntity(i) { entities.splice(i, 1); renderEntities(); recalc(); }
+function clearEntities() { entities = []; renderEntities(); recalc(); }
+
+function renderEntities() {
+  const container = g('entityCards');
+  if (!entities.length) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px 0">No entities added yet — use a template or add manually.</div>';
+    return;
+  }
+
+  const countryOptsFull = COUNTRIES.map(c =>
+    `<option value="${c.code}">${c.flag} ${c.code} — ${c.name}</option>`
+  ).join('');
+
+  let html = `
+    <div style="overflow-x:auto;margin-bottom:10px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="background:var(--paper-w);border-bottom:2px solid var(--rule)">
+            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Entity name</th>
+            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Country</th>
+            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Currency</th>
+            <th style="padding:7px 10px;text-align:right;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;min-width:150px">Avg. daily balance (EUR)</th>
+            <th style="padding:7px 10px;text-align:center;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Status</th>
+            <th style="width:30px"></th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+  entities.forEach((e, i) => {
+    const flag    = FLAGS[e.country] || '🏢';
+    const surplus = e.balance > 0;
+    const deficit = e.balance < 0;
+    const balColor = surplus ? 'var(--emerald)' : deficit ? 'var(--red)' : 'var(--ink-fnt)';
+    const badgeStyle = surplus
+      ? 'background:var(--emerald-lt);color:var(--emerald-dk);'
+      : deficit
+      ? 'background:var(--red-lt);color:var(--red);'
+      : 'background:var(--paper-w);color:var(--ink-fnt);';
+    const badgeText = surplus ? '↑ Surplus' : deficit ? '↓ Deficit' : 'Neutral';
+
+    const countryOptions = COUNTRIES.map(c =>
+      `<option value="${c.code}" ${c.code === e.country ? 'selected' : ''}>${c.flag} ${c.code}</option>`
+    ).join('');
+
+    const currencyOptions = CURRENCIES.slice(0, 20).map(c =>
+      `<option value="${c.code}" ${c.code === e.cc ? 'selected' : ''}>${c.code} — ${c.name}</option>`
+    ).join('');
+
+    html += `
+      <tr style="border-bottom:1px solid var(--paper-w)" onmouseenter="this.style.background='var(--paper)'" onmouseleave="this.style.background='transparent'">
+        <td style="padding:6px 8px">
+          <input
+            value="${e.name.replace(/"/g,'&quot;')}"
+            onchange="entities[${i}].name=this.value;renderEntities();recalc()"
+            style="border:1.5px solid transparent;border-radius:4px;padding:4px 7px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--navy);outline:none;width:140px;background:transparent;transition:border-color .12s"
+            onfocus="this.style.borderColor='var(--navy)';this.style.background='var(--white)'"
+            onblur="this.style.borderColor='transparent';this.style.background='transparent'"
+            placeholder="Entity name">
+        </td>
+        <td style="padding:6px 8px">
+          <select
+            onchange="entities[${i}].country=this.value;renderEntities();recalc()"
+            style="border:1.5px solid transparent;border-radius:4px;padding:4px 6px;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none;background:transparent;cursor:pointer;transition:border-color .12s"
+            onfocus="this.style.borderColor='var(--navy)'"
+            onblur="this.style.borderColor='transparent'">
+            ${countryOptions}
+          </select>
+        </td>
+        <td style="padding:6px 8px">
+          <select
+            onchange="entities[${i}].cc=this.value;recalc()"
+            style="border:1.5px solid transparent;border-radius:4px;padding:4px 6px;font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;background:transparent;cursor:pointer;transition:border-color .12s"
+            onfocus="this.style.borderColor='var(--navy)'"
+            onblur="this.style.borderColor='transparent'">
+            ${currencyOptions}
+          </select>
+        </td>
+        <td style="padding:6px 8px;text-align:right">
+          <input
+            type="number"
+            value="${e.balance}"
+            step="50000"
+            onchange="entities[${i}].balance=parseFloat(this.value)||0;renderEntities();recalc()"
+            style="border:1.5px solid transparent;border-radius:4px;padding:4px 7px;font-family:var(--mono);font-size:12px;font-weight:700;color:${balColor};outline:none;width:130px;text-align:right;background:transparent;transition:border-color .12s"
+            onfocus="this.style.borderColor='var(--navy)';this.style.background='var(--white)'"
+            onblur="this.style.borderColor='transparent';this.style.background='transparent'">
+        </td>
+        <td style="padding:6px 8px;text-align:center">
+          <span style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;${badgeStyle}">
+            ${badgeText}
+          </span>
+        </td>
+        <td style="padding:6px 8px;text-align:center">
+          <button
+            onclick="removeEntity(${i})"
+            style="padding:3px 8px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;line-height:1;transition:all .12s"
+            onmouseenter="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-lt)'"
+            onmouseleave="this.style.borderColor='var(--rule)';this.style.color='var(--ink-fnt)';this.style.background='transparent'">✕</button>
+        </td>
+      </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
 }
 
 // ── ENTITY AC PORTAL ──
@@ -1008,10 +1057,9 @@ function fileToBase64(file){
 function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
 
 // ── INIT ──
-g('poolBankInput').value='ING Bank';
-entities=EXAMPLE_ENTITIES.map(e=>({...e}));
-renderEntities();
-g('groupName').value='Acme Manufacturing Group';
+g('poolBankInput').value = 'ING Bank';
+loadTemplate('western');
+g('groupName').value = 'Acme Manufacturing Group';
 updateMasterCountryTrigger();
 recalc();
 </script>
