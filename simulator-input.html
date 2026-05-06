@@ -753,21 +753,27 @@ function recalc(){
       }))
     : entities;
 
-  let surplus=0, deficit=0, intCostBef=0, intIncBef=0, intCostAft=0, intIncAft=0;
+  let surplus=0, deficit=0, intCostBef=0, intIncBef=0;
   calcEnt.forEach(e=>{
     const b=e.balance;
-    if(b>0){surplus+=b;intIncBef+=b*cr;intIncAft+=b*pcr}
-    else if(b<0){deficit+=Math.abs(b);intCostBef+=Math.abs(b)*dr;intCostAft+=Math.abs(b)*pdr}
+    if(b>0){surplus+=b; intIncBef+=b*cr;}
+    else if(b<0){deficit+=Math.abs(b); intCostBef+=Math.abs(b)*dr;}
   });
 
   const netting    = Math.min(surplus,deficit);
   const nettingEff = (surplus+deficit)>0 ? netting/Math.max(surplus,deficit)*100 : 0;
-  const nettingSave= netting*(dr-pdr)*0.85;
-  let interestSaving = (intCostBef-intCostAft)+(intIncAft-intIncBef)+nettingSave;
+
+  // After pool: bank sees NET position (both ZBA and notional pool the cash/notionally)
+  // Applying pool rates to each entity separately overstates savings (ignores netting benefit)
+  // and adding nettingSave on top double-counts the debit spread improvement.
+  const netBal     = surplus - deficit;
+  const intIncAft  = netBal > 0 ? netBal * pcr : 0;
+  const intCostAft = netBal < 0 ? Math.abs(netBal) * pdr : 0;
+  const interestSaving = (intCostBef - intCostAft) + (intIncAft - intIncBef);
 
   // Pool-type adjustments:
-  // Notional: no physical sweeps → avoids transfer costs, but bank charges ~20% premium on fees
-  // ZBA + WHT: WHT deducted on interest income paid from header to surplus entities
+  // Notional: no physical sweeps → no IC loans, but bank charges ~20% premium on fees
+  // ZBA + WHT: WHT deducted on IC interest paid from header to surplus entities in other jurisdictions
   const notionalFeePremium = poolType === 'notional' ? fees * 0.20 : 0;
   const whtCost = (whtApplies && poolType !== 'notional') ? intIncAft * whtRate : 0;
 
@@ -820,7 +826,7 @@ function recalc(){
       yieldSpread: ((pcr-cr)*100).toFixed(2),
       intCostBef:Math.round(intCostBef), intIncBef:Math.round(intIncBef),
       intCostAft:Math.round(intCostAft), intIncAft:Math.round(intIncAft),
-      nettingSave:Math.round(nettingSave), fxSaving:Math.round(fxSaving),
+      nettingSave:0, fxSaving:Math.round(fxSaving),
       whtCost:Math.round(whtCost), notionalFeePremium:Math.round(notionalFeePremium),
       annualCosts, ts:Date.now(),
     }));
@@ -858,7 +864,7 @@ function viewReport(){ recalc(); window.location.href='/dashboard-preview.html';
   recalc();
 })();
 </script>
-<script src="/guide-data.js"></script>
+<script src="guide-data.js"></script>
 <script>
 /* Wire tooltip text from GUIDE_DATA once it's loaded */
 (function wireTooltips(){

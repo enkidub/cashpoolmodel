@@ -3,13 +3,13 @@
 // Used by: simulator-input.html (tooltips) and guide.html (client document).
 // To add a new field or KPI: add an item here — both tooltip and guide update automatically.
 
-const GUIDE_DATA = {
+window.GUIDE_DATA = {
 
   meta: {
     product:  'CashPoolModel',
     subtitle: 'Simulator Setup & Results Guide',
     version:  '1.1',
-    date:     'April 2026',
+    date:     'May 2026',
     byline:   'Independent treasury advisory by Intercompany.io · Geneva, Switzerland'
   },
 
@@ -91,6 +91,7 @@ const GUIDE_DATA = {
           ],
           cons:     [
             'Lower netting efficiency than full ZBA — retained balances do not participate in the offset',
+            'Swept amounts above the target create intercompany interest — the same WHT exposure as ZBA, but limited to the swept portion only',
             'More complex to model and explain in a bank RFP',
             'The retained buffer earns only bilateral deposit rates, not the higher pool credit rate'
           ],
@@ -105,6 +106,12 @@ const GUIDE_DATA = {
       title: 'Group Setup',
       type:  'fields',
       items: [
+        {
+          id:      'poolType',
+          label:   'Pool Type',
+          tip:     'The cash pooling structure that determines how balances are managed, swept, and how interest is calculated.',
+          detail:  'This is the most consequential decision in the setup. Three options:\n\nZero-Balancing (Physical ZBA) — cash is swept daily to a central header account. Surplus entities transfer cash up; deficit entities receive funding from the header. Maximises netting efficiency. Creates intercompany loans.\n\nNotional Pooling — no physical cash movement. The bank calculates interest on the combined net position. Each entity retains its own balance. Avoids intercompany interest and withholding tax entirely.\n\nTarget Balancing — a partial ZBA. Each entity retains a defined minimum operational balance and sweeps only the excess above that threshold. Lower netting efficiency than full ZBA but preserves subsidiary liquidity autonomy.\n\nSee section 02 — Pool Structure Types — for a full comparison including pros, cons, and recommended use cases.'
+        },
         {
           id:      'groupName',
           label:   'Group Name',
@@ -249,7 +256,7 @@ const GUIDE_DATA = {
           label:   'Net Interest Saving',
           tag:     'Usually the largest component',
           tip:     'Annual saving from eliminating the spread between borrowing and deposit rates across entities.',
-          detail:  'This is typically the largest single component of pool value — often 60–75% of total annual benefit.\n\nThree sources:\n\n1. Overdraft elimination — deficit entities stop borrowing at bilateral debit rates. Their deficit is funded from group surplus at the pool debit rate instead.\n\n2. Deposit rate improvement — surplus entities earn the pool credit rate rather than the lower bilateral credit rate.\n\n3. Netting benefit — the portion of surplus that offsets the deficit earns no explicit interest in a notional sense, but eliminates the gross interest cost and income that previously offset imperfectly at bilateral spreads.\n\nIf your group has near-equal surplus and deficit positions, the netting saving dominates. If one side strongly dominates, the rate improvement on the net position drives the saving.'
+          detail:  'This is typically the largest single component of pool value — often 60–75% of total annual benefit.\n\nHow it is calculated:\n\nBefore the pool, each entity manages its liquidity independently. Surplus entities earn the bilateral credit rate (typically 0.3–0.7% below benchmark). Deficit entities pay the bilateral debit rate (typically 1.0–2.5% above benchmark). The group pays the spread on both sides simultaneously.\n\nAfter the pool, the bank sees only the net group position — the sum of all surplus and deficit balances combined. If the group is net surplus, the pool credit rate applies to that combined net balance. If net deficit, the pool debit rate applies to the net shortfall only. The gross bilateral spread on offsetting positions is eliminated entirely.\n\nTwo components drive the saving:\n\n1. Netting benefit — surplus and deficit positions offset each other internally. The group stops paying borrowing rates on deficits that can be funded from internal surplus. At high netting efficiency this is the dominant component.\n\n2. Rate improvement on the net position — the pool credit and debit rates are materially better than bilateral rates, so the remaining net position earns more (or costs less) than under standalone banking.\n\nIf your group has near-equal surplus and deficit positions, the netting benefit dominates. If one side strongly dominates, the rate improvement on the large net position drives the saving.'
         },
         {
           id:      'opSaving',
