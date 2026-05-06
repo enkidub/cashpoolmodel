@@ -421,18 +421,40 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           </div>
         </div>
 
-        <div style="background:var(--paper-w);border-radius:var(--r);padding:6px 10px;font-size:11px;color:var(--ink-mid);margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap">
-          <span>Spread: <strong id="spreadVal" style="color:var(--emerald)">—</strong></span>
-          <span style="color:var(--rule)">·</span>
-          <span>Debit saving: <strong id="debitSpreadVal" style="color:var(--emerald)">—</strong></span>
+        <!-- Live rates: cpm-rates.kuba-houser.workers.dev — deploy cpm-rates-worker.js to Cloudflare Workers -->
+        <div id="refRateDisplay" style="display:none;font-size:10px;color:var(--ink-fnt);padding:4px 6px;border-top:1px solid var(--paper-w);margin-top:4px;align-items:center;gap:4px">
+          Reference: <span id="refRateName">—</span> <span id="refRateVal" style="font-family:var(--mono);font-weight:700;color:var(--ink-mid)">—</span><span id="refRateLive" style="color:var(--emerald)"></span>
         </div>
 
+        <div style="background:var(--paper-w);border-radius:var(--r);padding:6px 10px;margin-bottom:8px;margin-top:8px;display:flex;align-items:center;justify-content:space-between"
+          title="Credit spread: difference between pool credit rate and bilateral deposit rate. Higher = more interest earned by surplus entities.">
+          <span style="font-size:10px;color:var(--ink-fnt)">Credit spread</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span id="spreadVal" style="font-family:var(--mono);font-size:13px;font-weight:700">—</span>
+            <span style="font-size:10px;color:var(--ink-fnt)" id="spreadBpLabel"></span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Rate presets</span>
+          <span id="ratesTimestamp" style="font-size:9px;color:var(--ink-fnt)"></span>
+        </div>
         <div style="display:flex;gap:4px;flex-wrap:wrap">
-          <button onclick="setPreset('eur')" class="preset-btn">ECB/EUR</button>
-          <button onclick="setPreset('czk')" class="preset-btn">ČNB/CZK</button>
-          <button onclick="setPreset('usd')" class="preset-btn">Fed/USD</button>
-          <button onclick="setPreset('gbp')" class="preset-btn">BoE/GBP</button>
-          <button onclick="setPreset('chf')" class="preset-btn">SNB/CHF</button>
+          <button class="preset-btn" data-preset="eur" onclick="setPreset('eur')" title="Loading live rates…">
+            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>ECB/EUR
+          </button>
+          <button class="preset-btn" data-preset="czk" onclick="setPreset('czk')" title="Loading live rates…">
+            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>ČNB/CZK
+          </button>
+          <button class="preset-btn" data-preset="usd" onclick="setPreset('usd')" title="Loading live rates…">
+            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>Fed/USD
+          </button>
+          <button class="preset-btn" data-preset="gbp" onclick="setPreset('gbp')" title="Loading live rates…">
+            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>BoE/GBP
+          </button>
+          <button class="preset-btn" data-preset="chf" onclick="setPreset('chf')" title="Loading live rates…">
+            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>SNB/CHF
+          </button>
         </div>
       </div>
 
@@ -542,13 +564,18 @@ const COUNTRIES=[
 const FLAGS=Object.fromEntries(COUNTRIES.map(c=>[c.code,c.flag]));
 const countryNames=Object.fromEntries(COUNTRIES.map(c=>[c.code,c.name]));
 
-// ── PRESETS ──
-const PRESETS={
-  eur:{debit:4.15,credit:2.40,poolDebit:2.65,poolCredit:3.50},
-  czk:{debit:5.50,credit:2.80,poolDebit:3.20,poolCredit:4.00},
-  usd:{debit:6.50,credit:3.80,poolDebit:4.50,poolCredit:5.20},
-  gbp:{debit:5.75,credit:3.20,poolDebit:4.00,poolCredit:4.80},
-  chf:{debit:2.20,credit:0.80,poolDebit:1.00,poolCredit:1.30},
+// ── LIVE RATES ──
+const RATES_WORKER = 'https://cpm-rates.kuba-houser.workers.dev';
+let liveRates = null;
+let liveRatesTs = null;
+
+// ── PRESETS (fallback — overwritten by Worker if available) ──
+const PRESETS = {
+  eur: { debit: 4.15, credit: 2.40, poolDebit: 2.65, poolCredit: 3.50, ref: 3.91, name: '€STR',     live: false },
+  czk: { debit: 5.50, credit: 2.80, poolDebit: 3.20, poolCredit: 4.00, ref: 3.74, name: 'PRIBOR 3M', live: false },
+  usd: { debit: 6.50, credit: 3.80, poolDebit: 4.50, poolCredit: 5.20, ref: 5.32, name: 'SOFR',      live: false },
+  gbp: { debit: 5.75, credit: 3.20, poolDebit: 4.00, poolCredit: 4.80, ref: 5.19, name: 'SONIA',     live: false },
+  chf: { debit: 2.20, credit: 0.80, poolDebit: 1.00, poolCredit: 1.30, ref: 1.48, name: 'SARON',     live: false },
 };
 
 let currency='EUR', entities=[];
@@ -597,11 +624,24 @@ document.addEventListener('click',e=>{
 document.addEventListener('scroll',closeEcPortal,true);
 
 // ── PRESETS ──
-function setPreset(k){
-  const p=PRESETS[k];
-  g('debitRate').value=p.debit; g('creditRate').value=p.credit;
-  g('poolDebit').value=p.poolDebit; g('poolCredit').value=p.poolCredit;
+function setPreset(k) {
+  const p = PRESETS[k];
+  if (!p) return;
+  g('debitRate').value  = p.debit;
+  g('creditRate').value = p.credit;
+  g('poolDebit').value  = p.poolDebit;
+  g('poolCredit').value = p.poolCredit;
   recalc();
+  const display = g('refRateDisplay');
+  const name    = g('refRateName');
+  const val     = g('refRateVal');
+  const live    = g('refRateLive');
+  if (display && name && val) {
+    display.style.display = 'flex';
+    name.textContent = p.name + ':';
+    val.textContent  = p.ref.toFixed(2) + '%';
+    if (live) live.textContent = p.live ? ' ↺ live' : ' (typical)';
+  }
 }
 
 // ── ENTITY TABLE ──
@@ -1179,33 +1219,45 @@ function recalc(){
   }
 
   // Rate analysis
-  const rc=g('rateChecks');
-  if(rc){
-    const poolMakesSense = debitSpread > 0 && creditSpread > 0;
-    const ratesVerdict = debitSpread > 0.01 && creditSpread > 0.005
-      ? '✓ Pool makes sense'
-      : poolMakesSense
-      ? '△ Marginal benefit'
-      : '✗ Rates unfavourable';
-    const verdictOk  = debitSpread > 0.01 && creditSpread > 0.005;
-    const verdictWarn= poolMakesSense && !verdictOk;
-    const checks=[
-      {label:'Pool verdict',  val:ratesVerdict, ok:verdictOk, warn:verdictWarn},
-      {label:'Debit saving',  val:fmtPct(debitSpread*100),  ok:debitSpread>0,   warn:false},
-      {label:'Credit uplift', val:fmtPct(creditSpread*100), ok:creditSpread>0,  warn:false},
-      {label:'Day count',     val:days+' days',              ok:true,            warn:false},
-      {label:'WHT impact',    val:wht>0?'−'+fmt(whtCost).replace('+',''):'None', ok:wht===0, warn:wht>0},
-    ];
-    rc.innerHTML=checks.map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
-      <span style="font-size:11px;color:var(--ink-lt)">${c.label}</span>
-      <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${c.ok?'var(--emerald)':c.warn?'var(--amber)':'var(--red)'}">${c.val}</span>
-    </div>`).join('');
+  const debitBp  = Math.round(debitSpread * 10000);
+  const creditBp = Math.round(creditSpread * 10000);
+  const poolVerdict = debitBp > 100 && creditBp > 50
+    ? '✓ Rates favourable'
+    : debitBp > 0 && creditBp > 0
+    ? '△ Marginal — renegotiate'
+    : '✗ Rates unfavourable';
+  const verdictOk   = debitBp > 100 && creditBp > 50;
+  const verdictWarn = debitBp > 0 && creditBp > 0 && !verdictOk;
+  const checks = [
+    { label: 'Pool verdict',  val: poolVerdict,
+                              ok: verdictOk, warn: verdictWarn },
+    { label: 'Credit uplift', val: creditBp >= 0 ? '+' + creditBp + ' bp' : creditBp + ' bp',
+                              ok: creditBp > 50, warn: creditBp > 0 && creditBp <= 50 },
+    { label: 'Debit saving',  val: debitBp >= 0 ? '+' + debitBp + ' bp' : debitBp + ' bp',
+                              ok: debitBp > 100, warn: debitBp > 0 && debitBp <= 100 },
+    { label: 'WHT impact',    val: wht > 0 ? '−' + Math.round(whtCost / 1000) + 'k p.a.' : 'None',
+                              ok: wht === 0, warn: false },
+  ];
+  const rc = g('rateChecks');
+  if (rc) {
+    rc.innerHTML = checks.map(c => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
+        <span style="font-size:11px;color:var(--ink-lt)">${c.label}</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${c.ok ? 'var(--emerald)' : c.warn ? 'var(--amber)' : 'var(--red)'}">${c.val}</span>
+      </div>`).join('');
   }
 
-  // Spread display
-  const sv=g('spreadVal'),dv=g('debitSpreadVal');
-  if(sv) sv.textContent=creditSpread>0?'+'+fmtPct(creditSpread*100):fmtPct(creditSpread*100);
-  if(dv) dv.textContent=debitSpread>0?'+'+fmtPct(debitSpread*100):fmtPct(debitSpread*100);
+  // Spread display (basis points)
+  const sv = g('spreadVal');
+  const bpLabel = g('spreadBpLabel');
+  if (sv) {
+    const bp = Math.round(creditSpread * 10000);
+    sv.textContent = bp >= 0 ? '+' + bp + ' bp' : bp + ' bp';
+    sv.style.color = bp > 0 ? 'var(--emerald)' : 'var(--red)';
+  }
+  if (bpLabel && creditSpread !== 0) {
+    bpLabel.textContent = '(' + (creditSpread >= 0 ? '+' : '') + (creditSpread * 100).toFixed(2) + '%)';
+  }
 
   // ── SAVE TO LOCALSTORAGE ──
   const groupName  = g('groupName').value  || 'Sample Group';
@@ -1292,6 +1344,49 @@ function fileToBase64(file){
 
 function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
 
+// ── LIVE RATES ──
+function updatePresetButtons() {
+  const btns = document.querySelectorAll('.preset-btn[data-preset]');
+  btns.forEach(btn => {
+    const key = btn.dataset.preset;
+    const p = PRESETS[key];
+    if (!p) return;
+    const liveLabel = p.live ? '↺ live' : 'typical';
+    btn.title = `${p.name}: ${p.ref.toFixed(2)}% (${liveLabel})\nBilateral: debit ${p.debit.toFixed(2)}% · credit ${p.credit.toFixed(2)}%\nPool offer: debit ${p.poolDebit.toFixed(2)}% · credit ${p.poolCredit.toFixed(2)}%`;
+    const dot = btn.querySelector('.rate-live-dot');
+    if (dot) dot.style.background = p.live ? 'var(--emerald)' : 'var(--ink-fnt)';
+  });
+  const tsEl = document.getElementById('ratesTimestamp');
+  if (tsEl && liveRatesTs) {
+    const d = new Date(liveRatesTs);
+    tsEl.textContent = 'Updated ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + ' CET';
+  }
+}
+
+async function fetchLiveRates() {
+  try {
+    const res = await fetch(RATES_WORKER, { signal: AbortSignal.timeout(4000) });
+    if (!res.ok) throw new Error('Worker error');
+    const data = await res.json();
+    const ccyMap = { EUR: 'eur', USD: 'usd', GBP: 'gbp', CZK: 'czk', CHF: 'chf' };
+    for (const [ccy, preset] of Object.entries(data.rates || {})) {
+      const key = ccyMap[ccy];
+      if (!key || !preset.presetRates) continue;
+      const p = preset.presetRates;
+      PRESETS[key] = {
+        debit: p.debit, credit: p.credit,
+        poolDebit: p.poolDebit, poolCredit: p.poolCredit,
+        ref: p.referenceRate, name: preset.name, live: p.isLive,
+      };
+    }
+    liveRates = data.rates;
+    liveRatesTs = data.timestamp;
+    updatePresetButtons();
+  } catch (e) {
+    console.info('Live rates unavailable, using fallback presets:', e.message);
+  }
+}
+
 // ── INIT ──
 g('poolBankInput').value = 'ING Bank';
 g('groupName').value = 'Acme Manufacturing Group';
@@ -1303,6 +1398,8 @@ onPoolTypeChange();
 // Pool breakdown starts collapsed
 const _pb = document.getElementById('poolBreakdown');
 if (_pb) { _pb.style.display = 'none'; }
+// Fetch live rates in background — does not block page load
+fetchLiveRates();
 </script>
 
 <!-- AI UPLOAD MODAL -->
