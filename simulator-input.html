@@ -250,11 +250,11 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         </div>
       </div>
 
-      <!-- GROUP INFO -->
+      <!-- POOL SETUP -->
       <div class="sec">
         <div class="sec-hd">
           <div class="sec-icon">🏢</div>
-          <div><div class="sec-title">Group Information</div></div>
+          <div><div class="sec-title">Pool Setup</div><div class="sec-sub">Pool type, currency, bank and day count convention</div></div>
         </div>
         <div class="sec-body">
           <div class="row">
@@ -265,8 +265,10 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
             <div class="fg">
               <label>Pool type</label>
               <select id="poolType" onchange="recalc()">
-                <option value="zba">Zero-Balancing (Physical ZBA)</option>
-                <option value="notional">Notional Pooling</option>
+                <option value="zba">Zero-Balancing (ZBA) — physical sweep</option>
+                <option value="notional">Notional Pooling — virtual offset</option>
+                <option value="hybrid">Hybrid — ZBA + Notional</option>
+                <option value="tbd">To Be Determined</option>
               </select>
             </div>
           </div>
@@ -290,7 +292,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               <input type="hidden" id="poolBank" value="ING Bank">
             </div>
           </div>
-          <div class="row" style="margin-bottom:0">
+          <div class="row">
             <div class="fg">
               <label>HQ Country</label>
               <button class="ec-ac-trigger" id="masterCountryTrigger" onclick="openMasterCountryAC(event)" type="button"
@@ -310,6 +312,14 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
               </select>
             </div>
           </div>
+          <div class="fg" style="margin-bottom:0;margin-top:10px">
+            <label>Default Target Balance Amount (TBA)
+              <div class="tt"><div class="tt-icon">?</div>
+                <span>Minimum balance each entity retains before sweeping. Applies to all accounts unless overridden per account. Leave 0 for full sweep.</span>
+              </div>
+            </label>
+            <input type="number" id="defaultTBA" value="0" step="10000" min="0" oninput="recalc()">
+          </div>
         </div>
       </div>
 
@@ -317,16 +327,16 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
       <div class="sec">
         <div class="sec-hd">
           <div class="sec-icon">🏦</div>
-          <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Average daily balance per entity</div></div>
-          <button class="add-entity-hd-btn" onclick="loadTemplate('western')">Western Europe</button>
-          <button class="add-entity-hd-btn" onclick="loadTemplate('cee')">CEE</button>
-          <button class="add-entity-hd-btn" onclick="addEntity()">+ Add</button>
-          <button class="add-entity-hd-btn" onclick="clearEntities()" style="border-color:transparent;color:var(--ink-fnt)">Clear</button>
+          <div><div class="sec-title">Entity Accounts</div><div class="sec-sub">Pool hierarchy — accounts, balances, target balances and sweep structure</div></div>
         </div>
         <div class="sec-body">
-          <div class="note">Enter average daily balance in base currency equivalent. Positive = surplus (sweeps to pool), negative = deficit (funded by pool).</div>
+          <div class="note">Click any account row to expand and edit details. Positive balance = surplus, negative = deficit. TBA = minimum balance retained before sweep. Sub-accounts inherit their parent's pool structure.</div>
           <div class="warning-box" id="warnBox"></div>
           <div class="entity-cards" id="entityCards"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button class="add-btn" onclick="addEntity()">+ Add entity</button>
+            <button class="preset-btn" onclick="loadExample()" style="margin-left:8px">Load example structure</button>
+          </div>
         </div>
       </div>
 
@@ -623,142 +633,296 @@ function setPreset(k){
 }
 
 // ── ENTITY TABLE ──
-const TEMPLATES = {
-  western: [
-    { name:'Germany GmbH',   country:'DE', cc:'EUR', balance: 4200000, accounts:3 },
-    { name:'France SAS',     country:'FR', cc:'EUR', balance: 3800000, accounts:2 },
-    { name:'UK Ltd',         country:'GB', cc:'GBP', balance: 2100000, accounts:2 },
-    { name:'Netherlands BV', country:'NL', cc:'EUR', balance: 1900000, accounts:1 },
-    { name:'Switzerland AG', country:'CH', cc:'CHF', balance: -400000, accounts:1 },
-    { name:'Austria GmbH',   country:'AT', cc:'EUR', balance:  800000, accounts:1 },
-  ],
-  cee: [
-    { name:'HoldCo Prague',  country:'CZ', cc:'CZK', balance: 2500000, accounts:2 },
-    { name:'OpCo Slovakia',  country:'SK', cc:'EUR', balance: -450000, accounts:1 },
-    { name:'Sales Poland',   country:'PL', cc:'PLN', balance:  800000, accounts:1 },
-    { name:'Logistics HU',   country:'HU', cc:'HUF', balance: -300000, accounts:1 },
-    { name:'Services AT',    country:'AT', cc:'EUR', balance:  600000, accounts:1 },
-  ],
-};
+const EXAMPLE_ENTITIES = [
+  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      iban:'', accounts:1, parentId:null,  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000, tba:500000, iban:'', accounts:3, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e2', name:'France HoldCo',        country:'FR', cc:'EUR', balance:1500000, tba:200000, iban:'', accounts:2, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e3', name:'France SAS',           country:'FR', cc:'EUR', balance:2300000, tba:100000, iban:'', accounts:1, parentId:'e2',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e4', name:'France Retail',        country:'FR', cc:'EUR', balance:800000,  tba:50000,  iban:'', accounts:1, parentId:'e2',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e5', name:'UK Ltd',               country:'GB', cc:'GBP', balance:-400000, tba:0,      iban:'', accounts:2, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:0.05, isExpanded:false },
+  { id:'e6', name:'CEE HoldCo',           country:'CZ', cc:'EUR', balance:600000,  tba:100000, iban:'', accounts:1, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e7', name:'Czech s.r.o.',         country:'CZ', cc:'CZK', balance:900000,  tba:50000,  iban:'', accounts:1, parentId:'e6',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+];
 
-function loadTemplate(key) {
-  const t = TEMPLATES[key];
-  if (!t) return;
-  entities = t.map(e => ({...e}));
+function getEntityLevel(entity, allEntities) {
+  if (!entity.parentId) return 0;
+  const parent = allEntities.find(e => e.id === entity.parentId);
+  if (!parent) return 1;
+  return 1 + getEntityLevel(parent, allEntities);
+}
+function getChildren(entityId, allEntities) {
+  return allEntities.filter(e => e.parentId === entityId);
+}
+function hasChildren(entityId, allEntities) {
+  return allEntities.some(e => e.parentId === entityId);
+}
+
+function loadExample() {
+  if (entities.length > 1 && !confirm('This will replace your current entities. Continue?')) return;
+  entities = EXAMPLE_ENTITIES.map(e => ({...e}));
+  renderEntities();
+  recalc();
+}
+
+function toggleEntity(id) {
+  const e = entities.find(x => x.id === id);
+  if (e) { e.isExpanded = !e.isExpanded; renderEntities(); }
+}
+
+function updateEntity(id, field, value) {
+  const e = entities.find(x => x.id === id);
+  if (!e) return;
+  e[field] = value;
   renderEntities();
   recalc();
 }
 
 function addEntity() {
-  entities.push({ name:'New Entity', country:'DE', cc:'EUR', balance:0, accounts:1 });
+  const newId = 'e' + Date.now();
+  const firstParent = entities[0]?.id || null;
+  entities.push({
+    id: newId, name:'New Entity', country:'DE', cc:'EUR', balance:0, tba:0, iban:'',
+    accounts:1, parentId:firstParent, sweepType:'zba',
+    localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:true,
+  });
   renderEntities();
   recalc();
 }
-function removeEntity(i) { entities.splice(i, 1); renderEntities(); recalc(); }
-function clearEntities() { entities = []; renderEntities(); recalc(); }
+
+function removeEntity(id) {
+  const hasKids = entities.some(e => e.parentId === id);
+  if (hasKids) {
+    alert('This account has sub-accounts. Remove them first, or reassign them to another parent.');
+    return;
+  }
+  entities = entities.filter(e => e.id !== id);
+  renderEntities();
+  recalc();
+}
 
 function renderEntities() {
   const container = g('entityCards');
   if (!entities.length) {
-    container.innerHTML = '<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px 0">No entities added yet — use a template or add manually.</div>';
+    container.innerHTML = '<div style="font-size:12px;color:var(--ink-fnt);text-align:center;padding:16px 0">No entities. Add master account first.</div>';
     return;
   }
 
-  const countryOptsFull = COUNTRIES.map(c =>
-    `<option value="${c.code}">${c.flag} ${c.code} — ${c.name}</option>`
-  ).join('');
+  function buildOrder(parentId, depth) {
+    const children = entities.filter(e => e.parentId === parentId);
+    let result = [];
+    children.forEach(e => {
+      result.push({ entity: e, depth });
+      result = result.concat(buildOrder(e.id, depth + 1));
+    });
+    return result;
+  }
 
-  let html = `
-    <div style="overflow-x:auto;margin-bottom:10px">
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead>
-          <tr style="background:var(--paper-w);border-bottom:2px solid var(--rule)">
-            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;white-space:nowrap">Entity name</th>
-            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Country</th>
-            <th style="padding:7px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Currency</th>
-            <th style="padding:7px 10px;text-align:right;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px;min-width:150px">Avg. daily balance (EUR)</th>
-            <th style="padding:7px 10px;text-align:center;font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.7px">Status</th>
-            <th style="width:30px"></th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-  entities.forEach((e, i) => {
-    const flag    = FLAGS[e.country] || '🏢';
-    const surplus = e.balance > 0;
-    const deficit = e.balance < 0;
-    const balColor = surplus ? 'var(--emerald)' : deficit ? 'var(--red)' : 'var(--ink-fnt)';
-    const badgeStyle = surplus
-      ? 'background:var(--emerald-lt);color:var(--emerald-dk);'
-      : deficit
-      ? 'background:var(--red-lt);color:var(--red);'
-      : 'background:var(--paper-w);color:var(--ink-fnt);';
-    const badgeText = surplus ? '↑ Surplus' : deficit ? '↓ Deficit' : 'Neutral';
-
-    const countryOptions = COUNTRIES.map(c =>
-      `<option value="${c.code}" ${c.code === e.country ? 'selected' : ''}>${c.flag} ${c.code}</option>`
-    ).join('');
-
-    const currencyOptions = CURRENCIES.slice(0, 20).map(c =>
-      `<option value="${c.code}" ${c.code === e.cc ? 'selected' : ''}>${c.code} — ${c.name}</option>`
-    ).join('');
-
-    html += `
-      <tr style="border-bottom:1px solid var(--paper-w)" onmouseenter="this.style.background='var(--paper)'" onmouseleave="this.style.background='transparent'">
-        <td style="padding:6px 8px">
-          <input
-            value="${e.name.replace(/"/g,'&quot;')}"
-            onchange="entities[${i}].name=this.value;renderEntities();recalc()"
-            style="border:1.5px solid transparent;border-radius:4px;padding:4px 7px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--navy);outline:none;width:140px;background:transparent;transition:border-color .12s"
-            onfocus="this.style.borderColor='var(--navy)';this.style.background='var(--white)'"
-            onblur="this.style.borderColor='transparent';this.style.background='transparent'"
-            placeholder="Entity name">
-        </td>
-        <td style="padding:6px 8px">
-          <select
-            onchange="entities[${i}].country=this.value;renderEntities();recalc()"
-            style="border:1.5px solid transparent;border-radius:4px;padding:4px 6px;font-family:var(--sans);font-size:12px;color:var(--ink);outline:none;background:transparent;cursor:pointer;transition:border-color .12s"
-            onfocus="this.style.borderColor='var(--navy)'"
-            onblur="this.style.borderColor='transparent'">
-            ${countryOptions}
-          </select>
-        </td>
-        <td style="padding:6px 8px">
-          <select
-            onchange="entities[${i}].cc=this.value;recalc()"
-            style="border:1.5px solid transparent;border-radius:4px;padding:4px 6px;font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;background:transparent;cursor:pointer;transition:border-color .12s"
-            onfocus="this.style.borderColor='var(--navy)'"
-            onblur="this.style.borderColor='transparent'">
-            ${currencyOptions}
-          </select>
-        </td>
-        <td style="padding:6px 8px;text-align:right">
-          <input
-            type="number"
-            value="${e.balance}"
-            step="50000"
-            onchange="entities[${i}].balance=parseFloat(this.value)||0;renderEntities();recalc()"
-            style="border:1.5px solid transparent;border-radius:4px;padding:4px 7px;font-family:var(--mono);font-size:12px;font-weight:700;color:${balColor};outline:none;width:130px;text-align:right;background:transparent;transition:border-color .12s"
-            onfocus="this.style.borderColor='var(--navy)';this.style.background='var(--white)'"
-            onblur="this.style.borderColor='transparent';this.style.background='transparent'">
-        </td>
-        <td style="padding:6px 8px;text-align:center">
-          <span style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;${badgeStyle}">
-            ${badgeText}
-          </span>
-        </td>
-        <td style="padding:6px 8px;text-align:center">
-          <button
-            onclick="removeEntity(${i})"
-            style="padding:3px 8px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;line-height:1;transition:all .12s"
-            onmouseenter="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-lt)'"
-            onmouseleave="this.style.borderColor='var(--rule)';this.style.color='var(--ink-fnt)';this.style.background='transparent'">✕</button>
-        </td>
-      </tr>`;
+  const roots = entities.filter(e => !e.parentId);
+  let ordered = [];
+  roots.forEach(r => {
+    ordered.push({ entity: r, depth: 0 });
+    ordered = ordered.concat(buildOrder(r.id, 1));
   });
 
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
+  container.innerHTML = ordered.map(({ entity: e, depth }) => {
+    const flag = FLAGS[e.country] || '🏢';
+    const isRoot = !e.parentId;
+    const isSubMaster = hasChildren(e.id, entities);
+    const surplus = e.balance > 0;
+    const deficit = e.balance < 0;
+    const defaultTBA = parseFloat(g('defaultTBA')?.value) || 0;
+    const effectiveTBA = (e.tba !== null && e.tba !== undefined) ? e.tba : defaultTBA;
+    const effectiveSweep = Math.max(0, Math.abs(e.balance) - effectiveTBA);
+    const balColor = surplus ? 'var(--emerald)' : deficit ? 'var(--red)' : 'var(--ink-fnt)';
+
+    let statusText, statusStyle;
+    if (isRoot) {
+      statusText = 'Master'; statusStyle = 'background:#e0e7ff;color:#3730a3;';
+    } else if (isSubMaster) {
+      statusText = '↕ Sub-master'; statusStyle = 'background:#f0f9ff;color:#0369a1;';
+    } else if (surplus) {
+      statusText = '↑ Surplus'; statusStyle = 'background:var(--emerald-lt);color:var(--emerald-dk);';
+    } else if (deficit) {
+      statusText = '↓ Deficit'; statusStyle = 'background:var(--red-lt);color:var(--red);';
+    } else {
+      statusText = 'Neutral'; statusStyle = 'background:var(--paper-w);color:var(--ink-fnt);';
+    }
+
+    const levelLabel = depth === 0 ? 'L1' : depth === 1 ? 'L2' : 'L3+';
+    const borderColor = depth === 0 ? 'var(--navy)' : depth === 1 ? '#3b82f6' : '#94a3b8';
+    const borderWidth = depth === 0 ? '4px' : depth === 1 ? '3px' : '2px';
+    const indentPx = depth * 24;
+
+    const parentEntity = e.parentId ? entities.find(x => x.id === e.parentId) : null;
+    const parentName = parentEntity ? parentEntity.name : '';
+
+    const tbaDisplay = effectiveTBA > 0 ? `≥${effectiveTBA >= 1e6 ? (effectiveTBA/1e6).toFixed(1)+'M' : Math.round(effectiveTBA/1000)+'k'}` : '';
+
+    const balAbs = Math.abs(e.balance);
+    const balStr = isRoot ? 'Σ auto' : (balAbs >= 1e6 ? (surplus?'+':'−')+'€'+(balAbs/1e6).toFixed(2)+'M' : balAbs >= 1e3 ? (surplus?'+':'−')+'€'+Math.round(balAbs/1e3)+'k' : (surplus?'+':'−')+'€'+Math.round(balAbs));
+
+    const countryOpts = COUNTRIES.map(c => `<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code} — ${c.name}</option>`).join('');
+    const ccOpts = CURRENCIES.slice(0,20).map(c => `<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('');
+
+    const parentOpts = entities
+      .filter(x => x.id !== e.id)
+      .filter(x => {
+        function isDesc(pid, tid) {
+          return entities.filter(c => c.parentId === pid).some(c => c.id === tid || isDesc(c.id, tid));
+        }
+        return !isDesc(e.id, x.id);
+      })
+      .map(x => `<option value="${x.id}" ${x.id===e.parentId?'selected':''}>${FLAGS[x.country]||'🏢'} ${x.name}</option>`).join('');
+
+    return `
+    <div style="margin-left:${indentPx}px;margin-bottom:6px;border-radius:8px;overflow:hidden;border:1px solid var(--rule);border-left:${borderWidth} solid ${borderColor};background:var(--white);box-shadow:0 1px 3px rgba(15,23,42,.04)">
+
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background .12s"
+        onclick="toggleEntity('${e.id}')"
+        onmouseenter="this.style.background='var(--paper)'"
+        onmouseleave="this.style.background='transparent'">
+        <span style="font-size:20px;flex-shrink:0;line-height:1">${flag}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.name}</div>
+          ${parentName ? `<div style="font-size:9px;color:var(--ink-fnt);margin-top:1px">↳ ${parentName}</div>` : ''}
+        </div>
+        ${tbaDisplay ? `<span style="font-size:9px;font-weight:600;color:var(--amber);background:var(--amber-lt);padding:2px 7px;border-radius:99px;flex-shrink:0">TBA ${tbaDisplay}</span>` : ''}
+        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${balColor};flex-shrink:0">${balStr}</span>
+        <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0;${statusStyle}">${statusText}</span>
+        <span style="font-size:8px;font-weight:700;color:var(--ink-fnt);background:var(--paper-w);padding:1px 5px;border-radius:3px;flex-shrink:0">${levelLabel}</span>
+        <svg style="flex-shrink:0;transition:transform .2s;transform:${e.isExpanded?'rotate(180deg)':'rotate(0deg)'}"
+          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-fnt)" stroke-width="2" stroke-linecap="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+        ${!isRoot ? `
+        <button onclick="event.stopPropagation();removeEntity('${e.id}')"
+          style="padding:2px 7px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink-fnt);cursor:pointer;font-size:10px;flex-shrink:0;transition:all .12s"
+          onmouseenter="this.style.borderColor='var(--red)';this.style.color='var(--red)';this.style.background='var(--red-lt)'"
+          onmouseleave="this.style.borderColor='var(--rule)';this.style.color='var(--ink-fnt)';this.style.background='transparent'">✕</button>
+        ` : ''}
+      </div>
+
+      ${e.isExpanded ? `
+      <div style="border-top:1px solid var(--rule);background:var(--paper);padding:14px 16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Entity name</label>
+            <input value="${e.name.replace(/"/g,'&quot;')}" onchange="updateEntity('${e.id}','name',this.value)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Country</label>
+            <select onchange="updateEntity('${e.id}','country',this.value)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
+              ${countryOpts}
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Currency</label>
+            <select onchange="updateEntity('${e.id}','cc',this.value)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:11px;color:var(--ink);outline:none">
+              ${ccOpts}
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+          ${isRoot ? `
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Avg. daily balance</label>
+            <div style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper-w);font-family:var(--mono);font-size:12px;color:var(--ink-fnt)">Auto (Σ sub-accounts)</div>
+          </div>
+          ` : `
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Avg. daily balance (EUR eq.)</label>
+            <input type="number" value="${e.balance}" step="50000"
+              onchange="updateEntity('${e.id}','balance',parseFloat(this.value)||0)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;font-weight:700;color:${balColor};outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          `}
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">
+              Target Balance (TBA)
+              <span style="margin-left:4px;width:12px;height:12px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt);cursor:help" title="Minimum balance retained before sweep. Leave 0 to use group default.">?</span>
+            </label>
+            <input type="number" value="${e.tba||0}" step="10000" min="0"
+              onchange="updateEntity('${e.id}','tba',parseFloat(this.value)||0)"
+              placeholder="0 = use group default"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--amber);outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          ${!isRoot ? `
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Effective sweep amount</label>
+            <div style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--paper-w);font-family:var(--mono);font-size:12px;font-weight:700;color:${effectiveSweep>0?'var(--emerald)':'var(--ink-fnt)'}">${effectiveSweep >= 1e6 ? '€'+(effectiveSweep/1e6).toFixed(2)+'M' : effectiveSweep >= 1e3 ? '€'+Math.round(effectiveSweep/1e3)+'k' : '€'+Math.round(effectiveSweep)}</div>
+          </div>
+          ` : '<div></div>'}
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">IBAN (optional)</label>
+            <input value="${e.iban||''}" onchange="updateEntity('${e.id}','iban',this.value)"
+              placeholder="DE89 3704 0044…"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;letter-spacing:.5px"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">No. of accounts</label>
+            <input type="number" value="${e.accounts||1}" min="1" max="50"
+              onchange="updateEntity('${e.id}','accounts',parseInt(this.value)||1)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Sweep type</label>
+            <select onchange="updateEntity('${e.id}','sweepType',this.value)"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
+              <option value="zba" ${e.sweepType==='zba'?'selected':''}>ZBA — physical sweep</option>
+              <option value="notional" ${e.sweepType==='notional'?'selected':''}>Notional — virtual</option>
+              <option value="none" ${e.sweepType==='none'?'selected':''}>None — observer only</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          ${isRoot ? `
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Pool position</label>
+            <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt)">L1 — Pool master (top)</div>
+          </div>
+          ` : `
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Reports to (parent account)</label>
+            <select onchange="updateEntity('${e.id}','parentId',this.value);renderEntities();recalc()"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
+              ${parentOpts}
+            </select>
+          </div>
+          `}
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Local debit rate % <span style="font-weight:400">(blank = global)</span></label>
+            <input type="number" value="${e.localDebitRate!==null&&e.localDebitRate!==undefined?e.localDebitRate:''}" step="0.05" min="0" max="25"
+              onchange="updateEntity('${e.id}','localDebitRate',this.value===''?null:parseFloat(this.value))"
+              placeholder="Global rate"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Local WHT % <span style="font-weight:400">(blank = global)</span></label>
+            <input type="number" value="${e.localWht!==null&&e.localWht!==undefined?e.localWht*100:''}" step="1" min="0" max="35"
+              onchange="updateEntity('${e.id}','localWht',this.value===''?null:parseFloat(this.value)/100)"
+              placeholder="Global WHT"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+          </div>
+        </div>
+      </div>
+      ` : ''}
+    </div>`;
+  }).join('');
 }
 
 // ── ENTITY AC PORTAL ──
@@ -836,11 +1000,17 @@ function recalc(){
   // Day count factor (ACT/360 vs ACT/365)
   const dcf = 365 / days;
 
-  // Entity balances
-  let surplus=0, deficit=0;
-  entities.forEach(e=>{
-    if(e.balance>0) surplus+=e.balance;
-    else if(e.balance<0) deficit+=Math.abs(e.balance);
+  // Entity balances (TBA-aware)
+  const defaultTBA = parseFloat(g('defaultTBA')?.value) || 0;
+  let surplus=0, deficit=0, lockedLiquidity=0;
+  entities.filter(e => e.parentId !== null).forEach(e => {
+    const effectiveTBA = (e.tba !== null && e.tba !== undefined) ? e.tba : defaultTBA;
+    lockedLiquidity += effectiveTBA;
+    const effectiveBal = e.balance >= 0
+      ? Math.max(0, e.balance - effectiveTBA)
+      : e.balance;
+    if (effectiveBal > 0) surplus += effectiveBal;
+    else if (effectiveBal < 0) deficit += Math.abs(effectiveBal);
   });
   const totalBal = surplus + deficit;
   const poolBal  = surplus - deficit;
@@ -952,6 +1122,7 @@ function recalc(){
       {label:'Surplus entities',val:fmt(surplus).replace('+',''),col:'var(--emerald)'},
       {label:'Deficit entities',val:fmt(-deficit).replace('+',''),col:'var(--red)'},
       {label:'Netting offset', val:fmt(netting).replace('+',''),col:'var(--navy)'},
+      {label:'Locked liquidity (TBA)', val:fmt(lockedLiquidity).replace('+',''),col:'var(--amber)'},
     ].map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--paper-w)">
       <span style="font-size:11px;color:var(--ink-lt)">${r.label}</span>
       <span style="font-family:var(--mono);font-size:12px;font-weight:700;color:${r.col}">${r.val}</span>
@@ -988,7 +1159,7 @@ function recalc(){
       poolType: g('poolType').value,
       totalEntities: entities.length,
       totalAccounts: entities.reduce((s,e)=>s+(e.accounts||1),0),
-      surplus, deficit, netting, nettingEff: Math.round(nettingEff*10)/10,
+      surplus, deficit, netting, lockedLiquidity: Math.round(lockedLiquidity), nettingEff: Math.round(nettingEff*10)/10,
       interestSaving: Math.round(netInterestSaving),
       opSaving: 0,
       netBenefit: Math.round(netBenefit),
@@ -1036,7 +1207,13 @@ async function processFiles(files){
     const extracted=JSON.parse(text.replace(/```[a-z]*\n?/g,'').replace(/```/g,'').trim());
     clearInterval(tick);g('aiProcessing').classList.remove('show');
     if(extracted.length){
-      entities=extracted.map(e=>({name:e.name||'Entity',country:e.country||'DE',cc:e.cc||'EUR',balance:+e.balance||0,accounts:e.accounts||1}));
+      const masterId = entities[0]?.id || 'e0';
+      entities=extracted.map((e,i)=>({
+        id:'e'+Date.now()+i, name:e.name||'Entity', country:e.country||'DE',
+        cc:e.cc||'EUR', balance:+e.balance||0, tba:0, iban:'',
+        accounts:e.accounts||1, parentId:masterId, sweepType:'zba',
+        localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false,
+      }));
       renderEntities();recalc();
       g('aiResultText').textContent=`✓ ${extracted.length} entities extracted from ${file.name}. Review and adjust below.`;
       g('aiResult').classList.add('show');
@@ -1058,9 +1235,12 @@ function viewReport(){recalc();window.location.href='/dashboard-preview.html';}
 
 // ── INIT ──
 g('poolBankInput').value = 'ING Bank';
-loadTemplate('western');
 g('groupName').value = 'Acme Manufacturing Group';
+entities = [
+  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0, tba:0, iban:'', accounts:1, parentId:null, sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false }
+];
 updateMasterCountryTrigger();
+renderEntities();
 recalc();
 </script>
 
