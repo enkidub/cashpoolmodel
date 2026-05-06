@@ -443,10 +443,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           <button class="preset-btn" data-preset="eur" onclick="setPreset('eur')" title="Loading live rates…">
             <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>ECB/EUR
           </button>
-          <button class="preset-btn" data-preset="czk" onclick="setPreset('czk')" title="Loading live rates…">
-            <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>ČNB/CZK
-          </button>
-          <button class="preset-btn" data-preset="usd" onclick="setPreset('usd')" title="Loading live rates…">
+<button class="preset-btn" data-preset="usd" onclick="setPreset('usd')" title="Loading live rates…">
             <span class="rate-live-dot" style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-fnt);margin-right:4px;vertical-align:middle"></span>Fed/USD
           </button>
           <button class="preset-btn" data-preset="gbp" onclick="setPreset('gbp')" title="Loading live rates…">
@@ -1231,9 +1228,9 @@ function recalc(){
   const checks = [
     { label: 'Pool verdict',  val: poolVerdict,
                               ok: verdictOk, warn: verdictWarn },
-    { label: 'Credit uplift', val: creditBp >= 0 ? '+' + creditBp + ' bp' : creditBp + ' bp',
+    { label: 'Credit uplift', val: creditBp >= 0 ? '+' + creditBp + ' bps' : creditBp + ' bps',
                               ok: creditBp > 50, warn: creditBp > 0 && creditBp <= 50 },
-    { label: 'Debit saving',  val: debitBp >= 0 ? '+' + debitBp + ' bp' : debitBp + ' bp',
+    { label: 'Debit saving',  val: debitBp >= 0 ? '+' + debitBp + ' bps' : debitBp + ' bps',
                               ok: debitBp > 100, warn: debitBp > 0 && debitBp <= 100 },
     { label: 'WHT impact',    val: wht > 0 ? '−' + Math.round(whtCost / 1000) + 'k p.a.' : 'None',
                               ok: wht === 0, warn: false },
@@ -1252,7 +1249,7 @@ function recalc(){
   const bpLabel = g('spreadBpLabel');
   if (sv) {
     const bp = Math.round(creditSpread * 10000);
-    sv.textContent = bp >= 0 ? '+' + bp + ' bp' : bp + ' bp';
+    sv.textContent = bp >= 0 ? '+' + bp + ' bps' : bp + ' bps';
     sv.style.color = bp > 0 ? 'var(--emerald)' : 'var(--red)';
   }
   if (bpLabel && creditSpread !== 0) {
