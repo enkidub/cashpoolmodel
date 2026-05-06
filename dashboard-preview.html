@@ -530,12 +530,13 @@ const SECTION_TITLES = {
 
 // ─── Pool Structure data ─────────────────────────────────────────────────
 const ENTITIES = [
-  { name:'Acme Germany GmbH',   flag:'🇩🇪', domicile:'DE', cc:'EUR', balance:'+€4.20M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€168k' },
-  { name:'Acme France SAS',     flag:'🇫🇷', domicile:'FR', cc:'EUR', balance:'+€3.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€152k' },
-  { name:'Acme UK Ltd',         flag:'🇬🇧', domicile:'GB', cc:'GBP', balance:'+£2.10M', surplus:true,  sweep:'17:30 BST', resident:false, interestRate:'4.00%', annual:'+€84k'  },
-  { name:'Acme Netherlands BV', flag:'🇳🇱', domicile:'NL', cc:'EUR', balance:'+€1.90M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€76k'  },
-  { name:'Acme Switzerland AG', flag:'🇨🇭', domicile:'CH', cc:'CHF', balance:'−CHF0.4M',surplus:false, sweep:'17:00 CET', resident:false, interestRate:'3.20%', annual:'−€13k'  },
-  { name:'Acme Austria GmbH',   flag:'🇦🇹', domicile:'AT', cc:'EUR', balance:'+€0.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€32k'  },
+  { name:'Acme Germany GmbH',    domicile:'DE', cc:'EUR', balance:'+€4.20M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€168k' },
+  { name:'Acme France SAS',      domicile:'FR', cc:'EUR', balance:'+€3.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€152k' },
+  { name:'Acme France Retail',   domicile:'FR', cc:'EUR', balance:'+€1.20M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€48k',  parentIdx:1   },
+  { name:'Acme UK Ltd',          domicile:'GB', cc:'GBP', balance:'+£2.10M', surplus:true,  sweep:'17:30 BST', resident:false, interestRate:'4.00%', annual:'+€84k'  },
+  { name:'Acme Netherlands BV',  domicile:'NL', cc:'EUR', balance:'+€1.90M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€76k'  },
+  { name:'Acme Switzerland AG',  domicile:'CH', cc:'CHF', balance:'−CHF0.4M',surplus:false, sweep:'17:00 CET', resident:false, interestRate:'3.20%', annual:'−€13k'  },
+  { name:'Acme Austria GmbH',    domicile:'AT', cc:'EUR', balance:'+€0.80M', surplus:true,  sweep:'18:00 CET', resident:true,  interestRate:'4.00%', annual:'+€32k'  },
 ];
 
 // ─── P&L data ─────────────────────────────────────────────────────────────
@@ -580,6 +581,7 @@ const RATES = [
 
 function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
   const entityList = ents || ENTITIES;
+
   function pbNum(bal) {
     if (!bal) return 0;
     const neg = bal.includes('−') || bal.startsWith('-');
@@ -587,19 +589,107 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
     const k = bal.toLowerCase().includes('k');
     return (neg ? -1 : 1) * (k ? num / 1000 : num);
   }
-
   function fmtBal(bal, surplus) {
     const raw = bal.replace(/^\+/, '');
     if (surplus) return raw.startsWith('+') ? raw : '+' + raw;
     return (raw.startsWith('−') || raw.startsWith('-')) ? raw : '−' + raw;
   }
+  function isRoot(e) {
+    return e.parentIdx === undefined || e.parentIdx === null || e.parentIdx === '';
+  }
+  function getChildren(pidx) {
+    return entityList.map((e, i) => ({ e, i }))
+      .filter(({ e }) => !isRoot(e) && String(e.parentIdx) === String(pidx));
+  }
+  const rootNodes = entityList.map((e, i) => ({ e, i })).filter(({ e }) => isRoot(e));
 
   const surplusTotal = entityList.filter(e => e.surplus).reduce((s, e) => s + Math.abs(pbNum(e.balance)), 0);
   const deficitTotal = entityList.filter(e => !e.surplus).reduce((s, e) => s + Math.abs(pbNum(e.balance)), 0);
-  const zbaRaw = nettingEff ? parseFloat(nettingEff) : (surplusTotal + deficitTotal > 0 ? Math.round(Math.min(surplusTotal, deficitTotal) / (surplusTotal + deficitTotal) * 100) : 0);
+  const zbaRaw   = nettingEff ? parseFloat(nettingEff) : (surplusTotal + deficitTotal > 0 ? Math.round(Math.min(surplusTotal, deficitTotal) / (surplusTotal + deficitTotal) * 100) : 0);
   const zbaColor = zbaRaw >= 60 ? '#059669' : zbaRaw >= 30 ? '#d97706' : '#dc2626';
   const zbaBg    = zbaRaw >= 60 ? '#ecfdf5' : zbaRaw >= 30 ? '#fffbeb' : '#fee2e2';
   const zbaLabel = nettingEff || (zbaRaw + '%');
+
+  const containerRef = React.useRef(null);
+  const masterRef    = React.useRef(null);
+  const nodeRefs     = React.useRef({});
+  const linesCache   = React.useRef([]);
+  const [svgLines, setSvgLines] = React.useState([]);
+
+  function measureLines() {
+    if (!containerRef.current || !masterRef.current) return;
+    const cRect = containerRef.current.getBoundingClientRect();
+    const next = [];
+    entityList.forEach((e, i) => {
+      const cel = nodeRefs.current[i];
+      if (!cel) return;
+      const pel = !isRoot(e) ? nodeRefs.current[parseInt(e.parentIdx)] : masterRef.current;
+      if (!pel) return;
+      const pr = pel.getBoundingClientRect();
+      const cr = cel.getBoundingClientRect();
+      next.push({
+        x1: Math.round(pr.left + pr.width / 2 - cRect.left),
+        y1: Math.round(pr.bottom - cRect.top),
+        x2: Math.round(cr.left + cr.width / 2 - cRect.left),
+        y2: Math.round(cr.top - cRect.top),
+      });
+    });
+    const prev = linesCache.current;
+    const same = prev.length === next.length &&
+      next.every((l, i) => prev[i] && l.x1===prev[i].x1 && l.y1===prev[i].y1 && l.x2===prev[i].x2 && l.y2===prev[i].y2);
+    if (!same) { linesCache.current = next; setSvgLines(next); }
+  }
+
+  React.useEffect(() => { measureLines(); });
+  React.useEffect(() => {
+    const fn = () => measureLines();
+    window.addEventListener('resize', fn);
+    return () => window.removeEventListener('resize', fn);
+  }, []);
+
+  function pillJSX(entity, idx) {
+    const accent     = entity.surplus ? '#059669' : '#dc2626';
+    const displayBal = fmtBal(entity.balance, entity.surplus);
+    const domCode    = (entity.domicile || entity.country || '').toLowerCase();
+    return (
+      <div ref={el => { nodeRefs.current[idx] = el; }}
+        style={{ borderRadius:7, padding:'8px 12px', background:'#fff', position:'relative', overflow:'hidden',
+          border:`1.5px solid ${entity.surplus ? '#d1fae5' : '#fee2e2'}`,
+          width:176, flexShrink:0, cursor:'default', transition:'transform .15s' }}
+        onMouseEnter={ev => ev.currentTarget.style.transform='translateY(-2px)'}
+        onMouseLeave={ev => ev.currentTarget.style.transform=''}>
+        <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:accent }} />
+        <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:5, marginTop:1 }}>
+          <span className={'fi fi-' + domCode} style={{ width:13, height:9, display:'inline-block', borderRadius:1, flexShrink:0 }} />
+          <span style={{ fontSize:11, fontWeight:600, color:'#1e293b', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', flex:1, lineHeight:1.2 }}>{entity.name}</span>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:4 }}>
+          <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, color:accent, flexShrink:0 }}>{displayBal}</span>
+          <div style={{ display:'flex', alignItems:'center', gap:3 }}>
+            <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 5px', borderRadius:2 }}>{entity.cc}</span>
+            {entity.cc !== 'EUR' && <span style={{ fontSize:9, fontWeight:700, color:'#92400e', background:'#fef3c7', border:'1px solid #fde68a', padding:'1px 4px', borderRadius:2 }}>FX</span>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function renderLevel(nodes, depth) {
+    if (!nodes.length) return null;
+    return (
+      <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap', marginTop: depth === 0 ? 36 : 28 }}>
+        {nodes.map(({ e, i }) => {
+          const children = getChildren(i);
+          return (
+            <div key={i} style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
+              {pillJSX(e, i)}
+              {children.length > 0 && renderLevel(children, depth + 1)}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
@@ -619,118 +709,68 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
               <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>ZBA Efficiency</span>
               <span style={{ fontSize:11, fontWeight:700, color: zbaColor, fontFamily:'DM Mono,monospace' }}>{zbaLabel}</span>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:5, background:'#f8fafc',
-              border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:5, background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px' }}>
               <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>Net Balance</span>
               <span style={{ fontSize:11, fontWeight:700, color:'#1e293b', fontFamily:'DM Mono,monospace' }}>{poolBalance||'+€12.3M'}</span>
             </div>
           </div>
         </div>
 
-        {/* Master account card */}
-        <div style={{ display:'flex', justifyContent:'center', marginBottom:0 }}>
-          <div style={{ borderRadius:8, padding:'11px 20px', minWidth:280, background:'#fff',
-            border:'2px solid #1e3a5f', position:'relative', overflow:'hidden' }}>
-            <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background:'#1e3a5f' }}/>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8, marginTop:2 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                <span style={{ fontSize:15 }}>🏛</span>
-                <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account (EUR)</span>
-              </div>
-              <div style={{ fontSize:9, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff', padding:'2px 7px', borderRadius:99 }}>
-                ⬆↓ Pool Header
-              </div>
-            </div>
-            <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700, color:'#059669', letterSpacing:'-.3px', marginBottom:6 }}>
-              {poolBalance||'+€12.3M'}
-            </div>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em',
-                  background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>EUR</span>
-                <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe',
-                  padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
-                <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:9, fontWeight:600, color:'#059669' }}>
-                  <div style={{ width:5,height:5,borderRadius:'50%',background:'#059669', animation:'pulse 2s infinite' }}/>
-                  ZBA · Auto-sweep
+        {/* Tree with SVG connector overlay */}
+        <div ref={containerRef} style={{ position:'relative' }}>
+          <svg style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%', pointerEvents:'none', overflow:'visible' }}>
+            {svgLines.map((l, si) => (
+              <path key={si}
+                d={`M${l.x1},${l.y1} C${l.x1},${(l.y1+l.y2)/2} ${l.x2},${(l.y1+l.y2)/2} ${l.x2},${l.y2}`}
+                fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="4 3" />
+            ))}
+          </svg>
+
+          {/* Master pill */}
+          <div style={{ display:'flex', justifyContent:'center' }}>
+            <div ref={masterRef} style={{ borderRadius:8, padding:'10px 18px', background:'#fff',
+              border:'2px solid #1e3a5f', position:'relative', overflow:'hidden', minWidth:200, maxWidth:300 }}>
+              <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background:'#1e3a5f' }} />
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6, marginTop:1 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  <span style={{ fontSize:13 }}>🏛</span>
+                  <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account</span>
                 </div>
+                <div style={{ fontSize:9, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff', padding:'2px 7px', borderRadius:99 }}>Pool Header</div>
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'#64748b' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                Cut-off 16:00 CET
+              <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, fontWeight:700, color:'#059669', letterSpacing:'-.3px', marginBottom:5 }}>
+                {poolBalance||'+€12.3M'}
+              </div>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                  <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>EUR</span>
+                  <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe', padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, fontWeight:600, color:'#059669' }}>
+                    <div style={{ width:5, height:5, borderRadius:'50%', background:'#059669', animation:'pulse 2s infinite' }} />
+                    ZBA
+                  </div>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'#64748b' }}>
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  16:00 CET
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Connector */}
-        <div style={{ display:'flex', justifyContent:'center', position:'relative', height:36 }}>
-          <div style={{ width:2, height:'100%',
-            background:'repeating-linear-gradient(to bottom,#cbd5e1 0,#cbd5e1 5px,transparent 5px,transparent 10px)' }}/>
-        </div>
-
-        {/* Entity cards */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:12 }}>
-          {entityList.map((e, i) => {
-            const accent     = e.surplus ? '#059669' : '#dc2626';
-            const domCode    = (e.domicile || '').toLowerCase();
-            const displayBal = fmtBal(e.balance, e.surplus);
-            return (
-              <div key={i} style={{ borderRadius:8, padding:'11px 14px', background:'#fff',
-                border:`1.5px solid ${e.surplus ? '#d1fae5' : '#fee2e2'}`,
-                position:'relative', overflow:'hidden', transition:'transform .15s', cursor:'default' }}
-                onMouseEnter={ev => ev.currentTarget.style.transform='translateY(-2px)'}
-                onMouseLeave={ev => ev.currentTarget.style.transform=''}>
-                <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background: accent }}/>
-
-                {/* Flag + name + badge */}
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8, marginTop:2 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:7 }}>
-                    <span className={'fi fi-' + domCode} style={{ width:14, height:10, display:'inline-block', borderRadius:1, flexShrink:0 }}></span>
-                    <div>
-                      <div style={{ fontSize:11, fontWeight:600, color:'#1e293b', lineHeight:1.25 }}>{e.name}</div>
-                      {e.sweep && <div style={{ fontSize:9, color:'#94a3b8', marginTop:1 }}>{e.sweep}</div>}
-                    </div>
-                  </div>
-                  <div style={{ fontSize:9, fontWeight:700, color: accent,
-                    background: e.surplus ? '#ecfdf5' : '#fee2e2', padding:'2px 7px', borderRadius:99, flexShrink:0 }}>
-                    {e.surplus ? '↑ Surplus' : '↓ Deficit'}
-                  </div>
-                </div>
-
-                {/* Balance */}
-                <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700,
-                  color: accent, letterSpacing:'-.3px', marginBottom:6 }}>
-                  {displayBal}
-                </div>
-
-                {/* Tags */}
-                <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                  <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em',
-                    background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>
-                    {e.cc}
-                  </span>
-                  {e.cc !== 'EUR' && (
-                    <span style={{ fontSize:9, fontWeight:700, color:'#92400e',
-                      background:'#fef3c7', border:'1px solid #fde68a', padding:'1px 5px', borderRadius:3 }}>FX</span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          {/* Entity tree */}
+          {renderLevel(rootNodes, 0)}
         </div>
 
         {/* Legend */}
-        <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
+        <div style={{ marginTop:20, paddingTop:14, borderTop:'1px solid #f1f5f9',
           display:'flex', gap:20, justifyContent:'center', flexWrap:'wrap', alignItems:'center' }}>
           {[
             { col:'#059669', label:'Surplus — sweeps to master daily' },
             { col:'#dc2626', label:'Deficit — funded from master daily' },
           ].map(l => (
             <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
-              <div style={{ width:20, height:6, borderRadius:3, background:l.col, flexShrink:0 }}/>
+              <div style={{ width:20, height:6, borderRadius:3, background:l.col, flexShrink:0 }} />
               {l.label}
             </div>
           ))}
@@ -741,7 +781,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         </div>
       </div>
 
-      {/* ── Netting Flow Diagram ── */}
+      {/* ── Netting Flow ── */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:24 }}>
         <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:18 }}>
           Netting Flow — Daily Gross vs Net
@@ -749,18 +789,16 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         <div style={{ display:'flex', alignItems:'center' }}>
           <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:5 }}>
             <div style={{ fontSize:10, fontWeight:700, color:'#059669', textTransform:'uppercase', letterSpacing:'0.07em' }}>Surplus Inflows</div>
-            <div style={{ fontFamily:'DM Mono,monospace', fontSize:20, fontWeight:700, color:'#059669' }}>
-              +{surplusTotal.toFixed(2)}M
-            </div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:20, fontWeight:700, color:'#059669' }}>+{surplusTotal.toFixed(2)}M</div>
             <div style={{ fontSize:10, color:'#94a3b8' }}>{entityList.filter(e => e.surplus).length} entities sweep up</div>
           </div>
           <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:6, padding:'0 16px' }}>
             <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', letterSpacing:'0.08em' }}>NETTING</div>
             <svg width="48" height="28" viewBox="0 0 48 28">
-              <line x1="0" y1="8" x2="42" y2="8" stroke="#059669" strokeWidth="1.5"/>
-              <polygon points="42,4 48,8 42,12" fill="#059669"/>
-              <line x1="48" y1="20" x2="6" y2="20" stroke="#dc2626" strokeWidth="1.5"/>
-              <polygon points="6,16 0,20 6,24" fill="#dc2626"/>
+              <line x1="0" y1="8" x2="42" y2="8" stroke="#059669" strokeWidth="1.5" />
+              <polygon points="42,4 48,8 42,12" fill="#059669" />
+              <line x1="48" y1="20" x2="6" y2="20" stroke="#dc2626" strokeWidth="1.5" />
+              <polygon points="6,16 0,20 6,24" fill="#dc2626" />
             </svg>
             <div title={'ZBA Efficiency: ratio of matched netting flow to total gross flow'}
               style={{ background: zbaBg, border:`1px solid ${zbaColor}55`, borderRadius:6,
@@ -770,9 +808,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
           </div>
           <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:5 }}>
             <div style={{ fontSize:10, fontWeight:700, color:'#dc2626', textTransform:'uppercase', letterSpacing:'0.07em' }}>Deficit Outflows</div>
-            <div style={{ fontFamily:'DM Mono,monospace', fontSize:20, fontWeight:700, color:'#dc2626' }}>
-              −{deficitTotal.toFixed(2)}M
-            </div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:20, fontWeight:700, color:'#dc2626' }}>−{deficitTotal.toFixed(2)}M</div>
             <div style={{ fontSize:10, color:'#94a3b8' }}>{entityList.filter(e => !e.surplus).length} entities funded</div>
           </div>
         </div>
@@ -783,7 +819,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div>
             <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Intercompany Funding Matrix</div>
-            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>Daily sweep positions via master · EUR-equivalent · WHT-optimised structure</div>
+            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>Daily sweep positions via master · EUR-equivalent</div>
           </div>
           <div style={{ fontSize:10, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff',
             border:'1px solid #c7d2fe', borderRadius:99, padding:'3px 10px', flexShrink:0 }}>
@@ -797,22 +833,28 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         </div>
         {entityList.map((e, i) => {
           const accent2  = e.surplus ? '#059669' : '#dc2626';
-          const domCode2 = (e.domicile || '').toLowerCase();
+          const domCode2 = (e.domicile || e.country || '').toLowerCase();
           const dispBal2 = fmtBal(e.balance, e.surplus);
+          const isSub    = !isRoot(e);
           return (
-            <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr', padding:'12px 24px',
-              borderBottom: i < entityList.length - 1 ? '1px solid #f8fafc' : 'none', alignItems:'center' }}
-              onMouseEnter={ev => ev.currentTarget.style.background='#f8fafc'}
-              onMouseLeave={ev => ev.currentTarget.style.background='transparent'}>
-              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <span className={'fi fi-' + domCode2} style={{ width:14, height:10, display:'inline-block', borderRadius:1, flexShrink:0 }}></span>
+            <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr',
+              padding:`12px 24px 12px ${isSub ? 40 : 24}px`,
+              borderBottom: i < entityList.length - 1 ? '1px solid #f8fafc' : 'none', alignItems:'center',
+              background: isSub ? '#fafafa' : 'transparent' }}
+              onMouseEnter={ev => ev.currentTarget.style.background = isSub ? '#f1f5f9' : '#f8fafc'}
+              onMouseLeave={ev => ev.currentTarget.style.background = isSub ? '#fafafa' : 'transparent'}>
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                {isSub && <div style={{ width:12, height:12, borderLeft:'1.5px solid #cbd5e1', borderBottom:'1.5px solid #cbd5e1', borderRadius:'0 0 0 3px', flexShrink:0, alignSelf:'flex-start', marginTop:3 }} />}
+                <span className={'fi fi-' + domCode2} style={{ width:13, height:9, display:'inline-block', borderRadius:1, flexShrink:0 }} />
                 <div>
                   <div style={{ fontSize:12, fontWeight:500, color:'#334155' }}>{e.name}</div>
                   <div style={{ fontSize:10, color:'#94a3b8', marginTop:1, display:'flex', alignItems:'center', gap:6 }}>
                     <span>{e.cc}{e.cc !== 'EUR' ? ' → EUR (FX)' : ''}</span>
-                    <span style={{ color: e.resident ? '#2563eb' : '#7c3aed', fontWeight:600 }}>
-                      {e.resident ? 'Resident' : 'Non-resident'}
-                    </span>
+                    {e.resident !== undefined && (
+                      <span style={{ color: e.resident ? '#2563eb' : '#7c3aed', fontWeight:600 }}>
+                        {e.resident ? 'Resident' : 'Non-resident'}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -822,8 +864,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
               <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#475569' }}>
                 {e.interestRate}
               </div>
-              <div style={{ fontFamily:'Cormorant Garamond,serif', fontSize:16, fontWeight:600,
-                color: e.surplus ? '#059669' : '#475569' }}>
+              <div style={{ fontFamily:'Cormorant Garamond,serif', fontSize:16, fontWeight:600, color: e.surplus ? '#059669' : '#475569' }}>
                 {e.annual}
               </div>
             </div>
@@ -1698,7 +1739,6 @@ function App() {
   // Dynamic entities for pool structure
   const dynEntities = simEntities ? simEntities.map(e => ({
     name: e.name,
-    flag: ({DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸'})[e.country] || '🏢',
     domicile: e.country,
     cc: e.cc,
     balance: (e.balance>=0?'+':'') + (e.cc==='EUR'?'€':'') + (Math.abs(e.balance)>=1e6?(Math.abs(e.balance)/1e6).toFixed(2)+'M':Math.round(Math.abs(e.balance)/1000)+'k'),
@@ -1707,6 +1747,7 @@ function App() {
     resident: ['DE','FR','NL','AT','BE','IT','ES','CZ','SK','PL','HU'].includes(e.country),
     interestRate: e.balance>=0?((sim?.poolCredit||0.04)*100).toFixed(2)+'%':((sim?.poolDebit||0.032)*100).toFixed(2)+'%',
     annual: (e.balance>=0?'+':'−')+'€'+Math.round(Math.abs(e.balance)*(e.balance>=0?(sim?.poolCredit||0.04):(sim?.poolDebit||0.032))/1000)+'k',
+    parentIdx: e.parentIdx,
   })) : ENTITIES;
 
   const dynPoolBalance = poolBalance;

@@ -115,6 +115,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .ec-field input.bal{font-family:var(--mono);font-weight:700}
 .ec-field input.bal.pos{color:var(--emerald)}
 .ec-field input.bal.neg{color:var(--red)}
+.ec-field-wide{grid-column:1/-1;border-right:none;border-top:1px solid var(--paper-w)}
 
 .add-entity-hd-btn{padding:5px 12px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--navy);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .13s;margin-left:auto;flex-shrink:0}
 .add-entity-hd-btn:hover{border-color:var(--navy);background:var(--paper-w)}
@@ -643,15 +644,16 @@ function setPreset(k){
 
 // ── ENTITY CARDS ──
 const EXAMPLE_ENTITIES=[
-  {name:'Acme GmbH',         country:'DE',cc:'EUR',balance: 4200000,accounts:3},
-  {name:'Acme France SAS',   country:'FR',cc:'EUR',balance: 3800000,accounts:2},
-  {name:'Acme UK Ltd',       country:'GB',cc:'GBP',balance:-1500000,accounts:2},
-  {name:'Acme Benelux BV',   country:'NL',cc:'EUR',balance: 1900000,accounts:1},
-  {name:'Acme CEE s.r.o.',   country:'CZ',cc:'CZK',balance:-600000, accounts:1},
+  {name:'Acme GmbH',           country:'DE',cc:'EUR',balance: 4200000,accounts:3},
+  {name:'Acme France SAS',     country:'FR',cc:'EUR',balance: 3800000,accounts:2},
+  {name:'Acme France Retail',  country:'FR',cc:'EUR',balance:  800000,accounts:1,parentIdx:1},
+  {name:'Acme UK Ltd',         country:'GB',cc:'GBP',balance:-1500000,accounts:2},
+  {name:'Acme Benelux BV',     country:'NL',cc:'EUR',balance: 1900000,accounts:1},
+  {name:'Acme CEE s.r.o.',     country:'CZ',cc:'CZK',balance: -600000,accounts:1},
 ];
 
 function addEntity(){
-  entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1});
+  entities.push({name:`Entity ${entities.length+1}`,country:'DE',cc:'EUR',balance:0,accounts:1,parentIdx:null});
   renderEntities(); recalc();
 }
 function removeEntity(i){entities.splice(i,1);renderEntities();recalc()}
@@ -697,6 +699,13 @@ function renderEntities(){
           <input type="number" class="bal ${e.balance>0?'pos':e.balance<0?'neg':''}"
             value="${e.balance}" step="50000"
             onchange="entities[${i}].balance=parseFloat(this.value)||0;this.className='bal '+(entities[${i}].balance>0?'pos':entities[${i}].balance<0?'neg':'');renderEntities();recalc()">
+        </div>
+        <div class="ec-field ec-field-wide">
+          <div class="ec-field-label">Parent account</div>
+          <select onchange="entities[${i}].parentIdx=this.value===''?null:parseInt(this.value);recalc()">
+            <option value="" ${e.parentIdx===null||e.parentIdx===undefined?'selected':''}>↳ Direct to master</option>
+            ${entities.map((oth,j)=>j!==i?`<option value="${j}" ${String(e.parentIdx)===String(j)?'selected':''}>${oth.name}</option>`:'').join('')}
+          </select>
         </div>
       </div>
     </div>`;
