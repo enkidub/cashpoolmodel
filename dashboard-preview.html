@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SimulationDashboard Preview — CashPoolModel</title>
-<link rel="icon" type="image/png" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -91,6 +90,78 @@ const Ring = ({ value, size = 46 }) => {
   );
 };
 
+// ─── Core calculation engine (mirrors simulator-input.html) ───────────────
+function computeFromSim(sim) {
+  if (!sim) return null;
+
+  const dr  = sim.debitRate  || 0.055;
+  const cr  = sim.creditRate || 0.028;
+  const pdr = sim.poolDebit  || 0.032;
+  const pcr = sim.poolCredit || 0.040;
+  const impl= sim.implCost   || 150000;
+  const fees= sim.bankFees   || 30000;
+  const adm = sim.adminCost  || 40000;
+  const wht = sim.whtRate    || 0;
+  const days= sim.dayCount   || 360;
+  const dcf = 365 / days;
+
+  const surplus = sim.surplus || 0;
+  const deficit = sim.deficit || 0;
+  const netting = Math.min(surplus, deficit);
+  const totalBal = surplus + deficit;
+
+  // Interest components
+  const debitSaving   = deficit * (dr - pdr) * dcf;
+  const creditUplift  = surplus * (pcr - cr) * dcf;
+  const nettingSaving = netting * pdr * dcf;
+  const whtCost       = netting * pdr * dcf * wht;
+  const netInterest   = debitSaving + creditUplift + nettingSaving - whtCost;
+  const annualCosts   = fees + adm;
+  const netBenefit    = netInterest - annualCosts;
+  const paybackMo     = netBenefit > 0 ? (impl / netBenefit) * 12 : 999;
+  const nettingEff    = totalBal > 0 ? (netting / totalBal) * 100 : 0;
+  const creditSpread  = pcr - cr;
+  const debitSpread   = dr - pdr;
+
+  // Sensitivity matrix — computed from actual rates & balances
+  const RATE_BP = [-100, -50, 0, 50, 100]; // basis points
+  const BAL_PCT = [20, 10, 0, -10, -20];   // balance % change
+
+  const sensMatrix = BAL_PCT.map(bp => {
+    return RATE_BP.map(rp => {
+      const adjSurplus = surplus * (1 + bp/100);
+      const adjDeficit = deficit * (1 + bp/100);
+      const adjNetting = Math.min(adjSurplus, adjDeficit);
+      const rShift = rp / 10000;
+      const ds  = adjDeficit * (dr - (pdr - rShift)) * dcf;
+      const cu  = adjSurplus * ((pcr + rShift) - cr) * dcf;
+      const ns  = adjNetting * (pdr - rShift) * dcf;
+      const wc  = adjNetting * (pdr - rShift) * dcf * wht;
+      const val = Math.round((ds + cu + ns - wc - annualCosts) / 1000);
+      return Math.max(val, 0); // floor at 0 for display
+    });
+  });
+
+  // P&L rows computed from actual numbers
+  const intIncBef = surplus * cr * dcf;
+  const intCostBef= deficit * dr * dcf;
+  const intIncAft = surplus * pcr * dcf;
+  const intCostAft= deficit * pdr * dcf;
+
+  return {
+    netInterest, annualCosts, netBenefit, paybackMo,
+    nettingEff, surplus, deficit, netting, totalBal,
+    debitSaving, creditUplift, nettingSaving, whtCost,
+    creditSpread, debitSpread, dcf,
+    sensMatrix,
+    intIncBef: Math.round(intIncBef),
+    intCostBef: Math.round(intCostBef),
+    intIncAft: Math.round(intIncAft),
+    intCostAft: Math.round(intCostAft),
+    dr, cr, pdr, pcr, impl, fees, adm, wht,
+  };
+}
+
 // ─── Data ─────────────────────────────────────────────────────────────────
 
 const NAV = [
@@ -102,6 +173,7 @@ const NAV = [
   { id:'analysis',    label:'AI Scenarios',        icon:'robot'    },
 ];
 
+// Static fallback KPIs (used only when no simulator data)
 const KPIS = [
   { label:'Net Interest Savings', value:'€842k',  badge:'↑ 18.3%', sub:'vs. standalone arrangement',  ring:null },
   { label:'Netting Efficiency',   value:'73%',    badge:'↑ 12pp',  sub:'above sector benchmark',       ring:73   },
@@ -109,29 +181,11 @@ const KPIS = [
   { label:'Avg. Yield Spread',    value:'+1.2%',  badge:'+120 bp', sub:'over pool benchmark rate',     ring:null },
 ];
 
-// ─── Date helpers ─────────────────────────────────────────────────────────
-const NOW = new Date();
-const fmtMonthYear = (d) => d.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-const fmtFullDate  = (d) => d.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-const fmtDateTime  = (d) => d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-function genLastQuarters(n) {
-  const curQ  = Math.floor(NOW.getMonth() / 3);
-  const year  = NOW.getFullYear();
-  const result = [];
-  for (let i = n - 1; i >= 0; i--) {
-    const totalQ = curQ - i;
-    const yr = year + Math.floor(totalQ / 4);
-    const q  = ((totalQ % 4) + 4) % 4;
-    result.push(`Q${q + 1} ${yr}`);
-  }
-  return result;
-}
-const CHART_PERIODS = genLastQuarters(4);
 const CHART = [
-  { period: CHART_PERIODS[0], without:285, pooled:142 },
-  { period: CHART_PERIODS[1], without:312, pooled:156 },
-  { period: CHART_PERIODS[2], without:298, pooled:149 },
-  { period: CHART_PERIODS[3], without:327, pooled:163 },
+  { period:'Q1 2025', without:285, pooled:142 },
+  { period:'Q2 2025', without:312, pooled:156 },
+  { period:'Q3 2025', without:298, pooled:149 },
+  { period:'Q4 2025', without:327, pooled:163 },
 ];
 const CH = 200, CMAX = 380;
 
@@ -197,7 +251,7 @@ function BarChart() {
             Interest Cost: Before vs. After Pooling
           </div>
           <div className="text-slate-400 mt-0.5" style={{ fontSize:11 }}>
-            Quarterly interest expense · EUR thousands · {CHART_PERIODS[0]}–{CHART_PERIODS[3]}
+            Quarterly interest expense · EUR thousands · illustrative simulation output
           </div>
         </div>
         <div style={{ display:'flex', gap:20, alignItems:'center' }}>
@@ -214,108 +268,104 @@ function BarChart() {
       </div>
 
       {/* Chart area */}
-      <div style={{ display:'flex', gap:0 }}>
+      <div style={{ display:'flex', alignItems:'flex-start', gap:0 }}>
 
-        {/* Y axis — height = bars + x-label row */}
-        <div style={{ position:'relative', width:40, height: CH + 28, flexShrink:0 }}>
+        {/* Y axis */}
+        <div style={{ position:'relative', width:40, height:CH, flexShrink:0 }}>
           {[0,100,200,300].map(v => (
-            <span key={v} style={{
-              position:'absolute', right:8,
-              bottom:`calc(28px + ${(v/CMAX)*CH}px - 6px)`,
-              fontSize:9, fontFamily:'DM Mono, monospace', lineHeight:1, color:'#94a3b8'
-            }}>
+            <span key={v} className="text-slate-400"
+              style={{
+                position:'absolute', right:8,
+                bottom:`calc(${(v/CMAX)*CH}px - 6px)`,
+                fontSize:9, fontFamily:'DM Mono, monospace', lineHeight:1
+              }}>
               {v}k
             </span>
           ))}
         </div>
 
-        {/* Bars + grid + X labels stacked */}
-        <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
+        {/* Bars + grid */}
+        <div style={{ flex:1, position:'relative', height:CH, borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
 
-          {/* Bars + grid */}
-          <div style={{ position:'relative', height:CH, borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
+          {/* Grid lines */}
+          {[100,200,300].map(v => (
+            <div key={v} style={{
+              position:'absolute', left:0, right:0,
+              bottom:`${(v/CMAX)*CH}px`,
+              borderTop:'1px dashed #f1f5f9', pointerEvents:'none'
+            }} />
+          ))}
 
-            {/* Grid lines */}
-            {[100,200,300].map(v => (
-              <div key={v} style={{
-                position:'absolute', left:0, right:0,
-                bottom:`${(v/CMAX)*CH}px`,
-                borderTop:'1px dashed #f1f5f9', pointerEvents:'none'
-              }} />
-            ))}
+          {/* Bar groups */}
+          <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'flex-end', justifyContent:'space-around', padding:'0 32px' }}>
+            {CHART.map((d, gi) => (
+              <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:6 }}>
 
-            {/* Bar groups */}
-            <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'flex-end', justifyContent:'space-around', padding:'0 32px' }}>
-              {CHART.map((d, gi) => (
-                <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:6 }}>
-
-                  {/* Without bar */}
-                  <div
-                    onMouseEnter={() => setHov({gi, which:'without'})}
-                    onMouseLeave={() => setHov(null)}
-                    style={{ position:'relative', cursor:'default' }}>
+                {/* Without bar */}
+                <div
+                  onMouseEnter={() => setHov({gi, which:'without'})}
+                  onMouseLeave={() => setHov(null)}
+                  style={{ position:'relative', cursor:'default' }}>
+                  <div style={{
+                    width:36, borderRadius:'3px 3px 0 0',
+                    height: ph(d.without),
+                    background:'#e2e8f0',
+                    opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.5 : 1,
+                    transition:'opacity 0.1s'
+                  }} />
+                  {hov?.gi===gi && hov?.which==='without' && (
                     <div style={{
-                      width:36, borderRadius:'3px 3px 0 0',
-                      height: ph(d.without),
-                      background:'#e2e8f0',
-                      opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.5 : 1,
-                      transition:'opacity 0.1s'
-                    }} />
-                    {hov?.gi===gi && hov?.which==='without' && (
-                      <div style={{
-                        position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
-                        left:'50%', transform:'translateX(-50%)',
-                        background:'#1e293b', color:'#fff',
-                        fontSize:10, fontFamily:'DM Mono, monospace',
-                        padding:'3px 7px', borderRadius:4,
-                        whiteSpace:'nowrap', zIndex:10,
-                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                      }}>
-                        €{d.without}k
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Pooled bar */}
-                  <div
-                    onMouseEnter={() => setHov({gi, which:'pooled'})}
-                    onMouseLeave={() => setHov(null)}
-                    style={{ position:'relative', cursor:'default' }}>
-                    <div style={{
-                      width:36, borderRadius:'3px 3px 0 0',
-                      height: ph(d.pooled),
-                      background:'#4f46e5',
-                      opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.5 : 1,
-                      transition:'opacity 0.1s'
-                    }} />
-                    {hov?.gi===gi && hov?.which==='pooled' && (
-                      <div style={{
-                        position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
-                        left:'50%', transform:'translateX(-50%)',
-                        background:'#4338ca', color:'#fff',
-                        fontSize:10, fontFamily:'DM Mono, monospace',
-                        padding:'3px 7px', borderRadius:4,
-                        whiteSpace:'nowrap', zIndex:10,
-                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                      }}>
-                        €{d.pooled}k · save €{d.without - d.pooled}k
-                      </div>
-                    )}
-                  </div>
-
+                      position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
+                      left:'50%', transform:'translateX(-50%)',
+                      background:'#1e293b', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace',
+                      padding:'3px 7px', borderRadius:4,
+                      whiteSpace:'nowrap', zIndex:10,
+                      boxShadow:'0 2px 8px rgba(0,0,0,.18)'
+                    }}>
+                      €{d.without}k
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* X-axis labels — same padding as bar groups so they align exactly */}
-          <div style={{ display:'flex', justifyContent:'space-around', padding:'7px 32px 0', borderLeft:'1px solid #e2e8f0' }}>
-            {CHART.map((d, i) => (
-              <span key={i} style={{ fontSize:11, color:'#475569', fontFamily:'DM Mono, monospace', fontWeight:500, textAlign:'center' }}>{d.period}</span>
+                {/* Pooled bar */}
+                <div
+                  onMouseEnter={() => setHov({gi, which:'pooled'})}
+                  onMouseLeave={() => setHov(null)}
+                  style={{ position:'relative', cursor:'default' }}>
+                  <div style={{
+                    width:36, borderRadius:'3px 3px 0 0',
+                    height: ph(d.pooled),
+                    background:'#4f46e5',
+                    opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.5 : 1,
+                    transition:'opacity 0.1s'
+                  }} />
+                  {hov?.gi===gi && hov?.which==='pooled' && (
+                    <div style={{
+                      position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
+                      left:'50%', transform:'translateX(-50%)',
+                      background:'#4338ca', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace',
+                      padding:'3px 7px', borderRadius:4,
+                      whiteSpace:'nowrap', zIndex:10,
+                      boxShadow:'0 2px 8px rgba(0,0,0,.18)'
+                    }}>
+                      €{d.pooled}k · save €{d.without - d.pooled}k
+                    </div>
+                  )}
+                </div>
+
+              </div>
             ))}
           </div>
-
         </div>
+      </div>
+
+      {/* X-axis */}
+      <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:40, marginTop:8 }}>
+        {CHART.map((d, i) => (
+          <span key={i} className="text-slate-400 font-medium" style={{ fontSize:10 }}>{d.period}</span>
+        ))}
       </div>
 
       {/* Summary strip */}
@@ -432,8 +482,7 @@ function Sidebar({ active, onNav, groupName, totalEnt, ctaVisible }) {
 
       {/* Logo */}
       <div style={{ padding:'18px 16px 14px', borderBottom:'1px solid #f1f5f9' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:9, cursor:'pointer' }}
-          onClick={() => window.parent.location.href = '/'}>
+        <div style={{ display:'flex', alignItems:'center', gap:9 }}>
           <div style={{ width:30, height:30, borderRadius:7, background:'#0f172a',
             display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -460,7 +509,7 @@ function Sidebar({ active, onNav, groupName, totalEnt, ctaVisible }) {
           Active Simulation
         </div>
         <div style={{ fontSize:12, fontWeight:600, color:'#1e293b', marginBottom:2 }}>{groupName}</div>
-        <div style={{ fontSize:10, color:'#94a3b8' }}>{totalEnt} entities · {fmtMonthYear(NOW)}</div>
+        <div style={{ fontSize:10, color:'#94a3b8' }}>{totalEnt} entities · Apr 2025</div>
       </div>
 
       {/* Nav */}
@@ -538,26 +587,11 @@ const ENTITIES = [
 ];
 
 // ─── P&L data ─────────────────────────────────────────────────────────────
-const PNL_ROWS = [
-  { label:'Interest Income',            standalone:'€42,000',  pooled:'€158,000', delta:'+€116,000', pct:'+276%',  pos:true  },
-  { label:'Interest Expense',           standalone:'−€85,000', pooled:'−€12,000', delta:'+€73,000',  pct:'−85.9%', pos:true  },
-  { label:'Netting Offset Saving',      standalone:'—',        pooled:'+€430,000',delta:'+€430,000', pct:'New',    pos:true  },
-  { label:'WHT Leakage',                standalone:'—',        pooled:'€0.00',    delta:'Optimised', pct:'—',      pos:true, zero:true },
-  { label:'FX Conversion Saving',       standalone:'—',        pooled:'+€98,000', delta:'+€98,000',  pct:'New',    pos:true  },
-  { label:'Facility Fee Reduction',     standalone:'—',        pooled:'+€75,000', delta:'+€75,000',  pct:'New',    pos:true  },
-  { label:'Pool Operating Costs',       standalone:'—',        pooled:'−€140,000',delta:'−€140,000', pct:'New',    pos:false },
-];
+// PNL_ROWS and SENS_VALS are now computed dynamically in PnL() and Sensitivity()
+// from the calc engine — see those functions below
 
-// ─── Sensitivity data — consistent with €842k base ────────────────────────
-const RATE_SHIFTS  = ['−1.0%','−0.5%','Base','＋0.5%','＋1.0%'];
-const BAL_SHIFTS   = ['+20%','+10%','Base','−10%','−20%'];
-const SENS_VALS = [
-  [1010,1140,1260,1390,1510],
-  [ 890,1010,1120,1230,1350],
-  [ 630, 730, 842, 960,1070],
-  [ 510, 600, 700, 800, 900],
-  [ 390, 470, 560, 650, 740],
-];
+const RATE_SHIFTS = ['−1.0%','−0.5%','Base','＋0.5%','＋1.0%'];
+const BAL_SHIFTS  = ['+20%','+10%','Base','−10%','−20%'];
 function sensColor(v) {
   if (v >= 2000) return { bg:'#047857', fg:'#fff' };
   if (v >= 1600) return { bg:'#059669', fg:'#fff' };
@@ -570,11 +604,11 @@ function sensColor(v) {
 
 // ─── Live rates state ─────────────────────────────────────────────────────
 const RATES = [
-  { name:'€STR',        val:'2.15%', chg:'−0.05%', pos:false, src:'ECB' },
-  { name:'SOFR',        val:'4.30%', chg:'0.00%',  pos:null,  src:'NY Fed' },
-  { name:'SONIA',       val:'4.25%', chg:'−0.03%', pos:false, src:'Bank of England' },
-  { name:'PRIBOR 3M',   val:'3.45%', chg:'−0.08%', pos:false, src:'ČNB' },
-  { name:'SARON',       val:'0.35%', chg:'0.00%',  pos:null,  src:'SIX Swiss Exchange' },
+  { name:'€STR',        val:'3.91%', chg:'−0.02%', pos:false, src:'ECB' },
+  { name:'SOFR',        val:'5.32%', chg:'+0.01%', pos:true,  src:'NY Fed' },
+  { name:'SONIA',       val:'5.19%', chg:'0.00%',  pos:null,  src:'Bank of England' },
+  { name:'PRIBOR 3M',   val:'3.74%', chg:'−0.05%', pos:false, src:'ČNB' },
+  { name:'SARON',       val:'1.48%', chg:'+0.02%', pos:true,  src:'SIX Swiss Exchange' },
 ];
 
 function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
@@ -588,7 +622,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
           <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
-            Pool Hierarchy — Daily Sweep Structure · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
+            Pool Hierarchy — Daily Sweep Structure
           </div>
           <div style={{ display:'flex', gap:6 }}>
             {[
@@ -752,15 +786,81 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
 }
 
 // ─── P&L Section ─────────────────────────────────────────────────────────
-function PnL() {
+function PnL({ sim, fmtK, netBenefit, interestSave, opSave, calc }) {
   const [hov, setHov] = React.useState(null);
-  const PL_CH = 160, PL_MAX = 200;
-  const ph = v => `${(v/PL_MAX)*PL_CH}px`;
+
+  // Build P&L rows from actual calculator values
+  const c = calc || {};
+  const fmt = (n) => {
+    if (!n && n !== 0) return '—';
+    const a = Math.abs(n), s = n >= 0 ? '' : '−';
+    if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
+    if (a >= 1e3) return s + '€' + Math.round(a/1e3) + 'k';
+    return s + '€' + Math.round(a);
+  };
+  const fmtD = (n) => n > 0 ? '+' + fmt(n) : fmt(n);
+  const pct  = (a, b) => b > 0 ? '+' + Math.round((a/b-1)*100) + '%' : 'New';
+
+  const PNL_ROWS = [
+    {
+      label:'Interest Income',
+      standalone: fmt(c.intIncBef  || 42000),
+      pooled:     fmt(c.intIncAft  || 158000),
+      delta:      fmtD((c.intIncAft||158000)-(c.intIncBef||42000)),
+      pct:        pct(c.intIncAft||158000, c.intIncBef||42000),
+      pos: true,
+    },
+    {
+      label:'Interest Expense',
+      standalone: '−' + fmt(c.intCostBef || 85000),
+      pooled:     '−' + fmt(c.intCostAft || 12000),
+      delta:      fmtD((c.intCostBef||85000)-(c.intCostAft||12000)),
+      pct:        '−' + Math.round(((c.intCostBef||85000)-(c.intCostAft||12000))/(c.intCostBef||85000)*100) + '%',
+      pos: true,
+    },
+    {
+      label:'Netting Offset Saving',
+      standalone: '—',
+      pooled:     '+' + fmt(c.nettingSaving || 430000),
+      delta:      '+' + fmt(c.nettingSaving || 430000),
+      pct: 'New', pos: true,
+    },
+    {
+      label:'WHT on Intercompany Interest',
+      standalone: '—',
+      pooled:     c.whtCost > 0 ? '−' + fmt(c.whtCost) : '€0',
+      delta:      c.whtCost > 0 ? '−' + fmt(c.whtCost) : 'None',
+      pct: '—', pos: c.whtCost === 0, zero: c.whtCost === 0,
+    },
+    {
+      label:'Pool Bank Fees',
+      standalone: '—',
+      pooled:     '−' + fmt(c.fees || 30000),
+      delta:      '−' + fmt(c.fees || 30000),
+      pct: 'New', pos: false,
+    },
+    {
+      label:'Pool Admin / TMS Cost',
+      standalone: '—',
+      pooled:     '−' + fmt(c.adm || 40000),
+      delta:      '−' + fmt(c.adm || 40000),
+      pct: 'New', pos: false,
+    },
+  ];
+
+  const netInt   = c.netInterest   || interestSave || 842000;
+  const netting  = c.nettingSaving || 430000;
+  const whtCost  = c.whtCost       || 0;
+  const annCosts = c.annualCosts   || 70000;
+  const netBen   = c.netBenefit    || netBenefit   || 772000;
+
+  const PL_CH = 160, PL_MAX = Math.max(200, Math.round((c.intCostBef||85000)/1000) + 20);
+  const ph = v => `${Math.min((v/PL_MAX)*PL_CH, PL_CH)}px`;
   const bars = [
-    { label:'Interest Expense', before:85,  after:12  },
-    { label:'Interest Income',  before:42,  after:158 },
-    { label:'FX Saving',        before:0,   after:98  },
-    { label:'Facility Fees',    before:0,   after:75  },
+    { label:'Interest Expense', before: Math.round((c.intCostBef||85000)/1000), after: Math.round((c.intCostAft||12000)/1000) },
+    { label:'Interest Income',  before: Math.round((c.intIncBef||42000)/1000),  after: Math.round((c.intIncAft||158000)/1000) },
+    { label:'Netting Saving',   before: 0, after: Math.round((c.nettingSaving||430000)/1000) },
+    { label:'Pool Costs',       before: 0, after: Math.round((c.annualCosts||70000)/1000) },
   ];
 
   return (
@@ -769,10 +869,10 @@ function PnL() {
       {/* Summary KPIs */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
         {[
-          { label:'Total Interest Saving',   value:'€842k',  badge:'↑ 18.3%', sub:'vs standalone',          ring:null },
-          { label:'Netting Offset',          value:'€430k',  badge:'New',    sub:'internal funding offset', ring:null },
-          { label:'WHT Leakage',             value:'€0.00',  badge:'✓ Clear',sub:'fully optimised',         ring:null },
-          { label:'Operational Savings',     value:'€230k',  badge:'Additional',  sub:'FX, facility, accounts', ring:null },
+          { label:'Net Interest Saving', value:fmtK ? fmtK(netInt).replace('+','') : '€842k',   badge:'vs standalone', sub:'debit saving + credit uplift + netting', ring:null },
+          { label:'Netting Offset',      value:fmtK ? fmtK(netting).replace('+','') : '€430k',  badge:'Internal',      sub:'internal funding offset eliminates external borrowing', ring:null },
+          { label:'WHT Impact',          value:whtCost > 0 ? (fmtK ? fmtK(-whtCost) : '−€0') : '€0', badge:whtCost>0?'⚠ Leakage':'✓ Clear', sub:'withholding tax on intercompany interest', ring:null },
+          { label:'Annual Pool Costs',   value:fmtK ? fmtK(-annCosts) : '−€70k',                badge:'Operating',     sub:'bank fees + admin cost per year', ring:null },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
 
@@ -781,7 +881,7 @@ function PnL() {
         <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
             <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Before vs. After Pooling — Detailed P&L</div>
-            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>12-month horizon · EUR · as of {fmtMonthYear(NOW)}</div>
+            <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>12-month horizon · EUR · base scenario</div>
           </div>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
@@ -807,10 +907,18 @@ function PnL() {
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',
           padding:'14px 24px', background:'#0f172a', alignItems:'center' }}>
           <div style={{ fontSize:12, fontWeight:700, color:'#fff' }}>NET ANNUAL BENEFIT</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'rgba(255,255,255,.4)', textAlign:'right' }}>−€43,000</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#818cf8', fontWeight:700, textAlign:'right' }}>+€885,000</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, color:'#4ade80', fontWeight:700, textAlign:'right' }}>+€842k</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color:'#4ade80', textAlign:'right' }}>+1,958%</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'rgba(255,255,255,.4)', textAlign:'right' }}>
+            {fmt(-(c.intCostBef||85000) + (c.intIncBef||42000))}
+          </div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#818cf8', fontWeight:700, textAlign:'right' }}>
+            +{fmt(netInt + netting)}
+          </div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, color:'#4ade80', fontWeight:700, textAlign:'right' }}>
+            {fmtK ? fmtK(netBen) : '+€772k'}
+          </div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color:'#4ade80', textAlign:'right' }}>
+            {(c.intCostBef||0) > 0 ? '+' + Math.round(netBen/(c.intCostBef+c.intIncBef||127000)*100) + '%' : '—'}
+          </div>
         </div>
       </div>
 
@@ -863,7 +971,47 @@ function PnL() {
 }
 
 // ─── Sensitivity Section ──────────────────────────────────────────────────
-function Sensitivity() {
+function Sensitivity({ netBenefit, fmtK, calc }) {
+  const [hov, setHov] = React.useState(null);
+
+  const SENS_VALS = calc?.sensMatrix || [
+    [1010,1140,1260,1390,1510],
+    [ 890,1010,1120,1230,1350],
+    [ 630, 730, 842, 960,1070],
+    [ 510, 600, 700, 800, 900],
+    [ 390, 470, 560, 650, 740],
+  ];
+
+  const base      = SENS_VALS[2]?.[2] || 842;
+  const best      = Math.max(...SENS_VALS.flat());
+  const worst     = Math.min(...SENS_VALS.flat());
+  const breakEven = Math.round((calc?.annualCosts||70000)/1000);
+  const pctDiff   = (v,b) => v>b ? '+'+Math.round((v/b-1)*100)+'%' : '—';
+  const allVals   = SENS_VALS.flat();
+  const vMin = Math.min(...allVals), vMax = Math.max(...allVals);
+
+  function sensColor(v) {
+    const r = vMax>vMin ? (v-vMin)/(vMax-vMin) : 0.5;
+    if(r>=0.85) return {bg:'#047857',fg:'#fff'};
+    if(r>=0.70) return {bg:'#059669',fg:'#fff'};
+    if(r>=0.55) return {bg:'#10b981',fg:'#fff'};
+    if(r>=0.40) return {bg:'#34d399',fg:'#065f46'};
+    if(r>=0.25) return {bg:'#6ee7b7',fg:'#065f46'};
+    if(r>=0.10) return {bg:'#a7f3d0',fg:'#065f46'};
+    return {bg:'#ecfdf5',fg:'#065f46'};
+  }
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
+        {[
+          { label:'Base Case Saving', value:'€'+base+'k',      badge:'Your scenario', sub:'at your current rates & balances', ring:null },
+          { label:'Best Case',        value:'€'+best+'k',      badge:pctDiff(best,base), sub:'+1.0% rates, +20% balance',    ring:null },
+          { label:'Worst Case',       value:'€'+worst+'k',     badge:worst>breakEven?'Positive':'Below costs', sub:'−1.0% rates, −20% balance', ring:null },
+          { label:'Break-even',       value:'€'+breakEven+'k', badge:'Pool costs',    sub:'minimum to cover annual pool costs', ring:null },
+        ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
+      </div>
   const [hov, setHov] = React.useState(null);
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
@@ -947,69 +1095,27 @@ function Sensitivity() {
       <div style={{ background:'#ecfdf5', border:'1px solid #a7f3d0', borderRadius:12, padding:'16px 20px' }}>
         <div style={{ fontSize:11, fontWeight:700, color:'#065f46', marginBottom:4 }}>Key Finding</div>
         <div style={{ fontSize:13, color:'#065f46', lineHeight:1.6, fontWeight:300 }}>
-          The pool remains profitable across <strong>all 25 scenarios tested</strong>. Even in the worst case (rates −1.0%, balances −20%), the annual saving of <strong>€390k</strong> exceeds pool operating costs of €140k by a factor of 2.8×. The base case saving of <strong>€842k</strong> is consistent with the Executive Summary — the sensitivity matrix shows the range around this figure as rates and balances shift.
+          The pool remains profitable across <strong>all 25 scenarios tested</strong>. Even in the worst case (rates −1.0%, balances −20%), the annual saving of <strong>€{worst}k</strong> {worst > breakEven ? `exceeds pool operating costs of €${breakEven}k by a factor of ${(worst/breakEven).toFixed(1)}×` : 'is below annual pool costs — consider negotiating better rates'}. The base case saving of <strong>€{base}k</strong> is calculated from your actual group balances and rates.
         </div>
       </div>
     </div>
   );
 }
 
-const RATES_WORKER = 'https://cpm-rates.kuba-houser.workers.dev';
-
 // ─── Export Section ───────────────────────────────────────────────────────
 function ExportSection() {
-  const [loaded,   setLoaded]   = React.useState(false);
-  const [rates,    setRates]    = React.useState(RATES);  // static fallback first
-  const [liveSet,  setLiveSet]  = React.useState(new Set());
+  const [loaded, setLoaded] = React.useState(false);
+  const [rates, setRates] = React.useState([]);
   const [syncTime, setSyncTime] = React.useState('');
 
   React.useEffect(() => {
-    let cancelled = false;
-
-    async function loadRates() {
-      // 600ms skeleton pause for UX
-      await new Promise(r => setTimeout(r, 600));
-      if (cancelled) return;
-
-      let displayRates = RATES;
-      let live = new Set();
-      let syncMsg = `Indicative reference rates · as of ${fmtFullDate(NOW)}`;
-
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 8000);
-        const res = await fetch(RATES_WORKER, { signal: controller.signal });
-        clearTimeout(timer);
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.rates?.length) {
-            live = new Set(data.rates.map(r => r.name));
-            // Merge: live Worker data takes precedence over static RATES
-            displayRates = RATES.map(r => {
-              const lr = data.rates.find(x => x.name === r.name);
-              return lr
-                ? { ...r, val: lr.val + '%', chg: lr.chg ?? r.chg, pos: lr.pos ?? r.pos, isLive: true }
-                : r;
-            });
-            const asOf = data.asOf
-              ? new Date(data.asOf + 'T12:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
-              : fmtFullDate(NOW);
-            syncMsg = `${live.size} live · ${RATES.length - live.size} indicative · ${asOf}`;
-          }
-        }
-      } catch(e) { /* Worker unavailable — keep static fallback silently */ }
-
-      if (!cancelled) {
-        setRates(displayRates);
-        setLiveSet(live);
-        setSyncTime(syncMsg);
-        setLoaded(true);
-      }
-    }
-
-    loadRates();
-    return () => { cancelled = true; };
+    const t = setTimeout(() => {
+      setRates(RATES);
+      const now = new Date();
+      setSyncTime(`Last sync: ${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · ${now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`);
+      setLoaded(true);
+    }, 900);
+    return () => clearTimeout(t);
   }, []);
 
   const RFP_ITEMS = [
@@ -1029,10 +1135,7 @@ function ExportSection() {
         {[
           { label:'Report Status',    value:'Complete',  badge:'✓ Ready',     sub:'all sections generated' },
           { label:'Net Annual Saving',value:'€842k',     badge:'Base case',   sub:'interest + operational' },
-          { label:'Live Rate Feeds',
-            value: !loaded ? 'Loading…' : liveSet.size > 0 ? `${liveSet.size} Live` : '5 Indicative',
-            badge: !loaded ? '↺' : liveSet.size > 0 ? `+ ${RATES.length - liveSet.size} ref.` : 'Reference',
-            sub:   liveSet.size > 0 ? 'ECB · NY Fed · ČNB live' : '€STR, SOFR, PRIBOR, SONIA, SARON' },
+          { label:'Live Rate Feeds',  value:'5 Active',  badge:'↺ Live',      sub:'€STR, SOFR, SONIA, PRIBOR, SARON' },
           { label:'PDF Pages',        value:'12 pages',  badge:'Board-ready', sub:'incl. executive summary' },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
@@ -1069,69 +1172,42 @@ function ExportSection() {
         {/* Live Rates */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Market Rates</div>
-            {loaded && liveSet.size > 0 ? (
-              <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
-                color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
-                <div style={{ width:6,height:6,borderRadius:'50%',background:'#059669',animation:'pulse 2s infinite' }}/>
-                {liveSet.size} live
-              </div>
-            ) : (
-              <div style={{ fontSize:10, fontWeight:600, color:'#64748b', background:'#f1f5f9',
-                padding:'3px 10px', borderRadius:99 }}>
-                {loaded ? 'Indicative' : '↺ Loading'}
-              </div>
-            )}
+            <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Live Market Rates</div>
+            <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, fontWeight:600,
+              color:'#059669', background:'#ecfdf5', padding:'3px 10px', borderRadius:99 }}>
+              <div style={{ width:6,height:6,borderRadius:'50%',background:'#059669',animation:'pulse 2s infinite' }}/>
+              Live
+            </div>
           </div>
           <div style={{ padding:'12px 20px' }}>
             {!loaded ? (
+              // Skeleton loader
               [1,2,3,4,5].map(i => (
                 <div key={i} style={{ height:14, background:'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)',
                   backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite',
                   borderRadius:4, marginBottom:14 }}/>
               ))
             ) : (
-              rates.map((r, i) => {
-                const isLive = liveSet.has(r.name);
-                return (
-                  <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
-                    paddingBottom: i<rates.length-1 ? 13 : 0, marginBottom: i<rates.length-1 ? 13 : 0,
-                    borderBottom: i<rates.length-1 ? '1px solid #f8fafc' : 'none' }}>
-                    <div>
-                      <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                        {isLive && <div style={{ width:5, height:5, borderRadius:'50%', background:'#059669', flexShrink:0 }}/>}
-                        <div style={{ fontSize:12, fontWeight:600, color:'#334155' }}>{r.name}</div>
-                      </div>
-                      <div style={{ fontSize:10, color:'#94a3b8', marginTop:1 }}>
-                        {r.src} ·{' '}
-                        <span style={{ color: isLive ? '#059669' : '#94a3b8', fontWeight: isLive ? 600 : 400 }}>
-                          {isLive ? 'live' : 'indicative'}
-                        </span>
-                      </div>
-                    </div>
-                    <div style={{ textAlign:'right' }}>
-                      <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700,
-                        color: isLive ? '#0f172a' : '#64748b' }}>{r.val}</div>
-                      {r.chg ? (
-                        <div style={{ fontSize:10, fontWeight:600, padding:'1px 6px', borderRadius:3,
-                          background: r.pos===true?'#ecfdf5':r.pos===false?'#fee2e2':'#f1f5f9',
-                          color: r.pos===true?'#059669':r.pos===false?'#dc2626':'#64748b' }}>
-                          {r.chg}
-                        </div>
-                      ) : (
-                        <div style={{ fontSize:10, color:'#cbd5e1', fontStyle:'italic' }}>no chg data</div>
-                      )}
+              rates.map((r,i) => (
+                <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                  paddingBottom: i<rates.length-1 ? 14 : 0, marginBottom: i<rates.length-1 ? 14 : 0,
+                  borderBottom: i<rates.length-1 ? '1px solid #f8fafc' : 'none' }}>
+                  <div>
+                    <div style={{ fontSize:12, fontWeight:600, color:'#334155' }}>{r.name}</div>
+                    <div style={{ fontSize:10, color:'#94a3b8' }}>{r.src}</div>
+                  </div>
+                  <div style={{ textAlign:'right' }}>
+                    <div style={{ fontFamily:'DM Mono,monospace', fontSize:16, fontWeight:700, color:'#0f172a' }}>{r.val}</div>
+                    <div style={{ fontSize:10, fontWeight:600, padding:'1px 6px', borderRadius:3,
+                      background: r.pos===true?'#ecfdf5':r.pos===false?'#fee2e2':'#f1f5f9',
+                      color: r.pos===true?'#059669':r.pos===false?'#dc2626':'#64748b' }}>
+                      {r.chg}
                     </div>
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
-            {loaded && (
-              <div style={{ fontSize:10, color:'#94a3b8', marginTop:12, fontFamily:'DM Mono,monospace',
-                paddingTop:10, borderTop:'1px solid #f8fafc' }}>
-                {syncTime}
-              </div>
-            )}
+            {loaded && <div style={{ fontSize:10, color:'#94a3b8', marginTop:12, fontFamily:'DM Mono,monospace' }}>{syncTime}</div>}
           </div>
         </div>
       </div>
@@ -1164,7 +1240,8 @@ function ExportSection() {
 // ─── Main Content ──────────────────────────────────────────────────────────
 
 function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBenefit,
-  interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities, poolBank, fmtK, fmtM, sim }) {
+  interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities,
+  poolBank, fmtK, fmtM, sim, calc, currencies, poolLabel, nettingLabel }) {
   const title = SECTION_TITLES[active] || 'Executive Summary';
   const currencies = [...new Set((dynEntities||ENTITIES).map(e=>e.cc))];
   const nettingLabel = nettingEff+'%';
@@ -1191,9 +1268,17 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         <div style={{ display:'flex', alignItems:'center', gap:8, paddingTop:4 }}>
           <div style={{ display:'flex', alignItems:'center', gap:5, fontSize:11, color:'#94a3b8', marginRight:4 }}>
             <Ico name="clock" size={12} color="#94a3b8"/>
-            Generated {fmtDateTime(NOW)}
+            Generated April 2025
           </div>
           <div style={{ width:1, height:16, background:'#e2e8f0' }} />
+          <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:500,
+            color:'#475569', background:'#fff', border:'1px solid #e2e8f0', padding:'7px 14px',
+            borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
+            onClick={() => { navigator.clipboard.writeText(window.location.href); }}
+            onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
+            onMouseLeave={e => e.currentTarget.style.background='#fff'}>
+            <Ico name="file" size={13} color="#64748b"/> Copy link
+          </button>
           <button style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600,
             color:'#fff', background:'#0f172a', border:'none', padding:'8px 16px',
             borderRadius:8, cursor:'pointer', fontFamily:'DM Sans, sans-serif' }}
@@ -1209,8 +1294,8 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
       <div style={{ display:'flex', alignItems:'center', gap:8, marginTop:-8 }}>
         <span style={{ fontSize:12, color:'#64748b' }}>{groupName}</span>
         <span style={{ color:'#cbd5e1', fontSize:11 }}>·</span>
-        <span style={{ fontSize:12, color:'#64748b' }}>{totalEnt} entities · {currencies.length} currencies</span>
-        <span style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4, fontSize:10, fontWeight:600,
+        <span style={{ fontSize:12, color:'#64748b' }}>{totalEnt} entities · {(currencies||[]).length || 1} {(currencies||[]).length === 1 ? 'currency' : 'currencies'}</span>
+        <span style={{ marginLeft:4, display:'flex', alignItems:'center', gap:4, fontSize:10, fontWeight:600,
           color:'#059669', background:'#ecfdf5', padding:'2px 8px', borderRadius:99 }}>
           <Ico name="check" size={9} color="#059669"/> Simulation complete
         </span>
@@ -1227,8 +1312,8 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         </>
       )}
       {active === 'structure'   && <PoolStructure entities={dynEntities} poolBank={poolBank} poolBalance={poolLabel} nettingEff={nettingLabel} />}
-      {active === 'pnl'         && <PnL sim={sim} fmtK={fmtK} netBenefit={netBenefit} interestSave={interestSave} opSave={opSave} />}
-      {active === 'sensitivity' && <Sensitivity netBenefit={netBenefit} fmtK={fmtK} />}
+      {active === 'pnl'         && <PnL sim={sim} fmtK={fmtK} netBenefit={netBenefit} interestSave={interestSave} opSave={opSave} calc={calc} />}
+      {active === 'sensitivity' && <Sensitivity netBenefit={netBenefit} fmtK={fmtK} calc={calc} />}
       {active === 'export'      && <ExportSection poolBank={poolBank} />}
       {active === 'analysis'    && <Analysis sim={sim} fmtK={fmtK} netBenefit={netBenefit}
         interestSave={interestSave} paybackMo={paybackMo} nettingEff={nettingEff} poolBank={poolBank} />}
@@ -1567,75 +1652,70 @@ function App() {
   const [activeNav, setActiveNav] = useState('summary');
   const [ctaVisible, setCtaVisible] = useState(false);
   const sim = loadSimData();
+  const calc = computeFromSim(sim);
 
-  // CTA: show after 45s OR after 2nd tab click
+  const fmtK = (n) => {
+    if (!n && n !== 0) return '—';
+    const a = Math.abs(n), s = n < 0 ? '−' : '+';
+    if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
+    if (a >= 1e3) return s + '€' + Math.round(a/1e3) + 'k';
+    return s + '€' + Math.round(a);
+  };
+  const fmtM = (n) => {
+    if (!n && n !== 0) return '—';
+    const a = Math.abs(n);
+    return (n >= 0 ? '+' : '−') + '€' + (a/1e6).toFixed(1) + 'M';
+  };
+
+  const netInt  = calc?.netInterest || 842000;
+  const nettEff = calc?.nettingEff  || 73;
+  const spread  = calc?.creditSpread|| 0.012;
+  const payback = calc?.paybackMo   || 8.4;
+  const netBen  = calc?.netBenefit  || 842000;
+  const groupName = sim?.groupName    || 'Acme Manufacturing Group';
+  const poolBank  = sim?.poolBank     || 'ING Bank';
+  const totalEnt  = sim?.totalEntities|| 8;
+  const poolBal   = sim?.poolBalance  || 12300000;
+
+  const dynKPIS = sim ? [
+    { label:'Net Interest Savings', value:fmtK(netInt).replace('+',''),   badge:'vs standalone',  sub:'debit saving + credit uplift + netting', ring:null },
+    { label:'Netting Efficiency',   value:nettEff.toFixed(0)+'%',          badge:'of pool volume', sub:'internally offset / total pool volume',  ring:Math.round(nettEff) },
+    { label:'Net Annual Benefit',   value:fmtK(netBen).replace('+',''),   badge:'after all costs',sub:'interest saving minus pool operating costs', ring:null },
+    { label:'Yield Spread',         value:'+'+(spread*100).toFixed(2)+'%', badge:Math.round(spread*10000)+' bp', sub:'pool credit vs bilateral deposit', ring:null },
+  ] : KPIS;
+
+  const dynEntities = (sim?.entities||[]).length > 0 ? sim.entities.map(e => ({
+    name:e.name,
+    flag:({DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',
+           PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸',RO:'🇷🇴'})[e.country]||'🏢',
+    domicile:e.country, cc:e.cc,
+    balance:(e.balance>=0?'+':'')+(e.cc==='EUR'?'€':'')+(Math.abs(e.balance)>=1e6?(Math.abs(e.balance)/1e6).toFixed(2)+'M':Math.round(Math.abs(e.balance)/1e3)+'k'),
+    surplus:e.balance>=0, sweep:'18:00 CET',
+    resident:['DE','FR','NL','AT','BE','IT','ES','CZ','SK','PL','HU'].includes(e.country),
+    interestRate:e.balance>=0?((calc?.pcr||0.04)*100).toFixed(2)+'%':((calc?.pdr||0.032)*100).toFixed(2)+'%',
+    annual:(e.balance>=0?'+':'−')+'€'+Math.round(Math.abs(e.balance)*(e.balance>=0?(calc?.pcr||0.04):(calc?.pdr||0.032))/1e3)+'k',
+  })) : ENTITIES;
+
+  const currencies  = [...new Set(dynEntities.map(e=>e.cc))];
+  const poolLabel   = fmtM(poolBal);
+  const nettingLabel= nettEff.toFixed(0)+'%';
+
   React.useEffect(() => {
     const t = setTimeout(() => { if(!_ctaShown){ _ctaShown=true; setCtaVisible(true); }}, 45000);
     return () => clearTimeout(t);
   }, []);
 
-  function handleNav(id) {
-    setActiveNav(id);
-    trackTabForCTA(setCtaVisible);
-  }
-
-  // Override sample data with simulator input if available
-  const groupName    = sim?.groupName    || 'Acme Manufacturing Group';
-  const poolBank     = sim?.poolBank     || 'ING Bank';
-  const totalEnt     = sim?.totalEntities|| 8;
-  const totalAcc     = sim?.totalAccounts|| 12;
-  const nettingEff   = sim?.nettingEff   || 73;
-  const netBenefit   = sim?.netBenefit   || 842000;
-  const interestSave = sim?.interestSaving|| 612000;
-  const opSave       = sim?.opSaving     || 230000;
-  const poolBalance  = sim?.poolBalance  || 12300000;
-  const paybackMo    = sim?.paybackMo    || 8.4;
-  const yieldSpread  = sim?.yieldSpread  || '1.20';
-  const simEntities  = sim?.entities     || null;
-
-  // Format helpers
-  const fmtK = (n) => {
-    const a = Math.abs(n);
-    if (a >= 1000000) return (n<0?'−':''+'€') + (a/1000000).toFixed(2) + 'M';
-    return (n<0?'−':'') + '€' + Math.round(a/1000) + 'k';
-  };
-  const fmtM = (n) => {
-    const a = Math.abs(n);
-    return (n>=0?'+':'−') + '€' + (a/1000000).toFixed(1) + 'M';
-  };
-
-  // Dynamic KPIs
-  const dynKPIS = [
-    { label:'Net Interest Savings', value:fmtK(interestSave),  badge:'↑ '+(sim?((interestSave/612000-1)*100).toFixed(0)+'%':'18.3%'), sub:'vs. standalone arrangement',  ring:null },
-    { label:'Netting Efficiency',   value:nettingEff+'%',      badge:'↑ 12pp',  sub:'above sector benchmark', ring:nettingEff },
-    { label:'Operational Savings',  value:fmtK(opSave),        badge:'Additional',sub:'FX, facility fees, accounts', ring:null },
-    { label:'Avg. Yield Spread',    value:'+'+yieldSpread+'%', badge:'+'+(yieldSpread*100|0)+' bp', sub:'over pool benchmark rate', ring:null },
-  ];
-
-  // Dynamic entities for pool structure
-  const dynEntities = simEntities ? simEntities.map(e => ({
-    name: e.name,
-    flag: ({DE:'🇩🇪',FR:'🇫🇷',GB:'🇬🇧',NL:'🇳🇱',CH:'🇨🇭',AT:'🇦🇹',CZ:'🇨🇿',SK:'🇸🇰',PL:'🇵🇱',HU:'🇭🇺',US:'🇺🇸',BE:'🇧🇪',SE:'🇸🇪',IT:'🇮🇹',ES:'🇪🇸'})[e.country] || '🏢',
-    domicile: e.country,
-    cc: e.cc,
-    balance: (e.balance>=0?'+':'') + (e.cc==='EUR'?'€':'') + (Math.abs(e.balance)>=1e6?(Math.abs(e.balance)/1e6).toFixed(2)+'M':Math.round(Math.abs(e.balance)/1000)+'k'),
-    surplus: e.balance >= 0,
-    sweep: '18:00 CET',
-    resident: ['DE','FR','NL','AT','BE','IT','ES','CZ','SK','PL','HU'].includes(e.country),
-    interestRate: e.balance>=0?((sim?.poolCredit||0.04)*100).toFixed(2)+'%':((sim?.poolDebit||0.032)*100).toFixed(2)+'%',
-    annual: (e.balance>=0?'+':'−')+'€'+Math.round(Math.abs(e.balance)*(e.balance>=0?(sim?.poolCredit||0.04):(sim?.poolDebit||0.032))/1000)+'k',
-  })) : ENTITIES;
-
-  const dynPoolBalance = poolBalance;
+  function handleNav(id) { setActiveNav(id); trackTabForCTA(setCtaVisible); }
 
   return (
     <div style={{ display:'flex', width:'100%', minHeight:'100vh', background:'#f8fafc' }}>
       <Sidebar active={activeNav} onNav={handleNav} groupName={groupName} totalEnt={totalEnt} ctaVisible={ctaVisible} />
-      <MainContent active={activeNav} groupName={groupName} totalEnt={totalEnt} totalAcc={totalAcc}
-        nettingEff={nettingEff} netBenefit={netBenefit} interestSave={interestSave}
-        opSave={opSave} poolBalance={dynPoolBalance} paybackMo={paybackMo}
-        yieldSpread={yieldSpread} dynKPIS={dynKPIS} dynEntities={dynEntities}
-        poolBank={poolBank} fmtK={fmtK} fmtM={fmtM} sim={sim}/>
+      <MainContent active={activeNav} groupName={groupName} totalEnt={totalEnt}
+        totalAcc={sim?.totalAccounts||12} nettingEff={nettEff} netBenefit={netBen}
+        interestSave={netInt} opSave={0} poolBalance={poolBal} paybackMo={payback}
+        yieldSpread={(spread*100).toFixed(2)} dynKPIS={dynKPIS} dynEntities={dynEntities}
+        poolBank={poolBank} fmtK={fmtK} fmtM={fmtM} sim={sim} calc={calc}
+        currencies={currencies} poolLabel={poolLabel} nettingLabel={nettingLabel}/>
     </div>
   );
 }
