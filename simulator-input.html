@@ -42,25 +42,10 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .hero h1{font-family:var(--serif);font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--navy);letter-spacing:-.4px;margin-bottom:4px}
 .hero-sub{font-size:12px;color:var(--ink-lt);font-weight:300}
 
-/* LIVE RESULTS STRIP */
-.results-strip{
-  background:var(--white);border:1px solid var(--rule);border-radius:var(--rl);
-  padding:16px 20px;margin-bottom:20px;box-shadow:var(--sh);
-  display:grid;grid-template-columns:repeat(5,1fr) auto;
-  gap:0;align-items:center;
-}
-.rs-divider{width:1px;height:32px;background:var(--rule);margin:0 4px}
-.rs-kpi{padding:0 16px;border-right:1px solid var(--rule)}
-.rs-kpi:first-child{padding-left:0}
-.rs-kpi:last-of-type{border-right:none}
-.rs-label{font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
 .rs-val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--ink)}
 .rs-val.pos{color:var(--emerald)}
 .rs-val.neg{color:var(--red)}
 .rs-val.warn{color:var(--amber)}
-.rs-btn{margin-left:16px;padding:10px 20px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer;white-space:nowrap;transition:background .14s;flex-shrink:0}
-.rs-btn:hover{background:var(--navy-h)}
-@media(max-width:700px){.results-strip{grid-template-columns:1fr 1fr;gap:12px}.rs-kpi{border-right:none;padding:0}}
 
 /* TWO COLUMN LAYOUT */
 .layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
@@ -193,31 +178,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
     <div class="hero-ey">Cash Pool Simulator</div>
     <h1>Configure your group structure.</h1>
     <p class="hero-sub">Enter entity balances and rates — results update in real time. Upload bank statements to auto-fill.</p>
-  </div>
-
-  <!-- LIVE RESULTS STRIP -->
-  <div class="results-strip">
-    <div class="rs-kpi">
-      <div class="rs-label">Interest saving</div>
-      <div class="rs-val pos" id="r-interest">—</div>
-    </div>
-    <div class="rs-kpi">
-      <div class="rs-label">Netting efficiency</div>
-      <div class="rs-val" id="r-netting">—</div>
-    </div>
-    <div class="rs-kpi">
-      <div class="rs-label">Net benefit p.a.</div>
-      <div class="rs-val pos" id="r-benefit">—</div>
-    </div>
-    <div class="rs-kpi">
-      <div class="rs-label">Payback period</div>
-      <div class="rs-val" id="r-payback">—</div>
-    </div>
-    <div class="rs-kpi">
-      <div class="rs-label">Pool balance</div>
-      <div class="rs-val" id="r-pool">—</div>
-    </div>
-    <button class="rs-btn" onclick="viewReport()">View Full Report →</button>
   </div>
 
   <div class="layout">
@@ -427,12 +387,6 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
         </div>
       </div>
 
-      <!-- VIEW REPORT -->
-      <div style="padding:8px 0 48px;text-align:center">
-        <button class="btn-navy" onclick="viewReport()">View Full Report →</button>
-        <div style="margin-top:8px;font-size:11px;color:var(--ink-fnt)">All inputs are saved automatically</div>
-      </div>
-
     </div>
 
     <!-- RIGHT SIDEBAR -->
@@ -475,6 +429,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
           <div class="verdict-label" id="verdictLabel">—</div>
           <div class="verdict-text" id="verdictText">Enter data to see recommendation</div>
         </div>
+        <a href="/dashboard-preview.html"
+          onclick="recalc()"
+          style="display:block;margin-top:12px;padding:10px;border-radius:var(--r);background:var(--navy);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;text-align:center;text-decoration:none;transition:background .14s"
+          onmouseover="this.style.background='var(--navy-h)'"
+          onmouseout="this.style.background='var(--navy)'">
+          View Full Report →
+        </a>
       </div>
 
       <!-- POOL BREAKDOWN -->
@@ -569,6 +530,7 @@ const COUNTRIES=[
   {code:'KE',flag:'🇰🇪',name:'Kenya'},{code:'MA',flag:'🇲🇦',name:'Morocco'},
 ];
 const FLAGS=Object.fromEntries(COUNTRIES.map(c=>[c.code,c.flag]));
+const countryNames=Object.fromEntries(COUNTRIES.map(c=>[c.code,c.name]));
 
 // ── PRESETS ──
 const PRESETS={
@@ -669,6 +631,11 @@ function toggleEntity(id) {
   if (e) { e.isExpanded = !e.isExpanded; renderEntities(); }
 }
 
+function toggleAdvanced(id) {
+  const el = document.getElementById('adv-' + id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 function updateEntity(id, field, value) {
   const e = entities.find(x => x.id === id);
   if (!e) return;
@@ -761,7 +728,7 @@ function renderEntities() {
     const balAbs = Math.abs(e.balance);
     const balStr = isRoot ? 'Σ auto' : (balAbs >= 1e6 ? (surplus?'+':'−')+'€'+(balAbs/1e6).toFixed(2)+'M' : balAbs >= 1e3 ? (surplus?'+':'−')+'€'+Math.round(balAbs/1e3)+'k' : (surplus?'+':'−')+'€'+Math.round(balAbs));
 
-    const countryOpts = COUNTRIES.map(c => `<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${c.code} — ${c.name}</option>`).join('');
+    const countryOpts = COUNTRIES.map(c => `<option value="${c.code}" ${c.code===e.country?'selected':''}>${c.flag} ${countryNames[c.code]||c.code}</option>`).join('');
     const ccOpts = CURRENCIES.slice(0,20).map(c => `<option value="${c.code}" ${c.code===e.cc?'selected':''}>${c.code} — ${c.name}</option>`).join('');
 
     const parentOpts = entities
@@ -784,12 +751,10 @@ function renderEntities() {
         <span style="font-size:20px;flex-shrink:0;line-height:1">${flag}</span>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.name}</div>
-          ${parentName ? `<div style="font-size:9px;color:var(--ink-fnt);margin-top:1px">↳ ${parentName}</div>` : ''}
+          ${(parentName || tbaDisplay) ? `<div style="font-size:9px;color:var(--ink-fnt);margin-top:1px">${parentName ? `↳ ${parentName}` : ''}${parentName && tbaDisplay ? ' · ' : ''}${tbaDisplay ? `TBA ${tbaDisplay}` : ''}</div>` : ''}
         </div>
-        ${tbaDisplay ? `<span style="font-size:9px;font-weight:600;color:var(--amber);background:var(--amber-lt);padding:2px 7px;border-radius:99px;flex-shrink:0">TBA ${tbaDisplay}</span>` : ''}
         <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${balColor};flex-shrink:0">${balStr}</span>
         <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0;${statusStyle}">${statusText}</span>
-        <span style="font-size:8px;font-weight:700;color:var(--ink-fnt);background:var(--paper-w);padding:1px 5px;border-radius:3px;flex-shrink:0">${levelLabel}</span>
         <svg style="flex-shrink:0;transition:transform .2s;transform:${e.isExpanded?'rotate(180deg)':'rotate(0deg)'}"
           width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-fnt)" stroke-width="2" stroke-linecap="round">
           <polyline points="6 9 12 15 18 9"/>
@@ -803,8 +768,9 @@ function renderEntities() {
       </div>
 
       ${e.isExpanded ? `
-      <div style="border-top:1px solid var(--rule);background:var(--paper);padding:14px 16px">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+      <!-- Section A: Account Details -->
+      <div style="padding:14px 16px;background:var(--white);border-top:1px solid var(--rule)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Entity name</label>
             <input value="${e.name.replace(/"/g,'&quot;')}" onchange="updateEntity('${e.id}','name',this.value)"
@@ -826,7 +792,10 @@ function renderEntities() {
             </select>
           </div>
         </div>
+      </div>
 
+      <!-- Section B: Pool Parameters -->
+      <div style="padding:14px 16px;background:var(--paper);border-top:1px solid var(--rule)">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
           ${isRoot ? `
           <div style="display:flex;flex-direction:column;gap:4px">
@@ -838,7 +807,7 @@ function renderEntities() {
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Avg. daily balance (EUR eq.)</label>
             <input type="number" value="${e.balance}" step="50000"
               onchange="updateEntity('${e.id}','balance',parseFloat(this.value)||0)"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;font-weight:700;color:${balColor};outline:none"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);outline:none"
               onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
           </div>
           `}
@@ -850,7 +819,7 @@ function renderEntities() {
             <input type="number" value="${e.tba||0}" step="10000" min="0"
               onchange="updateEntity('${e.id}','tba',parseFloat(this.value)||0)"
               placeholder="0 = use group default"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--amber);outline:none"
+              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
               onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
           </div>
           ${!isRoot ? `
@@ -861,19 +830,12 @@ function renderEntities() {
           ` : '<div></div>'}
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">IBAN (optional)</label>
             <input value="${e.iban||''}" onchange="updateEntity('${e.id}','iban',this.value)"
               placeholder="DE89 3704 0044…"
               style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:11px;color:var(--ink);outline:none;letter-spacing:.5px"
-              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">No. of accounts</label>
-            <input type="number" value="${e.accounts||1}" min="1" max="50"
-              onchange="updateEntity('${e.id}','accounts',parseInt(this.value)||1)"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
               onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
           </div>
           <div style="display:flex;flex-direction:column;gap:4px">
@@ -887,36 +849,49 @@ function renderEntities() {
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          ${isRoot ? `
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Pool position</label>
-            <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt)">L1 — Pool master (top)</div>
-          </div>
-          ` : `
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Reports to (parent account)</label>
-            <select onchange="updateEntity('${e.id}','parentId',this.value);renderEntities();recalc()"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
-              ${parentOpts}
-            </select>
-          </div>
-          `}
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Local debit rate % <span style="font-weight:400">(blank = global)</span></label>
-            <input type="number" value="${e.localDebitRate!==null&&e.localDebitRate!==undefined?e.localDebitRate:''}" step="0.05" min="0" max="25"
-              onchange="updateEntity('${e.id}','localDebitRate',this.value===''?null:parseFloat(this.value))"
-              placeholder="Global rate"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
-              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Local WHT % <span style="font-weight:400">(blank = global)</span></label>
-            <input type="number" value="${e.localWht!==null&&e.localWht!==undefined?e.localWht*100:''}" step="1" min="0" max="35"
-              onchange="updateEntity('${e.id}','localWht',this.value===''?null:parseFloat(this.value)/100)"
-              placeholder="Global WHT"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
-              onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+        ${isRoot ? `
+        <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt);margin-bottom:10px">L1 — Pool master (top of hierarchy)</div>
+        ` : `
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
+          <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Reports to (parent account)</label>
+          <select onchange="updateEntity('${e.id}','parentId',this.value);renderEntities();recalc()"
+            style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
+            ${parentOpts}
+          </select>
+        </div>
+        `}
+
+        <div style="margin-top:4px">
+          <button onclick="toggleAdvanced('${e.id}')"
+            style="display:flex;align-items:center;gap:6px;padding:0;border:none;background:transparent;font-family:var(--sans);font-size:10px;font-weight:600;color:var(--ink-fnt);cursor:pointer;text-transform:uppercase;letter-spacing:.8px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+            Advanced overrides
+          </button>
+          <div id="adv-${e.id}" style="display:none;margin-top:8px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">
+                  Override debit rate %<span style="font-weight:300;text-transform:none;letter-spacing:0"> (blank = global)</span>
+                </label>
+                <input type="number" value="${e.localDebitRate!==null&&e.localDebitRate!==undefined?e.localDebitRate:''}" step="0.05" min="0" max="25"
+                  onchange="updateEntity('${e.id}','localDebitRate',this.value===''?null:parseFloat(this.value))"
+                  placeholder="Using global"
+                  style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                  onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">
+                  Override WHT %<span style="font-weight:300;text-transform:none;letter-spacing:0"> (blank = global)</span>
+                </label>
+                <input type="number" value="${e.localWht!==null&&e.localWht!==undefined?e.localWht*100:''}" step="1" min="0" max="35"
+                  onchange="updateEntity('${e.id}','localWht',this.value===''?null:parseFloat(this.value)/100)"
+                  placeholder="Using global"
+                  style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--mono);font-size:12px;color:var(--ink);outline:none"
+                  onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+              </div>
+            </div>
           </div>
         </div>
       </div>
