@@ -2112,14 +2112,13 @@ function randNormal(mean, std) {
 }
 
 function simulateQuarterly(sim, calc, volatility = 0.12) {
-  const surplus = sim?.surplus || 6200000;
-  const deficit = sim?.deficit || 2100000;
-  const dr      = calc?.dr    || 0.055;
-  const cr      = calc?.cr    || 0.028;
-  const pdr     = calc?.pdr   || 0.032;
-  const pcr     = calc?.pcr   || 0.040;
-  const dcf     = calc?.dcf   || 1;
-  const qf      = dcf / 4;
+  // defaults: net-debtor group so chart is always visually meaningful
+  const surplus = sim?.surplus || 3500000;
+  const deficit = sim?.deficit || 5200000;
+  const dr  = calc?.dr  || 0.055;
+  const pdr = calc?.pdr || 0.032;
+  const dcf = calc?.dcf || 1;
+  const qf  = dcf / 4;
 
   const now = new Date();
   const quarters = [];
@@ -2135,21 +2134,19 @@ function simulateQuarterly(sim, calc, volatility = 0.12) {
     const qDeficit = Math.max(0, deficit * Math.max(0.3, 1 + randNormal(0, sig)));
     const qNetting = Math.min(qSurplus, qDeficit);
 
+    // WITHOUT: gross bilateral debit cost (what deficit entities pay individually)
     const costWithout = qDeficit * dr * qf;
-    const incWithout  = qSurplus * cr * qf;
-    const netWithout  = Math.max(0, costWithout - incWithout);
 
-    const residual  = Math.max(0, qDeficit - qNetting);
-    const costWith  = residual * pdr * qf;
-    const incWith   = qSurplus * pcr * qf;
-    const netWith   = Math.max(0, costWith - incWith);
+    // WITH: only residual deficit after netting, at better pool rate
+    const residual = Math.max(0, qDeficit - qNetting);
+    const costWith = residual * pdr * qf;
 
-    const withoutK = Math.max(20, Math.round(netWithout / 1000));
-    const pooledK  = Math.max(5,  Math.round(netWith / 1000));
+    const withoutK = Math.max(1, Math.round(costWithout / 1000));
+    const pooledK  = Math.max(1, Math.round(costWith  / 1000));
 
     return {
       period,
-      without: Math.max(pooledK + 10, withoutK),
+      without: Math.max(pooledK + 5, withoutK),
       pooled:  pooledK,
     };
   });
