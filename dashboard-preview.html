@@ -218,7 +218,7 @@ function BarChart({ sim, calc }) {
             Interest Cost: Before vs. After Pooling
           </div>
           <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
-            Trailing 4 quarters · {ccyCode} thousands ·
+            Quarterly deficit financing cost · {ccyCode} thousands ·
             <span style={{ color:'#d97706', fontWeight:600, marginLeft:4 }}>⚡ Simulated estimate</span>
           </div>
         </div>
@@ -291,11 +291,11 @@ function BarChart({ sim, calc }) {
                     transition:'opacity 0.1s' }}/>
                   {hov?.gi === gi && hov?.which === 'without' && (
                     <div style={{ position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)',
-                      background:'#1e293b', color:'#fff', fontSize:10,
-                      fontFamily:'DM Mono, monospace', padding:'3px 7px',
-                      borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      {ccy}{d.without.toLocaleString('en-US')}k
+                      left:'50%', transform:'translateX(-50%)', background:'#1e293b', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'4px 8px',
+                      borderRadius:4, whiteSpace:'nowrap', zIndex:10, lineHeight:1.5 }}>
+                      <div>{ccy}{d.without.toLocaleString('en-US')}k bilateral cost</div>
+                      <div style={{ color:'#94a3b8' }}>full deficit × {((calc?.dr||0.055)*100).toFixed(2)}%</div>
                     </div>
                   )}
                 </div>
@@ -310,11 +310,11 @@ function BarChart({ sim, calc }) {
                     transition:'opacity 0.1s' }}/>
                   {hov?.gi === gi && hov?.which === 'pooled' && (
                     <div style={{ position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)',
-                      background:'#0b1929', color:'#fff', fontSize:10,
-                      fontFamily:'DM Mono, monospace', padding:'3px 7px',
-                      borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      {ccy}{d.pooled.toLocaleString('en-US')}k · save {ccy}{(d.without - d.pooled).toLocaleString('en-US')}k
+                      left:'50%', transform:'translateX(-50%)', background:'#0b1929', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'4px 8px',
+                      borderRadius:4, whiteSpace:'nowrap', zIndex:10, lineHeight:1.5 }}>
+                      <div>{ccy}{d.pooled.toLocaleString('en-US')}k pool cost</div>
+                      <div style={{ color:'#4ade80' }}>↓ save {ccy}{(d.without - d.pooled).toLocaleString('en-US')}k</div>
                     </div>
                   )}
                 </div>
@@ -336,9 +336,9 @@ function BarChart({ sim, calc }) {
       <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
         display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
         {[
-          { label:'Annual cost without pooling',    value:`${ccy}${totalWithout.toLocaleString('en-US')}k`, color:'#475569' },
-          { label:'Annual cost with pooling',        value:`${ccy}${totalPooled.toLocaleString('en-US')}k`,  color:'#0b1929' },
-          { label:'Annual interest saved',           value:`${ccy}${totalSaved.toLocaleString('en-US')}k · ↓ ${savingPct}%`, color:'#059669' },
+          { label:'Deficit financing cost — no pool',   value:`${ccy}${totalWithout.toLocaleString('en-US')}k`, color:'#475569' },
+          { label:'Deficit financing cost — with pool', value:`${ccy}${totalPooled.toLocaleString('en-US')}k`,  color:'#0b1929' },
+          { label:'Financing cost reduction',           value:`${ccy}${totalSaved.toLocaleString('en-US')}k · ↓ ${savingPct}%`, color:'#059669' },
         ].map(({ label, value, color }) => (
           <div key={label}>
             <div style={{ fontSize:10, color:'#94a3b8', marginBottom:3 }}>{label}</div>
@@ -2253,25 +2253,24 @@ function simulateQuarterly(sim, calc, volatility = 0.12) {
   }
 
   return quarters.map(period => {
-    const sig      = volatility;
-    const qSurplus = Math.max(0, surplus * Math.max(0.3, 1 + randNormal(0, sig)));
-    const qDeficit = Math.max(0, deficit * Math.max(0.3, 1 + randNormal(0, sig)));
+    const qSurplus = Math.max(0, surplus * Math.max(0.3, 1 + randNormal(0, volatility)));
+    const qDeficit = Math.max(0, deficit * Math.max(0.3, 1 + randNormal(0, volatility)));
     const qNetting = Math.min(qSurplus, qDeficit);
 
-    // WITHOUT: gross bilateral debit cost (what deficit entities pay individually)
-    const costWithout = qDeficit * dr * qf;
+    // GROSS DEBIT COST — what it costs to finance deficits (no income subtracted)
+    const grossWithout = qDeficit * dr * qf;
 
-    // WITH: only residual deficit after netting, at better pool rate
-    const residual = Math.max(0, qDeficit - qNetting);
-    const costWith = residual * pdr * qf;
+    const residualDeficit = Math.max(0, qDeficit - qNetting);
+    const grossWith       = residualDeficit * pdr * qf;
 
-    const withoutK = Math.max(1, Math.round(costWithout / 1000));
-    const pooledK  = Math.max(1, Math.round(costWith  / 1000));
+    const withoutK = Math.max(20, Math.round(grossWithout / 1000));
+    const pooledK  = Math.max(0,  Math.round(grossWith   / 1000));
 
     return {
       period,
-      without: Math.max(pooledK + 5, withoutK),
+      without: withoutK,
       pooled:  pooledK,
+      netting: Math.round(qNetting / 1e6 * 100) / 100,
     };
   });
 }
