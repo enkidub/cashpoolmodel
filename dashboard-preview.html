@@ -2290,33 +2290,51 @@ function App() {
   const poolBank     = sim?.poolBank     || 'ING Bank';
   const totalEnt     = sim?.entities?.length || sim?.totalEntities || 8;
   const totalAcc     = sim?.totalAccounts|| 12;
-  const nettingEff   = sim?.nettingEff   || 73;
-  const netBenefit   = sim?.netBenefit   || 842000;
-  const interestSave = sim?.interestSaving|| 612000;
-  const opSave       = sim?.opSaving     || 230000;
   const poolBalance  = sim?.poolBalance  || 12300000;
-  const paybackMo    = sim?.paybackMo    || 8.4;
-  const yieldSpread  = sim?.yieldSpread  || '1.20';
   const simEntities  = sim?.entities     || null;
 
-  // Format helpers
+  // Compute KPIs from raw simulator rates & balances
+  const calc        = computeFromSim(sim);
+  const surplus     = calc?.surplus || 0;
+  const deficit     = calc?.deficit || 0;
+  const dr          = calc?.dr  || 0.055;
+  const cr          = calc?.cr  || 0.028;
+  const pdr         = calc?.pdr || 0.032;
+  const pcr         = calc?.pcr || 0.040;
+  const dcf         = calc?.dcf || 1;
+  const annualCosts = calc?.annualCosts || 70000;
+  const hasBalances = surplus > 0 || deficit > 0;
+  const nettingMin  = Math.min(surplus, deficit);
+  const computedNetting     = hasBalances ? Math.round(nettingMin / Math.max(surplus, deficit) * 100) : 73;
+  const computedInterest    = hasBalances ? Math.round((deficit*(dr-pdr) + surplus*(pcr-cr)) * dcf) : 612000;
+  const computedNetBenefit  = hasBalances ? Math.max(0, Math.round(computedInterest - annualCosts)) : 842000;
+  const computedOpSave      = hasBalances ? Math.round(annualCosts) : 230000;
+  const computedYieldSpread = calc ? ((pcr - cr) * 100).toFixed(2) : '1.20';
+  const nettingEff   = (sim?.nettingEff    != null) ? sim.nettingEff    : computedNetting;
+  const netBenefit   = (sim?.netBenefit    != null) ? sim.netBenefit    : computedNetBenefit;
+  const interestSave = (sim?.interestSaving!= null) ? sim.interestSaving : computedInterest;
+  const opSave       = (sim?.opSaving      != null) ? sim.opSaving      : computedOpSave;
+  const paybackMo    = sim?.paybackMo     || 8.4;
+  const yieldSpread  = (sim?.yieldSpread   != null) ? String(sim.yieldSpread) : computedYieldSpread;
+
+  // Format helpers — currency follows pool base currency
+  const ccy = getCcySymbol(sim);
   const fmtK = (n) => {
     const a = Math.abs(n);
-    if (a >= 1000000) return (n < 0 ? '−' : '') + '€' + (a / 1000000).toFixed(2) + 'M';
-    return (n < 0 ? '−' : '') + '€' + Math.round(a / 1000).toLocaleString('en-US') + 'k';
+    if (a >= 1000000) return (n < 0 ? '−' : '') + ccy + (a / 1000000).toFixed(2) + 'M';
+    return (n < 0 ? '−' : '') + ccy + Math.round(a / 1000).toLocaleString('en-US') + 'k';
   };
   const fmtM = (n) => {
     const a = Math.abs(n);
-    return (n>=0?'+':'−') + '€' + (a/1000000).toFixed(1) + 'M';
+    return (n>=0?'+':'−') + ccy + (a/1000000).toFixed(1) + 'M';
   };
 
   // Dynamic KPIs
-  const calc = computeFromSim(sim);
   const dynKPIS = [
     { label:'Net Interest Savings', value:fmtK(interestSave),  badge: sim ? `↓ ${Math.round((interestSave / Math.max(calc?.intCostBef || interestSave * 2, 1)) * 100)}% cost` : '↑ 18.3%', sub:'vs. standalone arrangement',  ring:null },
     { label:'Netting Efficiency',   value:nettingEff+'%',      badge:'↑ 12pp',  sub:'above sector benchmark', ring:nettingEff },
     { label:'Operational Savings',  value:fmtK(opSave),        badge:'Additional',sub:'FX, facility fees, accounts', ring:null },
-    { label:'Avg. Yield Spread',    value:'+'+yieldSpread+'%', badge:'+'+(yieldSpread*100|0)+' bp', sub:'over pool benchmark rate', ring:null },
+    { label:'Avg. Yield Spread',    value:'+'+yieldSpread+'%', badge:'+'+(parseFloat(yieldSpread)*100|0)+' bp', sub:'over pool benchmark rate', ring:null },
   ];
 
   // Dynamic entities for pool structure
