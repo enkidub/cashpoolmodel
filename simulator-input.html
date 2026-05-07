@@ -807,17 +807,13 @@ function renderEntities() {
     const effectiveSweep = Math.max(0, Math.abs(e.balance) - effectiveTBA);
     const balColor = surplus ? 'var(--emerald)' : deficit ? 'var(--red)' : 'var(--ink-fnt)';
 
-    let statusText, statusStyle;
+    let statusBadgeHtml;
     if (isRoot) {
-      statusText = 'Master'; statusStyle = 'background:#e0e7ff;color:#3730a3;';
+      statusBadgeHtml = `<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0;background:#e0e7ff;color:#3730a3">Master</span>`;
     } else if (isSubMaster) {
-      statusText = '↕ Sub-master'; statusStyle = 'background:#f0f9ff;color:#0369a1;';
-    } else if (surplus) {
-      statusText = '↑ Surplus'; statusStyle = 'background:var(--emerald-lt);color:var(--emerald-dk);';
-    } else if (deficit) {
-      statusText = '↓ Deficit'; statusStyle = 'background:var(--red-lt);color:var(--red);';
+      statusBadgeHtml = `<span style="font-size:9px;font-weight:700;color:#0369a1;background:#f0f9ff;border:1px solid #bae6fd;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0">Sub-master</span>`;
     } else {
-      statusText = 'Neutral'; statusStyle = 'background:var(--paper-w);color:var(--ink-fnt);';
+      statusBadgeHtml = '';
     }
 
     const levelLabel = depth === 0 ? 'L1' : depth === 1 ? 'L2' : 'L3+';
@@ -827,6 +823,20 @@ function renderEntities() {
 
     const parentEntity = e.parentId ? entities.find(x => x.id === e.parentId) : null;
     const parentName = parentEntity ? parentEntity.name : '';
+    const masterEntity = entities.find(en => !en.parentId);
+    const isMasterParent = e.parentId === masterEntity?.id;
+    const showParent = parentName && !isMasterParent;
+    const poolTypeVal = g('poolType')?.value || 'zba';
+    const isPhysicalPool = ['zba', 'tba'].includes(poolTypeVal);
+    const sweepDir   = e.sweepDirection || 'two-way';
+    const sweepIcon  = !isPhysicalPool ? '~'
+      : sweepDir === 'one-way-up'   ? '↑'
+      : sweepDir === 'one-way-down' ? '↓'
+      : '↕';
+    const sweepTitle = !isPhysicalPool ? 'Notional pool — virtual offset'
+      : sweepDir === 'one-way-up'   ? 'One-way sweep — surplus to master only'
+      : sweepDir === 'one-way-down' ? 'One-way — funded by master only'
+      : 'Two-way sweep — surplus up, deficits funded down';
 
     const tbaDisplay = effectiveTBA > 0 ? `≥${effectiveTBA >= 1e6 ? (effectiveTBA/1e6).toFixed(1)+'M' : Math.round(effectiveTBA/1000)+'k'}` : '';
 
@@ -856,10 +866,11 @@ function renderEntities() {
         <span style="font-size:20px;flex-shrink:0;line-height:1">${flag}</span>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.name}</div>
-          ${(parentName || tbaDisplay) ? `<div style="font-size:9px;color:var(--ink-fnt);margin-top:1px">${parentName ? `↳ ${parentName}` : ''}${parentName && tbaDisplay ? ' · ' : ''}${tbaDisplay ? `TBA ${tbaDisplay}` : ''}</div>` : ''}
+          ${(showParent || tbaDisplay) ? `<div style="font-size:9px;color:var(--ink-fnt);margin-top:1px">${showParent ? `↳ ${parentName}` : ''}${showParent && tbaDisplay ? ' · ' : ''}${tbaDisplay ? `TBA ${tbaDisplay}` : ''}</div>` : ''}
         </div>
+        ${!isRoot ? `<span title="${sweepTitle}" style="font-size:10px;color:var(--ink-fnt);cursor:help;flex-shrink:0;opacity:0.6">${sweepIcon}</span>` : ''}
         <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${balColor};flex-shrink:0">${balStr}</span>
-        <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;flex-shrink:0;${statusStyle}">${statusText}</span>
+        ${statusBadgeHtml}
         <svg style="flex-shrink:0;transition:transform .2s;transform:${e.isExpanded?'rotate(180deg)':'rotate(0deg)'}"
           width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-fnt)" stroke-width="2" stroke-linecap="round">
           <polyline points="6 9 12 15 18 9"/>
