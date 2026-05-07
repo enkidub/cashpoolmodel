@@ -650,6 +650,15 @@ const RATES = [
 function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
   const entityList = ents || ENTITIES;
 
+  const baseCcy = (() => {
+    if (!entityList.length) return 'EUR';
+    const master = entityList.find(e => e.name?.toLowerCase().includes('master'));
+    if (master?.cc) return master.cc;
+    const counts = {};
+    entityList.forEach(e => { if (e.cc) counts[e.cc] = (counts[e.cc]||0)+1; });
+    return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0] || 'EUR';
+  })();
+
   function pbNum(bal) {
     if (!bal) return 0;
     const neg = bal.includes('−') || bal.startsWith('-');
@@ -676,7 +685,10 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
   const zbaRaw   = nettingEff ? parseFloat(nettingEff) : (surplusTotal + deficitTotal > 0 ? Math.round(Math.min(surplusTotal, deficitTotal) / (surplusTotal + deficitTotal) * 100) : 0);
   const zbaColor = zbaRaw >= 60 ? '#059669' : zbaRaw >= 30 ? '#d97706' : '#dc2626';
   const zbaBg    = zbaRaw >= 60 ? '#ecfdf5' : zbaRaw >= 30 ? '#fffbeb' : '#fee2e2';
-  const zbaLabel = nettingEff || (zbaRaw + '%');
+  const zbaLabel   = nettingEff || (zbaRaw + '%');
+  const nettingTip = zbaRaw >= 60 ? 'Strong pool — efficient netting'
+    : zbaRaw >= 30 ? 'Adequate — negotiate better rates'
+    : 'Low netting — consider restructuring entity mix';
 
   const containerRef = React.useRef(null);
   const masterRef    = React.useRef(null);
@@ -727,10 +739,16 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
         onMouseEnter={ev => ev.currentTarget.style.transform='translateY(-2px)'}
         onMouseLeave={ev => ev.currentTarget.style.transform=''}>
         <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:accent }} />
-        <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:5, marginTop:1 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:5, marginTop:1 }}>
           <span className={'fi fi-' + domCode} style={{ width:13, height:9, display:'inline-block', borderRadius:1, flexShrink:0 }} />
           <span style={{ fontSize:11, fontWeight:600, color:'#1e293b', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', flex:1, lineHeight:1.2 }}>{entity.name}</span>
         </div>
+        {(() => {
+          const parentName = entity.parentName || (!isRoot(entity) ? entityList[parseInt(entity.parentIdx)]?.name : null);
+          return parentName
+            ? <div style={{ fontSize:9, color:'#94a3b8', marginBottom:3, marginTop:1, paddingLeft:18 }}>↳ {parentName}</div>
+            : <div style={{ marginBottom:5 }} />;
+        })()}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:4 }}>
           <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, color:accent, flexShrink:0 }}>{displayBal}</span>
           <div style={{ display:'flex', alignItems:'center', gap:3 }}>
@@ -771,11 +789,12 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
             Pool Hierarchy — Daily Sweep Structure · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
           </div>
           <div style={{ display:'flex', gap:6, alignItems:'center' }}>
-            <div title={'ZBA Efficiency: ratio of matched netting flow to total gross flow'}
+            <div title={nettingTip}
               style={{ display:'flex', alignItems:'center', gap:5, background: zbaBg,
                 border:`1px solid ${zbaColor}55`, borderRadius:6, padding:'4px 10px', cursor:'default' }}>
               <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>ZBA Efficiency</span>
               <span style={{ fontSize:11, fontWeight:700, color: zbaColor, fontFamily:'DM Mono,monospace' }}>{zbaLabel}</span>
+              <span style={{ fontSize:9, color:zbaColor }}>{zbaRaw >= 60 ? '✓' : zbaRaw >= 30 ? '△' : '⚠'}</span>
             </div>
           </div>
         </div>
@@ -793,12 +812,12 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
           {/* Master pill */}
           <div style={{ display:'flex', justifyContent:'center' }}>
             <div ref={masterRef} style={{ borderRadius:8, padding:'10px 18px', background:'#fff',
-              border:'2px solid #1e3a5f', position:'relative', overflow:'hidden', minWidth:200, maxWidth:300 }}>
+              border:'1px solid #e2e8f0', position:'relative', overflow:'hidden', minWidth:200, maxWidth:300 }}>
               <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background:'#1e3a5f' }} />
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6, marginTop:1 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                   <span style={{ fontSize:13 }}>🏛</span>
-                  <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account</span>
+                  <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account ({baseCcy})</span>
                 </div>
                 <div style={{ fontSize:9, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff', padding:'2px 7px', borderRadius:99 }}>Pool Header</div>
               </div>
@@ -807,7 +826,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
               </div>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                  <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>EUR</span>
+                  <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>{baseCcy}</span>
                   <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe', padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
                   <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, fontWeight:600, color:'#059669' }}>
                     <div style={{ width:5, height:5, borderRadius:'50%', background:'#059669', animation:'pulse 2s infinite' }} />
@@ -901,7 +920,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
             <span key={h} style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em' }}>{h}</span>
           ))}
         </div>
-        {entityList.map((e, i) => {
+        {entityList.filter(e => !(e.name?.toLowerCase().includes('master') && pbNum(e.balance) === 0)).map((e, i) => {
           const domCode2 = (e.domicile || e.country || '').toLowerCase();
           const isSub    = !isRoot(e);
           return (
@@ -2350,6 +2369,11 @@ function App() {
     interestRate: e.balance>=0?((sim?.poolCredit||0.04)*100).toFixed(2)+'%':((sim?.poolDebit||0.032)*100).toFixed(2)+'%',
     annual: (e.balance>=0?'+':'−')+'€'+Math.round(Math.abs(e.balance)*(e.balance>=0?(sim?.poolCredit||0.04):(sim?.poolDebit||0.032))/1000)+'k',
     parentIdx: e.parentIdx,
+    parentName: (() => {
+      if (e.parentId != null) { const p = simEntities.find(p => p.id === e.parentId); return p ? p.name : null; }
+      if (e.parentIdx != null && e.parentIdx !== '') { const p = simEntities[parseInt(e.parentIdx)]; return p ? p.name : null; }
+      return null;
+    })(),
   })) : ENTITIES;
 
   const dynPoolBalance = poolBalance;
