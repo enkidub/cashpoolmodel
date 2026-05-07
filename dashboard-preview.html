@@ -181,6 +181,15 @@ function BarChart({ sim, calc }) {
   const [chartData, setChartData]   = React.useState(() => simulateQuarterly(sim, calc, 0.12));
   const [hov, setHov]               = React.useState(null);
 
+  React.useEffect(() => {
+    setChartData(simulateQuarterly(sim, calc, volatility));
+  }, [volatility]);
+
+  const newSeed = () => setChartData(simulateQuarterly(sim, calc, volatility));
+
+  const ccy     = getCcySymbol(sim);
+  const ccyCode = getCcyCode(sim);
+
   const data   = chartData;
   const maxVal = Math.max(...data.flatMap(d => [d.without, d.pooled]), 50);
   const CMAX   = Math.ceil(maxVal / 50) * 50 + 30;
@@ -209,7 +218,7 @@ function BarChart({ sim, calc }) {
             Interest Cost: Before vs. After Pooling
           </div>
           <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
-            Trailing 4 quarters · EUR thousands ·
+            Trailing 4 quarters · {ccyCode} thousands ·
             <span style={{ color:'#d97706', fontWeight:600, marginLeft:4 }}>⚡ Simulated estimate</span>
           </div>
         </div>
@@ -239,11 +248,12 @@ function BarChart({ sim, calc }) {
           color:'#0b1929', minWidth:32, textAlign:'right' }}>
           {Math.round(volatility * 100)}%
         </span>
-        <button onClick={() => setChartData(simulateQuarterly(sim, calc, volatility))}
+        <button onClick={newSeed}
+          title="Generate a new random scenario at the same volatility"
           style={{ padding:'4px 12px', borderRadius:6, background:'#0b1929', color:'#fff',
             fontFamily:'DM Sans, sans-serif', fontSize:11, fontWeight:600,
             border:'none', cursor:'pointer', whiteSpace:'nowrap' }}>
-          Recalculate
+          New seed ↺
         </button>
         <span style={{ fontSize:9, color:'#94a3b8', whiteSpace:'nowrap' }}>{volLabel}</span>
       </div>
@@ -255,7 +265,7 @@ function BarChart({ sim, calc }) {
             <span key={v} style={{ position:'absolute', right:8,
               bottom:`calc(${(v / CMAX) * CH}px - 6px)`,
               fontSize:9, fontFamily:'DM Mono, monospace', color:'#94a3b8', lineHeight:1 }}>
-              €{v.toLocaleString('en-US')}k
+              {ccy}{v.toLocaleString('en-US')}k
             </span>
           ))}
         </div>
@@ -285,7 +295,7 @@ function BarChart({ sim, calc }) {
                       background:'#1e293b', color:'#fff', fontSize:10,
                       fontFamily:'DM Mono, monospace', padding:'3px 7px',
                       borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      €{d.without.toLocaleString('en-US')}k
+                      {ccy}{d.without.toLocaleString('en-US')}k
                     </div>
                   )}
                 </div>
@@ -304,7 +314,7 @@ function BarChart({ sim, calc }) {
                       background:'#0b1929', color:'#fff', fontSize:10,
                       fontFamily:'DM Mono, monospace', padding:'3px 7px',
                       borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      €{d.pooled.toLocaleString('en-US')}k · save €{(d.without - d.pooled).toLocaleString('en-US')}k
+                      {ccy}{d.pooled.toLocaleString('en-US')}k · save {ccy}{(d.without - d.pooled).toLocaleString('en-US')}k
                     </div>
                   )}
                 </div>
@@ -326,9 +336,9 @@ function BarChart({ sim, calc }) {
       <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
         display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
         {[
-          { label:'Annual cost without pooling',    value:`€${totalWithout.toLocaleString('en-US')}k`, color:'#475569' },
-          { label:'Annual cost with pooling',        value:`€${totalPooled.toLocaleString('en-US')}k`,  color:'#0b1929' },
-          { label:'Annual interest saved',           value:`€${totalSaved.toLocaleString('en-US')}k · ↓ ${savingPct}%`, color:'#059669' },
+          { label:'Annual cost without pooling',    value:`${ccy}${totalWithout.toLocaleString('en-US')}k`, color:'#475569' },
+          { label:'Annual cost with pooling',        value:`${ccy}${totalPooled.toLocaleString('en-US')}k`,  color:'#0b1929' },
+          { label:'Annual interest saved',           value:`${ccy}${totalSaved.toLocaleString('en-US')}k · ↓ ${savingPct}%`, color:'#059669' },
         ].map(({ label, value, color }) => (
           <div key={label}>
             <div style={{ fontSize:10, color:'#94a3b8', marginBottom:3 }}>{label}</div>
@@ -344,8 +354,9 @@ function BarChart({ sim, calc }) {
 
 // ─── Table ────────────────────────────────────────────────────────────────
 
-function SubsidiaryTable({ entities: ents, calc }) {
+function SubsidiaryTable({ entities: ents, calc, sim }) {
   const [expanded, setExpanded] = React.useState(false);
+  const ccy = getCcySymbol(sim);
   let subs;
   if (ents && ents.length > 0) {
     const dr  = calc?.dr  || 0.055;
@@ -367,18 +378,18 @@ function SubsidiaryTable({ entities: ents, calc }) {
 
     const fmtBal = (bal) => {
       const a = Math.abs(bal);
-      if (bal === 0) return '+€0k';
+      if (bal === 0) return '+' + ccy + '0k';
       const s = bal > 0 ? '+' : '−';
-      if (a >= 1e6) return s + '€' + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
-      return s + '€' + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
+      if (a >= 1e6) return s + ccy + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
+      return s + ccy + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
     };
 
     const fmtSav = (n) => {
       const a = Math.abs(n);
-      if (n === 0) return '€0k';
+      if (n === 0) return ccy + '0k';
       const s = n > 0 ? '+' : '−';
-      if (a >= 1e6) return s + '€' + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
-      return s + '€' + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
+      if (a >= 1e6) return s + ccy + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
+      return s + ccy + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
     };
 
     subs = withSavings.map(e => ({
@@ -1504,7 +1515,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
             {(dynKPIS||KPIS).map((k, i) => <KPICard key={i} {...k}/>)}
           </div>
           <BarChart sim={sim} calc={calc} />
-          <SubsidiaryTable entities={dynEntities} calc={calc} />
+          <SubsidiaryTable entities={dynEntities} calc={calc} sim={sim} />
         </>
       )}
       {active === 'structure'   && <PoolStructure entities={dynEntities} poolBank={poolBank} poolBalance={poolLabel} nettingEff={nettingLabel} />}
@@ -2088,6 +2099,18 @@ function loadSimData() {
 
 function computeFromSim(sim) {
   if (!sim) return null;
+
+  let surplus = sim.surplus || 0;
+  let deficit = sim.deficit || 0;
+
+  if (surplus === 0 && deficit === 0 && sim?.entities?.length > 0) {
+    sim.entities.forEach(e => {
+      const bal = typeof e.balance === 'number' ? e.balance : 0;
+      if (bal > 0) surplus += bal;
+      else if (bal < 0) deficit += Math.abs(bal);
+    });
+  }
+
   return {
     dr:          sim.debitRate   || 0.055,
     cr:          sim.creditRate  || 0.028,
@@ -2098,10 +2121,27 @@ function computeFromSim(sim) {
     annualCosts: sim.annualCosts || 70000,
     wht:         sim.whtRate     || 0,
     intCostBef:  sim.intCostBef  || 0,
+    surplus,
+    deficit,
   };
 }
 
 // ─── Simulation Engine ────────────────────────────────────────────────────
+
+function getCcySymbol(sim) {
+  const cc = sim?.baseCurrency || sim?.currency || 'EUR';
+  const map = {
+    EUR:'€', USD:'$', GBP:'£', CHF:'CHF ', CZK:'Kč ',
+    PLN:'zł ', HUF:'Ft ', SEK:'kr ', DKK:'kr ',
+    NOK:'kr ', HKD:'HK$', SGD:'S$', JPY:'¥', AUD:'A$', CAD:'C$',
+    AED:'AED ', TRY:'₺', RON:'lei ', CNY:'¥',
+  };
+  return map[cc] || cc + ' ';
+}
+
+function getCcyCode(sim) {
+  return sim?.baseCurrency || sim?.currency || 'EUR';
+}
 
 function randNormal(mean, std) {
   let u, v;
@@ -2112,9 +2152,18 @@ function randNormal(mean, std) {
 }
 
 function simulateQuarterly(sim, calc, volatility = 0.12) {
-  // defaults: net-debtor group so chart is always visually meaningful
-  const surplus = sim?.surplus || 3500000;
-  const deficit = sim?.deficit || 5200000;
+  let surplus = sim?.surplus || 0;
+  let deficit = sim?.deficit || 0;
+
+  if (surplus === 0 && deficit === 0 && sim?.entities?.length > 0) {
+    sim.entities.forEach(e => {
+      const bal = typeof e.balance === 'number' ? e.balance : 0;
+      if (bal > 0) surplus += bal;
+      else if (bal < 0) deficit += Math.abs(bal);
+    });
+  }
+
+  if (surplus === 0 && deficit === 0) { surplus = 3500000; deficit = 5200000; }
   const dr  = calc?.dr  || 0.055;
   const pdr = calc?.pdr || 0.032;
   const dcf = calc?.dcf || 1;
