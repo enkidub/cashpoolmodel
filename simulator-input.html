@@ -655,14 +655,14 @@ function setPreset(k) {
 
 // ── ENTITY TABLE ──
 const EXAMPLE_ENTITIES = [
-  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      iban:'', accounts:1, parentId:null,  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000, tba:500000, iban:'', accounts:3, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e2', name:'France HoldCo',        country:'FR', cc:'EUR', balance:1500000, tba:200000, iban:'', accounts:2, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e3', name:'France SAS',           country:'FR', cc:'EUR', balance:2300000, tba:100000, iban:'', accounts:1, parentId:'e2',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e4', name:'France Retail',        country:'FR', cc:'EUR', balance:800000,  tba:50000,  iban:'', accounts:1, parentId:'e2',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e5', name:'UK Ltd',               country:'GB', cc:'GBP', balance:-400000, tba:0,      iban:'', accounts:2, parentId:'e0',  sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:0.05, isExpanded:false },
-  { id:'e6', name:'CEE HoldCo',           country:'CZ', cc:'EUR', balance:600000,  tba:100000, iban:'', accounts:1, parentId:'e0',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
-  { id:'e7', name:'Czech s.r.o.',         country:'CZ', cc:'CZK', balance:900000,  tba:50000,  iban:'', accounts:1, parentId:'e6',  sweepType:'tba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      iban:'', accounts:1, parentId:null,  sweepType:'zba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000, tba:500000, iban:'', accounts:3, parentId:'e0',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e2', name:'France HoldCo',        country:'FR', cc:'EUR', balance:1500000, tba:200000, iban:'', accounts:2, parentId:'e0',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e3', name:'France SAS',           country:'FR', cc:'EUR', balance:2300000, tba:100000, iban:'', accounts:1, parentId:'e2',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e4', name:'France Retail',        country:'FR', cc:'EUR', balance:800000,  tba:50000,  iban:'', accounts:1, parentId:'e2',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e5', name:'UK Ltd',               country:'GB', cc:'GBP', balance:-400000, tba:0,      iban:'', accounts:2, parentId:'e0',  sweepType:'zba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:0.05, isExpanded:false },
+  { id:'e6', name:'CEE HoldCo',           country:'CZ', cc:'EUR', balance:600000,  tba:100000, iban:'', accounts:1, parentId:'e0',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
+  { id:'e7', name:'Czech s.r.o.',         country:'CZ', cc:'CZK', balance:900000,  tba:50000,  iban:'', accounts:1, parentId:'e6',  sweepType:'tba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false },
 ];
 
 function getEntityLevel(entity, allEntities) {
@@ -749,7 +749,7 @@ function addEntity() {
   const firstParent = entities[0]?.id || null;
   entities.push({
     id: newId, name:'New Entity', country:'DE', cc:'EUR', balance:0, tba:0, iban:'',
-    accounts:1, parentId:firstParent, sweepType:'zba',
+    accounts:1, parentId:firstParent, sweepType:'zba', sweepDirection:'two-way',
     localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:true,
   });
   renderEntities();
@@ -959,15 +959,36 @@ function renderEntities() {
             </select>
           </div>
           `}
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Sweep type</label>
-            <select onchange="updateEntity('${e.id}','sweepType',this.value)"
-              style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none">
-              <option value="zba" ${e.sweepType==='zba'?'selected':''}>ZBA — Zero Balancing</option>
-              <option value="tba" ${e.sweepType==='tba'?'selected':''}>TBA — Target Balancing</option>
-              <option value="notional" ${e.sweepType==='notional'?'selected':''}>Notional Pooling</option>
-              <option value="none" ${e.sweepType==='none'?'selected':''}>None — Observer Only</option>
-            </select>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Pool type</label>
+              <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt)">
+                ${g('poolType')?.value === 'tba' ? 'Target Balancing (TBA)'
+                  : g('poolType')?.value === 'notional' ? 'Notional Pool'
+                  : 'Zero Balancing (ZBA)'}
+              </div>
+            </div>
+            ${['zba','tba'].includes(g('poolType')?.value || 'zba') ? `
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">
+                Sweep direction
+                <span title="Two-way: surplus sweeps up, deficits funded down. One-way up: only sweeps to master, no funding back. One-way down: only receives funding, never sweeps."
+                  style="margin-left:4px;width:12px;height:12px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt);cursor:help">?</span>
+              </label>
+              <select onchange="updateEntity('${e.id}','sweepDirection',this.value)"
+                style="padding:6px 9px;border-radius:var(--r);border:1.5px solid var(--rule);background:var(--white);font-family:var(--sans);font-size:12px;color:var(--ink);outline:none"
+                onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--rule)'">
+                <option value="two-way" ${(e.sweepDirection||'two-way')==='two-way'?'selected':''}>Two-way (default)</option>
+                <option value="one-way-up" ${e.sweepDirection==='one-way-up'?'selected':''}>One-way ↑ surplus only</option>
+                <option value="one-way-down" ${e.sweepDirection==='one-way-down'?'selected':''}>One-way ↓ funded only</option>
+              </select>
+            </div>
+            ` : `
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label style="font-size:9px;font-weight:600;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Sweep direction</label>
+              <div style="padding:6px 9px;border-radius:var(--r);background:var(--paper-w);font-size:11px;color:var(--ink-fnt)">N/A — virtual offset</div>
+            </div>
+            `}
           </div>
         </div>
 
@@ -1287,6 +1308,7 @@ function recalc(){
   try {
     localStorage.setItem('cpm_sim', JSON.stringify({
       groupName, poolBank, currency:currencyVal,
+      baseCurrency: g('selectedCurrency')?.value || currencyVal || 'EUR',
       poolType: g('poolType').value,
       totalEntities: entities.length,
       totalAccounts: entities.reduce((s,e)=>s+(e.accounts||1),0),
@@ -1342,7 +1364,7 @@ async function processFiles(files){
       entities=extracted.map((e,i)=>({
         id:'e'+Date.now()+i, name:e.name||'Entity', country:e.country||'DE',
         cc:e.cc||'EUR', balance:+e.balance||0, tba:0, iban:'',
-        accounts:e.accounts||1, parentId:masterId, sweepType:'zba',
+        accounts:e.accounts||1, parentId:masterId, sweepType:'zba', sweepDirection:'two-way',
         localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false,
       }));
       renderEntities();recalc();
@@ -1412,7 +1434,7 @@ async function fetchLiveRates() {
 g('poolBankInput').value = 'ING Bank';
 g('groupName').value = 'Acme Manufacturing Group';
 entities = [
-  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0, tba:0, iban:'', accounts:1, parentId:null, sweepType:'zba', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false }
+  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0, tba:0, iban:'', accounts:1, parentId:null, sweepType:'zba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false }
 ];
 renderEntities();
 onPoolTypeChange();
