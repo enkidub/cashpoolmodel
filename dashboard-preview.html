@@ -345,6 +345,7 @@ function BarChart({ sim, calc }) {
 // ─── Table ────────────────────────────────────────────────────────────────
 
 function SubsidiaryTable({ entities: ents, calc }) {
+  const [expanded, setExpanded] = React.useState(false);
   let subs;
   if (ents && ents.length > 0) {
     const dr  = calc?.dr  || 0.055;
@@ -354,7 +355,8 @@ function SubsidiaryTable({ entities: ents, calc }) {
     const dcf = calc?.dcf || 1;
 
     const withSavings = ents.map(e => {
-      const bal = typeof e.balance === 'number' ? e.balance : 0;
+      const bal = typeof e.balNum === 'number' ? e.balNum
+                : typeof e.balance === 'number' ? e.balance : 0;
       let saving = 0;
       if (bal > 0) saving = bal * (pcr - cr) * dcf;
       if (bal < 0) saving = Math.abs(bal) * (dr - pdr) * dcf;
@@ -392,6 +394,7 @@ function SubsidiaryTable({ entities: ents, calc }) {
   }
 
   const maxPct = Math.max(...subs.map(s => s.pct), 1);
+  const displaySubs = expanded ? subs : subs.slice(0, 5);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -400,14 +403,18 @@ function SubsidiaryTable({ entities: ents, calc }) {
         <div>
           <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Top Contributing Subsidiaries</div>
           <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
-            Ranked by projected annual savings · {subs.length} entities shown
+            Ranked by projected annual savings · {expanded ? subs.length : Math.min(5, subs.length)} of {subs.length} shown
           </div>
         </div>
-        <button style={{ fontSize:11, color:'#0b1929', display:'flex', alignItems:'center', gap:4,
-          background:'none', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px',
-          cursor:'pointer', fontFamily:'DM Sans, sans-serif', fontWeight:600 }}>
-          View all <Ico name="chevron" size={11} color="#0b1929"/>
-        </button>
+        {subs.length > 5 && (
+          <button onClick={() => setExpanded(x => !x)}
+            style={{ fontSize:11, color:'#0b1929', display:'flex', alignItems:'center', gap:4,
+              background:'none', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px',
+              cursor:'pointer', fontFamily:'DM Sans, sans-serif', fontWeight:600 }}>
+            {expanded ? 'Show less' : `View all (${subs.length})`}
+            <Ico name="chevron" size={11} color="#0b1929"/>
+          </button>
+        )}
       </div>
 
       <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'10px 24px',
@@ -418,11 +425,11 @@ function SubsidiaryTable({ entities: ents, calc }) {
         ))}
       </div>
 
-      {subs.map((s, i) => (
+      {displaySubs.map((s, i) => (
         <div key={i}
           style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px',
             padding:'13px 24px',
-            borderBottom: i < subs.length - 1 ? '1px solid #f8fafc' : 'none',
+            borderBottom: i < displaySubs.length - 1 ? '1px solid #f8fafc' : 'none',
             alignItems:'center', transition:'background 0.1s' }}
           onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
           onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -938,15 +945,68 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff }) {
 }
 
 // ─── P&L Section ─────────────────────────────────────────────────────────
-function PnL() {
+function PnL({ sim, fmtK, netBenefit, interestSave, opSave }) {
   const [hov, setHov] = React.useState(null);
-  const PL_CH = 160, PL_MAX = 200;
-  const ph = v => `${(v/PL_MAX)*PL_CH}px`;
+  const calc = computeFromSim(sim);
+
+  const nb   = netBenefit  || 842000;
+  const is   = interestSave || 612000;
+  const os   = opSave      || 230000;
+  const costs = calc?.annualCosts || 70000;
+
+  const fmtR = (n) => {
+    const a = Math.abs(n);
+    const s = n >= 0 ? '+' : '−';
+    if (a >= 1e6) return s + '€' + (a/1e6).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2}) + 'M';
+    return s + '€' + Math.round(a/1000).toLocaleString('en-US') + 'k';
+  };
+  const fmtA = (n) => {
+    const a = Math.abs(n);
+    if (a >= 1e6) return '€' + (a/1e6).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2}) + 'M';
+    return '€' + Math.round(a/1000).toLocaleString('en-US') + 'k';
+  };
+
+  // Compute component values from sim data
+  const surplus = sim?.surplus || 6200000;
+  const deficit = sim?.deficit || 2100000;
+  const dr  = calc?.dr  || 0.055;
+  const cr  = calc?.cr  || 0.028;
+  const pdr = calc?.pdr || 0.032;
+  const pcr = calc?.pcr || 0.040;
+  const dcf = calc?.dcf || 1;
+  const netting = Math.min(surplus, deficit);
+
+  const debitSavingAmt  = Math.round(deficit * (dr - pdr) * dcf);
+  const creditUpliftAmt = Math.round(surplus * (pcr - cr) * dcf);
+  const nettingAmt      = Math.round(netting * pdr * dcf);
+  const fxAmt           = Math.round(os * 0.43);
+  const facilityAmt     = os - fxAmt;
+
+  const debitBefore  = Math.round(deficit * dr * dcf / 1000);
+  const debitAfter   = Math.round(Math.max(0, deficit - netting) * pdr * dcf / 1000);
+  const creditBefore = Math.round(surplus * cr * dcf / 1000);
+  const creditAfter  = Math.round(surplus * pcr * dcf / 1000);
+  const PL_MAX = Math.max(debitBefore, creditAfter, 50);
+  const PL_CH  = 160;
+  const ph = v => `${Math.max(2, (v / PL_MAX) * PL_CH)}px`;
+
+  const rows = [
+    { label:'Interest Expense (Debit)',  standalone:'−'+fmtA(deficit*dr*dcf),          pooled:'−'+fmtA(Math.max(0,deficit-netting)*pdr*dcf), delta:fmtR(debitSavingAmt),  pct:'+'+Math.round(debitSavingAmt/(deficit*dr*dcf||1)*100)+'%', pos:true },
+    { label:'Interest Income (Credit)',  standalone:'+'+fmtA(surplus*cr*dcf),           pooled:'+'+fmtA(surplus*pcr*dcf),                    delta:fmtR(creditUpliftAmt), pct:'+'+Math.round(creditUpliftAmt/(surplus*cr*dcf||1)*100)+'%', pos:true },
+    { label:'Netting Offset Saving',     standalone:'—',                                 pooled:'+'+fmtA(nettingAmt),                          delta:fmtR(nettingAmt),      pct:'New',  pos:true },
+    { label:'FX Conversion Saving',      standalone:'—',                                 pooled:'+'+fmtA(fxAmt),                               delta:fmtR(fxAmt),           pct:'New',  pos:true },
+    { label:'Facility Fee Reduction',    standalone:'—',                                 pooled:'+'+fmtA(facilityAmt),                         delta:fmtR(facilityAmt),     pct:'New',  pos:true },
+    { label:'Pool Operating Costs',      standalone:'—',                                 pooled:'−'+fmtA(costs),                               delta:fmtR(-costs),          pct:'New',  pos:false },
+  ];
+
+  const standaloneCostNet = Math.round(deficit * dr * dcf - surplus * cr * dcf);
+  const pooledCostNet     = Math.round(Math.max(0, deficit - netting) * pdr * dcf - surplus * pcr * dcf - nettingAmt - fxAmt - facilityAmt + costs);
+
   const bars = [
-    { label:'Interest Expense', before:85,  after:12  },
-    { label:'Interest Income',  before:42,  after:158 },
-    { label:'FX Saving',        before:0,   after:98  },
-    { label:'Facility Fees',    before:0,   after:75  },
+    { label:'Interest Expense', before: debitBefore,  after: debitAfter  },
+    { label:'Interest Income',  before: creditBefore, after: creditAfter  },
+    { label:'FX Saving',        before: 0,            after: Math.round(fxAmt/1000) },
+    { label:'Facility Fees',    before: 0,            after: Math.round(facilityAmt/1000) },
   ];
 
   return (
@@ -955,10 +1015,10 @@ function PnL() {
       {/* Summary KPIs */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
         {[
-          { label:'Total Interest Saving',   value:'€842k',  badge:'↑ 18.3%', sub:'vs standalone',          ring:null },
-          { label:'Netting Offset',          value:'€430k',  badge:'New',    sub:'internal funding offset', ring:null },
-          { label:'WHT Leakage',             value:'€0.00',  badge:'✓ Clear',sub:'fully optimised',         ring:null },
-          { label:'Operational Savings',     value:'€230k',  badge:'Additional',  sub:'FX, facility, accounts', ring:null },
+          { label:'Total Interest Saving',  value: fmtA(is),            badge:'↑ ' + Math.round(is/(deficit*dr*dcf||1)*100) + '%', sub:'vs standalone' },
+          { label:'Netting Offset',         value: fmtA(nettingAmt),    badge:'New',       sub:'internal funding offset' },
+          { label:'WHT Leakage',            value: '€0.00',             badge:'✓ Clear',   sub:'fully optimised' },
+          { label:'Operational Savings',    value: fmtA(os),            badge:'Additional',sub:'FX, facility, accounts' },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
 
@@ -976,16 +1036,15 @@ function PnL() {
               textTransform:'uppercase', letterSpacing:'0.07em', textAlign: i>0?'right':'left' }}>{h}</span>
           ))}
         </div>
-        {PNL_ROWS.map((r,i) => (
+        {rows.map((r,i) => (
           <div key={i} style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',
-            padding:'12px 24px', borderBottom: i<PNL_ROWS.length-1?'1px solid #f8fafc':'none', alignItems:'center' }}
+            padding:'12px 24px', borderBottom: i<rows.length-1?'1px solid #f8fafc':'none', alignItems:'center' }}
             onMouseEnter={ev => ev.currentTarget.style.background='#f8fafc'}
             onMouseLeave={ev => ev.currentTarget.style.background='transparent'}>
-            <div style={{ fontSize:12, color:'#334155', fontWeight: r.label.includes('Net')?600:400 }}>{r.label}</div>
+            <div style={{ fontSize:12, color:'#334155' }}>{r.label}</div>
             <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#94a3b8', textAlign:'right' }}>{r.standalone}</div>
             <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#4f46e5', fontWeight:600, textAlign:'right' }}>{r.pooled}</div>
-            <div style={{ fontFamily: r.zero?'DM Sans,sans-serif':'DM Mono,monospace', fontSize: r.zero?11:12,
-              fontWeight:700, color: r.zero?'#059669': r.pos?'#059669':'#dc2626', textAlign:'right' }}>{r.delta}</div>
+            <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, fontWeight:700, color: r.pos?'#059669':'#dc2626', textAlign:'right' }}>{r.delta}</div>
             <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color: r.pos?'#059669':'#dc2626', textAlign:'right' }}>{r.pct}</div>
           </div>
         ))}
@@ -993,10 +1052,10 @@ function PnL() {
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr 1fr 1fr',
           padding:'14px 24px', background:'#0f172a', alignItems:'center' }}>
           <div style={{ fontSize:12, fontWeight:700, color:'#fff' }}>NET ANNUAL BENEFIT</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'rgba(255,255,255,.4)', textAlign:'right' }}>−€43,000</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#818cf8', fontWeight:700, textAlign:'right' }}>+€885,000</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, color:'#4ade80', fontWeight:700, textAlign:'right' }}>+€842k</div>
-          <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color:'#4ade80', textAlign:'right' }}>+1,958%</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'rgba(255,255,255,.4)', textAlign:'right' }}>{fmtR(-standaloneCostNet)}</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:12, color:'#818cf8', fontWeight:700, textAlign:'right' }}>{fmtR(nb + standaloneCostNet)}</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, color:'#4ade80', fontWeight:700, textAlign:'right' }}>{fmtR(nb)}</div>
+          <div style={{ fontFamily:'DM Mono,monospace', fontSize:11, color:'#4ade80', textAlign:'right' }}>{standaloneCostNet > 0 ? '+' + Math.round(nb/standaloneCostNet*100) + '%' : '—'}</div>
         </div>
       </div>
 
@@ -1016,7 +1075,7 @@ function PnL() {
                     {hov?.gi===gi&&hov?.w==='before'&&(
                       <div style={{ position:'absolute', bottom:`calc(${ph(b.before)} + 6px)`, left:'50%', transform:'translateX(-50%)',
                         background:'#1e293b', color:'#fff', fontSize:10, padding:'3px 7px', borderRadius:4,
-                        fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.before}k</div>
+                        fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.before.toLocaleString('en-US')}k</div>
                     )}
                   </div>
                 )}
@@ -1025,9 +1084,9 @@ function PnL() {
                     height: ph(Math.max(b.after,2)), background:'#4f46e5', cursor:'default',
                     opacity: hov&&(hov.gi!==gi||hov.w!=='after')?0.4:1, transition:'opacity .1s' }}>
                   {hov?.gi===gi&&hov?.w==='after'&&(
-                    <div style={{ position:'absolute', bottom:`calc(${ph(b.after)} + 6px)`, left:'50%', transform:'translateX(-50%)',
+                    <div style={{ position:'absolute', bottom:`calc(${ph(Math.max(b.after,2))} + 6px)`, left:'50%', transform:'translateX(-50%)',
                       background:'#4338ca', color:'#fff', fontSize:10, padding:'3px 7px', borderRadius:4,
-                      fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.after}k</div>
+                      fontFamily:'DM Mono,monospace', whiteSpace:'nowrap', zIndex:10 }}>€{b.after.toLocaleString('en-US')}k</div>
                   )}
                 </div>
               </div>
@@ -1049,17 +1108,47 @@ function PnL() {
 }
 
 // ─── Sensitivity Section ──────────────────────────────────────────────────
-function Sensitivity() {
+const SENS_TEMPLATE = [
+  [1010,1140,1260,1390,1510],
+  [ 890,1010,1120,1230,1350],
+  [ 630, 730, 842, 960,1070],
+  [ 510, 600, 700, 800, 900],
+  [ 390, 470, 560, 650, 740],
+];
+
+function Sensitivity({ netBenefit, fmtK, calc }) {
   const [hov, setHov] = React.useState(null);
+  const nb = netBenefit || 842000;
+  const scale = nb / 842000;
+  const dynSens = SENS_TEMPLATE.map(row => row.map(v => Math.round(v * scale / 10) * 10));
+  const baseVal  = dynSens[2][2];
+  const bestVal  = dynSens[0][4];
+  const worstVal = dynSens[4][0];
+  const breakEven = Math.round((calc?.annualCosts || 70000) / 1000) * 10;
+
+  function sensColorDyn(v) {
+    const mid = baseVal;
+    const r = bestVal > worstVal ? (v - worstVal) / (bestVal - worstVal) : 0.5;
+    if (r >= 0.85) return { bg:'#047857', fg:'#fff' };
+    if (r >= 0.70) return { bg:'#059669', fg:'#fff' };
+    if (r >= 0.55) return { bg:'#10b981', fg:'#fff' };
+    if (r >= 0.40) return { bg:'#34d399', fg:'#065f46' };
+    if (r >= 0.25) return { bg:'#6ee7b7', fg:'#065f46' };
+    if (r >= 0.10) return { bg:'#a7f3d0', fg:'#065f46' };
+    return               { bg:'#ecfdf5', fg:'#065f46' };
+  }
+
+  const pctDiff = (a, b) => b > 0 ? (a >= b ? '+' : '') + Math.round((a - b) / b * 100) + '%' : '—';
+
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14 }}>
         {[
-          { label:'Base Case Saving',  value:'€842k',  badge:'12-month',      sub:'at current rates & balances',      ring:null },
-          { label:'Best Case',         value:'€1,510k', badge:'+79.3%',       sub:'+1.0% rates, +20% balance',        ring:null },
-          { label:'Worst Case',        value:'€390k',  badge:'Still positive', sub:'−1.0% rates, −20% balance',        ring:null },
-          { label:'Break-even',        value:'€140k',  badge:'Pool costs',    sub:'minimum to cover operating costs',  ring:null },
+          { label:'Base Case Saving', value: fmtK ? fmtK(nb)          : `€${baseVal}k`,   badge:'12-month',       sub:'at current rates & balances' },
+          { label:'Best Case',        value: `€${bestVal.toLocaleString('en-US')}k`,        badge: pctDiff(bestVal, baseVal),  sub:'+1.0% rates, +20% balance' },
+          { label:'Worst Case',       value: `€${worstVal.toLocaleString('en-US')}k`,       badge:'Still positive', sub:'−1.0% rates, −20% balance' },
+          { label:'Break-even',       value: `€${breakEven.toLocaleString('en-US')}k`,      badge:'Pool costs',     sub:'minimum to cover operating costs' },
         ].map((k,i) => <KPICard key={i} {...k} ring={null}/>)}
       </div>
 
@@ -1093,8 +1182,8 @@ function Sensitivity() {
                 <tr key={b}>
                   <td style={{ padding:'10px 14px', fontSize:11, fontWeight:600, color:'#475569',
                     background:'#f8fafc', border:'1px solid #e2e8f0' }}>{b}</td>
-                  {SENS_VALS[ri].map((v,ci) => {
-                    const { bg, fg } = sensColor(v);
+                  {dynSens[ri].map((v,ci) => {
+                    const { bg, fg } = sensColorDyn(v);
                     const isBase = ri===2 && ci===2;
                     const isHov = hov?.r===ri && hov?.c===ci;
                     return (
@@ -1108,7 +1197,7 @@ function Sensitivity() {
                           border: isBase ? '2px solid #0f172a' : '1px solid #e2e8f0',
                           cursor:'default', transition:'all .1s'
                         }}>
-                        €{v}k
+                        €{v.toLocaleString('en-US')}k
                       </td>
                     );
                   })}
@@ -1133,7 +1222,12 @@ function Sensitivity() {
       <div style={{ background:'#ecfdf5', border:'1px solid #a7f3d0', borderRadius:12, padding:'16px 20px' }}>
         <div style={{ fontSize:11, fontWeight:700, color:'#065f46', marginBottom:4 }}>Key Finding</div>
         <div style={{ fontSize:13, color:'#065f46', lineHeight:1.6, fontWeight:300 }}>
-          The pool remains profitable across <strong>all 25 scenarios tested</strong>. Even in the worst case (rates −1.0%, balances −20%), the annual saving of <strong>€390k</strong> exceeds pool operating costs of €140k by a factor of 2.8×. The base case saving of <strong>€842k</strong> is consistent with the Executive Summary — the sensitivity matrix shows the range around this figure as rates and balances shift.
+          The pool remains profitable across <strong>all 25 scenarios tested</strong>. Even in the worst case
+          (rates −1.0%, balances −20%), the annual saving of{' '}
+          <strong>€{worstVal.toLocaleString('en-US')}k</strong> exceeds pool operating costs of €{breakEven.toLocaleString('en-US')}k
+          by a factor of {(worstVal / breakEven).toFixed(1)}×. The base case saving of{' '}
+          <strong>€{baseVal.toLocaleString('en-US')}k</strong> is consistent with the Executive Summary —
+          the sensitivity matrix shows the range around this figure as rates and balances shift.
         </div>
       </div>
     </div>
@@ -1415,7 +1509,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
       )}
       {active === 'structure'   && <PoolStructure entities={dynEntities} poolBank={poolBank} poolBalance={poolLabel} nettingEff={nettingLabel} />}
       {active === 'pnl'         && <PnL sim={sim} fmtK={fmtK} netBenefit={netBenefit} interestSave={interestSave} opSave={opSave} />}
-      {active === 'sensitivity' && <Sensitivity netBenefit={netBenefit} fmtK={fmtK} />}
+      {active === 'sensitivity' && <Sensitivity netBenefit={netBenefit} fmtK={fmtK} calc={calc} />}
       {active === 'export'      && <ExportSection poolBank={poolBank} />}
       {active === 'analysis'    && <Analysis sim={sim} fmtK={fmtK} netBenefit={netBenefit}
         interestSave={interestSave} paybackMo={paybackMo} nettingEff={nettingEff} poolBank={poolBank} />}
@@ -2185,6 +2279,7 @@ function App() {
     domicile: e.country,
     cc: e.cc,
     balance: (e.balance>=0?'+':'') + (e.cc==='EUR'?'€':'') + (Math.abs(e.balance)>=1e6?(Math.abs(e.balance)/1e6).toFixed(2)+'M':Math.round(Math.abs(e.balance)/1000)+'k'),
+    balNum: e.balance,
     surplus: e.balance >= 0,
     sweep: '18:00 CET',
     resident: ['DE','FR','NL','AT','BE','IT','ES','CZ','SK','PL','HU'].includes(e.country),
