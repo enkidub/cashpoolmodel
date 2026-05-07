@@ -2232,6 +2232,12 @@ const SAMPLE_SIM_DATA = {
   totalEntities: 6,
   totalAccounts: 6,
   poolBalance:  12400000,
+  nettingEff:   3,
+  interestSaving: 178000,
+  netBenefit:     108000,
+  annualCosts:    70000,
+  paybackMo:      16.7,
+  netting:        400000,
   entities: [
     { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      parentId:null, sweepType:'zba', sweepDirection:'two-way' },
     { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000,  tba:500000, parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
@@ -2248,9 +2254,13 @@ function loadSimData() {
     const raw = localStorage.getItem('cpm_sim');
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && (parsed.entities?.length > 0 || parsed.surplus > 0)) {
-        return parsed;
-      }
+      // Only use stored data if it has actual sub-entity balances (not just master)
+      const hasRealData = parsed && (
+        parsed.surplus > 0 ||
+        parsed.deficit > 0 ||
+        parsed.entities?.some(e => e.parentId != null && e.balance !== 0)
+      );
+      if (hasRealData) return parsed;
     }
   } catch(e) {}
   return SAMPLE_SIM_DATA;

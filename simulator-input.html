@@ -1505,12 +1505,15 @@ async function fetchLiveRates() {
       if (data.creditRate) { const el = g('creditRate'); if (el) el.value = (data.creditRate * 100).toFixed(2); }
       if (data.poolDebit)  { const el = g('poolDebit');  if (el) el.value = (data.poolDebit  * 100).toFixed(2); }
       if (data.poolCredit) { const el = g('poolCredit'); if (el) el.value = (data.poolCredit * 100).toFixed(2); }
-      if (data.entities && data.entities.length > 0) {
+      const subEntities = data.entities ? data.entities.filter(e => e.parentId != null) : [];
+      if (subEntities.length > 0) {
+        // Real session with sub-accounts — restore it
         entities = data.entities.map(e => ({...e}));
+        renderEntities();
+        recalc();
+        return;
       }
-      renderEntities();
-      recalc();
-      return;
+      // Only master in storage — treat as fresh, fall through to sample
     } catch(e) {}
   }
   g('poolBankInput').value = 'ING Bank';
