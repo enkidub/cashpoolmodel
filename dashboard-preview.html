@@ -1605,6 +1605,31 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
         </span>
       </div>
 
+      {/* Sample data banner */}
+      {sim?.isSample && (
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+          margin:'0 0 4px', padding:'10px 16px', borderRadius:8,
+          background:'#fef9ec', border:'1px solid #f6d860', gap:12 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <span style={{ fontSize:16 }}>⚡</span>
+            <div>
+              <div style={{ fontSize:12, fontWeight:600, color:'#92400e' }}>
+                Viewing sample simulation
+              </div>
+              <div style={{ fontSize:11, color:'#b45309', marginTop:1 }}>
+                This is demo data. Run your own simulation to see results for your group.
+              </div>
+            </div>
+          </div>
+          <a href="/simulator-input.html"
+            style={{ padding:'6px 14px', borderRadius:6, background:'#0b1929', color:'#fff',
+              fontFamily:'DM Sans, sans-serif', fontSize:12, fontWeight:600,
+              textDecoration:'none', whiteSpace:'nowrap', flexShrink:0 }}>
+            Run your simulation →
+          </a>
+        </div>
+      )}
+
       {/* Section content */}
       {active === 'summary' && (
         <>
@@ -2186,12 +2211,49 @@ function trackTabForCTA(setCtaVisible) {
   _tabCount++;
   if (!_ctaShown && _tabCount >= 2) { _ctaShown = true; setCtaVisible(true); }
 }
+const SAMPLE_SIM_DATA = {
+  isSample: true,
+  groupName:    'Acme Manufacturing Group',
+  poolBank:     'ING Bank',
+  baseCurrency: 'EUR',
+  currency:     'EUR',
+  poolType:     'zba',
+  debitRate:    0.055,
+  creditRate:   0.028,
+  poolDebit:    0.032,
+  poolCredit:   0.040,
+  implCost:     150000,
+  bankFees:     30000,
+  adminCost:    40000,
+  whtRate:      0,
+  dayCount:     360,
+  surplus:      12800000,
+  deficit:      400000,
+  totalEntities: 6,
+  totalAccounts: 6,
+  poolBalance:  12400000,
+  entities: [
+    { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0,       tba:0,      parentId:null, sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e1', name:'Germany GmbH',         country:'DE', cc:'EUR', balance:4200000,  tba:500000, parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e2', name:'France SAS',           country:'FR', cc:'EUR', balance:3800000,  tba:200000, parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e3', name:'UK Ltd',               country:'GB', cc:'GBP', balance:2100000,  tba:0,      parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e4', name:'Netherlands BV',       country:'NL', cc:'EUR', balance:1900000,  tba:100000, parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e5', name:'Switzerland AG',       country:'CH', cc:'CHF', balance:-400000,  tba:0,      parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+    { id:'e6', name:'Austria GmbH',         country:'AT', cc:'EUR', balance:800000,   tba:0,      parentId:'e0', sweepType:'zba', sweepDirection:'two-way' },
+  ],
+};
+
 function loadSimData() {
   try {
     const raw = localStorage.getItem('cpm_sim');
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && (parsed.entities?.length > 0 || parsed.surplus > 0)) {
+        return parsed;
+      }
+    }
   } catch(e) {}
-  return null;
+  return SAMPLE_SIM_DATA;
 }
 
 function computeFromSim(sim) {

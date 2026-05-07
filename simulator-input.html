@@ -317,6 +317,30 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
             </button>
           </div>
         </div>
+        <!-- SAMPLE DATA BANNER -->
+        <div id="sampleBanner" style="display:none;align-items:center;justify-content:space-between;
+          margin:0 16px 12px;padding:9px 14px;border-radius:8px;
+          background:#fef9ec;border:1px solid #f6d860;gap:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px">⚡</span>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#92400e">
+                Sample data loaded — Acme Manufacturing Group
+              </div>
+              <div style="font-size:10px;color:#b45309;margin-top:1px">
+                6 entities · Western Europe · Replace with your own group structure
+              </div>
+            </div>
+          </div>
+          <button onclick="clearSampleData()"
+            style="padding:5px 12px;border-radius:6px;border:1px solid #f6d860;
+            background:transparent;font-family:var(--sans);font-size:11px;font-weight:600;
+            color:#92400e;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .13s"
+            onmouseover="this.style.background='#fde68a'"
+            onmouseout="this.style.background='transparent'">
+            Clear sample data
+          </button>
+        </div>
         <div class="sec-body">
           <div class="warning-box" id="warnBox"></div>
           <div class="entity-cards" id="entityCards"></div>
@@ -685,7 +709,33 @@ function loadExample() {
   recalc();
 }
 
+function showSampleBanner() {
+  const banner = document.getElementById('sampleBanner');
+  if (banner) banner.style.display = 'flex';
+}
+
+function hideSampleBanner() {
+  const banner = document.getElementById('sampleBanner');
+  if (banner) banner.style.display = 'none';
+}
+
+function clearSampleData() {
+  entities = entities.filter(e => !e.parentId);
+  if (entities.length === 0) {
+    entities = [{
+      id: 'e0', name: 'Group Master Account', country: 'NL', cc: 'EUR',
+      balance: 0, tba: 0, iban: '', accounts: 1, parentId: null,
+      sweepType: 'zba', sweepDirection: 'two-way',
+      localDebitRate: null, localCreditRate: null, localWht: null, isExpanded: false
+    }];
+  }
+  hideSampleBanner();
+  renderEntities();
+  recalc();
+}
+
 function clearEntities() {
+  hideSampleBanner();
   if (entities.filter(e => e.parentId !== null).length === 0) return;
   if (!confirm('Remove all accounts except the master? This cannot be undone.')) return;
   entities = entities.filter(e => e.parentId === null);
@@ -1442,12 +1492,33 @@ async function fetchLiveRates() {
 }
 
 // ── INIT ──
-g('poolBankInput').value = 'ING Bank';
-g('groupName').value = 'Acme Manufacturing Group';
-entities = [
-  { id:'e0', name:'Group Master Account', country:'NL', cc:'EUR', balance:0, tba:0, iban:'', accounts:1, parentId:null, sweepType:'zba', sweepDirection:'two-way', localDebitRate:null, localCreditRate:null, localWht:null, isExpanded:false }
-];
-renderEntities();
+(function() {
+  const saved = localStorage.getItem('cpm_sim');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      if (data.groupName) g('groupName').value = data.groupName;
+      if (data.poolBank)  g('poolBankInput').value = data.poolBank;
+      if (data.currency)  { const sel = g('selectedCurrency'); if (sel) sel.value = data.currency; }
+      if (data.poolType)  { const sel = g('poolType'); if (sel) sel.value = data.poolType; }
+      if (data.debitRate)  { const el = g('debitRate');  if (el) el.value = (data.debitRate  * 100).toFixed(2); }
+      if (data.creditRate) { const el = g('creditRate'); if (el) el.value = (data.creditRate * 100).toFixed(2); }
+      if (data.poolDebit)  { const el = g('poolDebit');  if (el) el.value = (data.poolDebit  * 100).toFixed(2); }
+      if (data.poolCredit) { const el = g('poolCredit'); if (el) el.value = (data.poolCredit * 100).toFixed(2); }
+      if (data.entities && data.entities.length > 0) {
+        entities = data.entities.map(e => ({...e}));
+      }
+      renderEntities();
+      recalc();
+      return;
+    } catch(e) {}
+  }
+  g('poolBankInput').value = 'ING Bank';
+  g('groupName').value = 'Acme Manufacturing Group';
+  loadTemplate('western');
+  recalc();
+  showSampleBanner();
+})();
 onPoolTypeChange();
 // Pool breakdown starts collapsed
 const _pb = document.getElementById('poolBreakdown');
