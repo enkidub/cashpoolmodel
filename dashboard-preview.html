@@ -1786,7 +1786,7 @@ function MonteCarloCard({ sim, calc }) {
             padding:'10px 14px', display:'flex', gap:24, flexWrap:'wrap' }}>
             {[
               { label:'Probability of positive return', val:`${mcResult.probPositive}%` },
-              { label:'Probability of saving > €500k',  val:`${mcResult.probGt500k}%` },
+              { label:`Probability of saving > €${mcResult.thresholdK}k`, val:`${mcResult.probGt500k}%` },
               { label:'Mean outcome', val:fmtMC(mcResult.mean), dark:true },
             ].map(({ label, val, dark }) => (
               <div key={label}>
@@ -1874,11 +1874,11 @@ function CashVaRCard({ sim, calc }) {
               Interpretation
             </div>
             <div style={{ fontSize:12, color:'#7c2d12', lineHeight:1.6, fontWeight:300 }}>
-              On <strong>95% of trading days</strong> the pool's net benefit will not deviate
-              by more than <strong>{fmtV(varResult.var95)}</strong> from the daily expected
-              saving of <strong>{fmtV(Math.abs(varResult.dailyExpected))}</strong>.
-              The worst 5% of days may see a shortfall of up to <strong>{fmtV(varResult.cvar)}</strong> (CVaR).
-              Annual VaR at 95%: <strong>{fmtV(varResult.annualVaR95)}</strong>.
+              On <strong>95% of trading days</strong> the pool balance will not fall by more than
+              <strong> {fmtV(varResult.var95)}</strong> (1-in-20 day event).
+              The worst 5% of days may see a balance drop of up to <strong>{fmtV(varResult.cvar)}</strong> (CVaR).
+              Annual VaR at 95%: <strong>{fmtV(varResult.annualVaR95)}</strong>, based on a pool balance
+              of <strong>{fmtV(varResult.poolBalance)}</strong>.
             </div>
           </div>
 
@@ -1947,9 +1947,8 @@ function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, 
     }
     const netBen = interest - Math.round(annualCosts/1000);
     const pb = netBen>0 ? Math.round(implCost/1000/netBen*12*10)/10 : 999;
-    const above = interest - base.breakeven;
-    const verdict = interest > base.breakeven*4 ? 'GO' : interest > base.breakeven ? 'CONSIDER' : 'NO-GO';
-    return { interest, pb, above, verdict };
+    const verdict = pb < 24 ? 'GO' : pb < 48 ? 'CONSIDER' : 'NO-GO';
+    return { interest, pb, netBen, verdict };
   }
   const wi = computeWhatIf();
 
@@ -1989,6 +1988,139 @@ function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, 
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+      {/* ── ZBA vs NOTIONAL ── */}
+      {(() => { const col1 = sim?.poolType === 'tba' ? 'TBA' : 'ZBA'; return (
+      <div style={cardStyle}>
+        <div style={labelStyle}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
+          Structure Comparison
+          <span style={{ marginLeft:'auto', fontSize:10, fontWeight:500, color:'#059669',
+            background:'#ecfdf5', padding:'2px 9px', borderRadius:20 }}>
+            Calculated from your inputs
+          </span>
+        </div>
+        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign:'left', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Metric</th>
+              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#059669', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>{col1}</th>
+              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Notional</th>
+              <th style={{ textAlign:'right', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Win</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              {m:'Interest saving p.a.',  zba:'€'+base.interest+'k',   not:'€'+notionalSave+'k',  zbaW:true },
+              {m:'WHT exposure',          zba:'€0',                    not:'€'+whtExposure+'k',    zbaW:true },
+              {m:'TP documentation',      zba:'Full',                  not:'Simplified',           zbaW:false},
+              {m:'Non-EU jurisdictions',  zba:'Supported',             not:'Limited',              zbaW:true },
+              {m:'Implementation',        zba:'12–16 wks',             not:'8–10 wks',             zbaW:false},
+              {m:'Net annual benefit',    zba:'€'+zbaNet+'k',          not:'€'+notionalNet+'k',    zbaW:true, bold:true},
+            ].map((r,i)=>(
+              <tr key={i} style={{ borderBottom:'1px solid #f8fafc' }}
+                onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'}
+                onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <td style={{ padding:'9px 0', color:'#475569', fontWeight:r.bold?600:400 }}>{r.m}</td>
+                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:r.zbaW?700:400, color:r.zbaW?'#059669':'#94a3b8' }}>{r.zba}</td>
+                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:!r.zbaW?700:400, color:!r.zbaW?'#059669':'#94a3b8' }}>{r.not}</td>
+                <td style={{ padding:'9px 0', textAlign:'right', fontSize:11, fontWeight:600, color:r.zbaW?'#059669':'#475569' }}>{r.zbaW?col1+' ✓':'Notional ✓'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div style={{ marginTop:14, padding:'12px 14px', background:'#f8fafc', borderRadius:8,
+          fontSize:12, color:'#334155', lineHeight:1.6 }}>
+          <strong>Recommendation:</strong> {col1} generates
+          <strong style={{ color:'#059669' }}> €{Math.max(0,zbaNet-notionalNet)}k more annually</strong> than
+          notional pooling for your structure, primarily through eliminated WHT exposure.
+          Proceed with {col1 === 'TBA' ? 'target balancing' : 'zero-balancing'}.
+        </div>
+      </div>
+      ); })()}
+
+      {/* ── WHAT-IF EXPLORER ── */}
+      <div style={cardStyle}>
+        <div style={labelStyle}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          What-If Explorer
+        </div>
+
+        {/* Tab switcher */}
+        <div style={{ display:'inline-flex', background:'#f8fafc', borderRadius:8, padding:3, gap:2, marginBottom:18 }}>
+          {[{id:'rate',label:`${rateRef} shift`},{id:'balance',label:'Balance'},{id:'entities',label:'Entities'}].map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)}
+              style={{ padding:'5px 13px', borderRadius:6, border:'none', cursor:'pointer',
+                fontFamily:'DM Sans,sans-serif', fontSize:12, fontWeight:600,
+                background:tab===t.id?'#fff':'transparent', color:tab===t.id?'#0f172a':'#64748b',
+                boxShadow:tab===t.id?'0 1px 3px rgba(15,23,42,.08)':'none', transition:'all .13s' }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Slider */}
+        <div style={{ marginBottom:18 }}>
+          {tab==='rate' && (
+            <div>
+              <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:6 }}>
+                <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>{rateRef} shift from {rateBase}%</span>
+                <input type="range" min="-200" max="200" step="10" value={rateShift}
+                  onChange={e=>setRateShift(parseInt(e.target.value))} style={{ flex:1 }}/>
+                <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
+                  color:rateShift===0?'#64748b':rateShift>0?'#059669':'#dc2626' }}>
+                  {rateShift>=0?'+':''}{rateShift}bp
+                </span>
+              </div>
+              <div style={{ fontSize:11, color:'#94a3b8' }}>
+                Pool bank: <strong style={{color:'#334155'}}>{poolBankName}</strong> ·
+                Pool credit: <strong style={{color:'#334155'}}>{(poolCredit*100).toFixed(2)}%</strong>
+                {rateShift!==0 && <> → <strong style={{color:rateShift>0?'#059669':'#dc2626'}}>{((poolCredit+rateShift/10000)*100).toFixed(2)}%</strong></>}
+              </div>
+            </div>
+          )}
+          {tab==='balance' && (
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Pool balance change</span>
+              <input type="range" min="-50" max="50" step="5" value={balShift}
+                onChange={e=>setBalShift(parseInt(e.target.value))} style={{ flex:1 }}/>
+              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
+                color:balShift===0?'#64748b':balShift>0?'#059669':'#dc2626' }}>
+                {balShift>=0?'+':''}{balShift}%
+              </span>
+            </div>
+          )}
+          {tab==='entities' && (
+            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Entities in pool</span>
+              <input type="range" min="2" max="12" step="1" value={entCount}
+                onChange={e=>setEntCount(parseInt(e.target.value))} style={{ flex:1 }}/>
+              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right', color:'#0f172a' }}>
+                {entCount}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Results — inline, compact */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
+          {[
+            { label:'Interest saving', from:'€'+base.interest+'k', to:'€'+wi.interest+'k', pos:wi.interest>=base.interest },
+            { label:'Payback period',  from:base.payback.toFixed(1)+' mo', to:wi.pb<999?wi.pb.toFixed(1)+' mo':'N/A', pos:wi.pb<=base.payback },
+            { label:'Net annual benefit',from:'€'+(base.interest-Math.round(annualCosts/1000))+'k', to:wi.netBen>0?'€'+wi.netBen+'k':'Below', pos:wi.netBen>0 },
+            { label:'Verdict',         from:base.payback<24?'GO':base.payback<48?'CONSIDER':'NO-GO', to:wi.verdict, pos:wi.verdict==='GO' },
+          ].map((m,i)=>(
+            <div key={i} style={{ background:'#f8fafc', borderRadius:8, padding:'12px 14px', border:'1px solid #e2e8f0' }}>
+              <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:7 }}>{m.label}</div>
+              <div style={{ fontSize:11, color:'#94a3b8', fontFamily:'DM Mono,monospace', textDecoration:'line-through', marginBottom:2 }}>{m.from}</div>
+              <div style={{ fontSize:14, fontWeight:700, fontFamily:'DM Mono,monospace', color:m.pos?'#059669':'#dc2626' }}>{m.to}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <MonteCarloCard sim={sim} calc={calc} />
+      <CashVaRCard sim={sim} calc={calc} />
 
       {/* ── AI ASK ── */}
       <div style={cardStyle}>
@@ -2068,137 +2200,6 @@ function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, 
           </div>
         )}
       </div>
-
-      {/* ── WHAT-IF EXPLORER ── */}
-      <div style={cardStyle}>
-        <div style={labelStyle}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          What-If Explorer
-        </div>
-
-        {/* Tab switcher */}
-        <div style={{ display:'inline-flex', background:'#f8fafc', borderRadius:8, padding:3, gap:2, marginBottom:18 }}>
-          {[{id:'rate',label:`${rateRef} shift`},{id:'balance',label:'Balance'},{id:'entities',label:'Entities'}].map(t=>(
-            <button key={t.id} onClick={()=>setTab(t.id)}
-              style={{ padding:'5px 13px', borderRadius:6, border:'none', cursor:'pointer',
-                fontFamily:'DM Sans,sans-serif', fontSize:12, fontWeight:600,
-                background:tab===t.id?'#fff':'transparent', color:tab===t.id?'#0f172a':'#64748b',
-                boxShadow:tab===t.id?'0 1px 3px rgba(15,23,42,.08)':'none', transition:'all .13s' }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Slider */}
-        <div style={{ marginBottom:18 }}>
-          {tab==='rate' && (
-            <div>
-              <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:6 }}>
-                <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>{rateRef} shift from {rateBase}%</span>
-                <input type="range" min="-200" max="200" step="10" value={rateShift}
-                  onChange={e=>setRateShift(parseInt(e.target.value))} style={{ flex:1 }}/>
-                <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
-                  color:rateShift===0?'#64748b':rateShift>0?'#059669':'#dc2626' }}>
-                  {rateShift>=0?'+':''}{rateShift}bp
-                </span>
-              </div>
-              <div style={{ fontSize:11, color:'#94a3b8' }}>
-                Pool bank: <strong style={{color:'#334155'}}>{poolBankName}</strong> ·
-                Pool credit: <strong style={{color:'#334155'}}>{(poolCredit*100).toFixed(2)}%</strong>
-                {rateShift!==0 && <> → <strong style={{color:rateShift>0?'#059669':'#dc2626'}}>{((poolCredit+rateShift/10000)*100).toFixed(2)}%</strong></>}
-              </div>
-            </div>
-          )}
-          {tab==='balance' && (
-            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Pool balance change</span>
-              <input type="range" min="-50" max="50" step="5" value={balShift}
-                onChange={e=>setBalShift(parseInt(e.target.value))} style={{ flex:1 }}/>
-              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right',
-                color:balShift===0?'#64748b':balShift>0?'#059669':'#dc2626' }}>
-                {balShift>=0?'+':''}{balShift}%
-              </span>
-            </div>
-          )}
-          {tab==='entities' && (
-            <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-              <span style={{ fontSize:12, color:'#64748b', minWidth:190 }}>Entities in pool</span>
-              <input type="range" min="2" max="12" step="1" value={entCount}
-                onChange={e=>setEntCount(parseInt(e.target.value))} style={{ flex:1 }}/>
-              <span style={{ fontFamily:'DM Mono,monospace', fontSize:13, fontWeight:700, minWidth:56, textAlign:'right', color:'#0f172a' }}>
-                {entCount}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Results — inline, compact */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
-          {[
-            { label:'Interest saving', from:'€'+base.interest+'k', to:'€'+wi.interest+'k', pos:wi.interest>=base.interest },
-            { label:'Payback period',  from:base.payback.toFixed(1)+' mo', to:wi.pb<999?wi.pb.toFixed(1)+' mo':'N/A', pos:wi.pb<=base.payback },
-            { label:'Above break-even',from:'€'+(base.interest-base.breakeven)+'k', to:wi.above>0?'€'+wi.above+'k':'Below', pos:wi.above>0 },
-            { label:'Verdict',         from:'GO', to:wi.verdict, pos:wi.verdict==='GO' },
-          ].map((m,i)=>(
-            <div key={i} style={{ background:'#f8fafc', borderRadius:8, padding:'12px 14px', border:'1px solid #e2e8f0' }}>
-              <div style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.8px', marginBottom:7 }}>{m.label}</div>
-              <div style={{ fontSize:11, color:'#94a3b8', fontFamily:'DM Mono,monospace', textDecoration:'line-through', marginBottom:2 }}>{m.from}</div>
-              <div style={{ fontSize:14, fontWeight:700, fontFamily:'DM Mono,monospace', color:m.pos?'#059669':'#dc2626' }}>{m.to}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── ZBA vs NOTIONAL ── */}
-      <div style={cardStyle}>
-        <div style={labelStyle}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="3" width="8" height="18" rx="1"/><rect x="13" y="3" width="8" height="18" rx="1"/></svg>
-          Structure Comparison
-          <span style={{ marginLeft:'auto', fontSize:10, fontWeight:500, color:'#059669',
-            background:'#ecfdf5', padding:'2px 9px', borderRadius:20 }}>
-            Calculated from your inputs
-          </span>
-        </div>
-        <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign:'left', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Metric</th>
-              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#059669', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>ZBA</th>
-              <th style={{ textAlign:'right', padding:'8px 12px', fontSize:10, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Notional</th>
-              <th style={{ textAlign:'right', padding:'8px 0', fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.7px', borderBottom:'1px solid #f1f5f9' }}>Win</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              {m:'Interest saving p.a.',  zba:'€'+base.interest+'k',   not:'€'+notionalSave+'k',  zbaW:true },
-              {m:'WHT exposure',          zba:'€0',                    not:'€'+whtExposure+'k',    zbaW:true },
-              {m:'TP documentation',      zba:'Full',                  not:'Simplified',           zbaW:false},
-              {m:'Non-EU jurisdictions',  zba:'Supported',             not:'Limited',              zbaW:true },
-              {m:'Implementation',        zba:'12–16 wks',             not:'8–10 wks',             zbaW:false},
-              {m:'Net annual benefit',    zba:'€'+zbaNet+'k',          not:'€'+notionalNet+'k',    zbaW:true, bold:true},
-            ].map((r,i)=>(
-              <tr key={i} style={{ borderBottom:'1px solid #f8fafc' }}
-                onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'}
-                onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                <td style={{ padding:'9px 0', color:'#475569', fontWeight:r.bold?600:400 }}>{r.m}</td>
-                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:r.zbaW?700:400, color:r.zbaW?'#059669':'#94a3b8' }}>{r.zba}</td>
-                <td style={{ padding:'9px 12px', textAlign:'right', fontFamily:'DM Mono,monospace', fontWeight:!r.zbaW?700:400, color:!r.zbaW?'#059669':'#94a3b8' }}>{r.not}</td>
-                <td style={{ padding:'9px 0', textAlign:'right', fontSize:11, fontWeight:600, color:r.zbaW?'#059669':'#475569' }}>{r.zbaW?'ZBA ✓':'Notional ✓'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div style={{ marginTop:14, padding:'12px 14px', background:'#f8fafc', borderRadius:8,
-          fontSize:12, color:'#334155', lineHeight:1.6 }}>
-          <strong>Recommendation:</strong> ZBA generates
-          <strong style={{ color:'#059669' }}> €{Math.max(0,zbaNet-notionalNet)}k more annually</strong> than
-          notional pooling for your structure, primarily through eliminated WHT exposure.
-          Proceed with zero-balancing.
-        </div>
-      </div>
-
-      <MonteCarloCard sim={sim} calc={calc} />
-      <CashVaRCard sim={sim} calc={calc} />
 
     </div>
   );
@@ -2385,10 +2386,10 @@ function runMonteCarlo(sim, calc, volatility = 0.12, runs = 1000) {
     const adjDeficit = (sim.deficit || 0) * deficitFactor;
     const adjNetting = Math.min(adjSurplus, adjDeficit);
 
-    const debitSave    = adjDeficit * ((calc.dr || 0.055) - (calc.pdr || 0.032)) * (calc.dcf || 1);
-    const creditUplift = adjSurplus * ((calc.pcr || 0.040) - (calc.cr || 0.028)) * (calc.dcf || 1);
-    const nettingSave  = adjNetting * (calc.pdr || 0.032) * (calc.dcf || 1);
-    const whtCost      = adjNetting * (calc.pdr || 0.032) * (calc.dcf || 1) * (calc.wht || 0);
+    const debitSave    = adjDeficit * ((calc.dr || 0.055) - (calc.pdr || 0.032));
+    const creditUplift = adjSurplus * ((calc.pcr || 0.040) - (calc.cr || 0.028));
+    const nettingSave  = adjNetting * (calc.pdr || 0.032);
+    const whtCost      = adjNetting * (calc.pdr || 0.032) * (calc.wht || 0);
 
     const annualSaving = debitSave + creditUplift + nettingSave - whtCost - annualCosts;
     results.push(Math.round(annualSaving));
@@ -2398,6 +2399,8 @@ function runMonteCarlo(sim, calc, volatility = 0.12, runs = 1000) {
 
   const p = (pct) => results[Math.floor(pct / 100 * runs)];
   const positive = results.filter(r => r > 0).length;
+  const p50val = p(50);
+  const highThreshold = Math.max(Math.round(p50val * 1.5), 50000);
 
   return {
     runs,
@@ -2405,29 +2408,31 @@ function runMonteCarlo(sim, calc, volatility = 0.12, runs = 1000) {
     p5:  p(5),
     p10: p(10),
     p25: p(25),
-    p50: p(50),
+    p50: p50val,
     p75: p(75),
     p90: p(90),
     p95: p(95),
     mean: Math.round(results.reduce((a, b) => a + b, 0) / runs),
     probPositive: Math.round(positive / runs * 1000) / 10,
-    probGt500k:   Math.round(results.filter(r => r > 500000).length / runs * 1000) / 10,
+    probGt500k:   Math.round(results.filter(r => r > highThreshold).length / runs * 1000) / 10,
+    thresholdK:   Math.round(highThreshold / 1000),
   };
 }
 
 function computeCashVaR(sim, calc, volatility = 0.12) {
   if (!sim || !calc) return null;
 
-  const netBenefit   = calc.netBenefit || 0;
-  const dailyBenefit = netBenefit / 365;
-  const dailySigma   = Math.abs(dailyBenefit) * volatility / Math.sqrt(252);
+  const poolBalance = sim.poolBalance || sim.surplus || 0;
+  const netBenefit  = sim.netBenefit || calc.netBenefit || 0;
+  const dailySigma  = poolBalance * volatility / Math.sqrt(252);
 
   const var95 = Math.round(dailySigma * 1.645);
   const var99 = Math.round(dailySigma * 2.326);
   const cvar  = Math.round(dailySigma * 2.063);
 
   return {
-    dailyExpected: Math.round(dailyBenefit),
+    poolBalance,
+    dailyExpected: Math.round(netBenefit / 252),
     var95,
     var99,
     cvar,
