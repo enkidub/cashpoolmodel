@@ -710,14 +710,21 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
   const zbaColor = zbaRaw >= 60 ? '#059669' : zbaRaw >= 30 ? '#d97706' : '#dc2626';
   const zbaBg    = zbaRaw >= 60 ? '#ecfdf5' : zbaRaw >= 30 ? '#fffbeb' : '#fee2e2';
   const zbaLabel   = nettingEff || (zbaRaw + '%');
-  const nettingTip = zbaRaw >= 60 ? 'Strong pool — efficient netting'
-    : zbaRaw >= 30 ? 'Adequate — negotiate better rates'
-    : 'Low netting — consider restructuring entity mix';
+  const poolType   = sim?.poolType || 'zba';
+  const effLabel   = poolType === 'notional' ? 'Notional Offset'
+    : poolType === 'tba' ? 'TBA Efficiency'
+    : 'ZBA Efficiency';
+  const nettingTip = (poolType === 'notional'
+    ? `Notional Offset — ${zbaRaw}% of balances virtually offset (no physical sweep)`
+    : `${effLabel}: ${zbaRaw}% = min(surplus,deficit)÷(surplus+deficit)`)
+    + (zbaRaw >= 60 ? ' · Strong pool — efficient netting'
+    : zbaRaw >= 30 ? ' · Adequate — negotiate better rates'
+    : ' · Low netting — consider restructuring entity mix');
 
   // Card renderer for L2/L3 entities — compact 2-row layout
   function renderCard(e, isL3) {
-    const accentColor = e.surplus ? '#059669' : '#dc2626';
-    const accentBg    = e.surplus ? '#ecfdf5' : '#fee2e2';
+    const accentColor = poolType === 'notional' ? '#6366f1' : (e.surplus ? '#059669' : '#dc2626');
+    const accentBg    = poolType === 'notional' ? '#eef2ff' : (e.surplus ? '#ecfdf5' : '#fee2e2');
     const isNonBase   = e.cc !== baseCcy;
     const regColor    = regionColor(e.domicile || e.country || 'DE');
     const domCode     = (e.domicile || e.country || '').toLowerCase();
@@ -726,7 +733,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
       : (e.balance?.startsWith('−') || e.balance?.startsWith('-') ? e.balance : '−' + (e.balance || '0'));
     return (
       <div style={{ borderRadius:8, background:'#fff',
-        border:`1.5px solid ${e.surplus ? '#d1fae5' : '#fee2e2'}`,
+        border:`1.5px solid ${poolType === 'notional' ? '#c7d2fe' : (e.surplus ? '#d1fae5' : '#fee2e2')}`,
         borderLeft:`4px solid ${regColor}`,
         position:'relative', overflow:'hidden',
         transition:'transform .15s, box-shadow .15s', cursor:'default',
@@ -748,7 +755,7 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
             </div>
             <div style={{ fontSize:8, fontWeight:700, color:accentColor, background:accentBg,
               padding:'2px 6px', borderRadius:99, flexShrink:0, whiteSpace:'nowrap', marginLeft:4 }}>
-              {e.surplus ? '↑' : '↓'} {e.surplus ? 'Surplus' : 'Deficit'}
+              {poolType === 'notional' ? (e.surplus ? '○ Net credit' : '○ Net debit') : (e.surplus ? '↑ Surplus' : '↓ Deficit')}
             </div>
           </div>
           {/* Row 2: balance + cc tag + FX + rate with tooltip */}
@@ -786,13 +793,13 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
         {/* Header */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
           <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
-            Pool Hierarchy — Daily Sweep Structure · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
+            {poolType === 'notional' ? 'Notional Offset Structure' : 'Pool Hierarchy — Daily Sweep Structure'} · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
           </div>
           <div style={{ display:'flex', gap:6, alignItems:'center' }}>
             <div title={nettingTip}
               style={{ display:'flex', alignItems:'center', gap:5, background: zbaBg,
                 border:`1px solid ${zbaColor}55`, borderRadius:6, padding:'4px 10px', cursor:'default' }}>
-              <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>ZBA Efficiency</span>
+              <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>{effLabel}</span>
               <span style={{ fontSize:11, fontWeight:700, color: zbaColor, fontFamily:'DM Mono,monospace' }}>{zbaLabel}</span>
               <span style={{ fontSize:9, color:zbaColor }}>{zbaRaw >= 60 ? '✓' : zbaRaw >= 30 ? '△' : '⚠'}</span>
             </div>
@@ -818,9 +825,9 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
               <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                 <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>{baseCcy}</span>
                 <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe', padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
-                <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, fontWeight:600, color:'#059669' }}>
-                  <div style={{ width:5, height:5, borderRadius:'50%', background:'#059669', animation:'pulse 2s infinite' }} />
-                  ZBA
+                <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, fontWeight:600, color: poolType === 'notional' ? '#6366f1' : '#059669' }}>
+                  <div style={{ width:5, height:5, borderRadius:'50%', background: poolType === 'notional' ? '#6366f1' : '#059669', animation: poolType === 'notional' ? 'none' : 'pulse 2s infinite' }} />
+                  {poolType === 'notional' ? 'Notional · Virtual offset' : poolType === 'tba' ? 'TBA · Target sweep' : 'ZBA · Auto-sweep'}
                 </div>
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'#64748b' }}>
@@ -831,48 +838,27 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
           </div>
         </div>
 
-        {/* ── SVG SWEEP DIRECTION CONNECTOR ── */}
+        {/* ── CONNECTOR ── */}
         {(() => {
           const subAccounts = entityList.filter(e => effParent(e) != null);
-          const poolType    = sim?.poolType || 'zba';
           const isPhysical  = ['zba','tba'].includes(poolType);
           const twoWay   = subAccounts.filter(e => !e.sweepDirection || e.sweepDirection === 'two-way').length;
           const oneWayUp = subAccounts.filter(e => e.sweepDirection === 'one-way-up').length;
-          const oneWayDn = subAccounts.filter(e => e.sweepDirection === 'one-way-down').length;
+          const sweepLabel = isPhysical
+            ? (twoWay > 0 ? '↕ Two-way daily sweep' : oneWayUp > 0 ? '↑ Surplus sweep only' : '↓ Funded only')
+            : 'Virtual offset — no physical movement';
+          const tip = isPhysical
+            ? (twoWay > 0 ? 'Physical sweep: surplus and deficit balances moved to master daily'
+              : oneWayUp > 0 ? 'One-way sweep: surplus accounts only — deficits funded by master'
+              : 'One-way sweep: deficits funded by master — surplus stays in-place')
+            : 'Notional pool: balances netted virtually, no physical cash movement';
           return (
-            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', height:44, gap:3 }}>
-              <svg width="40" height="30" viewBox="0 0 40 30" style={{ overflow:'visible' }}>
-                <defs>
-                  <marker id="mUp" markerWidth="6" markerHeight="6" refX="3" refY="0" orient="auto">
-                    <path d="M0,6 L3,0 L6,6" fill="none" stroke="#0b1929" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                  <marker id="mDn" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
-                    <path d="M0,0 L3,6 L6,0" fill="none" stroke="#0b1929" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                  <marker id="mGrn" markerWidth="6" markerHeight="6" refX="3" refY="0" orient="auto">
-                    <path d="M0,6 L3,0 L6,6" fill="none" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                  <marker id="mGry" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
-                    <path d="M0,0 L3,6 L6,0" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                </defs>
-                {isPhysical ? (
-                  twoWay > 0 ? (
-                    <line x1="20" y1="2" x2="20" y2="28" stroke="#0b1929" strokeWidth="1.5" strokeDasharray="4,3"
-                      markerStart="url(#mUp)" markerEnd="url(#mDn)"/>
-                  ) : oneWayUp > 0 ? (
-                    <line x1="20" y1="28" x2="20" y2="4" stroke="#059669" strokeWidth="1.5" markerEnd="url(#mGrn)"/>
-                  ) : (
-                    <line x1="20" y1="2" x2="20" y2="26" stroke="#94a3b8" strokeWidth="1.5" markerEnd="url(#mGry)"/>
-                  )
-                ) : (
-                  <line x1="20" y1="2" x2="20" y2="28" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3,4"/>
-                )}
-              </svg>
-              <div style={{ fontSize:8, color:'#94a3b8', textAlign:'center', lineHeight:1.3 }}>
-                {isPhysical
-                  ? (twoWay > 0 ? '↕ Two-way daily sweep' : oneWayUp > 0 ? '↑ One-way — surplus only' : '↓ One-way — funded only')
-                  : 'Virtual offset — no physical movement'}
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', height:44, gap:4 }}>
+              <div style={{ width:1.5, height:28,
+                backgroundImage:'repeating-linear-gradient(to bottom,#94a3b8 0,#94a3b8 4px,transparent 4px,transparent 8px)' }} />
+              <div title={tip} style={{ fontSize:8, color:'#94a3b8', textAlign:'center', lineHeight:1.3,
+                cursor:'help', textDecoration:'underline', textDecorationStyle:'dotted', textUnderlineOffset:'2px' }}>
+                {sweepLabel}
               </div>
             </div>
           );
