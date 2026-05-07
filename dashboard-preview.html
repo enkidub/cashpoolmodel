@@ -127,14 +127,6 @@ function genLastQuarters(n) {
   }
   return result;
 }
-const CHART_PERIODS = genLastQuarters(4);
-const CHART = [
-  { period: CHART_PERIODS[0], without:285, pooled:142 },
-  { period: CHART_PERIODS[1], without:312, pooled:156 },
-  { period: CHART_PERIODS[2], without:298, pooled:149 },
-  { period: CHART_PERIODS[3], without:327, pooled:163 },
-];
-const CH = 200, CMAX = 380;
 
 const SUBS = [
   { name:'Acme Germany GmbH',    cc:'EUR', balance:'€4.2M',    savings:'€218k', pct:25.9 },
@@ -186,17 +178,12 @@ function KPICard({ label, value, badge, sub, ring }) {
 
 function BarChart({ sim, calc }) {
   const [volatility, setVolatility] = React.useState(0.12);
-  const [chartData, setChartData]   = React.useState(null);
+  const [chartData, setChartData]   = React.useState(() => simulateQuarterly(sim, calc, 0.12));
   const [hov, setHov]               = React.useState(null);
-  const [dataSource]                = React.useState('simulated');
 
-  React.useEffect(() => {
-    setChartData(simulateQuarterly(sim, calc, volatility));
-  }, [volatility]);
-
-  const data   = chartData || simulateQuarterly(sim, calc, volatility);
-  const maxVal = Math.max(...data.flatMap(d => [d.without, d.pooled]), 100);
-  const CMAX   = Math.ceil(maxVal / 100) * 100 + 50;
+  const data   = chartData;
+  const maxVal = Math.max(...data.flatMap(d => [d.without, d.pooled]), 50);
+  const CMAX   = Math.ceil(maxVal / 50) * 50 + 30;
   const CH     = 200;
   const ph     = v => `${Math.max(4, (v / CMAX) * CH)}px`;
 
@@ -205,24 +192,25 @@ function BarChart({ sim, calc }) {
   const totalSaved   = totalWithout - totalPooled;
   const savingPct    = totalWithout > 0 ? Math.round(totalSaved / totalWithout * 100) : 0;
 
-  const yTicks = [0, Math.round(CMAX * 0.33 / 100) * 100, Math.round(CMAX * 0.66 / 100) * 100, CMAX - 50];
+  const yStep  = Math.max(50, Math.ceil(CMAX / 4 / 50) * 50);
+  const yTicks = [0, yStep, yStep * 2, yStep * 3];
 
-  const volLabel = volatility < 0.08 ? 'Holding company' : volatility < 0.15 ? 'Operating company' : volatility < 0.22 ? 'Seasonal business' : 'Trading company';
+  const volLabel = volatility < 0.08 ? 'Holding company'
+    : volatility < 0.15 ? 'Operating company'
+    : volatility < 0.22 ? 'Seasonal business' : 'Trading company';
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:24 }}>
 
       {/* Header */}
-      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:16 }}>
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:14 }}>
         <div>
           <div style={{ fontSize:14, fontWeight:600, color:'#1e293b' }}>
             Interest Cost: Before vs. After Pooling
           </div>
           <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
-            Quarterly estimate · EUR thousands ·
-            <span style={{ color:'#d97706', fontWeight:600, marginLeft:4 }}>
-              ⚡ Simulated estimate
-            </span>
+            Trailing 4 quarters · EUR thousands ·
+            <span style={{ color:'#d97706', fontWeight:600, marginLeft:4 }}>⚡ Simulated estimate</span>
           </div>
         </div>
         <div style={{ display:'flex', gap:16, alignItems:'center' }}>
@@ -231,7 +219,7 @@ function BarChart({ sim, calc }) {
             { bg:'#0b1929', border:'#0b1929', label:'With CashPoolModel' },
           ].map(({ bg, border, label }) => (
             <div key={label} style={{ display:'flex', alignItems:'center', gap:6 }}>
-              <div style={{ width:12, height:12, borderRadius:3, background:bg, border:`1.5px solid ${border}` }} />
+              <div style={{ width:12, height:12, borderRadius:3, background:bg, border:`1.5px solid ${border}` }}/>
               <span style={{ fontSize:11, color:'#64748b' }}>{label}</span>
             </div>
           ))}
@@ -239,8 +227,8 @@ function BarChart({ sim, calc }) {
       </div>
 
       {/* Volatility slider */}
-      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
-        background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14,
+        background:'#f8fafc', borderRadius:8, padding:'7px 14px', border:'1px solid #e2e8f0' }}>
         <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
           letterSpacing:'.7px', whiteSpace:'nowrap' }}>Balance volatility</span>
         <input type="range" min="3" max="35" step="1"
@@ -248,78 +236,79 @@ function BarChart({ sim, calc }) {
           onChange={e => setVolatility(parseInt(e.target.value) / 100)}
           style={{ flex:1, accentColor:'#0b1929' }}/>
         <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
-          color:'#0b1929', minWidth:36, textAlign:'right' }}>
+          color:'#0b1929', minWidth:32, textAlign:'right' }}>
           {Math.round(volatility * 100)}%
         </span>
         <button onClick={() => setChartData(simulateQuarterly(sim, calc, volatility))}
           style={{ padding:'4px 12px', borderRadius:6, background:'#0b1929', color:'#fff',
-            fontFamily:'DM Sans, sans-serif', fontSize:11, fontWeight:600, border:'none',
-            cursor:'pointer', whiteSpace:'nowrap' }}>
+            fontFamily:'DM Sans, sans-serif', fontSize:11, fontWeight:600,
+            border:'none', cursor:'pointer', whiteSpace:'nowrap' }}>
           Recalculate
         </button>
-        <div style={{ fontSize:9, color:'#94a3b8', maxWidth:120, lineHeight:1.4 }}>
-          {volLabel}
-        </div>
+        <span style={{ fontSize:9, color:'#94a3b8', whiteSpace:'nowrap' }}>{volLabel}</span>
       </div>
 
       {/* Chart area */}
       <div style={{ display:'flex', alignItems:'flex-start', gap:0 }}>
-        {/* Y axis */}
-        <div style={{ position:'relative', width:44, height:CH, flexShrink:0 }}>
+        <div style={{ position:'relative', width:52, height:CH, flexShrink:0 }}>
           {yTicks.map(v => (
             <span key={v} style={{ position:'absolute', right:8,
-              bottom:`calc(${(v/CMAX)*CH}px - 6px)`,
+              bottom:`calc(${(v / CMAX) * CH}px - 6px)`,
               fontSize:9, fontFamily:'DM Mono, monospace', color:'#94a3b8', lineHeight:1 }}>
-              €{v}k
+              €{v.toLocaleString('en-US')}k
             </span>
           ))}
         </div>
-
-        {/* Bars */}
         <div style={{ flex:1, position:'relative', height:CH,
           borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
           {yTicks.slice(1).map(v => (
             <div key={v} style={{ position:'absolute', left:0, right:0,
-              bottom:`${(v/CMAX)*CH}px`, borderTop:'1px dashed #f1f5f9', pointerEvents:'none' }}/>
+              bottom:`${(v / CMAX) * CH}px`,
+              borderTop:'1px dashed #f1f5f9', pointerEvents:'none' }}/>
           ))}
           <div style={{ position:'absolute', inset:0, display:'flex',
             alignItems:'flex-end', justifyContent:'space-around', padding:'0 24px' }}>
             {data.map((d, gi) => (
               <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:5 }}>
+
                 {/* Without bar */}
-                <div onMouseEnter={() => setHov({gi, which:'without'})}
+                <div onMouseEnter={() => setHov({ gi, which:'without' })}
                   onMouseLeave={() => setHov(null)}
                   style={{ position:'relative', cursor:'default' }}>
-                  <div style={{ width:34, borderRadius:'3px 3px 0 0', height:ph(d.without),
-                    background:'#e2e8f0',
-                    opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.4 : 1,
-                    transition:'opacity 0.1s, height 0.4s ease' }}/>
-                  {hov?.gi===gi && hov?.which==='without' && (
+                  <div style={{ width:34, borderRadius:'3px 3px 0 0',
+                    height: ph(d.without), background:'#e2e8f0',
+                    opacity: hov && (hov.gi !== gi || hov.which !== 'without') ? 0.4 : 1,
+                    transition:'opacity 0.1s' }}/>
+                  {hov?.gi === gi && hov?.which === 'without' && (
                     <div style={{ position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)', background:'#1e293b', color:'#fff',
-                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'3px 7px',
+                      left:'50%', transform:'translateX(-50%)',
+                      background:'#1e293b', color:'#fff', fontSize:10,
+                      fontFamily:'DM Mono, monospace', padding:'3px 7px',
                       borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      €{d.without}k
+                      €{d.without.toLocaleString('en-US')}k
                     </div>
                   )}
                 </div>
+
                 {/* Pooled bar */}
-                <div onMouseEnter={() => setHov({gi, which:'pooled'})}
+                <div onMouseEnter={() => setHov({ gi, which:'pooled' })}
                   onMouseLeave={() => setHov(null)}
                   style={{ position:'relative', cursor:'default' }}>
-                  <div style={{ width:34, borderRadius:'3px 3px 0 0', height:ph(d.pooled),
-                    background:'#0b1929',
-                    opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.4 : 1,
-                    transition:'opacity 0.1s, height 0.4s ease' }}/>
-                  {hov?.gi===gi && hov?.which==='pooled' && (
+                  <div style={{ width:34, borderRadius:'3px 3px 0 0',
+                    height: ph(d.pooled), background:'#0b1929',
+                    opacity: hov && (hov.gi !== gi || hov.which !== 'pooled') ? 0.4 : 1,
+                    transition:'opacity 0.1s' }}/>
+                  {hov?.gi === gi && hov?.which === 'pooled' && (
                     <div style={{ position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
-                      left:'50%', transform:'translateX(-50%)', background:'#0b1929', color:'#fff',
-                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'3px 7px',
+                      left:'50%', transform:'translateX(-50%)',
+                      background:'#0b1929', color:'#fff', fontSize:10,
+                      fontFamily:'DM Mono, monospace', padding:'3px 7px',
                       borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
-                      €{d.pooled}k · save €{d.without - d.pooled}k
+                      €{d.pooled.toLocaleString('en-US')}k · save €{(d.without - d.pooled).toLocaleString('en-US')}k
                     </div>
                   )}
                 </div>
+
               </div>
             ))}
           </div>
@@ -327,11 +316,9 @@ function BarChart({ sim, calc }) {
       </div>
 
       {/* X-axis */}
-      <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:44, marginTop:6 }}>
+      <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:52, marginTop:6 }}>
         {data.map((d, i) => (
-          <span key={i} style={{ fontSize:10, color:'#94a3b8', fontFamily:'DM Sans, sans-serif' }}>
-            {d.period}
-          </span>
+          <span key={i} style={{ fontSize:10, color:'#94a3b8' }}>{d.period}</span>
         ))}
       </div>
 
@@ -339,9 +326,9 @@ function BarChart({ sim, calc }) {
       <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
         display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
         {[
-          { label:'Annual cost without pooling', value:`€${totalWithout}k`, color:'#475569' },
-          { label:'Annual cost with pooling',    value:`€${totalPooled}k`,  color:'#0b1929' },
-          { label:'Annual interest saved',       value:`€${totalSaved}k · ↓ ${savingPct}%`, color:'#059669' },
+          { label:'Annual cost without pooling',    value:`€${totalWithout.toLocaleString('en-US')}k`, color:'#475569' },
+          { label:'Annual cost with pooling',        value:`€${totalPooled.toLocaleString('en-US')}k`,  color:'#0b1929' },
+          { label:'Annual interest saved',           value:`€${totalSaved.toLocaleString('en-US')}k · ↓ ${savingPct}%`, color:'#059669' },
         ].map(({ label, value, color }) => (
           <div key={label}>
             <div style={{ fontSize:10, color:'#94a3b8', marginBottom:3 }}>{label}</div>
@@ -357,81 +344,127 @@ function BarChart({ sim, calc }) {
 
 // ─── Table ────────────────────────────────────────────────────────────────
 
-function SubsidiaryTable({ entities: ents }) {
-  const subs = ents ? ents.map(e => ({
-    name: e.name,
-    cc: e.cc,
-    balance: e.balance,
-    savings: e.annual || '—',
-    pct: 0,
-  })) : SUBS;
-  const maxPct = Math.max(...subs.map((s,i) => i===0?25.9:s.pct||25.9/(i+1)));
+function SubsidiaryTable({ entities: ents, calc }) {
+  let subs;
+  if (ents && ents.length > 0) {
+    const dr  = calc?.dr  || 0.055;
+    const cr  = calc?.cr  || 0.028;
+    const pdr = calc?.pdr || 0.032;
+    const pcr = calc?.pcr || 0.040;
+    const dcf = calc?.dcf || 1;
+
+    const withSavings = ents.map(e => {
+      const bal = typeof e.balance === 'number' ? e.balance : 0;
+      let saving = 0;
+      if (bal > 0) saving = bal * (pcr - cr) * dcf;
+      if (bal < 0) saving = Math.abs(bal) * (dr - pdr) * dcf;
+      return { ...e, savingNum: Math.round(saving) };
+    });
+
+    const totalSaving = withSavings.reduce((s, e) => s + Math.max(0, e.savingNum), 0) || 1;
+
+    const fmtBal = (bal) => {
+      const a = Math.abs(bal);
+      if (bal === 0) return '+€0k';
+      const s = bal > 0 ? '+' : '−';
+      if (a >= 1e6) return s + '€' + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
+      return s + '€' + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
+    };
+
+    const fmtSav = (n) => {
+      const a = Math.abs(n);
+      if (n === 0) return '€0k';
+      const s = n > 0 ? '+' : '−';
+      if (a >= 1e6) return s + '€' + (a / 1e6).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }) + 'M';
+      return s + '€' + Math.round(a / 1e3).toLocaleString('en-US') + 'k';
+    };
+
+    subs = withSavings.map(e => ({
+      name:      e.name,
+      cc:        e.cc,
+      balance:   fmtBal(typeof e.balance === 'number' ? e.balance : 0),
+      savings:   fmtSav(e.savingNum),
+      savingNum: e.savingNum,
+      pct:       e.savingNum > 0 ? Math.round(e.savingNum / totalSaving * 100) : 0,
+    })).sort((a, b) => b.savingNum - a.savingNum);
+  } else {
+    subs = SUBS;
+  }
+
+  const maxPct = Math.max(...subs.map(s => s.pct), 1);
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+      <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9',
+        display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <div>
-          <div className="font-semibold text-slate-800" style={{ fontSize:13 }}>Top Contributing Subsidiaries</div>
-          <div className="text-slate-400" style={{ fontSize:11, marginTop:2 }}>Ranked by projected annual savings · {subs.length} entities shown</div>
+          <div style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Top Contributing Subsidiaries</div>
+          <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
+            Ranked by projected annual savings · {subs.length} entities shown
+          </div>
         </div>
-        <button className="text-indigo-600 font-medium" style={{ fontSize:11, display:'flex', alignItems:'center', gap:4, background:'none', border:'none', cursor:'pointer' }}>
-          View all <Ico name="chevron" size={11} color="#4f46e5"/>
+        <button style={{ fontSize:11, color:'#0b1929', display:'flex', alignItems:'center', gap:4,
+          background:'none', border:'1px solid #e2e8f0', borderRadius:6, padding:'4px 10px',
+          cursor:'pointer', fontFamily:'DM Sans, sans-serif', fontWeight:600 }}>
+          View all <Ico name="chevron" size={11} color="#0b1929"/>
         </button>
       </div>
 
-      {/* Column headers */}
-      <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'10px 24px',
+        background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
         {['Subsidiary','Ccy','Avg Balance','Proj. Savings','Contribution'].map(h => (
-          <span key={h} className="text-slate-400 font-semibold uppercase"
-            style={{ fontSize:10, letterSpacing:'0.07em' }}>{h}</span>
+          <span key={h} style={{ fontSize:10, fontWeight:700, color:'#94a3b8',
+            textTransform:'uppercase', letterSpacing:'0.07em' }}>{h}</span>
         ))}
       </div>
 
       {subs.map((s, i) => (
         <div key={i}
-          style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'13px 24px',
-            borderBottom: i < subs.length-1 ? '1px solid #f8fafc' : 'none',
+          style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px',
+            padding:'13px 24px',
+            borderBottom: i < subs.length - 1 ? '1px solid #f8fafc' : 'none',
             alignItems:'center', transition:'background 0.1s' }}
-          onMouseEnter={e => e.currentTarget.style.background='#f8fafc'}
-          onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+          onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
 
           {/* Name */}
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-            <div style={{ width:20, height:20, borderRadius:4, background:'#f1f5f9', border:'1px solid #e2e8f0',
-              display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <div style={{ width:20, height:20, borderRadius:4, background:'#f1f5f9',
+              border:'1px solid #e2e8f0', display:'flex', alignItems:'center',
+              justifyContent:'center', flexShrink:0 }}>
               <span style={{ fontSize:7, fontWeight:700, color:'#64748b', textTransform:'uppercase' }}>{s.cc}</span>
             </div>
-            <span className="text-slate-700 font-medium" style={{ fontSize:12 }}>{s.name}</span>
+            <span style={{ fontSize:12, fontWeight:500, color:'#334155' }}>{s.name}</span>
           </div>
 
           {/* Currency */}
           <span style={{ fontSize:10, fontFamily:'DM Mono, monospace', fontWeight:600,
-            color:'#475569', background:'#f1f5f9', borderRadius:4, padding:'2px 6px', width:'fit-content' }}>
+            color:'#475569', background:'#f1f5f9', borderRadius:4,
+            padding:'2px 6px', width:'fit-content' }}>
             {s.cc}
           </span>
 
           {/* Balance */}
-          <span className="text-slate-500 tabular-nums" style={{ fontSize:12, fontFamily:'DM Mono, monospace' }}>
+          <span style={{ fontSize:12, fontFamily:'DM Mono, monospace', color:'#64748b' }}>
             {s.balance}
           </span>
 
           {/* Savings */}
-          <span className="text-emerald-600 font-semibold tabular-nums"
-            style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:16, fontWeight:600 }}>
+          <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+            color: (s.savingNum || 0) >= 0 ? '#059669' : '#dc2626' }}>
             {s.savings}
           </span>
 
-          {/* Bar + pct */}
+          {/* Contribution bar */}
           <div style={{ display:'flex', alignItems:'center', gap:8 }}>
             <div style={{ flex:1, height:6, background:'#f1f5f9', borderRadius:99, overflow:'hidden' }}>
-              <div style={{
-                height:'100%', borderRadius:99,
-                width:`${(s.pct/maxPct)*100}%`,
-                background:'#4f46e5',
-                opacity: 0.55 + (s.pct/maxPct)*0.45,
-                transition:'width 0.6s ease'
-              }} />
+              <div style={{ height:'100%', borderRadius:99,
+                width: `${(s.pct / maxPct) * 100}%`,
+                background: s.pct > 0 ? '#0b1929' : '#e2e8f0',
+                transition:'width 0.6s ease' }}/>
             </div>
-            <span style={{ fontSize:10, fontFamily:'DM Mono, monospace', color:'#64748b', width:28, textAlign:'right' }}>
+            <span style={{ fontSize:10, fontFamily:'DM Mono, monospace', color:'#64748b',
+              width:30, textAlign:'right' }}>
               {s.pct}%
             </span>
           </div>
@@ -1377,7 +1410,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
             {(dynKPIS||KPIS).map((k, i) => <KPICard key={i} {...k}/>)}
           </div>
           <BarChart sim={sim} calc={calc} />
-          <SubsidiaryTable entities={dynEntities} />
+          <SubsidiaryTable entities={dynEntities} calc={calc} />
         </>
       )}
       {active === 'structure'   && <PoolStructure entities={dynEntities} poolBank={poolBank} poolBalance={poolLabel} nettingEff={nettingLabel} />}
@@ -1985,44 +2018,45 @@ function randNormal(mean, std) {
 }
 
 function simulateQuarterly(sim, calc, volatility = 0.12) {
-  if (!sim || !calc) return [
-    { period:'Q1', without:285, pooled:142 },
-    { period:'Q2', without:312, pooled:156 },
-    { period:'Q3', without:298, pooled:149 },
-    { period:'Q4', without:327, pooled:163 },
-  ];
+  const surplus = sim?.surplus || 6200000;
+  const deficit = sim?.deficit || 2100000;
+  const dr      = calc?.dr    || 0.055;
+  const cr      = calc?.cr    || 0.028;
+  const pdr     = calc?.pdr   || 0.032;
+  const pcr     = calc?.pcr   || 0.040;
+  const dcf     = calc?.dcf   || 1;
+  const qf      = dcf / 4;
 
-  const surplus = sim.surplus || 0;
-  const deficit = sim.deficit || 0;
-  const dr  = calc.dr  || 0.055;
-  const cr  = calc.cr  || 0.028;
-  const pdr = calc.pdr || 0.032;
-  const pcr = calc.pcr || 0.040;
-  const dcf = calc.dcf || 1;
-  const qf  = dcf / 4;
+  const now = new Date();
+  const quarters = [];
+  for (let i = 3; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i * 3, 1);
+    const q = Math.floor(d.getMonth() / 3) + 1;
+    quarters.push(`Q${q} ${d.getFullYear()}`);
+  }
 
-  const year     = new Date().getFullYear();
-  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-
-  return quarters.map((q) => {
+  return quarters.map(period => {
     const sig      = volatility;
-    const qSurplus = Math.max(0, surplus * (1 + randNormal(0, sig)));
-    const qDeficit = Math.max(0, deficit * (1 + randNormal(0, sig)));
+    const qSurplus = Math.max(0, surplus * Math.max(0.3, 1 + randNormal(0, sig)));
+    const qDeficit = Math.max(0, deficit * Math.max(0.3, 1 + randNormal(0, sig)));
+    const qNetting = Math.min(qSurplus, qDeficit);
 
-    const withoutInterest = (
-      qDeficit * dr * qf +
-      qSurplus * -cr * qf * 0.5
-    ) / 1000;
+    const costWithout = qDeficit * dr * qf;
+    const incWithout  = qSurplus * cr * qf;
+    const netWithout  = Math.max(0, costWithout - incWithout);
 
-    const withInterest = (
-      Math.max(0, qDeficit - Math.min(qSurplus, qDeficit)) * pdr * qf +
-      qSurplus * -pcr * qf * 0.3
-    ) / 1000;
+    const residual  = Math.max(0, qDeficit - qNetting);
+    const costWith  = residual * pdr * qf;
+    const incWith   = qSurplus * pcr * qf;
+    const netWith   = Math.max(0, costWith - incWith);
+
+    const withoutK = Math.max(20, Math.round(netWithout / 1000));
+    const pooledK  = Math.max(5,  Math.round(netWith / 1000));
 
     return {
-      period: `${q} ${year}`,
-      without: Math.max(10, Math.round(Math.abs(withoutInterest))),
-      pooled:  Math.max(5,  Math.round(Math.abs(withInterest))),
+      period,
+      without: Math.max(pooledK + 10, withoutK),
+      pooled:  pooledK,
     };
   });
 }
@@ -2128,8 +2162,8 @@ function App() {
   // Format helpers
   const fmtK = (n) => {
     const a = Math.abs(n);
-    if (a >= 1000000) return (n<0?'−':''+'€') + (a/1000000).toFixed(2) + 'M';
-    return (n<0?'−':'') + '€' + Math.round(a/1000) + 'k';
+    if (a >= 1000000) return (n < 0 ? '−' : '') + '€' + (a / 1000000).toFixed(2) + 'M';
+    return (n < 0 ? '−' : '') + '€' + Math.round(a / 1000).toLocaleString('en-US') + 'k';
   };
   const fmtM = (n) => {
     const a = Math.abs(n);
