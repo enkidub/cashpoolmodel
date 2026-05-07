@@ -328,7 +328,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
                 Sample data loaded — Acme Manufacturing Group
               </div>
               <div style="font-size:10px;color:#b45309;margin-top:1px">
-                6 entities · Western Europe · Replace with your own group structure
+                8 entities · 3 currencies · Replace with your own group structure
               </div>
             </div>
           </div>
@@ -1518,8 +1518,7 @@ async function fetchLiveRates() {
   }
   g('poolBankInput').value = 'ING Bank';
   g('groupName').value = 'Acme Manufacturing Group';
-  loadTemplate('western');
-  recalc();
+  loadExample();
   showSampleBanner();
 })();
 onPoolTypeChange();
