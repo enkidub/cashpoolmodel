@@ -594,25 +594,6 @@ function SubsidiaryTable({ entities: ents, calc }) {
     </div>
   );
 }
-  return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-      <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <div>
-          <div className="font-semibold text-slate-800" style={{ fontSize:13 }}>Top Contributing Subsidiaries</div>
-          <div className="text-slate-400" style={{ fontSize:11, marginTop:2 }}>Ranked by projected annual savings · {subs.length} entities shown</div>
-        </div>
-        <button className="text-indigo-600 font-medium" style={{ fontSize:11, display:'flex', alignItems:'center', gap:4, background:'none', border:'none', cursor:'pointer' }}>
-          View all <Ico name="chevron" size={11} color="#4f46e5"/>
-        </button>
-      </div>
-
-      {/* Column headers */}
-      <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'10px 24px', background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
-        {['Subsidiary','Ccy','Avg Balance','Proj. Savings','Contribution'].map(h => (
-          <span key={h} className="text-slate-400 font-semibold uppercase"
-            style={{ fontSize:10, letterSpacing:'0.07em' }}>{h}</span>
-        ))}
-      </div>
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────
 
