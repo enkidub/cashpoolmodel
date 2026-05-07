@@ -1394,6 +1394,245 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
 // ─── AI Worker URL ────────────────────────────────────────────────────────
 const AI_WORKER = 'https://cpm-ai.kuba-houser.workers.dev';
 
+// ─── Monte Carlo Card ─────────────────────────────────────────────────────
+function MonteCarloCard({ sim, calc }) {
+  const [mcVol, setMcVol]         = React.useState(0.12);
+  const [mcResult, setMcResult]   = React.useState(null);
+  const [mcRunning, setMcRunning] = React.useState(false);
+
+  const cardStyle  = { background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:'20px 24px', boxShadow:'0 1px 3px rgba(15,23,42,.06)' };
+  const labelStyle = { fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:8, display:'flex', alignItems:'center', gap:6 };
+
+  function runMC() {
+    setMcRunning(true);
+    setTimeout(() => {
+      setMcResult(runMonteCarlo(sim, calc, mcVol, 1000));
+      setMcRunning(false);
+    }, 50);
+  }
+
+  const fmtMC = (n) => {
+    if (n === null || n === undefined) return '—';
+    const a = Math.abs(n);
+    const s = n < 0 ? '−' : '+';
+    if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
+    if (a >= 1e3) return s + '€' + Math.round(a/1e3) + 'k';
+    return s + '€' + Math.round(a);
+  };
+
+  const buildHistogram = (results, bins = 20) => {
+    if (!results || !results.length) return [];
+    const min = results[0], max = results[results.length - 1];
+    const range = max - min || 1;
+    const binSize = range / bins;
+    const counts = Array(bins).fill(0);
+    results.forEach(v => {
+      const idx = Math.min(bins - 1, Math.floor((v - min) / binSize));
+      counts[idx]++;
+    });
+    return counts.map((count, i) => ({
+      from: Math.round(min + i * binSize),
+      to:   Math.round(min + (i+1) * binSize),
+      count,
+      pct:  count / results.length,
+    }));
+  };
+
+  const hist    = mcResult ? buildHistogram(mcResult.results) : [];
+  const histMax = hist.length ? Math.max(...hist.map(b => b.count)) : 1;
+
+  return (
+    <div style={cardStyle}>
+      <div style={labelStyle}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M2 20h20M5 20V10l7-7 7 7v10"/>
+        </svg>
+        Monte Carlo Simulation
+        <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>1,000 scenarios</span>
+      </div>
+
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
+        background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+        <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
+          letterSpacing:'.7px', whiteSpace:'nowrap' }}>Volatility</span>
+        <input type="range" min="3" max="35" step="1"
+          value={Math.round(mcVol * 100)}
+          onChange={e => setMcVol(parseInt(e.target.value) / 100)}
+          style={{ flex:1, accentColor:'#0b1929' }}/>
+        <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+          color:'#0b1929', minWidth:36, textAlign:'right' }}>
+          {Math.round(mcVol * 100)}%
+        </span>
+        <button onClick={runMC} disabled={mcRunning}
+          style={{ padding:'6px 16px', borderRadius:6, background:'#0b1929', color:'#fff',
+            fontFamily:'DM Sans, sans-serif', fontSize:12, fontWeight:600, border:'none',
+            cursor: mcRunning ? 'not-allowed' : 'pointer', opacity: mcRunning ? 0.7 : 1,
+            whiteSpace:'nowrap' }}>
+          {mcRunning ? 'Running…' : 'Run simulation →'}
+        </button>
+      </div>
+
+      {!mcResult && !mcRunning && (
+        <div style={{ textAlign:'center', padding:'24px 0', color:'#94a3b8', fontSize:13 }}>
+          Set volatility and click "Run simulation" to see the distribution of outcomes.
+        </div>
+      )}
+
+      {mcResult && (
+        <div>
+          <div style={{ marginBottom:16 }}>
+            <div style={{ fontSize:11, color:'#94a3b8', marginBottom:8 }}>
+              Distribution of annual net savings — 1,000 simulated scenarios
+            </div>
+            <div style={{ display:'flex', alignItems:'flex-end', gap:2, height:80, marginBottom:4 }}>
+              {hist.map((b, i) => {
+                const h = Math.max(2, Math.round((b.count / histMax) * 80));
+                return (
+                  <div key={i} title={`${fmtMC(b.from)} to ${fmtMC(b.to)}: ${b.count} scenarios`}
+                    style={{ flex:1, height:`${h}px`,
+                      background: b.from >= 0 ? '#0b1929' : '#dc2626',
+                      borderRadius:'2px 2px 0 0', opacity:0.7+(b.pct*0.3), cursor:'default' }}/>
+                );
+              })}
+            </div>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:9,
+              color:'#94a3b8', fontFamily:'DM Mono, monospace' }}>
+              <span>{fmtMC(mcResult.p5)}</span>
+              <span>P50: {fmtMC(mcResult.p50)}</span>
+              <span>{fmtMC(mcResult.p95)}</span>
+            </div>
+          </div>
+
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:14 }}>
+            {[
+              { label:'P10 — pessimistic', val:mcResult.p10, color:'#dc2626' },
+              { label:'P50 — median',      val:mcResult.p50, color:'#0b1929' },
+              { label:'P90 — optimistic',  val:mcResult.p90, color:'#059669' },
+            ].map(({ label, val, color }) => (
+              <div key={label} style={{ background:'#f8fafc', borderRadius:8,
+                padding:'10px 12px', border:'1px solid #e2e8f0' }}>
+                <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
+                  textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
+                  {label}
+                </div>
+                <div style={{ fontFamily:'DM Mono, monospace', fontSize:16, fontWeight:700, color }}>
+                  {fmtMC(val)}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:'#f0fdf4', border:'1px solid #a7f3d0', borderRadius:8,
+            padding:'10px 14px', display:'flex', gap:24, flexWrap:'wrap' }}>
+            {[
+              { label:'Probability of positive return', val:`${mcResult.probPositive}%` },
+              { label:'Probability of saving > €500k',  val:`${mcResult.probGt500k}%` },
+              { label:'Mean outcome', val:fmtMC(mcResult.mean), dark:true },
+            ].map(({ label, val, dark }) => (
+              <div key={label}>
+                <div style={{ fontSize:9, color:'#065f46', fontWeight:700,
+                  textTransform:'uppercase', letterSpacing:'.6px', marginBottom:3 }}>
+                  {label}
+                </div>
+                <div style={{ fontFamily:'DM Mono, monospace', fontSize:16,
+                  fontWeight:700, color: dark ? '#0b1929' : '#059669' }}>
+                  {val}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Cash VaR Card ────────────────────────────────────────────────────────
+function CashVaRCard({ sim, calc }) {
+  const [varVol, setVarVol] = React.useState(0.12);
+  const varResult = computeCashVaR(sim, calc, varVol);
+
+  const cardStyle  = { background:'#fff', border:'1px solid #e2e8f0', borderRadius:12, padding:'20px 24px', boxShadow:'0 1px 3px rgba(15,23,42,.06)' };
+  const labelStyle = { fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'1px', marginBottom:8, display:'flex', alignItems:'center', gap:6 };
+
+  const fmtV = (n) => {
+    if (!n && n !== 0) return '—';
+    const a = Math.abs(n);
+    if (a >= 1e6) return '€' + (a/1e6).toFixed(2) + 'M';
+    if (a >= 1e3) return '€' + Math.round(a/1e3) + 'k';
+    return '€' + Math.round(a);
+  };
+
+  return (
+    <div style={cardStyle}>
+      <div style={labelStyle}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Cash VaR — Value at Risk
+        <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>Pool performance risk</span>
+      </div>
+
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
+        background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+        <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
+          letterSpacing:'.7px', whiteSpace:'nowrap' }}>Balance volatility</span>
+        <input type="range" min="3" max="35" step="1"
+          value={Math.round(varVol * 100)}
+          onChange={e => setVarVol(parseInt(e.target.value) / 100)}
+          style={{ flex:1, accentColor:'#0b1929' }}/>
+        <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+          color:'#0b1929', minWidth:36, textAlign:'right' }}>
+          {Math.round(varVol * 100)}%
+        </span>
+      </div>
+
+      {varResult && (
+        <div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, marginBottom:14 }}>
+            {[
+              { label:'95% Daily VaR',  val:varResult.var95, sub:'1-in-20 day shortfall',  color:'#d97706' },
+              { label:'99% Daily VaR',  val:varResult.var99, sub:'1-in-100 day shortfall', color:'#dc2626' },
+              { label:'CVaR (95%)',      val:varResult.cvar,  sub:'Expected shortfall',     color:'#dc2626' },
+            ].map(({ label, val, sub, color }) => (
+              <div key={label} style={{ background:'#f8fafc', borderRadius:8,
+                padding:'10px 12px', border:'1px solid #e2e8f0' }}>
+                <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
+                  textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
+                  {label}
+                </div>
+                <div style={{ fontFamily:'DM Mono, monospace', fontSize:15, fontWeight:700, color }}>
+                  −{fmtV(val)}
+                </div>
+                <div style={{ fontSize:9, color:'#94a3b8', marginTop:3 }}>{sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background:'#fff7ed', border:'1px solid #fed7aa', borderRadius:8, padding:'12px 14px' }}>
+            <div style={{ fontSize:11, fontWeight:600, color:'#9a3412', marginBottom:6 }}>
+              Interpretation
+            </div>
+            <div style={{ fontSize:12, color:'#7c2d12', lineHeight:1.6, fontWeight:300 }}>
+              On <strong>95% of trading days</strong> the pool's net benefit will not deviate
+              by more than <strong>{fmtV(varResult.var95)}</strong> from the daily expected
+              saving of <strong>{fmtV(Math.abs(varResult.dailyExpected))}</strong>.
+              The worst 5% of days may see a shortfall of up to <strong>{fmtV(varResult.cvar)}</strong> (CVaR).
+              Annual VaR at 95%: <strong>{fmtV(varResult.annualVaR95)}</strong>.
+            </div>
+          </div>
+
+          <div style={{ marginTop:10, fontSize:10, color:'#94a3b8', lineHeight:1.5 }}>
+            VaR assumes normally distributed daily balance movements with {Math.round(varVol*100)}% annual volatility.
+            This is a modelled estimate — actual results depend on group cash flow patterns.
+            Standard methodology per Basel III / IFRS 7 liquidity risk reporting.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Analysis Section ─────────────────────────────────────────────────────
 function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, poolBank }) {
   const calc = computeFromSim(sim);
@@ -1698,239 +1937,8 @@ function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, 
         </div>
       </div>
 
-      {/* ── MONTE CARLO SIMULATION ── */}
-      {(() => {
-        const [mcVol, setMcVol]         = React.useState(0.12);
-        const [mcResult, setMcResult]   = React.useState(null);
-        const [mcRunning, setMcRunning] = React.useState(false);
-
-        function runMC() {
-          setMcRunning(true);
-          setTimeout(() => {
-            const result = runMonteCarlo(sim, calc, mcVol, 1000);
-            setMcResult(result);
-            setMcRunning(false);
-          }, 50);
-        }
-
-        const fmtMC = (n) => {
-          if (n === null || n === undefined) return '—';
-          const a = Math.abs(n);
-          const s = n < 0 ? '−' : '+';
-          if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
-          if (a >= 1e3) return s + '€' + Math.round(a/1e3) + 'k';
-          return s + '€' + Math.round(a);
-        };
-
-        const buildHistogram = (results, bins = 20) => {
-          if (!results || !results.length) return [];
-          const min = results[0], max = results[results.length - 1];
-          const range = max - min || 1;
-          const binSize = range / bins;
-          const counts = Array(bins).fill(0);
-          results.forEach(v => {
-            const idx = Math.min(bins - 1, Math.floor((v - min) / binSize));
-            counts[idx]++;
-          });
-          return counts.map((count, i) => ({
-            from: Math.round(min + i * binSize),
-            to:   Math.round(min + (i+1) * binSize),
-            count,
-            pct:  count / results.length,
-          }));
-        };
-
-        const hist    = mcResult ? buildHistogram(mcResult.results) : [];
-        const histMax = hist.length ? Math.max(...hist.map(b => b.count)) : 1;
-
-        return (
-          <div style={cardStyle}>
-            <div style={labelStyle}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M2 20h20M5 20V10l7-7 7 7v10"/>
-              </svg>
-              Monte Carlo Simulation
-              <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>1,000 scenarios</span>
-            </div>
-
-            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
-              background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
-              <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
-                letterSpacing:'.7px', whiteSpace:'nowrap' }}>Volatility</span>
-              <input type="range" min="3" max="35" step="1"
-                value={Math.round(mcVol * 100)}
-                onChange={e => setMcVol(parseInt(e.target.value) / 100)}
-                style={{ flex:1, accentColor:'#0b1929' }}/>
-              <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
-                color:'#0b1929', minWidth:36, textAlign:'right' }}>
-                {Math.round(mcVol * 100)}%
-              </span>
-              <button onClick={runMC} disabled={mcRunning}
-                style={{ padding:'6px 16px', borderRadius:6, background:'#0b1929', color:'#fff',
-                  fontFamily:'DM Sans, sans-serif', fontSize:12, fontWeight:600, border:'none',
-                  cursor: mcRunning ? 'not-allowed' : 'pointer', opacity: mcRunning ? 0.7 : 1,
-                  whiteSpace:'nowrap' }}>
-                {mcRunning ? 'Running…' : 'Run simulation →'}
-              </button>
-            </div>
-
-            {!mcResult && !mcRunning && (
-              <div style={{ textAlign:'center', padding:'24px 0', color:'#94a3b8', fontSize:13 }}>
-                Set volatility and click "Run simulation" to see the distribution of outcomes.
-              </div>
-            )}
-
-            {mcResult && (
-              <div>
-                <div style={{ marginBottom:16 }}>
-                  <div style={{ fontSize:11, color:'#94a3b8', marginBottom:8 }}>
-                    Distribution of annual net savings — 1,000 simulated scenarios
-                  </div>
-                  <div style={{ display:'flex', alignItems:'flex-end', gap:2, height:80, marginBottom:4 }}>
-                    {hist.map((b, i) => {
-                      const h = Math.max(2, Math.round((b.count / histMax) * 80));
-                      return (
-                        <div key={i} title={`${fmtMC(b.from)} to ${fmtMC(b.to)}: ${b.count} scenarios`}
-                          style={{ flex:1, height:`${h}px`,
-                            background: b.from >= 0 ? '#0b1929' : '#dc2626',
-                            borderRadius:'2px 2px 0 0', opacity:0.7+(b.pct*0.3), cursor:'default' }}/>
-                      );
-                    })}
-                  </div>
-                  <div style={{ display:'flex', justifyContent:'space-between', fontSize:9,
-                    color:'#94a3b8', fontFamily:'DM Mono, monospace' }}>
-                    <span>{fmtMC(mcResult.p5)}</span>
-                    <span>P50: {fmtMC(mcResult.p50)}</span>
-                    <span>{fmtMC(mcResult.p95)}</span>
-                  </div>
-                </div>
-
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:14 }}>
-                  {[
-                    { label:'P10 — pessimistic', val:mcResult.p10, color:'#dc2626' },
-                    { label:'P50 — median',      val:mcResult.p50, color:'#0b1929' },
-                    { label:'P90 — optimistic',  val:mcResult.p90, color:'#059669' },
-                  ].map(({ label, val, color }) => (
-                    <div key={label} style={{ background:'#f8fafc', borderRadius:8,
-                      padding:'10px 12px', border:'1px solid #e2e8f0' }}>
-                      <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
-                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
-                        {label}
-                      </div>
-                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:16, fontWeight:700, color }}>
-                        {fmtMC(val)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ background:'#f0fdf4', border:'1px solid #a7f3d0', borderRadius:8,
-                  padding:'10px 14px', display:'flex', gap:24, flexWrap:'wrap' }}>
-                  {[
-                    { label:'Probability of positive return', val:`${mcResult.probPositive}%` },
-                    { label:'Probability of saving > €500k',  val:`${mcResult.probGt500k}%` },
-                    { label:'Mean outcome',                    val:fmtMC(mcResult.mean), dark:true },
-                  ].map(({ label, val, dark }) => (
-                    <div key={label}>
-                      <div style={{ fontSize:9, color:'#065f46', fontWeight:700,
-                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:3 }}>
-                        {label}
-                      </div>
-                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:16,
-                        fontWeight:700, color: dark ? '#0b1929' : '#059669' }}>
-                        {val}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* ── CASH VaR ── */}
-      {(() => {
-        const [varVol, setVarVol] = React.useState(0.12);
-        const varResult = computeCashVaR(sim, calc, varVol);
-
-        const fmtV = (n) => {
-          if (!n && n !== 0) return '—';
-          const a = Math.abs(n);
-          if (a >= 1e6) return '€' + (a/1e6).toFixed(2) + 'M';
-          if (a >= 1e3) return '€' + Math.round(a/1e3) + 'k';
-          return '€' + Math.round(a);
-        };
-
-        return (
-          <div style={cardStyle}>
-            <div style={labelStyle}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-              Cash VaR — Value at Risk
-              <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>Pool performance risk</span>
-            </div>
-
-            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
-              background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
-              <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
-                letterSpacing:'.7px', whiteSpace:'nowrap' }}>Balance volatility</span>
-              <input type="range" min="3" max="35" step="1"
-                value={Math.round(varVol * 100)}
-                onChange={e => setVarVol(parseInt(e.target.value) / 100)}
-                style={{ flex:1, accentColor:'#0b1929' }}/>
-              <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
-                color:'#0b1929', minWidth:36, textAlign:'right' }}>
-                {Math.round(varVol * 100)}%
-              </span>
-            </div>
-
-            {varResult && (
-              <div>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, marginBottom:14 }}>
-                  {[
-                    { label:'95% Daily VaR',  val:varResult.var95, sub:'1-in-20 day shortfall',  color:'#d97706' },
-                    { label:'99% Daily VaR',  val:varResult.var99, sub:'1-in-100 day shortfall', color:'#dc2626' },
-                    { label:'CVaR (95%)',      val:varResult.cvar,  sub:'Expected shortfall',     color:'#dc2626' },
-                  ].map(({ label, val, sub, color }) => (
-                    <div key={label} style={{ background:'#f8fafc', borderRadius:8,
-                      padding:'10px 12px', border:'1px solid #e2e8f0' }}>
-                      <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
-                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
-                        {label}
-                      </div>
-                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:15, fontWeight:700, color }}>
-                        −{fmtV(val)}
-                      </div>
-                      <div style={{ fontSize:9, color:'#94a3b8', marginTop:3 }}>{sub}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ background:'#fff7ed', border:'1px solid #fed7aa', borderRadius:8, padding:'12px 14px' }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:'#9a3412', marginBottom:6 }}>
-                    Interpretation
-                  </div>
-                  <div style={{ fontSize:12, color:'#7c2d12', lineHeight:1.6, fontWeight:300 }}>
-                    On <strong>95% of trading days</strong> the pool's net benefit will not deviate
-                    by more than <strong>{fmtV(varResult.var95)}</strong> from the daily expected
-                    saving of <strong>{fmtV(Math.abs(varResult.dailyExpected))}</strong>.
-                    The worst 5% of days may see a shortfall of up to <strong>{fmtV(varResult.cvar)}</strong> (CVaR).
-                    Annual VaR at 95%: <strong>{fmtV(varResult.annualVaR95)}</strong>.
-                  </div>
-                </div>
-
-                <div style={{ marginTop:10, fontSize:10, color:'#94a3b8', lineHeight:1.5 }}>
-                  VaR assumes normally distributed daily balance movements with {Math.round(varVol*100)}% annual volatility.
-                  This is a modelled estimate — actual results depend on group cash flow patterns.
-                  Standard methodology per Basel III / IFRS 7 liquidity risk reporting.
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
+      <MonteCarloCard sim={sim} calc={calc} />
+      <CashVaRCard sim={sim} calc={calc} />
 
     </div>
   );
