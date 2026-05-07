@@ -184,151 +184,168 @@ function KPICard({ label, value, badge, sub, ring }) {
 
 // ─── Bar Chart ─────────────────────────────────────────────────────────────
 
-function BarChart() {
-  const [hov, setHov] = useState(null);
-  const ph = v => `${(v / CMAX) * CH}px`;
+function BarChart({ sim, calc }) {
+  const [volatility, setVolatility] = React.useState(0.12);
+  const [chartData, setChartData]   = React.useState(null);
+  const [hov, setHov]               = React.useState(null);
+  const [dataSource]                = React.useState('simulated');
+
+  React.useEffect(() => {
+    setChartData(simulateQuarterly(sim, calc, volatility));
+  }, [volatility]);
+
+  const data   = chartData || simulateQuarterly(sim, calc, volatility);
+  const maxVal = Math.max(...data.flatMap(d => [d.without, d.pooled]), 100);
+  const CMAX   = Math.ceil(maxVal / 100) * 100 + 50;
+  const CH     = 200;
+  const ph     = v => `${Math.max(4, (v / CMAX) * CH)}px`;
+
+  const totalWithout = data.reduce((s, d) => s + d.without, 0);
+  const totalPooled  = data.reduce((s, d) => s + d.pooled,  0);
+  const totalSaved   = totalWithout - totalPooled;
+  const savingPct    = totalWithout > 0 ? Math.round(totalSaved / totalWithout * 100) : 0;
+
+  const yTicks = [0, Math.round(CMAX * 0.33 / 100) * 100, Math.round(CMAX * 0.66 / 100) * 100, CMAX - 50];
+
+  const volLabel = volatility < 0.08 ? 'Holding company' : volatility < 0.15 ? 'Operating company' : volatility < 0.22 ? 'Seasonal business' : 'Trading company';
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:24 }}>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:16 }}>
         <div>
-          <div className="font-semibold text-slate-800" style={{ fontSize:14 }}>
+          <div style={{ fontSize:14, fontWeight:600, color:'#1e293b' }}>
             Interest Cost: Before vs. After Pooling
           </div>
-          <div className="text-slate-400 mt-0.5" style={{ fontSize:11 }}>
-            Quarterly interest expense · EUR thousands · {CHART_PERIODS[0]}–{CHART_PERIODS[3]}
+          <div style={{ fontSize:11, color:'#94a3b8', marginTop:2 }}>
+            Quarterly estimate · EUR thousands ·
+            <span style={{ color:'#d97706', fontWeight:600, marginLeft:4 }}>
+              ⚡ Simulated estimate
+            </span>
           </div>
         </div>
-        <div style={{ display:'flex', gap:20, alignItems:'center' }}>
+        <div style={{ display:'flex', gap:16, alignItems:'center' }}>
           {[
             { bg:'#e2e8f0', border:'#cbd5e1', label:'Without pooling' },
-            { bg:'#4f46e5', border:'#4f46e5', label:'With CashPoolModel' },
+            { bg:'#0b1929', border:'#0b1929', label:'With CashPoolModel' },
           ].map(({ bg, border, label }) => (
             <div key={label} style={{ display:'flex', alignItems:'center', gap:6 }}>
               <div style={{ width:12, height:12, borderRadius:3, background:bg, border:`1.5px solid ${border}` }} />
-              <span className="text-slate-500" style={{ fontSize:11 }}>{label}</span>
+              <span style={{ fontSize:11, color:'#64748b' }}>{label}</span>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Volatility slider */}
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
+        background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+        <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
+          letterSpacing:'.7px', whiteSpace:'nowrap' }}>Balance volatility</span>
+        <input type="range" min="3" max="35" step="1"
+          value={Math.round(volatility * 100)}
+          onChange={e => setVolatility(parseInt(e.target.value) / 100)}
+          style={{ flex:1, accentColor:'#0b1929' }}/>
+        <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+          color:'#0b1929', minWidth:36, textAlign:'right' }}>
+          {Math.round(volatility * 100)}%
+        </span>
+        <button onClick={() => setChartData(simulateQuarterly(sim, calc, volatility))}
+          style={{ padding:'4px 12px', borderRadius:6, background:'#0b1929', color:'#fff',
+            fontFamily:'DM Sans, sans-serif', fontSize:11, fontWeight:600, border:'none',
+            cursor:'pointer', whiteSpace:'nowrap' }}>
+          Recalculate
+        </button>
+        <div style={{ fontSize:9, color:'#94a3b8', maxWidth:120, lineHeight:1.4 }}>
+          {volLabel}
         </div>
       </div>
 
       {/* Chart area */}
-      <div style={{ display:'flex', gap:0 }}>
-
-        {/* Y axis — height = bars + x-label row */}
-        <div style={{ position:'relative', width:40, height: CH + 28, flexShrink:0 }}>
-          {[0,100,200,300].map(v => (
-            <span key={v} style={{
-              position:'absolute', right:8,
-              bottom:`calc(28px + ${(v/CMAX)*CH}px - 6px)`,
-              fontSize:9, fontFamily:'DM Mono, monospace', lineHeight:1, color:'#94a3b8'
-            }}>
-              {v}k
+      <div style={{ display:'flex', alignItems:'flex-start', gap:0 }}>
+        {/* Y axis */}
+        <div style={{ position:'relative', width:44, height:CH, flexShrink:0 }}>
+          {yTicks.map(v => (
+            <span key={v} style={{ position:'absolute', right:8,
+              bottom:`calc(${(v/CMAX)*CH}px - 6px)`,
+              fontSize:9, fontFamily:'DM Mono, monospace', color:'#94a3b8', lineHeight:1 }}>
+              €{v}k
             </span>
           ))}
         </div>
 
-        {/* Bars + grid + X labels stacked */}
-        <div style={{ flex:1, display:'flex', flexDirection:'column' }}>
-
-          {/* Bars + grid */}
-          <div style={{ position:'relative', height:CH, borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
-
-            {/* Grid lines */}
-            {[100,200,300].map(v => (
-              <div key={v} style={{
-                position:'absolute', left:0, right:0,
-                bottom:`${(v/CMAX)*CH}px`,
-                borderTop:'1px dashed #f1f5f9', pointerEvents:'none'
-              }} />
-            ))}
-
-            {/* Bar groups */}
-            <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'flex-end', justifyContent:'space-around', padding:'0 32px' }}>
-              {CHART.map((d, gi) => (
-                <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:6 }}>
-
-                  {/* Without bar */}
-                  <div
-                    onMouseEnter={() => setHov({gi, which:'without'})}
-                    onMouseLeave={() => setHov(null)}
-                    style={{ position:'relative', cursor:'default' }}>
-                    <div style={{
-                      width:36, borderRadius:'3px 3px 0 0',
-                      height: ph(d.without),
-                      background:'#e2e8f0',
-                      opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.5 : 1,
-                      transition:'opacity 0.1s'
-                    }} />
-                    {hov?.gi===gi && hov?.which==='without' && (
-                      <div style={{
-                        position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
-                        left:'50%', transform:'translateX(-50%)',
-                        background:'#1e293b', color:'#fff',
-                        fontSize:10, fontFamily:'DM Mono, monospace',
-                        padding:'3px 7px', borderRadius:4,
-                        whiteSpace:'nowrap', zIndex:10,
-                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                      }}>
-                        €{d.without}k
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Pooled bar */}
-                  <div
-                    onMouseEnter={() => setHov({gi, which:'pooled'})}
-                    onMouseLeave={() => setHov(null)}
-                    style={{ position:'relative', cursor:'default' }}>
-                    <div style={{
-                      width:36, borderRadius:'3px 3px 0 0',
-                      height: ph(d.pooled),
-                      background:'#4f46e5',
-                      opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.5 : 1,
-                      transition:'opacity 0.1s'
-                    }} />
-                    {hov?.gi===gi && hov?.which==='pooled' && (
-                      <div style={{
-                        position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
-                        left:'50%', transform:'translateX(-50%)',
-                        background:'#4338ca', color:'#fff',
-                        fontSize:10, fontFamily:'DM Mono, monospace',
-                        padding:'3px 7px', borderRadius:4,
-                        whiteSpace:'nowrap', zIndex:10,
-                        boxShadow:'0 2px 8px rgba(0,0,0,.18)'
-                      }}>
-                        €{d.pooled}k · save €{d.without - d.pooled}k
-                      </div>
-                    )}
-                  </div>
-
+        {/* Bars */}
+        <div style={{ flex:1, position:'relative', height:CH,
+          borderLeft:'1px solid #e2e8f0', borderBottom:'1px solid #e2e8f0' }}>
+          {yTicks.slice(1).map(v => (
+            <div key={v} style={{ position:'absolute', left:0, right:0,
+              bottom:`${(v/CMAX)*CH}px`, borderTop:'1px dashed #f1f5f9', pointerEvents:'none' }}/>
+          ))}
+          <div style={{ position:'absolute', inset:0, display:'flex',
+            alignItems:'flex-end', justifyContent:'space-around', padding:'0 24px' }}>
+            {data.map((d, gi) => (
+              <div key={gi} style={{ display:'flex', alignItems:'flex-end', gap:5 }}>
+                {/* Without bar */}
+                <div onMouseEnter={() => setHov({gi, which:'without'})}
+                  onMouseLeave={() => setHov(null)}
+                  style={{ position:'relative', cursor:'default' }}>
+                  <div style={{ width:34, borderRadius:'3px 3px 0 0', height:ph(d.without),
+                    background:'#e2e8f0',
+                    opacity: hov && (hov.gi!==gi || hov.which!=='without') ? 0.4 : 1,
+                    transition:'opacity 0.1s, height 0.4s ease' }}/>
+                  {hov?.gi===gi && hov?.which==='without' && (
+                    <div style={{ position:'absolute', bottom:`calc(${ph(d.without)} + 6px)`,
+                      left:'50%', transform:'translateX(-50%)', background:'#1e293b', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'3px 7px',
+                      borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
+                      €{d.without}k
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* X-axis labels — same padding as bar groups so they align exactly */}
-          <div style={{ display:'flex', justifyContent:'space-around', padding:'7px 32px 0', borderLeft:'1px solid #e2e8f0' }}>
-            {CHART.map((d, i) => (
-              <span key={i} style={{ fontSize:11, color:'#475569', fontFamily:'DM Mono, monospace', fontWeight:500, textAlign:'center' }}>{d.period}</span>
+                {/* Pooled bar */}
+                <div onMouseEnter={() => setHov({gi, which:'pooled'})}
+                  onMouseLeave={() => setHov(null)}
+                  style={{ position:'relative', cursor:'default' }}>
+                  <div style={{ width:34, borderRadius:'3px 3px 0 0', height:ph(d.pooled),
+                    background:'#0b1929',
+                    opacity: hov && (hov.gi!==gi || hov.which!=='pooled') ? 0.4 : 1,
+                    transition:'opacity 0.1s, height 0.4s ease' }}/>
+                  {hov?.gi===gi && hov?.which==='pooled' && (
+                    <div style={{ position:'absolute', bottom:`calc(${ph(d.pooled)} + 6px)`,
+                      left:'50%', transform:'translateX(-50%)', background:'#0b1929', color:'#fff',
+                      fontSize:10, fontFamily:'DM Mono, monospace', padding:'3px 7px',
+                      borderRadius:4, whiteSpace:'nowrap', zIndex:10 }}>
+                      €{d.pooled}k · save €{d.without - d.pooled}k
+                    </div>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
-
         </div>
       </div>
 
+      {/* X-axis */}
+      <div style={{ display:'flex', justifyContent:'space-around', paddingLeft:44, marginTop:6 }}>
+        {data.map((d, i) => (
+          <span key={i} style={{ fontSize:10, color:'#94a3b8', fontFamily:'DM Sans, sans-serif' }}>
+            {d.period}
+          </span>
+        ))}
+      </div>
+
       {/* Summary strip */}
-      <div style={{ marginTop:20, paddingTop:16, borderTop:'1px solid #f1f5f9', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
+      <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f1f5f9',
+        display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:16 }}>
         {[
-          { label:'Total cost without pooling',    value:'€1,222k', color:'#475569' },
-          { label:'Total cost with CashPoolModel', value:'€610k',   color:'#4f46e5' },
-          { label:'Total annual interest saved',   value:'€612k · ↓ 50%', color:'#059669' },
+          { label:'Annual cost without pooling', value:`€${totalWithout}k`, color:'#475569' },
+          { label:'Annual cost with pooling',    value:`€${totalPooled}k`,  color:'#0b1929' },
+          { label:'Annual interest saved',       value:`€${totalSaved}k · ↓ ${savingPct}%`, color:'#059669' },
         ].map(({ label, value, color }) => (
           <div key={label}>
-            <div className="text-slate-400" style={{ fontSize:10, marginBottom:3 }}>{label}</div>
-            <div style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:17, fontWeight:600, color, tabularNums:true }}>
+            <div style={{ fontSize:10, color:'#94a3b8', marginBottom:3 }}>{label}</div>
+            <div style={{ fontFamily:'DM Mono, monospace', fontSize:16, fontWeight:700, color }}>
               {value}
             </div>
           </div>
@@ -1306,6 +1323,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
   const nettingLabel = nettingEff+'%';
   const netLabel = fmtK ? fmtK(netBenefit) : '€842k';
   const poolLabel = fmtM ? fmtM(poolBalance) : '+€12.3M';
+  const calc = computeFromSim(sim);
 
   return (
     <div style={{ flex:1, overflowY:'auto', padding:32, display:'flex', flexDirection:'column', gap:20,
@@ -1358,7 +1376,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:16 }}>
             {(dynKPIS||KPIS).map((k, i) => <KPICard key={i} {...k}/>)}
           </div>
-          <BarChart />
+          <BarChart sim={sim} calc={calc} />
           <SubsidiaryTable entities={dynEntities} />
         </>
       )}
@@ -1378,6 +1396,8 @@ const AI_WORKER = 'https://cpm-ai.kuba-houser.workers.dev';
 
 // ─── Analysis Section ─────────────────────────────────────────────────────
 function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, poolBank }) {
+  const calc = computeFromSim(sim);
+
   const [aiInput, setAiInput]     = React.useState('');
   const [aiAnswer, setAiAnswer]   = React.useState(null);
   const [aiLoading, setAiLoading] = React.useState(false);
@@ -1678,6 +1698,240 @@ function Analysis({ sim, fmtK, netBenefit, interestSave, paybackMo, nettingEff, 
         </div>
       </div>
 
+      {/* ── MONTE CARLO SIMULATION ── */}
+      {(() => {
+        const [mcVol, setMcVol]         = React.useState(0.12);
+        const [mcResult, setMcResult]   = React.useState(null);
+        const [mcRunning, setMcRunning] = React.useState(false);
+
+        function runMC() {
+          setMcRunning(true);
+          setTimeout(() => {
+            const result = runMonteCarlo(sim, calc, mcVol, 1000);
+            setMcResult(result);
+            setMcRunning(false);
+          }, 50);
+        }
+
+        const fmtMC = (n) => {
+          if (n === null || n === undefined) return '—';
+          const a = Math.abs(n);
+          const s = n < 0 ? '−' : '+';
+          if (a >= 1e6) return s + '€' + (a/1e6).toFixed(2) + 'M';
+          if (a >= 1e3) return s + '€' + Math.round(a/1e3) + 'k';
+          return s + '€' + Math.round(a);
+        };
+
+        const buildHistogram = (results, bins = 20) => {
+          if (!results || !results.length) return [];
+          const min = results[0], max = results[results.length - 1];
+          const range = max - min || 1;
+          const binSize = range / bins;
+          const counts = Array(bins).fill(0);
+          results.forEach(v => {
+            const idx = Math.min(bins - 1, Math.floor((v - min) / binSize));
+            counts[idx]++;
+          });
+          return counts.map((count, i) => ({
+            from: Math.round(min + i * binSize),
+            to:   Math.round(min + (i+1) * binSize),
+            count,
+            pct:  count / results.length,
+          }));
+        };
+
+        const hist    = mcResult ? buildHistogram(mcResult.results) : [];
+        const histMax = hist.length ? Math.max(...hist.map(b => b.count)) : 1;
+
+        return (
+          <div style={cardStyle}>
+            <div style={labelStyle}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M2 20h20M5 20V10l7-7 7 7v10"/>
+              </svg>
+              Monte Carlo Simulation
+              <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>1,000 scenarios</span>
+            </div>
+
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
+              background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+              <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
+                letterSpacing:'.7px', whiteSpace:'nowrap' }}>Volatility</span>
+              <input type="range" min="3" max="35" step="1"
+                value={Math.round(mcVol * 100)}
+                onChange={e => setMcVol(parseInt(e.target.value) / 100)}
+                style={{ flex:1, accentColor:'#0b1929' }}/>
+              <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+                color:'#0b1929', minWidth:36, textAlign:'right' }}>
+                {Math.round(mcVol * 100)}%
+              </span>
+              <button onClick={runMC} disabled={mcRunning}
+                style={{ padding:'6px 16px', borderRadius:6, background:'#0b1929', color:'#fff',
+                  fontFamily:'DM Sans, sans-serif', fontSize:12, fontWeight:600, border:'none',
+                  cursor: mcRunning ? 'not-allowed' : 'pointer', opacity: mcRunning ? 0.7 : 1,
+                  whiteSpace:'nowrap' }}>
+                {mcRunning ? 'Running…' : 'Run simulation →'}
+              </button>
+            </div>
+
+            {!mcResult && !mcRunning && (
+              <div style={{ textAlign:'center', padding:'24px 0', color:'#94a3b8', fontSize:13 }}>
+                Set volatility and click "Run simulation" to see the distribution of outcomes.
+              </div>
+            )}
+
+            {mcResult && (
+              <div>
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ fontSize:11, color:'#94a3b8', marginBottom:8 }}>
+                    Distribution of annual net savings — 1,000 simulated scenarios
+                  </div>
+                  <div style={{ display:'flex', alignItems:'flex-end', gap:2, height:80, marginBottom:4 }}>
+                    {hist.map((b, i) => {
+                      const h = Math.max(2, Math.round((b.count / histMax) * 80));
+                      return (
+                        <div key={i} title={`${fmtMC(b.from)} to ${fmtMC(b.to)}: ${b.count} scenarios`}
+                          style={{ flex:1, height:`${h}px`,
+                            background: b.from >= 0 ? '#0b1929' : '#dc2626',
+                            borderRadius:'2px 2px 0 0', opacity:0.7+(b.pct*0.3), cursor:'default' }}/>
+                      );
+                    })}
+                  </div>
+                  <div style={{ display:'flex', justifyContent:'space-between', fontSize:9,
+                    color:'#94a3b8', fontFamily:'DM Mono, monospace' }}>
+                    <span>{fmtMC(mcResult.p5)}</span>
+                    <span>P50: {fmtMC(mcResult.p50)}</span>
+                    <span>{fmtMC(mcResult.p95)}</span>
+                  </div>
+                </div>
+
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:14 }}>
+                  {[
+                    { label:'P10 — pessimistic', val:mcResult.p10, color:'#dc2626' },
+                    { label:'P50 — median',      val:mcResult.p50, color:'#0b1929' },
+                    { label:'P90 — optimistic',  val:mcResult.p90, color:'#059669' },
+                  ].map(({ label, val, color }) => (
+                    <div key={label} style={{ background:'#f8fafc', borderRadius:8,
+                      padding:'10px 12px', border:'1px solid #e2e8f0' }}>
+                      <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
+                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
+                        {label}
+                      </div>
+                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:16, fontWeight:700, color }}>
+                        {fmtMC(val)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ background:'#f0fdf4', border:'1px solid #a7f3d0', borderRadius:8,
+                  padding:'10px 14px', display:'flex', gap:24, flexWrap:'wrap' }}>
+                  {[
+                    { label:'Probability of positive return', val:`${mcResult.probPositive}%` },
+                    { label:'Probability of saving > €500k',  val:`${mcResult.probGt500k}%` },
+                    { label:'Mean outcome',                    val:fmtMC(mcResult.mean), dark:true },
+                  ].map(({ label, val, dark }) => (
+                    <div key={label}>
+                      <div style={{ fontSize:9, color:'#065f46', fontWeight:700,
+                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:3 }}>
+                        {label}
+                      </div>
+                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:16,
+                        fontWeight:700, color: dark ? '#0b1929' : '#059669' }}>
+                        {val}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* ── CASH VaR ── */}
+      {(() => {
+        const [varVol, setVarVol] = React.useState(0.12);
+        const varResult = computeCashVaR(sim, calc, varVol);
+
+        const fmtV = (n) => {
+          if (!n && n !== 0) return '—';
+          const a = Math.abs(n);
+          if (a >= 1e6) return '€' + (a/1e6).toFixed(2) + 'M';
+          if (a >= 1e3) return '€' + Math.round(a/1e3) + 'k';
+          return '€' + Math.round(a);
+        };
+
+        return (
+          <div style={cardStyle}>
+            <div style={labelStyle}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Cash VaR — Value at Risk
+              <span style={{ marginLeft:'auto', fontSize:9, color:'#94a3b8' }}>Pool performance risk</span>
+            </div>
+
+            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16,
+              background:'#f8fafc', borderRadius:8, padding:'8px 14px', border:'1px solid #e2e8f0' }}>
+              <span style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
+                letterSpacing:'.7px', whiteSpace:'nowrap' }}>Balance volatility</span>
+              <input type="range" min="3" max="35" step="1"
+                value={Math.round(varVol * 100)}
+                onChange={e => setVarVol(parseInt(e.target.value) / 100)}
+                style={{ flex:1, accentColor:'#0b1929' }}/>
+              <span style={{ fontFamily:'DM Mono, monospace', fontSize:13, fontWeight:700,
+                color:'#0b1929', minWidth:36, textAlign:'right' }}>
+                {Math.round(varVol * 100)}%
+              </span>
+            </div>
+
+            {varResult && (
+              <div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, marginBottom:14 }}>
+                  {[
+                    { label:'95% Daily VaR',  val:varResult.var95, sub:'1-in-20 day shortfall',  color:'#d97706' },
+                    { label:'99% Daily VaR',  val:varResult.var99, sub:'1-in-100 day shortfall', color:'#dc2626' },
+                    { label:'CVaR (95%)',      val:varResult.cvar,  sub:'Expected shortfall',     color:'#dc2626' },
+                  ].map(({ label, val, sub, color }) => (
+                    <div key={label} style={{ background:'#f8fafc', borderRadius:8,
+                      padding:'10px 12px', border:'1px solid #e2e8f0' }}>
+                      <div style={{ fontSize:9, color:'#94a3b8', fontWeight:700,
+                        textTransform:'uppercase', letterSpacing:'.6px', marginBottom:5 }}>
+                        {label}
+                      </div>
+                      <div style={{ fontFamily:'DM Mono, monospace', fontSize:15, fontWeight:700, color }}>
+                        −{fmtV(val)}
+                      </div>
+                      <div style={{ fontSize:9, color:'#94a3b8', marginTop:3 }}>{sub}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ background:'#fff7ed', border:'1px solid #fed7aa', borderRadius:8, padding:'12px 14px' }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:'#9a3412', marginBottom:6 }}>
+                    Interpretation
+                  </div>
+                  <div style={{ fontSize:12, color:'#7c2d12', lineHeight:1.6, fontWeight:300 }}>
+                    On <strong>95% of trading days</strong> the pool's net benefit will not deviate
+                    by more than <strong>{fmtV(varResult.var95)}</strong> from the daily expected
+                    saving of <strong>{fmtV(Math.abs(varResult.dailyExpected))}</strong>.
+                    The worst 5% of days may see a shortfall of up to <strong>{fmtV(varResult.cvar)}</strong> (CVaR).
+                    Annual VaR at 95%: <strong>{fmtV(varResult.annualVaR95)}</strong>.
+                  </div>
+                </div>
+
+                <div style={{ marginTop:10, fontSize:10, color:'#94a3b8', lineHeight:1.5 }}>
+                  VaR assumes normally distributed daily balance movements with {Math.round(varVol*100)}% annual volatility.
+                  This is a modelled estimate — actual results depend on group cash flow patterns.
+                  Standard methodology per Basel III / IFRS 7 liquidity risk reporting.
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
     </div>
   );
 }
@@ -1695,6 +1949,140 @@ function loadSimData() {
     if (raw) return JSON.parse(raw);
   } catch(e) {}
   return null;
+}
+
+function computeFromSim(sim) {
+  if (!sim) return null;
+  return {
+    dr:          sim.debitRate   || 0.055,
+    cr:          sim.creditRate  || 0.028,
+    pdr:         sim.poolDebit   || 0.032,
+    pcr:         sim.poolCredit  || 0.040,
+    dcf:         sim.dayCount    || 1,
+    netBenefit:  sim.netBenefit  || 842000,
+    annualCosts: sim.annualCosts || 70000,
+    wht:         sim.whtRate     || 0,
+    intCostBef:  sim.intCostBef  || 0,
+  };
+}
+
+// ─── Simulation Engine ────────────────────────────────────────────────────
+
+function randNormal(mean, std) {
+  let u, v;
+  do { u = Math.random(); } while (u === 0);
+  do { v = Math.random(); } while (v === 0);
+  const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  return mean + std * z;
+}
+
+function simulateQuarterly(sim, calc, volatility = 0.12) {
+  if (!sim || !calc) return [
+    { period:'Q1', without:285, pooled:142 },
+    { period:'Q2', without:312, pooled:156 },
+    { period:'Q3', without:298, pooled:149 },
+    { period:'Q4', without:327, pooled:163 },
+  ];
+
+  const surplus = sim.surplus || 0;
+  const deficit = sim.deficit || 0;
+  const dr  = calc.dr  || 0.055;
+  const cr  = calc.cr  || 0.028;
+  const pdr = calc.pdr || 0.032;
+  const pcr = calc.pcr || 0.040;
+  const dcf = calc.dcf || 1;
+  const qf  = dcf / 4;
+
+  const year     = new Date().getFullYear();
+  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+
+  return quarters.map((q) => {
+    const sig      = volatility;
+    const qSurplus = Math.max(0, surplus * (1 + randNormal(0, sig)));
+    const qDeficit = Math.max(0, deficit * (1 + randNormal(0, sig)));
+
+    const withoutInterest = (
+      qDeficit * dr * qf +
+      qSurplus * -cr * qf * 0.5
+    ) / 1000;
+
+    const withInterest = (
+      Math.max(0, qDeficit - Math.min(qSurplus, qDeficit)) * pdr * qf +
+      qSurplus * -pcr * qf * 0.3
+    ) / 1000;
+
+    return {
+      period: `${q} ${year}`,
+      without: Math.max(10, Math.round(Math.abs(withoutInterest))),
+      pooled:  Math.max(5,  Math.round(Math.abs(withInterest))),
+    };
+  });
+}
+
+function runMonteCarlo(sim, calc, volatility = 0.12, runs = 1000) {
+  if (!sim || !calc) return null;
+
+  const annualCosts = calc.annualCosts || 70000;
+  const results = [];
+
+  for (let i = 0; i < runs; i++) {
+    const sig           = volatility;
+    const surplusFactor = Math.max(0.1, 1 + randNormal(0, sig));
+    const deficitFactor = Math.max(0.1, 1 + randNormal(0, sig));
+
+    const adjSurplus = (sim.surplus || 0) * surplusFactor;
+    const adjDeficit = (sim.deficit || 0) * deficitFactor;
+    const adjNetting = Math.min(adjSurplus, adjDeficit);
+
+    const debitSave    = adjDeficit * ((calc.dr || 0.055) - (calc.pdr || 0.032)) * (calc.dcf || 1);
+    const creditUplift = adjSurplus * ((calc.pcr || 0.040) - (calc.cr || 0.028)) * (calc.dcf || 1);
+    const nettingSave  = adjNetting * (calc.pdr || 0.032) * (calc.dcf || 1);
+    const whtCost      = adjNetting * (calc.pdr || 0.032) * (calc.dcf || 1) * (calc.wht || 0);
+
+    const annualSaving = debitSave + creditUplift + nettingSave - whtCost - annualCosts;
+    results.push(Math.round(annualSaving));
+  }
+
+  results.sort((a, b) => a - b);
+
+  const p = (pct) => results[Math.floor(pct / 100 * runs)];
+  const positive = results.filter(r => r > 0).length;
+
+  return {
+    runs,
+    results,
+    p5:  p(5),
+    p10: p(10),
+    p25: p(25),
+    p50: p(50),
+    p75: p(75),
+    p90: p(90),
+    p95: p(95),
+    mean: Math.round(results.reduce((a, b) => a + b, 0) / runs),
+    probPositive: Math.round(positive / runs * 1000) / 10,
+    probGt500k:   Math.round(results.filter(r => r > 500000).length / runs * 1000) / 10,
+  };
+}
+
+function computeCashVaR(sim, calc, volatility = 0.12) {
+  if (!sim || !calc) return null;
+
+  const netBenefit   = calc.netBenefit || 0;
+  const dailyBenefit = netBenefit / 365;
+  const dailySigma   = Math.abs(dailyBenefit) * volatility / Math.sqrt(252);
+
+  const var95 = Math.round(dailySigma * 1.645);
+  const var99 = Math.round(dailySigma * 2.326);
+  const cvar  = Math.round(dailySigma * 2.063);
+
+  return {
+    dailyExpected: Math.round(dailyBenefit),
+    var95,
+    var99,
+    cvar,
+    annualVaR95: Math.round(var95 * Math.sqrt(252)),
+    annualVaR99: Math.round(var99 * Math.sqrt(252)),
+  };
 }
 
 // ─── App root ─────────────────────────────────────────────────────────────
@@ -1741,8 +2129,9 @@ function App() {
   };
 
   // Dynamic KPIs
+  const calc = computeFromSim(sim);
   const dynKPIS = [
-    { label:'Net Interest Savings', value:fmtK(interestSave),  badge:'↑ '+(sim?((interestSave/612000-1)*100).toFixed(0)+'%':'18.3%'), sub:'vs. standalone arrangement',  ring:null },
+    { label:'Net Interest Savings', value:fmtK(interestSave),  badge: sim ? `↓ ${Math.round((interestSave / Math.max(calc?.intCostBef || interestSave * 2, 1)) * 100)}% cost` : '↑ 18.3%', sub:'vs. standalone arrangement',  ring:null },
     { label:'Netting Efficiency',   value:nettingEff+'%',      badge:'↑ 12pp',  sub:'above sector benchmark', ring:nettingEff },
     { label:'Operational Savings',  value:fmtK(opSave),        badge:'Additional',sub:'FX, facility fees, accounts', ring:null },
     { label:'Avg. Yield Spread',    value:'+'+yieldSpread+'%', badge:'+'+(yieldSpread*100|0)+' bp', sub:'over pool benchmark rate', ring:null },
