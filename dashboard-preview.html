@@ -669,6 +669,403 @@ const RATES = [
   { name:'SARON',       val:'0.35%', chg:'0.00%',  pos:null,  src:'SIX Swiss Exchange' },
 ];
 
+// ─── PoolCanvas ───────────────────────────────────────────────────────────
+function PoolCanvas({ entityList, poolBank, poolBalance, baseCcy, ccySym,
+                      poolType, sim, nettingPct, nettingColor, nettingBg, nettingTip,
+                      effLabel, masterName }) {
+
+  const [compact,   setCompact]   = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState({});
+  const [transform, setTransform] = React.useState({ x:0, y:0, scale:1 });
+  const [dragging,  setDragging]  = React.useState(false);
+  const [dragStart, setDragStart] = React.useState({ x:0, y:0 });
+
+  const CANVAS_W = 900;
+  const CANVAS_H = 480;
+  const MASTER_W = 200;
+  const MASTER_H = 80;
+  const nodeW    = compact ? 130 : 160;
+  const nodeH    = compact ? 36  : 72;
+  const hGap     = compact ? 20  : 28;
+  const vGap     = compact ? 55  : 75;
+
+  const mName = masterName || '__master__';
+
+  function effP(e) {
+    if (e.parentName !== undefined && e.parentName !== null) return e.parentName;
+    if (e.parentIdx != null && e.parentIdx !== '') {
+      const p = entityList[parseInt(e.parentIdx)];
+      return p ? p.name : null;
+    }
+    return null;
+  }
+
+  function countryFlag(cc) {
+    if (!cc || cc.length !== 2) return '🏢';
+    const b = 0x1F1E6 - 65;
+    const u = cc.toUpperCase();
+    return String.fromCodePoint(b + u.charCodeAt(0)) + String.fromCodePoint(b + u.charCodeAt(1));
+  }
+
+  const subEntities = entityList.filter(e =>
+    e.name !== mName &&
+    !(e.name?.toLowerCase().includes('master') && effP(e) == null)
+  );
+
+  function getVisible(entities, coll) {
+    const hidden = new Set();
+    function markHidden(pName) {
+      entities.forEach(e => {
+        const ep = effP(e) ?? mName;
+        if (ep === pName) { hidden.add(e.name); markHidden(e.name); }
+      });
+    }
+    Object.entries(coll).forEach(([name, isC]) => { if (isC) markHidden(name); });
+    return entities.filter(e => !hidden.has(e.name));
+  }
+
+  const visibleSubs = getVisible(subEntities, collapsed);
+
+  const childMap = {};
+  childMap[mName] = [];
+  visibleSubs.forEach(e => {
+    const pk = effP(e) ?? mName;
+    if (!childMap[pk]) childMap[pk] = [];
+    if (!childMap[pk].find(c => c.name === e.name)) childMap[pk].push(e);
+  });
+
+  function subtreeW(name) {
+    const ch = childMap[name] || [];
+    if (!ch.length) return nodeW;
+    return Math.max(nodeW, ch.reduce((s, c) => s + subtreeW(c.name), 0) + hGap * (ch.length - 1));
+  }
+
+  const positions = {};
+  function assignPos(name, cx, topY) {
+    const isM = name === mName;
+    const w = isM ? MASTER_W : nodeW;
+    const h = isM ? MASTER_H : nodeH;
+    positions[name] = { x: cx - w / 2, y: topY };
+    const ch = childMap[name] || [];
+    if (!ch.length) return;
+    const tw = ch.reduce((s, c) => s + subtreeW(c.name), 0) + hGap * (ch.length - 1);
+    let lx = cx - tw / 2;
+    ch.forEach(child => {
+      const sw = subtreeW(child.name);
+      assignPos(child.name, lx + sw / 2, topY + h + vGap);
+      lx += sw + hGap;
+    });
+  }
+  assignPos(mName, CANVAS_W / 2, 40);
+
+  const allPos = Object.values(positions);
+  const totalW = Math.max(CANVAS_W, allPos.length ? Math.max(...allPos.map(p => p.x + nodeW)) : CANVAS_W);
+  const totalH = Math.max(CANVAS_H, allPos.length ? Math.max(...allPos.map(p => p.y + nodeH)) + 20 : CANVAS_H);
+
+  function onWheel(e) {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const ns = Math.max(0.3, Math.min(2.5, transform.scale * delta));
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    setTransform(t => ({ scale: ns, x: cx - (cx - t.x) * (ns / t.scale), y: cy - (cy - t.y) * (ns / t.scale) }));
+  }
+  function onMouseDown(e) {
+    if (e.target && e.target.closest && e.target.closest('[data-node]')) return;
+    setDragging(true);
+    setDragStart({ x: e.clientX - transform.x, y: e.clientY - transform.y });
+  }
+  function onMouseMove(e) {
+    if (!dragging) return;
+    setTransform(t => ({ ...t, x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }));
+  }
+  function onMouseUp() { setDragging(false); }
+
+  React.useEffect(() => { setTransform({ x:0, y:0, scale:1 }); }, [compact]);
+
+  function rColor(cc) {
+    const map = { DE:'#2563eb', FR:'#7c3aed', NL:'#0891b2', GB:'#be185d', AT:'#dc2626',
+      CH:'#d97706', BE:'#059669', IT:'#0284c7', ES:'#9333ea', CZ:'#6366f1',
+      SK:'#0d9488', PL:'#d946ef', HU:'#f59e0b', SE:'#10b981', DK:'#3b82f6',
+      NO:'#f97316', FI:'#8b5cf6', PT:'#06b6d4', LU:'#e11d48', IE:'#16a34a' };
+    return map[(cc||'').toUpperCase()] || '#64748b';
+  }
+
+  const ptLabel = poolType==='tba' ? 'TBA · Target sweep'
+    : poolType==='notional' ? 'Notional · Virtual offset' : 'ZBA · Auto-sweep';
+
+  const pScale = Math.round(transform.scale * 100) + '%';
+
+  return (
+    <div style={{ background:'#fff', borderRadius:12, border:'1px solid #e2e8f0',
+      boxShadow:'0 1px 3px rgba(15,23,42,.06)', overflow:'hidden' }}>
+
+      {/* Header */}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'12px 20px', borderBottom:'1px solid #f1f5f9', flexWrap:'wrap', gap:8 }}>
+        <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
+          {poolType==='notional' ? 'Notional Offset Structure' : 'Pool Hierarchy — Daily Sweep Structure'}
+        </div>
+        <div style={{ display:'flex', gap:6, alignItems:'center', flexWrap:'wrap' }}>
+          <div title={nettingTip}
+            style={{ display:'flex', alignItems:'center', gap:5, background: nettingBg,
+              border:`1px solid ${nettingColor}55`, borderRadius:6, padding:'4px 10px', cursor:'default' }}>
+            <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>{effLabel}</span>
+            <span style={{ fontSize:11, fontWeight:700, color: nettingColor, fontFamily:'DM Mono,monospace' }}>{nettingPct}</span>
+          </div>
+          <div style={{ display:'inline-flex', background:'#f8fafc', borderRadius:8, padding:2, gap:1 }}>
+            {[{v:false,l:'Detailed'},{v:true,l:'Compact'}].map(({ v, l }) => (
+              <button key={l} onClick={() => setCompact(v)}
+                style={{ padding:'4px 10px', borderRadius:6, border:'none', cursor:'pointer',
+                  fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600, transition:'all .13s',
+                  background: compact===v ? '#fff' : 'transparent',
+                  color: compact===v ? '#0f172a' : '#94a3b8',
+                  boxShadow: compact===v ? '0 1px 3px rgba(15,23,42,.08)' : 'none' }}>
+                {compact===v ? '● ' : '○ '}{l}
+              </button>
+            ))}
+          </div>
+          {[
+            ['−', () => setTransform(t => ({ ...t, scale: Math.max(0.3, t.scale * 0.8) }))],
+            [pScale, () => setTransform({ x:0, y:0, scale:1 })],
+            ['+', () => setTransform(t => ({ ...t, scale: Math.min(2.5, t.scale * 1.2) }))],
+            ['Fit', () => setTransform({ x:0, y:0, scale:1 })],
+          ].map(([label, action]) => (
+            <button key={label} onClick={action}
+              style={{ padding:'3px 8px', borderRadius:5, border:'1px solid #e2e8f0',
+                cursor:'pointer', fontFamily:'DM Mono,monospace', fontSize:10, fontWeight:600,
+                background:'#f8fafc', color:'#64748b' }}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SVG canvas */}
+      <div style={{ height: CANVAS_H, overflow:'hidden', position:'relative',
+        background:'#f8fafc', cursor: dragging ? 'grabbing' : 'grab', userSelect:'none' }}
+        onWheel={onWheel}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}>
+        <svg width="100%" height={CANVAS_H} style={{ display:'block', overflow:'visible' }}>
+          <g transform={`translate(${transform.x},${transform.y}) scale(${transform.scale})`}>
+
+            {/* Edges */}
+            {visibleSubs.map(e => {
+              const pN = effP(e) ?? mName;
+              const fp = positions[pN];
+              const tp = positions[e.name];
+              if (!fp || !tp) return null;
+              const isMp = pN === mName;
+              const pW   = isMp ? MASTER_W : nodeW;
+              const pH   = isMp ? MASTER_H : nodeH;
+              const x1   = fp.x + pW / 2;
+              const y1   = fp.y + pH;
+              const x2   = tp.x + nodeW / 2;
+              const y2   = tp.y;
+              const my   = (y1 + y2) / 2;
+              const path = `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
+              const isFX  = e.cc !== baseCcy;
+              const isNot = poolType === 'notional';
+              const col   = isFX ? '#f59e0b' : isNot ? '#a5b4fc' : e.surplus ? '#059669' : '#dc2626';
+              const dash  = isNot ? '6,4' : (e.sweepDirection && e.sweepDirection !== 'two-way') ? '4,3' : undefined;
+              return (
+                <g key={'edge_'+e.name}>
+                  <path d={path} fill="none" stroke={col}
+                    strokeWidth={isFX ? 2 : 1.5} strokeDasharray={dash} opacity={0.7}/>
+                  {!isNot && (
+                    <polygon points={`${x2},${y2} ${x2-4},${y2-7} ${x2+4},${y2-7}`}
+                      fill={col} opacity={0.8}/>
+                  )}
+                  {isFX && (
+                    <g transform={`translate(${(x1+x2)/2-12},${my-8})`}>
+                      <rect width={24} height={16} rx={4} fill="#fef3c7" stroke="#f59e0b" strokeWidth={1}/>
+                      <text x={12} y={11} textAnchor="middle" fontSize={8} fontWeight={700} fill="#92400e">FX</text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* Master node */}
+            {positions[mName] && (() => {
+              const p = positions[mName];
+              return (
+                <g transform={`translate(${p.x},${p.y})`} data-node="true">
+                  <rect width={MASTER_W} height={MASTER_H} rx={10} fill="#fff"
+                    stroke="#0b1929" strokeWidth={1.5}
+                    style={{ filter:'drop-shadow(0 2px 6px rgba(15,23,42,.10))' }}/>
+                  <rect width={MASTER_W} height={3} rx={1.5} fill="#0b1929"/>
+                  <text x={14} y={22} fontSize={11} fontWeight={700} fill="#0b1929"
+                    fontFamily="DM Sans, sans-serif">Master Account ({baseCcy})</text>
+                  <rect x={136} y={9} width={56} height={15} rx={8} fill="#e0e7ff"/>
+                  <text x={164} y={20} fontSize={8} fontWeight={700} fill="#3730a3"
+                    textAnchor="middle" fontFamily="DM Sans, sans-serif">Pool Header</text>
+                  <text x={14} y={47} fontSize={17} fontWeight={700} fill="#059669"
+                    fontFamily="DM Mono, monospace">{poolBalance||'+€12.3M'}</text>
+                  <rect x={14} y={56} width={28} height={13} rx={3} fill="#f8fafc" stroke="#e2e8f0" strokeWidth={0.8}/>
+                  <text x={28} y={66} fontSize={8} fontWeight={700} fill="#94a3b8"
+                    textAnchor="middle" fontFamily="DM Sans, sans-serif">{baseCcy}</text>
+                  <text x={49} y={66} fontSize={8} fontWeight={600} fill="#0b1929"
+                    fontFamily="DM Sans, sans-serif">{poolBank||'ING Bank'}</text>
+                  <circle cx={111} cy={62} r={3} fill="#059669"/>
+                  <text x={117} y={66} fontSize={8} fontWeight={600} fill="#059669"
+                    fontFamily="DM Sans, sans-serif">{ptLabel}</text>
+                </g>
+              );
+            })()}
+
+            {/* Entity nodes */}
+            {visibleSubs.map(e => {
+              const pos = positions[e.name];
+              if (!pos) return null;
+              const allCh   = entityList.filter(o => (effP(o) ?? mName) === e.name && o.name !== mName);
+              const isCol   = allCh.length > 0;
+              const regCol  = rColor(e.domicile || e.country || 'DE');
+              const acc     = poolType==='notional' ? '#6366f1' : e.surplus ? '#059669' : '#dc2626';
+              const bal     = e.surplus
+                ? (e.balance?.startsWith('+') ? e.balance : '+'+(e.balance||'0'))
+                : (e.balance?.startsWith('−')||e.balance?.startsWith('-') ? e.balance : '−'+(e.balance||'0'));
+              const nm      = e.name || '';
+              const flag    = e.flag || countryFlag(e.domicile || e.country);
+
+              if (compact) {
+                return (
+                  <g key={e.name} transform={`translate(${pos.x},${pos.y})`} data-node="true">
+                    <rect width={nodeW} height={nodeH} rx={18} fill="#fff"
+                      stroke={e.surplus ? '#d1fae5' : '#fee2e2'} strokeWidth={1.5}
+                      style={{ filter:'drop-shadow(0 1px 2px rgba(15,23,42,.05))' }}/>
+                    <rect width={3} height={nodeH} rx={1.5} fill={acc}/>
+                    <text x={13} y={15} fontSize={13}>{flag}</text>
+                    <text x={29} y={14} fontSize={9} fontWeight={700} fill="#0f172a"
+                      fontFamily="DM Sans, sans-serif">{nm.length>13 ? nm.slice(0,12)+'…' : nm}</text>
+                    <text x={29} y={27} fontSize={9} fontWeight={700} fill={acc}
+                      fontFamily="DM Mono, monospace">{bal}</text>
+                    {isCol && (
+                      <g transform={`translate(${nodeW/2-8},${nodeH-5})`} data-node="collapse"
+                        onClick={ev => { ev.stopPropagation(); setCollapsed(c => ({...c,[e.name]:!c[e.name]})); }}
+                        style={{ cursor:'pointer' }}>
+                        <circle cx={8} cy={8} r={8} fill="#0b1929" stroke="#fff" strokeWidth={1.5}/>
+                        <text x={8} y={12} textAnchor="middle" fontSize={11} fontWeight={700}
+                          fill="#fff" fontFamily="DM Sans, sans-serif">{collapsed[e.name] ? '+' : '−'}</text>
+                      </g>
+                    )}
+                  </g>
+                );
+              }
+
+              return (
+                <g key={e.name} transform={`translate(${pos.x},${pos.y})`} data-node="true">
+                  <rect width={nodeW} height={nodeH} rx={8} fill="#fff"
+                    stroke={e.surplus ? '#d1fae5' : '#fee2e2'} strokeWidth={1.5}
+                    style={{ filter:'drop-shadow(0 1px 3px rgba(15,23,42,.06))' }}/>
+                  <rect width={4} height={nodeH} rx={2} fill={regCol}/>
+                  <rect x={4} width={nodeW-4} height={2.5} rx={1}
+                    fill={e.surplus ? '#059669' : '#dc2626'}/>
+                  <text x={10} y={26} fontSize={16}>{flag}</text>
+                  <text x={30} y={21} fontSize={10} fontWeight={700} fill="#0f172a"
+                    fontFamily="DM Sans, sans-serif">{nm.length>16 ? nm.slice(0,15)+'…' : nm}</text>
+                  <text x={30} y={31} fontSize={8} fill="#94a3b8"
+                    fontFamily="DM Sans, sans-serif">{e.domicile||e.country||'—'}</text>
+                  <text x={10} y={52} fontSize={13} fontWeight={700} fill={acc}
+                    fontFamily="DM Mono, monospace">{bal}</text>
+                  <rect x={10} y={57} width={26} height={12} rx={3} fill="#f8fafc" stroke="#e2e8f0" strokeWidth={0.8}/>
+                  <text x={23} y={66} fontSize={7} fontWeight={700} fill="#94a3b8"
+                    textAnchor="middle" fontFamily="DM Sans, sans-serif">{e.cc}</text>
+                  <text x={nodeW-6} y={66} fontSize={8} fill="#94a3b8" textAnchor="end"
+                    fontFamily="DM Mono, monospace">{e.interestRate}</text>
+                  {e.cc !== baseCcy && (
+                    <g transform={`translate(${nodeW-32},56)`}>
+                      <rect width={24} height={12} rx={3} fill="#fef3c7" stroke="#fde68a" strokeWidth={0.8}/>
+                      <text x={12} y={9} textAnchor="middle" fontSize={7} fontWeight={700}
+                        fill="#92400e" fontFamily="DM Sans, sans-serif">FX</text>
+                    </g>
+                  )}
+                  {isCol && (
+                    <g transform={`translate(${nodeW/2-8},${nodeH-5})`} data-node="collapse"
+                      onClick={ev => { ev.stopPropagation(); setCollapsed(c => ({...c,[e.name]:!c[e.name]})); }}
+                      style={{ cursor:'pointer' }}>
+                      <circle cx={8} cy={8} r={8} fill="#0b1929" stroke="#fff" strokeWidth={2}/>
+                      <text x={8} y={12} textAnchor="middle" fontSize={11} fontWeight={700}
+                        fill="#fff" fontFamily="DM Sans, sans-serif">{collapsed[e.name] ? '+' : '−'}</text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+
+            {/* MiniMap */}
+            <g transform={`translate(${CANVAS_W-130},${CANVAS_H-90})`}>
+              <rect width={120} height={80} rx={6}
+                fill="rgba(248,250,252,0.95)" stroke="#e2e8f0" strokeWidth={1}/>
+              <text x={8} y={14} fontSize={8} fontWeight={700} fill="#94a3b8"
+                fontFamily="DM Sans, sans-serif">MAP</text>
+              {positions[mName] && (() => {
+                const p = positions[mName];
+                const mx = 8 + (p.x / totalW) * 104;
+                const my = 20 + (p.y / totalH) * 50;
+                return <rect x={mx} y={my} width={10} height={6} rx={1} fill="#0b1929" opacity={0.9}/>;
+              })()}
+              {visibleSubs.map(e => {
+                const p = positions[e.name];
+                if (!p) return null;
+                const mx = 8 + (p.x / totalW) * 104;
+                const my = 20 + (p.y / totalH) * 50;
+                return <rect key={'mm_'+e.name} x={mx} y={my} width={8} height={4} rx={1}
+                  fill={e.surplus ? '#059669' : '#dc2626'} opacity={0.7}/>;
+              })}
+              <rect
+                x={8 + Math.max(0, -transform.x/transform.scale) / totalW * 104}
+                y={20 + Math.max(0, -transform.y/transform.scale) / totalH * 50}
+                width={Math.min(104, CANVAS_W/transform.scale/totalW*104)}
+                height={Math.min(50, CANVAS_H/transform.scale/totalH*50)}
+                fill="none" stroke="#0b1929" strokeWidth={0.8} opacity={0.5}/>
+            </g>
+
+          </g>
+        </svg>
+      </div>
+
+      {/* Legend */}
+      <div style={{ padding:'12px 20px', borderTop:'1px solid #f1f5f9',
+        display:'flex', gap:20, justifyContent:'center', flexWrap:'wrap', alignItems:'center' }}>
+        {[
+          { col:'#059669', label:'Surplus — sweeps to master daily' },
+          { col:'#dc2626', label:'Deficit — funded from master daily' },
+        ].map(l => (
+          <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+            <div style={{ width:20, height:6, borderRadius:3, background:l.col, flexShrink:0 }} />
+            {l.label}
+          </div>
+        ))}
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+          <span style={{ background:'#fef3c7', color:'#92400e', fontSize:9, fontWeight:700,
+            padding:'1px 6px', borderRadius:3 }}>FX</span>
+          Non-base currency · FX conversion on sweep
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+          <svg width="20" height="10" viewBox="0 0 20 10">
+            <line x1="2" y1="5" x2="14" y2="5" stroke="#0b1929" strokeWidth="1.5" strokeDasharray="3,2"/>
+            <polygon points="12,2 18,5 12,8" fill="#0b1929"/>
+            <polygon points="6,2 2,5 6,8" fill="#0b1929"/>
+          </svg>
+          Two-way ZBA sweep
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
+          <svg width="20" height="10" viewBox="0 0 20 10">
+            <line x1="2" y1="5" x2="14" y2="5" stroke="#059669" strokeWidth="1.5"/>
+            <polygon points="12,2 18,5 12,8" fill="#059669"/>
+          </svg>
+          One-way sweep
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, baseCurrency, sim }) {
   const entityList = ents || ENTITIES;
 
@@ -810,143 +1207,21 @@ function PoolStructure({ entities: ents, poolBank, poolBalance, nettingEff, base
     <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
 
       {/* ── Hierarchy card ── */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:28 }}>
-
-        {/* Header */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-          <div style={{ fontSize:11, fontWeight:600, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.08em' }}>
-            {poolType === 'notional' ? 'Notional Offset Structure' : 'Pool Hierarchy — Daily Sweep Structure'} · <span style={{ fontWeight:400, textTransform:'none', letterSpacing:0 }}>as of {fmtMonthYear(NOW)}</span>
-          </div>
-          <div style={{ display:'flex', gap:6, alignItems:'center' }}>
-            <div title={nettingTip}
-              style={{ display:'flex', alignItems:'center', gap:5, background: zbaBg,
-                border:`1px solid ${zbaColor}55`, borderRadius:6, padding:'4px 10px', cursor:'default' }}>
-              <span style={{ fontSize:9, color:'#94a3b8', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.06em' }}>{effLabel}</span>
-              <span style={{ fontSize:11, fontWeight:700, color: zbaColor, fontFamily:'DM Mono,monospace' }}>{zbaLabel}</span>
-              <span style={{ fontSize:9, color:zbaColor }}>{zbaRaw >= 60 ? '✓' : zbaRaw >= 30 ? '△' : '⚠'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Master account pill */}
-        <div style={{ display:'flex', justifyContent:'center', marginBottom:0 }}>
-          <div style={{ borderRadius:8, padding:'10px 18px', background:'#fff',
-            border:'1px solid #e2e8f0', position:'relative', overflow:'hidden', minWidth:200, maxWidth:320 }}>
-            <div style={{ position:'absolute', top:0, left:0, right:0, height:2.5, background:'#1e3a5f' }} />
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6, marginTop:1 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                <span style={{ fontSize:13 }}>🏛</span>
-                <span style={{ fontSize:11, fontWeight:600, color:'#1e293b' }}>Master Account ({baseCcy})</span>
-              </div>
-              <div style={{ fontSize:9, fontWeight:700, color:'#1e3a5f', background:'#e0e7ff', padding:'2px 7px', borderRadius:99 }}>Pool Header</div>
-            </div>
-            <div style={{ fontFamily:'DM Mono,monospace', fontSize:14, fontWeight:700, color:'#059669', letterSpacing:'-.3px', marginBottom:5 }}>
-              {poolBalance||'+€12.3M'}
-            </div>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:5 }}>
-                <span style={{ fontSize:9, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.07em', background:'#f8fafc', border:'1px solid #e2e8f0', padding:'1px 6px', borderRadius:3 }}>{baseCcy}</span>
-                <span style={{ fontSize:9, fontWeight:600, color:'#1e3a5f', background:'#e0e7ff', border:'1px solid #c7d2fe', padding:'1px 6px', borderRadius:3 }}>{poolBank||'ING Bank'}</span>
-                <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, fontWeight:600, color: poolType === 'notional' ? '#6366f1' : '#059669' }}>
-                  <div style={{ width:5, height:5, borderRadius:'50%', background: poolType === 'notional' ? '#6366f1' : '#059669', animation: poolType === 'notional' ? 'none' : 'pulse 2s infinite' }} />
-                  {poolType === 'notional' ? 'Notional · Virtual offset' : poolType === 'tba' ? 'TBA · Target sweep' : 'ZBA · Auto-sweep'}
-                </div>
-              </div>
-              <div style={{ display:'flex', alignItems:'center', gap:3, fontSize:9, color:'#64748b' }}>
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                16:00 CET
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── CONNECTOR ── */}
-        {(() => {
-          const subAccounts = entityList.filter(e => effParent(e) != null);
-          const isPhysical  = ['zba','tba'].includes(poolType);
-          const twoWay   = subAccounts.filter(e => !e.sweepDirection || e.sweepDirection === 'two-way').length;
-          const oneWayUp = subAccounts.filter(e => e.sweepDirection === 'one-way-up').length;
-          const sweepLabel = isPhysical
-            ? (twoWay > 0 ? '↕ Two-way daily sweep' : oneWayUp > 0 ? '↑ Surplus sweep only' : '↓ Funded only')
-            : 'Virtual offset — no physical movement';
-          const tip = isPhysical
-            ? (twoWay > 0 ? 'Physical sweep: surplus and deficit balances moved to master daily'
-              : oneWayUp > 0 ? 'One-way sweep: surplus accounts only — deficits funded by master'
-              : 'One-way sweep: deficits funded by master — surplus stays in-place')
-            : 'Notional pool: balances netted virtually, no physical cash movement';
-          return (
-            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', height:44, gap:4 }}>
-              <div style={{ width:1.5, height:28,
-                backgroundImage:'repeating-linear-gradient(to bottom,#94a3b8 0,#94a3b8 4px,transparent 4px,transparent 8px)' }} />
-              <div title={tip} style={{ fontSize:8, color:'#94a3b8', textAlign:'center', lineHeight:1.3,
-                cursor:'help', textDecoration:'underline', textDecorationStyle:'dotted', textUnderlineOffset:'2px' }}>
-                {sweepLabel}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* ── ENTITY CARDS — HIERARCHICAL TREE ── */}
-        {(() => {
-          const l2Count = l2Entities.length;
-          const cols = l2Count <= 2 ? 2 : l2Count <= 6 ? 3 : 4;
-          return (
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              <div style={{ display:'grid', gridTemplateColumns:`repeat(${cols}, 1fr)`, gap:10 }}>
-                {l2Entities.map((e, i) => {
-                  const children = getChildrenOf(e.name);
-                  return (
-                    <div key={i} style={{ display:'flex', flexDirection:'column', gap:0 }}>
-                      {renderCard(e, false)}
-                      {children.length > 0 && (
-                        <div style={{ display:'flex', flexDirection:'column', gap:6, marginTop:6,
-                          paddingLeft:12, borderLeft:'2px dashed #e2e8f0', marginLeft:8 }}>
-                          {children.map((child, ci) => (
-                            <div key={ci}>{renderCard(child, true)}</div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Legend */}
-        <div style={{ marginTop:20, paddingTop:14, borderTop:'1px solid #f1f5f9',
-          display:'flex', gap:20, justifyContent:'center', flexWrap:'wrap', alignItems:'center' }}>
-          {[
-            { col:'#059669', label:'Surplus — sweeps to master daily' },
-            { col:'#dc2626', label:'Deficit — funded from master daily' },
-          ].map(l => (
-            <div key={l.label} style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
-              <div style={{ width:20, height:6, borderRadius:3, background:l.col, flexShrink:0 }} />
-              {l.label}
-            </div>
-          ))}
-          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
-            <span style={{ background:'#fef3c7', color:'#92400e', fontSize:9, fontWeight:700, padding:'1px 6px', borderRadius:3 }}>FX</span>
-            Non-base currency · FX conversion on sweep
-          </div>
-          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
-            <svg width="20" height="10" viewBox="0 0 20 10">
-              <line x1="2" y1="5" x2="18" y2="5" stroke="#0b1929" strokeWidth="1.5" strokeDasharray="3,2"/>
-              <polygon points="14,2 18,5 14,8" fill="#0b1929"/>
-              <polygon points="6,2 2,5 6,8" fill="#0b1929"/>
-            </svg>
-            Two-way ZBA sweep
-          </div>
-          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'#64748b' }}>
-            <svg width="20" height="10" viewBox="0 0 20 10">
-              <line x1="2" y1="5" x2="16" y2="5" stroke="#059669" strokeWidth="1.5"/>
-              <polygon points="13,2 18,5 13,8" fill="#059669"/>
-            </svg>
-            One-way sweep
-          </div>
-        </div>
-      </div>
+      <PoolCanvas
+        entityList={entityList}
+        poolBank={poolBank}
+        poolBalance={poolBalance}
+        baseCcy={baseCcy}
+        ccySym={ccySym}
+        poolType={poolType}
+        sim={sim}
+        nettingPct={zbaLabel}
+        nettingColor={zbaColor}
+        nettingBg={zbaBg}
+        nettingTip={nettingTip}
+        effLabel={effLabel}
+        masterName={masterName}
+      />
 
       {/* ── Netting Flow ── */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm" style={{ padding:24 }}>
