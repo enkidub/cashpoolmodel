@@ -674,11 +674,12 @@ function PoolCanvas({ entityList, poolBank, poolBalance, baseCcy, ccySym,
                       poolType, sim, nettingPct, nettingColor, nettingBg, nettingTip,
                       effLabel, masterName }) {
 
-  const [compact,   setCompact]   = React.useState(false);
-  const [collapsed, setCollapsed] = React.useState({});
-  const [transform, setTransform] = React.useState({ x:0, y:0, scale:1 });
-  const [dragging,  setDragging]  = React.useState(false);
-  const [dragStart, setDragStart] = React.useState({ x:0, y:0 });
+  const [compact,     setCompact]     = React.useState(false);
+  const [collapsed,   setCollapsed]   = React.useState({});
+  const [transform,   setTransform]   = React.useState({ x:0, y:0, scale:1 });
+  const [dragging,    setDragging]    = React.useState(false);
+  const [dragStart,   setDragStart]   = React.useState({ x:0, y:0 });
+  const [mmCollapsed, setMmCollapsed] = React.useState(false);
 
   const CANVAS_W = 900;
   const CANVAS_H = 480;
@@ -826,19 +827,6 @@ function PoolCanvas({ entityList, poolBank, poolBalance, baseCcy, ccySym,
               </button>
             ))}
           </div>
-          {[
-            ['−', () => setTransform(t => ({ ...t, scale: Math.max(0.3, t.scale * 0.8) }))],
-            [pScale, () => setTransform({ x:0, y:0, scale:1 })],
-            ['+', () => setTransform(t => ({ ...t, scale: Math.min(2.5, t.scale * 1.2) }))],
-            ['Fit', () => setTransform({ x:0, y:0, scale:1 })],
-          ].map(([label, action]) => (
-            <button key={label} onClick={action}
-              style={{ padding:'3px 8px', borderRadius:5, border:'1px solid #e2e8f0',
-                cursor:'pointer', fontFamily:'DM Mono,monospace', fontSize:10, fontWeight:600,
-                background:'#f8fafc', color:'#64748b' }}>
-              {label}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -997,36 +985,86 @@ function PoolCanvas({ entityList, poolBank, poolBalance, baseCcy, ccySym,
               );
             })}
 
-            {/* MiniMap */}
-            <g transform={`translate(${CANVAS_W-130},${CANVAS_H-90})`}>
-              <rect width={120} height={80} rx={6}
-                fill="rgba(248,250,252,0.95)" stroke="#e2e8f0" strokeWidth={1}/>
-              <text x={8} y={14} fontSize={8} fontWeight={700} fill="#94a3b8"
-                fontFamily="DM Sans, sans-serif">MAP</text>
-              {positions[mName] && (() => {
-                const p = positions[mName];
-                const mx = 8 + (p.x / totalW) * 104;
-                const my = 20 + (p.y / totalH) * 50;
-                return <rect x={mx} y={my} width={10} height={6} rx={1} fill="#0b1929" opacity={0.9}/>;
-              })()}
-              {visibleSubs.map(e => {
-                const p = positions[e.name];
-                if (!p) return null;
-                const mx = 8 + (p.x / totalW) * 104;
-                const my = 20 + (p.y / totalH) * 50;
-                return <rect key={'mm_'+e.name} x={mx} y={my} width={8} height={4} rx={1}
-                  fill={e.surplus ? '#059669' : '#dc2626'} opacity={0.7}/>;
-              })}
-              <rect
-                x={8 + Math.max(0, -transform.x/transform.scale) / totalW * 104}
-                y={20 + Math.max(0, -transform.y/transform.scale) / totalH * 50}
-                width={Math.min(104, CANVAS_W/transform.scale/totalW*104)}
-                height={Math.min(50, CANVAS_H/transform.scale/totalH*50)}
-                fill="none" stroke="#0b1929" strokeWidth={0.8} opacity={0.5}/>
-            </g>
 
           </g>
         </svg>
+
+        {/* ── Minimap + Zoom overlay ── */}
+        <div
+          onMouseDown={e => e.stopPropagation()}
+          style={{ position:'absolute', bottom:12, right:12, zIndex:10,
+            background:'rgba(248,250,252,0.97)', border:'1px solid #e2e8f0',
+            borderRadius:8, boxShadow:'0 2px 10px rgba(15,23,42,.10)',
+            overflow:'hidden', userSelect:'none', minWidth:136 }}>
+
+          {/* Header */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+            padding:'5px 8px 5px 10px',
+            borderBottom: mmCollapsed ? 'none' : '1px solid #f1f5f9' }}>
+            <span style={{ fontSize:8, fontWeight:700, color:'#94a3b8',
+              letterSpacing:'0.12em', textTransform:'uppercase' }}>Map</span>
+            <button onClick={() => setMmCollapsed(c => !c)}
+              title={mmCollapsed ? 'Expand minimap' : 'Collapse minimap'}
+              style={{ background:'none', border:'none', cursor:'pointer',
+                padding:'0 2px', color:'#94a3b8', fontSize:14, lineHeight:1,
+                fontWeight:400, fontFamily:'DM Mono,monospace' }}>
+              {mmCollapsed ? '+' : '−'}
+            </button>
+          </div>
+
+          {/* Minimap SVG */}
+          {!mmCollapsed && (
+            <div style={{ padding:'6px 8px 4px' }}>
+              <svg width={120} height={66} style={{ display:'block', overflow:'visible' }}>
+                {/* master node */}
+                {positions[mName] && (() => {
+                  const p = positions[mName];
+                  const mx = 4 + (p.x / totalW) * 112;
+                  const my = 4 + (p.y / totalH) * 56;
+                  return <rect x={mx} y={my} width={11} height={6} rx={1.5} fill="#0b1929" opacity={0.9}/>;
+                })()}
+                {/* sub nodes */}
+                {visibleSubs.map(e => {
+                  const p = positions[e.name];
+                  if (!p) return null;
+                  const mx = 4 + (p.x / totalW) * 112;
+                  const my = 4 + (p.y / totalH) * 56;
+                  return <rect key={'mm_'+e.name} x={mx} y={my} width={8} height={4} rx={1}
+                    fill={e.surplus ? '#059669' : '#dc2626'} opacity={0.75}/>;
+                })}
+                {/* viewport indicator */}
+                <rect
+                  x={4 + Math.max(0, -transform.x/transform.scale) / totalW * 112}
+                  y={4 + Math.max(0, -transform.y/transform.scale) / totalH * 56}
+                  width={Math.min(112, CANVAS_W/transform.scale/totalW*112)}
+                  height={Math.min(56, CANVAS_H/transform.scale/totalH*56)}
+                  fill="rgba(11,25,41,.05)" stroke="#0b1929" strokeWidth={0.8}
+                  strokeDasharray="2,1.5" rx={1}/>
+              </svg>
+            </div>
+          )}
+
+          {/* Zoom controls */}
+          <div style={{ display:'flex', gap:3, padding:'5px 7px',
+            borderTop:'1px solid #f1f5f9' }}>
+            {[
+              ['−', () => setTransform(t => ({ ...t, scale: Math.max(0.3, t.scale * 0.8) }))],
+              [pScale, () => setTransform({ x:0, y:0, scale:1 })],
+              ['+', () => setTransform(t => ({ ...t, scale: Math.min(2.5, t.scale * 1.2) }))],
+              ['Fit', () => setTransform({ x:0, y:0, scale:1 })],
+            ].map(([label, action]) => (
+              <button key={label} onClick={action}
+                style={{ flex: label === pScale ? 1 : 'none',
+                  padding:'3px 6px', borderRadius:4, border:'1px solid #e2e8f0',
+                  cursor:'pointer', fontFamily:'DM Mono,monospace', fontSize:9,
+                  fontWeight:600, background:'#fff', color:'#64748b',
+                  whiteSpace:'nowrap', textAlign:'center' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       {/* Legend */}
