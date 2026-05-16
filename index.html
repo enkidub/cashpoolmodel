@@ -775,8 +775,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <div class="calc-row">
         <div class="calc-label-row">
           <label class="calc-label" for="calcSpread">
-            Estimated Interest Spread
-            <span class="calc-tip-icon" data-tip="Difference between your group's borrowing and lending rates.">?</span>
+            Borrowing–Deposit Rate Gap
+            <span class="calc-tip-icon" data-tip="Difference between what your entities pay on overdrafts and earn on deposits — the gap cash pooling closes.">?</span>
           </label>
           <span class="calc-val" id="calcSpreadVal">2.5%</span>
         </div>
@@ -833,8 +833,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <div class="how-step">
         <div class="how-n">01</div>
         <div class="how-content">
-          <div class="how-t" data-i18n="how.s1t">Upload &amp; Map Entities</div>
-          <div class="how-d" data-i18n="how.s1d">AI extracts balances and structure from statements in seconds. Manual entry available.</div>
+          <div class="how-t" data-i18n="how.s1t">Enter Your Entity Structure</div>
+          <div class="how-d" data-i18n="how.s1d">Add subsidiaries manually or load a preset. Map balances, currencies, and intercompany relationships.</div>
         </div>
       </div>
 
@@ -939,6 +939,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
         <a href="/about.html">About</a>
         <a href="/blog.html">Blog</a>
         <a href="/contact.html">Contact</a>
+        <a href="https://github.com/enkidub/cashpoolmodel" target="_blank" rel="noopener">GitHub</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Trust &amp; Legal</div>
@@ -978,8 +979,8 @@ const translations = {
     'preview.matrix_label': 'Sensitivity Matrix — Net Benefit (rate × volatility)',
     'preview.note': 'Illustrative data. Actual report generated from your inputs.',
     'how.eyebrow': 'How it works', 'how.h2': 'From data to board decision<br>in three steps.',
-    'how.s1t': 'Upload &amp; Map Entities',
-    'how.s1d': 'AI extracts balances and structure from statements in seconds. Manual entry available.',
+    'how.s1t': 'Enter Your Entity Structure',
+    'how.s1d': 'Add subsidiaries manually or load a preset. Map balances, currencies, and intercompany relationships.',
     'how.s2t': 'Model Scenarios',
     'how.s2d': 'Run base, optimistic, and stress-test simulations. Analyze netting efficiency and P&amp;L impact.',
     'how.s3t': 'Export Board-Ready Intelligence',
@@ -1011,8 +1012,8 @@ const translations = {
     'preview.matrix_label': 'Sensitivitätsmatrix — Nettonutzen (Zinssatz × Volatilität)',
     'preview.note': 'Illustrative Daten. Der tatsächliche Bericht wird aus Ihren Eingaben erstellt.',
     'how.eyebrow': 'So funktioniert es', 'how.h2': 'Von den Daten zur Entscheidung —<br>in drei Schritten.',
-    'how.s1t': 'Entitäten hochladen &amp; zuordnen',
-    'how.s1d': 'KI extrahiert Salden und Struktur aus Kontoauszügen in Sekunden. Manuelle Eingabe verfügbar.',
+    'how.s1t': 'Konzernstruktur eingeben',
+    'how.s1d': 'Tochtergesellschaften manuell hinzufügen oder ein Preset laden. Salden, Währungen und konzerninterne Beziehungen abbilden.',
     'how.s2t': 'Szenarien modellieren',
     'how.s2d': 'Basis-, optimistische und Stress-Simulationen ausführen. Netting-Effizienz und P&amp;L-Auswirkung analysieren.',
     'how.s3t': 'Board-fähige Intelligence exportieren',
@@ -1044,8 +1045,8 @@ const translations = {
     'preview.matrix_label': 'Matrice de sensibilité — Bénéfice net (taux × volatilité)',
     'preview.note': 'Données illustratives. Le rapport réel est généré à partir de vos données.',
     'how.eyebrow': 'Comment ça fonctionne', 'how.h2': 'Des données à la décision du conseil —<br>en trois étapes.',
-    'how.s1t': 'Importer &amp; cartographier les entités',
-    'how.s1d': 'L\'IA extrait les soldes et la structure des relevés en quelques secondes. Saisie manuelle disponible.',
+    'how.s1t': 'Saisir la structure du groupe',
+    'how.s1d': 'Ajoutez les filiales manuellement ou chargez un preset. Mappez les soldes, devises et relations intragroupes.',
     'how.s2t': 'Modéliser les scénarios',
     'how.s2d': 'Exécutez des simulations de base, optimiste et de stress. Analysez l\'efficacité de netting et l\'impact sur le P&amp;L.',
     'how.s3t': 'Exporter l\'intelligence board-ready',
