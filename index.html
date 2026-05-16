@@ -184,7 +184,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ── HERO ── */
 .hero {
-  padding: clamp(44px, 7vw, 80px) 0 clamp(36px, 5vw, 60px);
+  padding: clamp(32px, 5vw, 56px) 0 clamp(24px, 3.5vw, 40px);
 }
 .hero-inner {
   position: relative; z-index: 1;
@@ -384,7 +384,7 @@ h1 em { font-style: normal; color: var(--gold); }
 }
 
 /* ── SECTION ── */
-.section { padding: clamp(44px, 5.5vw, 72px) 0; }
+.section { padding: clamp(32px, 3.8vw, 52px) 0; }
 .section-alt { background: var(--paper-w); }
 .section-bt { border-top: none; }
 
@@ -524,7 +524,7 @@ h2 {
 
 /* ── SOCIAL PROOF BAND ── */
 .sp {
-  padding: clamp(36px, 4.5vw, 56px) 0;
+  padding: clamp(24px, 3vw, 40px) 0;
   background: var(--paper-w);
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
@@ -803,7 +803,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <!-- Trust line -->
       <div class="calc-benchmark">
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1.5L8.5 5H12L9 7.5l1 3.5L7 9l-3 2 1-3.5L2 5h3.5z" fill="#c8a84b" opacity=".8"/></svg>
-        <span data-i18n="hero.benchmark">Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.</span>
+        <span data-i18n="hero.benchmark">Well-structured pools typically generate €200k–€800k in net savings annually.</span>
       </div>
     </div>
     </div><!-- /hero-col-right -->
@@ -823,39 +823,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
   </div>
 </section>
 
-<!-- REPORT PREVIEW -->
-<section class="section section-bt">
-  <div class="wrap">
-    <div class="sec-eyebrow" data-i18n="preview.eyebrow">Sample Output</div>
-    <h2 data-i18n="preview.h2">Your simulation dashboard, live.</h2>
-    <p class="sec-sub" data-i18n="preview.sub">KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.</p>
-
-    <div class="preview-wrap">
-      <!-- Browser chrome bar -->
-      <div class="preview-chrome">
-        <div class="preview-chrome-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="preview-chrome-bar">cashpoolmodel.com/dashboard · Executive Summary</div>
-      </div>
-      <!-- Dashboard iframe -->
-      <div class="preview-iframe-wrap">
-        <iframe
-          src="/dashboard-preview.html"
-          class="preview-iframe"
-          title="CashPoolModel Simulation Dashboard"
-          loading="lazy"
-          scrolling="no"
-        ></iframe>
-      </div>
-      <div class="preview-fade"></div>
-    </div>
-    <div class="preview-note" data-i18n="preview.note">Illustrative data. Actual report generated from your inputs.</div>
-  </div>
-</section>
-
 <!-- HOW IT WORKS -->
-<section class="section section-alt" id="how">
+<section class="section section-bt" id="how">
   <div class="wrap">
     <div class="sec-eyebrow" data-i18n="how.eyebrow">How it works</div>
     <h2 data-i18n="how.h2">From data to board decision<br>in three steps.</h2>
@@ -892,6 +861,37 @@ footer { background: var(--navy); padding: 52px 0 0; }
   </div>
 </section>
 
+<!-- REPORT PREVIEW -->
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="sec-eyebrow" data-i18n="preview.eyebrow">Sample Output</div>
+    <h2 data-i18n="preview.h2">Your simulation dashboard, live.</h2>
+    <p class="sec-sub" data-i18n="preview.sub">KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.</p>
+
+    <div class="preview-wrap">
+      <!-- Browser chrome bar -->
+      <div class="preview-chrome">
+        <div class="preview-chrome-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="preview-chrome-bar">cashpoolmodel.com/dashboard · Executive Summary</div>
+      </div>
+      <!-- Dashboard iframe -->
+      <div class="preview-iframe-wrap">
+        <iframe
+          src="/dashboard-preview.html"
+          class="preview-iframe"
+          title="CashPoolModel Simulation Dashboard"
+          loading="lazy"
+          scrolling="no"
+        ></iframe>
+      </div>
+      <div class="preview-fade"></div>
+    </div>
+    <div class="preview-note" data-i18n="preview.note">Illustrative data. Actual report generated from your inputs.</div>
+  </div>
+</section>
+
 <!-- ABOUT THE PROJECT -->
 <section class="section section-bt" id="about">
   <div class="wrap">
@@ -908,7 +908,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
         <p class="sec-sub" style="margin-top:14px;">The simulation model is grounded in my master's thesis in corporate finance at Masaryk University and informed by real treasury structures. It's fully open — no registration, no data sent to any server, no paywall.</p>
         <div class="author-actions">
           <a class="btn btn-navy" href="https://www.linkedin.com/in/houserjakub/" target="_blank" rel="noopener">Connect on LinkedIn →</a>
-          <a class="btn btn-outline" href="/simulator-input.html">Open Simulator</a>
+          <a class="btn btn-outline" href="/contact.html">Send a Message</a>
         </div>
       </div>
 
@@ -965,7 +965,7 @@ const translations = {
     'hero.h1': 'See how much your company could save with cash pooling.',
     'hero.sub': 'Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.',
     'hero.cta1': 'Run Free Simulation →', 'hero.cta2': 'View Sample Report',
-    'hero.benchmark': 'Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.',
+    'hero.benchmark': 'Well-structured pools typically generate €200k–€800k in net savings annually.',
     'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
     'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
     'preview.generated': 'Generated April 2025', 'preview.badge': 'Illustrative',
@@ -998,7 +998,7 @@ const translations = {
     'hero.h1': 'Ermitteln Sie, wie viel Ihr Unternehmen mit Cash Pooling sparen könnte.',
     'hero.sub': 'Die meisten Treasury-Teams erfahren das Einsparpotenzial erst nach der Unterschrift bei einer Bank. CashPoolModel gibt Ihnen in wenigen Minuten eine klare, unabhängige Sicht — vor jeder Bindung.',
     'hero.cta1': 'Simulation starten →', 'hero.cta2': 'Beispiel ansehen',
-    'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise $200k–$800k jährliche Einsparungen.',
+    'hero.benchmark': 'Gut strukturierte Pools generieren typischerweise €200k–€800k jährliche Nettoeinsparungen.',
     'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
     'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
     'preview.generated': 'Erstellt April 2025', 'preview.badge': 'Illustrativ',
@@ -1031,7 +1031,7 @@ const translations = {
     'hero.h1': 'Découvrez combien votre entreprise pourrait économiser avec le cash pooling.',
     'hero.sub': 'La plupart des équipes trésorerie découvrent le potentiel d\'économies seulement après avoir signé avec une banque. CashPoolModel vous offre une vision claire et indépendante en quelques minutes — avant tout engagement.',
     'hero.cta1': 'Lancer la simulation →', 'hero.cta2': 'Voir un exemple',
-    'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement $200k–$800k d\'économies annuelles.',
+    'hero.benchmark': 'Les pools bien structurés génèrent généralement €200k–€800k d\'économies nettes annuelles.',
     'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
     'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
     'preview.generated': 'Généré avril 2025', 'preview.badge': 'Illustratif',
