@@ -345,6 +345,11 @@ h1 em { font-style: normal; color: var(--gold); }
   font-weight: 700; color: var(--navy); line-height: 1;
   letter-spacing: -1px; margin-bottom: 8px;
 }
+.calc-range-wrap { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 8px; }
+.calc-range-col { display: flex; flex-direction: column; }
+.calc-range-sublabel { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-fnt); opacity: .45; margin-bottom: 3px; }
+.calc-range-dash { font-size: clamp(24px, 3vw, 34px); color: var(--ink-fnt); opacity: .3; padding: 0 2px 4px; line-height: 1; }
+.calc-range-wrap .calc-output-val { margin-bottom: 0; }
 .calc-micro {
   font-size: 10.5px; color: var(--ink-fnt); line-height: 1.55; margin-bottom: 16px;
 }
@@ -788,8 +793,18 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <!-- Output -->
       <hr class="calc-divider">
       <div class="calc-output-label">Potential Annual Optimization</div>
-      <div class="calc-output-val" id="calcOutputVal">$437,500</div>
-      <p class="calc-micro">Rough estimate based on a standard 35% netting efficiency. For precise entity-level modelling, open the full simulator.</p>
+      <div class="calc-range-wrap">
+        <div class="calc-range-col">
+          <div class="calc-range-sublabel">Conservative</div>
+          <div class="calc-output-val" id="calcConservativeVal">$175,000</div>
+        </div>
+        <div class="calc-range-dash">—</div>
+        <div class="calc-range-col">
+          <div class="calc-range-sublabel">Optimistic</div>
+          <div class="calc-output-val" id="calcOptimisticVal">$562,500</div>
+        </div>
+      </div>
+      <p class="calc-micro">Range based on 20%–45% netting efficiency depending on group structure and currencies. For your precise figure, run the full simulation.</p>
 
       <!-- CTAs -->
       <div class="calc-actions">
@@ -1108,10 +1123,12 @@ function setLang(lang) {
     const liq = parseFloat(liqEl.value);
     const spread = parseFloat(spreadEl.value);
     const sym = SYMBOLS[currEl.value] || currEl.value + ' ';
-    const saving = liq * 1e6 * (spread / 100) * 0.35;
+    const conservative = liq * 1e6 * (spread / 100) * 0.20;
+    const optimistic   = liq * 1e6 * (spread / 100) * 0.45;
     document.getElementById('calcLiqVal').textContent = sym + liq.toLocaleString('en') + 'M';
     document.getElementById('calcSpreadVal').textContent = spread.toFixed(1) + '%';
-    document.getElementById('calcOutputVal').textContent = sym + Math.round(saving).toLocaleString('en');
+    document.getElementById('calcConservativeVal').textContent = sym + Math.round(conservative).toLocaleString('en');
+    document.getElementById('calcOptimisticVal').textContent = sym + Math.round(optimistic).toLocaleString('en');
     updateSliderBg(liqEl);
     updateSliderBg(spreadEl);
   };
