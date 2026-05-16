@@ -50,7 +50,17 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="text/babel">
 
-const { useState } = React;
+const { useState, useEffect } = React;
+
+function useMobile() {
+  const [mob, setMob] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const h = () => setMob(window.innerWidth < 768);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return mob;
+}
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────
 
@@ -450,7 +460,8 @@ function SubsidiaryTable({ entities: ents, calc, sim }) {
         )}
       </div>
 
-      <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', padding:'10px 24px',
+      <div style={{ overflowX:'auto' }}>
+      <div style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', minWidth:500, padding:'10px 24px',
         background:'#f8fafc', borderBottom:'1px solid #f1f5f9' }}>
         {['Subsidiary','Ccy','Avg Balance','Proj. Savings','Contribution'].map(h => (
           <span key={h} style={{ fontSize:10, fontWeight:700, color:'#94a3b8',
@@ -460,7 +471,7 @@ function SubsidiaryTable({ entities: ents, calc, sim }) {
 
       {displaySubs.map((s, i) => (
         <div key={i}
-          style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px',
+          style={{ display:'grid', gridTemplateColumns:'2fr 80px 1fr 1fr 160px', minWidth:500,
             padding:'13px 24px',
             borderBottom: i < displaySubs.length - 1 ? '1px solid #f8fafc' : 'none',
             alignItems:'center', transition:'background 0.1s' }}
@@ -510,6 +521,7 @@ function SubsidiaryTable({ entities: ents, calc, sim }) {
           </div>
         </div>
       ))}
+      </div>{/* end overflow-x:auto wrapper */}
     </div>
   );
 }
@@ -1865,7 +1877,7 @@ function ExportSection() {
 // ─── Main Content ──────────────────────────────────────────────────────────
 
 function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBenefit,
-  interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities, poolBank, fmtK, fmtM, sim }) {
+  interestSave, opSave, poolBalance, paybackMo, yieldSpread, dynKPIS, dynEntities, poolBank, fmtK, fmtM, sim, isMobile }) {
   const title = SECTION_TITLES[active] || 'Executive Summary';
   const currencies = [...new Set((dynEntities||ENTITIES).map(e=>e.cc))];
   const nettingLabel = nettingEff+'%';
@@ -1874,17 +1886,17 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
   const calc = computeFromSim(sim);
 
   return (
-    <div style={{ flex:1, overflowY:'auto', padding:32, display:'flex', flexDirection:'column', gap:20,
+    <div style={{ flex:1, overflowY:'auto', overflowX:'hidden', padding: isMobile ? 14 : 32, display:'flex', flexDirection:'column', gap:20,
       fontFamily:'DM Sans, system-ui, sans-serif' }}>
 
       {/* Header */}
-      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:8 }}>
         <div>
           <div style={{ fontSize:10, fontWeight:700, color:'#94a3b8', textTransform:'uppercase',
             letterSpacing:'0.1em', marginBottom:8 }}>
             Simulation Report
           </div>
-          <h1 style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize:30, fontWeight:600,
+          <h1 style={{ fontFamily:'Cormorant Garamond, Georgia, serif', fontSize: isMobile ? 22 : 30, fontWeight:600,
             color:'#0f172a', margin:0, lineHeight:1.1 }}>
             {title}
           </h1>
@@ -1942,7 +1954,7 @@ function MainContent({ active, groupName, totalEnt, totalAcc, nettingEff, netBen
       {/* Section content */}
       {active === 'summary' && (
         <>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:16 }}>
+          <div style={{ display:'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap:isMobile ? 10 : 16 }}>
             {(dynKPIS||KPIS).map((k, i) => <KPICard key={i} {...k}/>)}
           </div>
           <BarChart sim={sim} calc={calc} />
@@ -2880,6 +2892,7 @@ function computeCashVaR(sim, calc, volatility = 0.12) {
 // ─── App root ─────────────────────────────────────────────────────────────
 
 function App() {
+  const isMobile = useMobile();
   const [activeNav, setActiveNav] = useState('summary');
   const [ctaVisible, setCtaVisible] = useState(false);
   const sim = loadSimData();
@@ -2971,13 +2984,28 @@ function App() {
   const dynPoolBalance = poolBalance;
 
   return (
-    <div style={{ display:'flex', width:'100%', minHeight:'100vh', background:'#f8fafc' }}>
-      <Sidebar active={activeNav} onNav={handleNav} groupName={groupName} totalEnt={totalEnt} ctaVisible={ctaVisible} />
+    <div style={{ display:'flex', flexDirection: isMobile ? 'column' : 'row', width:'100%', minHeight:'100vh', background:'#f8fafc' }}>
+      {!isMobile && <Sidebar active={activeNav} onNav={handleNav} groupName={groupName} totalEnt={totalEnt} ctaVisible={ctaVisible} />}
+      {isMobile && (
+        <div style={{ position:'sticky', top:0, zIndex:50, background:'#fff', borderBottom:'1px solid #e2e8f0',
+          display:'flex', overflowX:'auto', gap:2, padding:'6px 8px', WebkitOverflowScrolling:'touch' }}>
+          {NAV.map(item => (
+            <button key={item.id} onClick={() => handleNav(item.id)}
+              style={{ flexShrink:0, padding:'7px 12px', borderRadius:7, border:'none', cursor:'pointer',
+                fontFamily:'DM Sans,sans-serif', fontSize:11, fontWeight:600,
+                background: activeNav === item.id ? '#0b1929' : 'transparent',
+                color: activeNav === item.id ? '#fff' : '#64748b',
+                whiteSpace:'nowrap', transition:'all 0.1s' }}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
       <MainContent active={activeNav} groupName={groupName} totalEnt={totalEnt} totalAcc={totalAcc}
         nettingEff={nettingEff} netBenefit={netBenefit} interestSave={interestSave}
         opSave={opSave} poolBalance={dynPoolBalance} paybackMo={paybackMo}
         yieldSpread={yieldSpread} dynKPIS={dynKPIS} dynEntities={dynEntities}
-        poolBank={poolBank} fmtK={fmtK} fmtM={fmtM} sim={sim}/>
+        poolBank={poolBank} fmtK={fmtK} fmtM={fmtM} sim={sim} isMobile={isMobile}/>
     </div>
   );
 }

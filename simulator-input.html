@@ -147,6 +147,12 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 .ai-result{display:none;background:var(--emerald-lt);border:1px solid #a7f3d0;border-radius:var(--r);padding:10px 14px;margin-top:10px}
 .ai-result.show{display:block}
 
+@media(max-width:600px){
+  #navUploadBtn{display:none}
+  .entity-detail-grid{grid-template-columns:1fr 1fr!important}
+  .wrap{padding:0 14px}
+}
+
 /* TOOLTIP */
 .tt{position:relative;display:inline-flex;cursor:help}
 .tt-icon{width:12px;height:12px;border-radius:50%;background:var(--paper-w);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ink-fnt)}
@@ -174,7 +180,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
     </a>
     <div style="display:flex;align-items:center;gap:8px">
       <div class="nav-pill">Simulator — Beta</div>
-      <button onclick="document.getElementById('uploadModal').style.display='flex'"
+      <button id="navUploadBtn" onclick="document.getElementById('uploadModal').style.display='flex'"
         style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink-lt);cursor:pointer;transition:all .13s"
         onmouseover="this.style.borderColor='var(--navy)';this.style.color='var(--navy)'"
         onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--ink-lt)'">
@@ -937,7 +943,7 @@ function renderEntities() {
       <!-- Section A: Account Details -->
       <div style="padding:14px 16px;background:var(--white);border-top:1px solid var(--rule)">
         <div style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Account details</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="entity-detail-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
           <div style="display:flex;flex-direction:column;gap:4px">
             <label style="font-size:9px;font-weight:700;color:var(--ink-fnt);text-transform:uppercase;letter-spacing:.6px">Entity name</label>
             <input value="${e.name.replace(/"/g,'&quot;')}" onchange="updateEntity('${e.id}','name',this.value)"
