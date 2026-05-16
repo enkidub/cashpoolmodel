@@ -507,29 +507,20 @@ h2 {
   .how-d { font-size: 12px; }
 }
 
-/* ── EARLY ACCESS ── */
-.ea-2col {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(40px, 5vw, 72px); align-items: start;
+/* ── ABOUT / AUTHOR ── */
+.author-2col {
+  display: grid; grid-template-columns: 260px 1fr;
+  gap: clamp(36px, 5vw, 72px); align-items: start;
   margin-top: 40px;
 }
-@media (max-width: 700px) { .ea-2col { grid-template-columns: 1fr; gap: 32px; } }
-.ea-left .sec-sub { margin-bottom: 0; }
-.ea-features {
-  list-style: none; padding: 0; margin: 22px 0 0;
-  display: flex; flex-direction: column; gap: 16px;
+@media (max-width: 700px) { .author-2col { grid-template-columns: 1fr; gap: 32px; } }
+.author-photo {
+  width: 100%; max-width: 260px; border-radius: var(--rl);
+  display: block; box-shadow: var(--sh-lg);
 }
-.ea-feature-item { display: flex; gap: 12px; align-items: flex-start; }
-.ea-check {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; color: var(--gold); font-size: 10px; font-weight: 700; margin-top: 2px;
+.author-actions {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px;
 }
-.ea-feature-body strong {
-  display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px;
-}
-.ea-feature-body span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; line-height: 1.5; }
 
 /* ── SOCIAL PROOF BAND ── */
 .sp {
@@ -612,50 +603,6 @@ h2 {
   text-underline-offset: 2px; font-weight: 500; cursor: pointer;
 }
 
-/* ── WAITLIST ── */
-.wl {
-  background: var(--navy); border-radius: var(--rl);
-  padding: clamp(36px, 5vw, 56px) clamp(28px, 5vw, 52px);
-  position: relative; overflow: hidden; margin-top: 36px;
-}
-.wl::before {
-  content: ''; position: absolute; top: -60px; right: -60px;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, rgba(29,78,216,.13) 0%, transparent 65%);
-  pointer-events: none;
-}
-.wl::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--gold), transparent 55%);
-}
-.wl-label { font-size: 9px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 11px; }
-.wl-title {
-  font-family: var(--serif); font-size: clamp(19px, 2.8vw, 30px);
-  font-weight: 600; color: #fff; letter-spacing: -.4px; line-height: 1.2;
-  max-width: 440px; margin-bottom: 9px;
-}
-.wl-sub { font-size: 14px; color: rgba(255,255,255,.55); max-width: 420px; margin-bottom: 26px; font-weight: 300; line-height: 1.65; }
-.wl-form { display: flex; gap: 8px; max-width: 420px; flex-wrap: wrap; }
-.wl-input {
-  flex: 1; min-width: 190px;
-  padding: 11px 15px; border-radius: var(--r);
-  border: 1.5px solid rgba(255,255,255,.11); background: rgba(255,255,255,.07);
-  color: #fff; font-family: var(--sans); font-size: 13px; outline: none;
-  transition: border-color .15s;
-}
-.wl-input::placeholder { color: rgba(255,255,255,.28); }
-.wl-input:focus { border-color: rgba(255,255,255,.32); background: rgba(255,255,255,.1); }
-.wl-btn {
-  padding: 11px 22px; border-radius: var(--r);
-  background: var(--gold); color: #fff;
-  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
-  font-family: var(--sans); transition: all .16s; white-space: nowrap;
-}
-.wl-btn:hover { background: var(--gold-h); transform: translateY(-1px); }
-.wl-pricing {
-  margin-top: 14px; font-size: 11px; color: rgba(255,255,255,.28);
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-}
 
 /* ── NEWSLETTER (blog only) ── */
 .nl {
@@ -769,7 +716,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
     <div class="nav-links">
       <a class="nav-link" href="/blog.html" data-i18n="nav.blog">Blog</a>
       <a class="nav-link" href="/about.html">About</a>
-      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Book Advisory Session</a>
+      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Contact</a>
     </div>
     <div class="lang-sw">
       <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -778,7 +725,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <span class="lang-sep">·</span>
       <button class="lang-btn" onclick="setLang('fr')">FR</button>
     </div>
-    <button class="nav-cta" onclick="document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta">Request Priority Access</button>
+    <a class="nav-cta" href="/simulator-input.html" data-i18n="nav.cta">Open Simulator</a>
     <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -786,8 +733,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
   <div class="nav-mobile" id="navMobile">
     <a href="/blog.html" data-i18n="nav.blog">Blog</a>
     <a href="/about.html">About</a>
-    <a href="/contact.html" data-i18n="nav.contact">Book Advisory Session</a>
-    <button class="nav-mobile-cta" onclick="toggleMobileNav(); document.getElementById('early-access').scrollIntoView({behavior:'smooth'})" data-i18n="nav.cta_mobile">Request Priority Access →</button>
+    <a href="/contact.html" data-i18n="nav.contact">Contact</a>
+    <a class="nav-mobile-cta" href="/simulator-input.html" data-i18n="nav.cta_mobile">Open Simulator →</a>
   </div>
 </nav>
 
@@ -842,11 +789,11 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <hr class="calc-divider">
       <div class="calc-output-label">Potential Annual Optimization</div>
       <div class="calc-output-val" id="calcOutputVal">$437,500</div>
-      <p class="calc-micro">Rough estimate based on a standard 35% netting efficiency. For precise entity-level modelling, generate your full report.</p>
+      <p class="calc-micro">Rough estimate based on a standard 35% netting efficiency. For precise entity-level modelling, open the full simulator.</p>
 
       <!-- CTAs -->
       <div class="calc-actions">
-        <a class="btn btn-navy" href="#early-access" data-i18n="hero.cta1">Get Precision Report →</a>
+        <a class="btn btn-navy" href="/simulator-input.html" data-i18n="hero.cta1">Run Free Simulation →</a>
         <a class="calc-link" href="/dashboard-preview.html" data-i18n="hero.cta2">
           <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="0.5" width="9" height="11" rx="1"/><path d="M3.5 3.5h5M3.5 5.5h5M3.5 7.5h3"/></svg>
           View Sample Report
@@ -867,17 +814,12 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <!-- SOCIAL PROOF -->
 <section class="sp">
   <div class="wrap">
-    <div class="sp-eyebrow">Trusted by early treasury teams</div>
-    <div class="sp-stat">Teams managing <em>€50M – €2bn</em> in liquidity</div>
+    <div class="sp-eyebrow">Open simulation tool</div>
+    <div class="sp-stat">Free to use — <em>no registration</em> required</div>
     <div class="sp-companies">
-      Global manufacturing group &thinsp;·&thinsp; European SaaS company
-      &thinsp;·&thinsp; Logistics &amp; supply chain leader &thinsp;·&thinsp; Mid-cap industrial group
+      Multi-currency netting &thinsp;·&thinsp; Sensitivity analysis &thinsp;·&thinsp; Structure comparison &thinsp;·&thinsp; Interactive pool canvas
     </div>
-    <!-- Future Logo Grid — uncomment and populate when logos are available
-    <div class="sp-logos">
-    </div>
-    -->
-    <div class="sp-micro">Limited early cohort &thinsp;·&thinsp; No bank connection required</div>
+    <div class="sp-micro">No data uploaded to any server &thinsp;·&thinsp; No bank connection required &thinsp;·&thinsp; No paywall</div>
   </div>
 </section>
 
@@ -950,78 +892,23 @@ footer { background: var(--navy); padding: 52px 0 0; }
   </div>
 </section>
 
-<!-- EARLY ACCESS -->
-<section class="section section-bt" id="early-access">
+<!-- ABOUT THE PROJECT -->
+<section class="section section-bt" id="about">
   <div class="wrap">
-    <div class="ea-2col">
+    <div class="author-2col">
 
-      <!-- Left: Value Proposition -->
-      <div class="ea-left">
-        <div class="sec-eyebrow" data-i18n="ea.eyebrow">Early Access</div>
-        <h2 data-i18n="ea.h2">Unlock Independent Treasury Intelligence.</h2>
-        <p class="sec-sub" data-i18n="ea.sub">We are granting early access to a select group of corporate finance teams. Secure your spot to model your liquidity structure — before your next bank negotiation.</p>
-        <ul class="ea-features">
-          <li class="ea-feature-item">
-            <span class="ea-check">✓</span>
-            <div class="ea-feature-body">
-              <strong data-i18n="ea.f1t">Automated Simulation</strong>
-              <span data-i18n="ea.f1d">Instant visibility into multi-currency netting and interest optimization</span>
-            </div>
-          </li>
-          <li class="ea-feature-item">
-            <span class="ea-check">✓</span>
-            <div class="ea-feature-body">
-              <strong data-i18n="ea.f2t">Board-Ready Intelligence</strong>
-              <span data-i18n="ea.f2d">Export comprehensive PDF reports with risk and sensitivity modeling</span>
-            </div>
-          </li>
-          <li class="ea-feature-item">
-            <span class="ea-check">✓</span>
-            <div class="ea-feature-body">
-              <strong data-i18n="ea.f3t">Absolute Privacy</strong>
-              <span data-i18n="ea.f3d">Bank-grade security with a strict Zero Data Retention policy</span>
-            </div>
-          </li>
-        </ul>
-
+      <div>
+        <img src="/profile picture bw.jpg" alt="Jakub Houser" class="author-photo">
       </div>
 
-      <!-- Right: Qualification Card -->
-      <div class="ea-right">
-        <div class="ea-qual-card">
-          <div class="ea-qual-eyebrow">Priority Access Program</div>
-          <div class="ea-qual-title" data-i18n="ea.form_title">Request Priority Access</div>
-          <div class="ea-anchor">Join the early cohort and receive a complimentary <strong>Professional Report</strong> (standard value <strong>$749</strong>) upon launch.</div>
-
-          <div class="ea-field">
-            <label class="ea-label" for="eaLiquidity" data-i18n="ea.liq_label">Average Daily Liquidity</label>
-            <select class="ea-select" id="eaLiquidity">
-              <option value="" data-i18n="ea.liq_opt0">Select volume...</option>
-              <option value="lt5m">&lt; $5M</option>
-              <option value="5m50m">$5M – $50M</option>
-              <option value="50m200m">$50M – $200M</option>
-              <option value="200m+">$200M+</option>
-            </select>
-          </div>
-
-          <div class="ea-field">
-            <label class="ea-label" for="eaPooling" data-i18n="ea.pool_label">Current Pooling Setup</label>
-            <select class="ea-select" id="eaPooling">
-              <option value="" data-i18n="ea.pool_opt0">Select setup...</option>
-              <option value="none">Decentralized (None)</option>
-              <option value="physical">Physical Sweeping</option>
-              <option value="notional">Notional Pooling</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
-          </div>
-
-          <div class="ea-field">
-            <label class="ea-label" for="eaEmail" data-i18n="ea.email_label">Professional Email</label>
-            <input class="ea-field-input" type="email" id="eaEmail" data-i18n-ph="ea.placeholder" placeholder="name@company.com">
-          </div>
-
-          <button class="ea-submit-btn" onclick="handleEarlyAccess()" data-i18n="ea.btn">Request Priority Access →</button>
-          <div class="ea-privacy">🔒 Bank-grade security. Strict '<a class="ea-zdr" href="/security.html">Zero Data Retention</a>' policy. Your data never leaves your session.</div>
+      <div>
+        <div class="sec-eyebrow">About the project</div>
+        <h2 style="font-family:var(--serif);font-size:clamp(24px,3vw,36px);font-weight:600;letter-spacing:-.5px;color:var(--navy);line-height:1.12;margin-bottom:16px;">Built by a treasury practitioner.<br>Free for anyone who needs it.</h2>
+        <p class="sec-sub">I'm Jakub Houser — an independent treasury practitioner based in Geneva. I built CashPoolModel to give corporate finance teams a clear, independent view of their pooling structure before any bank conversation: savings potential, netting efficiency, sensitivity analysis.</p>
+        <p class="sec-sub" style="margin-top:14px;">The simulation model is grounded in my master's thesis in corporate finance at Masaryk University and informed by real treasury structures. It's fully open — no registration, no data sent to any server, no paywall.</p>
+        <div class="author-actions">
+          <a class="btn btn-navy" href="https://www.linkedin.com/in/houserjakub/" target="_blank" rel="noopener">Connect on LinkedIn →</a>
+          <a class="btn btn-outline" href="/simulator-input.html">Open Simulator</a>
         </div>
       </div>
 
@@ -1044,8 +931,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <div class="footer-col">
         <div class="footer-col-title">Platform</div>
         <a href="/">Home</a>
-        <a href="/#early-access">Request Priority Access</a>
-        <a href="/simulator-input.html">Simulator</a>
+        <a href="/simulator-input.html">Open Simulator</a>
+        <a href="/guide.html">Guide</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Company</div>
@@ -1073,11 +960,11 @@ footer { background: var(--navy); padding: 52px 0 0; }
 <script>
 const translations = {
   en: {
-    'nav.blog': 'Blog', 'nav.contact': 'Book Advisory Session', 'nav.cta': 'Request Priority Access', 'nav.cta_mobile': 'Request Priority Access →',
+    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Open Simulator', 'nav.cta_mobile': 'Open Simulator →',
     'hero.eyebrow': 'Independent Cash Pooling Intelligence',
     'hero.h1': 'See how much your company could save with cash pooling.',
     'hero.sub': 'Most treasury teams find out the savings potential only after signing with a bank. CashPoolModel gives you a clear, independent view in minutes — before any commitment.',
-    'hero.cta1': 'Get Precision Report →', 'hero.cta2': 'View Sample Report',
+    'hero.cta1': 'Run Free Simulation →', 'hero.cta2': 'View Sample Report',
     'hero.benchmark': 'Groups modelled on CashPoolModel typically identify $200k–$800k in annual savings.',
     'preview.eyebrow': 'Sample Output', 'preview.h2': 'Your simulation dashboard, live.',
     'preview.sub': 'KPIs, interest cost charts, sensitivity analysis, and a structured export — all generated from your inputs in one place.',
@@ -1097,19 +984,6 @@ const translations = {
     'how.s2d': 'Run base, optimistic, and stress-test simulations. Analyze netting efficiency and P&amp;L impact.',
     'how.s3t': 'Export Board-Ready Intelligence',
     'how.s3d': 'Download a comprehensive PDF with sensitivity matrices and bank RFP specifications.',
-    'ea.eyebrow': 'Early Access',
-    'ea.h2': 'Unlock Independent Treasury Intelligence.',
-    'ea.sub': 'We are granting early access to a select group of corporate finance teams. Secure your spot to model your liquidity structure — before your next bank negotiation.',
-    'ea.f1t': 'Automated Simulation', 'ea.f1d': 'Instant visibility into multi-currency netting and interest optimization',
-    'ea.f2t': 'Board-Ready Intelligence', 'ea.f2d': 'Export comprehensive PDF reports with risk and sensitivity modeling',
-    'ea.f3t': 'Absolute Privacy', 'ea.f3d': 'Bank-grade security with a strict Zero Data Retention policy',
-    'ea.form_title': 'Request Priority Access',
-    'ea.liq_label': 'Average Daily Liquidity', 'ea.liq_opt0': 'Select volume...',
-    'ea.pool_label': 'Current Pooling Setup', 'ea.pool_opt0': 'Select setup...',
-    'ea.email_label': 'Professional Email',
-    'ea.placeholder': 'name@company.com',
-    'ea.btn': 'Request Priority Access →',
-    'ea.privacy': '🔒 Your data is strictly confidential.',
     'footer.tagline': 'Independent Treasury Intelligence.',
     'footer.swiss': 'Swiss-based advisory',
     'footer.sub': 'Independent Swiss Advisory led by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
@@ -1119,11 +993,11 @@ const translations = {
     'toast.invalid': 'Please enter a valid email address.',
   },
   de: {
-    'nav.blog': 'Blog', 'nav.contact': 'Beratung buchen', 'nav.cta': 'Vorrangzugang anfragen', 'nav.cta_mobile': 'Vorrangzugang anfragen →',
+    'nav.blog': 'Blog', 'nav.contact': 'Kontakt', 'nav.cta': 'Simulator öffnen', 'nav.cta_mobile': 'Simulator öffnen →',
     'hero.eyebrow': 'Unabhängige Cash-Pooling-Intelligence',
     'hero.h1': 'Ermitteln Sie, wie viel Ihr Unternehmen mit Cash Pooling sparen könnte.',
     'hero.sub': 'Die meisten Treasury-Teams erfahren das Einsparpotenzial erst nach der Unterschrift bei einer Bank. CashPoolModel gibt Ihnen in wenigen Minuten eine klare, unabhängige Sicht — vor jeder Bindung.',
-    'hero.cta1': 'Präzisionsbericht anfordern →', 'hero.cta2': 'Beispielbericht ansehen',
+    'hero.cta1': 'Simulation starten →', 'hero.cta2': 'Beispiel ansehen',
     'hero.benchmark': 'Auf CashPoolModel modellierte Konzerne identifizieren typischerweise $200k–$800k jährliche Einsparungen.',
     'preview.eyebrow': 'Beispiel-Output', 'preview.h2': 'Ihr Simulations-Dashboard, live.',
     'preview.sub': 'KPIs, Zinskosten-Charts, Sensitivitätsanalyse und strukturierter Export — alles aus Ihren Eingaben generiert.',
@@ -1143,19 +1017,6 @@ const translations = {
     'how.s2d': 'Basis-, optimistische und Stress-Simulationen ausführen. Netting-Effizienz und P&amp;L-Auswirkung analysieren.',
     'how.s3t': 'Board-fähige Intelligence exportieren',
     'how.s3d': 'Laden Sie ein umfassendes PDF mit Sensitivitätsmatrizen und Bank-Ausschreibungsspezifikationen herunter.',
-    'ea.eyebrow': 'Früher Zugang',
-    'ea.h2': 'Unabhängige Treasury-Intelligence freischalten.',
-    'ea.sub': 'Wir gewähren einer ausgewählten Gruppe von Unternehmensfinanzteams frühzeitigen Zugang. Sichern Sie sich Ihren Platz, um Ihre Liquiditätsstruktur zu modellieren — vor Ihrer nächsten Bankverhandlung.',
-    'ea.f1t': 'Automatisierte Simulation', 'ea.f1d': 'Sofortige Übersicht über Multi-Währungs-Netting und Zinsoptimierung',
-    'ea.f2t': 'Board-fähige Intelligence', 'ea.f2d': 'Umfassende PDF-Berichte mit Risiko- und Sensitivitätsmodellierung exportieren',
-    'ea.f3t': 'Absolute Vertraulichkeit', 'ea.f3d': 'Bankgrade-Sicherheit mit strikter Zero-Data-Retention-Policy',
-    'ea.form_title': 'Vorrangzugang anfragen',
-    'ea.liq_label': 'Durchschnittliche tägliche Liquidität', 'ea.liq_opt0': 'Volumen auswählen...',
-    'ea.pool_label': 'Aktuelles Pooling-Setup', 'ea.pool_opt0': 'Setup auswählen...',
-    'ea.email_label': 'Geschäftliche E-Mail',
-    'ea.placeholder': 'name@company.com',
-    'ea.btn': 'Vorrangzugang anfragen →',
-    'ea.privacy': '🔒 Ihre Daten sind streng vertraulich.',
     'footer.tagline': 'Unabhängige Treasury-Intelligence.',
     'footer.swiss': 'Schweizer Treasury-Beratung',
     'footer.sub': 'Unabhängige Schweizer Beratung von <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
@@ -1165,11 +1026,11 @@ const translations = {
     'toast.invalid': 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
   },
   fr: {
-    'nav.blog': 'Blog', 'nav.contact': 'Réserver une session', 'nav.cta': 'Accès prioritaire', 'nav.cta_mobile': 'Accès prioritaire →',
+    'nav.blog': 'Blog', 'nav.contact': 'Contact', 'nav.cta': 'Ouvrir le simulateur', 'nav.cta_mobile': 'Ouvrir le simulateur →',
     'hero.eyebrow': 'Intelligence indépendante en cash pooling',
     'hero.h1': 'Découvrez combien votre entreprise pourrait économiser avec le cash pooling.',
     'hero.sub': 'La plupart des équipes trésorerie découvrent le potentiel d\'économies seulement après avoir signé avec une banque. CashPoolModel vous offre une vision claire et indépendante en quelques minutes — avant tout engagement.',
-    'hero.cta1': 'Obtenir un rapport précis →', 'hero.cta2': 'Voir un exemple de rapport',
+    'hero.cta1': 'Lancer la simulation →', 'hero.cta2': 'Voir un exemple',
     'hero.benchmark': 'Les groupes modélisés sur CashPoolModel identifient généralement $200k–$800k d\'économies annuelles.',
     'preview.eyebrow': 'Exemple de rapport', 'preview.h2': 'Votre tableau de bord de simulation, en direct.',
     'preview.sub': 'KPIs, graphiques de coûts, analyse de sensibilité et export structuré — tout généré depuis vos données en un seul endroit.',
@@ -1189,19 +1050,6 @@ const translations = {
     'how.s2d': 'Exécutez des simulations de base, optimiste et de stress. Analysez l\'efficacité de netting et l\'impact sur le P&amp;L.',
     'how.s3t': 'Exporter l\'intelligence board-ready',
     'how.s3d': 'Téléchargez un PDF complet avec matrices de sensibilité et spécifications d\'appel d\'offres bancaire.',
-    'ea.eyebrow': 'Accès anticipé',
-    'ea.h2': 'Déverrouillez une intelligence trésorerie indépendante.',
-    'ea.sub': 'Nous accordons un accès anticipé à un groupe sélectionné d\'équipes finance d\'entreprise. Réservez votre place pour modéliser votre structure de liquidité — avant votre prochaine négociation bancaire.',
-    'ea.f1t': 'Simulation automatisée', 'ea.f1d': 'Visibilité immédiate sur le netting multi-devises et l\'optimisation des intérêts',
-    'ea.f2t': 'Intelligence pour le conseil', 'ea.f2d': 'Exportez des rapports PDF complets avec modélisation des risques et de la sensibilité',
-    'ea.f3t': 'Confidentialité absolue', 'ea.f3d': 'Sécurité de niveau bancaire avec une politique stricte de zéro rétention de données',
-    'ea.form_title': 'Demander un accès prioritaire',
-    'ea.liq_label': 'Liquidité quotidienne moyenne', 'ea.liq_opt0': 'Sélectionner le volume...',
-    'ea.pool_label': 'Configuration de pooling actuelle', 'ea.pool_opt0': 'Sélectionner la configuration...',
-    'ea.email_label': 'Adresse e-mail professionnelle',
-    'ea.placeholder': 'name@company.com',
-    'ea.btn': 'Demander un accès prioritaire →',
-    'ea.privacy': '🔒 Vos données sont strictement confidentielles.',
     'footer.tagline': 'Intelligence trésorerie indépendante.',
     'footer.swiss': 'Conseil suisse en trésorerie',
     'footer.sub': 'Conseil suisse indépendant dirigé par <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank" style="color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:2px;">Jakub Houser</a>',
@@ -1277,50 +1125,6 @@ function toggleMobileNav() {
   document.getElementById('navMobile').classList.toggle('open');
 }
 
-async function addToBrevo(email, attributes = {}) {
-  try {
-    await fetch('https://brevo-subscribe.kuba-houser.workers.dev', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, attributes })
-    });
-  } catch(e) { console.error(e); }
-}
-
-async function handleEarlyAccess() {
-  const emailEl = document.getElementById('eaEmail');
-  const liqEl   = document.getElementById('eaLiquidity');
-  const poolEl  = document.getElementById('eaPooling');
-  const e = emailEl.value.trim();
-  const t = translations[currentLang];
-  if (!e || !e.includes('@')) { showToast(t['toast.invalid']); return; }
-  await addToBrevo(e, { LIQUIDITY: liqEl.value, POOLING: poolEl.value });
-  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', {
-    method: 'email',
-    liquidity_band: liqEl.value,
-    pooling_setup: poolEl.value,
-  });
-  showToast(t['toast.success']);
-  emailEl.value = ''; liqEl.value = ''; poolEl.value = '';
-}
-
-async function handleWaitlist() {
-  const e = document.getElementById('wlEmail').value;
-  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'waitlist_signup', { method: 'email' });
-  showToast('You are on the list. We will notify you when the simulator launches.');
-  document.getElementById('wlEmail').value = '';
-}
-
-async function handleNewsletter() {
-  const e = document.getElementById('nlEmail').value;
-  if (!e || !e.includes('@')) { showToast('Please enter a valid email address.'); return; }
-  await addToBrevo(e);
-  if (typeof gtag !== 'undefined') gtag('event', 'newsletter_signup');
-  showToast('Subscribed. When something worth reading happens — you will hear from us.');
-  document.getElementById('nlEmail').value = '';
-}
 
 function showToast(msg) {
   const t = document.getElementById('toast');

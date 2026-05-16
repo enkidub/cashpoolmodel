@@ -367,7 +367,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
     <div class="nav-links">
       <a class="nav-link" href="/blog.html" data-i18n="nav.blog">Blog</a>
       <a class="nav-link active" href="/about.html" data-i18n="nav.about">About</a>
-      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Book Advisory Session</a>
+      <a class="nav-link" href="/contact.html" data-i18n="nav.contact">Contact</a>
     </div>
     <div class="lang-sw">
       <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
@@ -376,7 +376,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <span class="lang-sep">·</span>
       <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
     </div>
-    <a class="nav-cta" href="/index.html#early-access" data-i18n="nav.cta">Request Priority Access</a>
+    <a class="nav-cta" href="/simulator-input.html" data-i18n="nav.cta">Open Simulator</a>
     <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -384,8 +384,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
   <div class="nav-mobile" id="navMobile">
     <a href="/blog.html" data-i18n="nav.blog">Blog</a>
     <a href="/about.html" class="active" data-i18n="nav.about">About</a>
-    <a href="/contact.html" data-i18n="nav.contact">Book Advisory Session</a>
-    <button class="nav-mobile-cta" onclick="toggleMobileNav(); window.location='/index.html#early-access'" data-i18n="nav.cta_mobile">Request Priority Access →</button>
+    <a href="/contact.html" data-i18n="nav.contact">Contact</a>
+    <a class="nav-mobile-cta" href="/simulator-input.html" data-i18n="nav.cta_mobile">Open Simulator →</a>
   </div>
 </nav>
 
@@ -533,8 +533,8 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <div class="footer-col">
         <div class="footer-col-title" data-i18n="footer.p.platform">Platform</div>
         <a href="/" data-i18n="footer.home">Home</a>
-        <a href="/#early-access" data-i18n="footer.access">Request Priority Access</a>
-        <a href="/simulator-input.html" data-i18n="footer.simulator">Simulator</a>
+        <a href="/simulator-input.html" data-i18n="footer.access">Open Simulator</a>
+        <a href="/guide.html" data-i18n="footer.guide">Guide</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title" data-i18n="footer.p.company">Company</div>
@@ -566,9 +566,9 @@ const T = {
   en: {
     'nav.blog': 'Blog',
     'nav.about': 'About',
-    'nav.contact': 'Book Advisory Session',
-    'nav.cta': 'Request Priority Access',
-    'nav.cta_mobile': 'Request Priority Access →',
+    'nav.contact': 'Contact',
+    'nav.cta': 'Open Simulator',
+    'nav.cta_mobile': 'Open Simulator →',
     'hero.eyebrow': 'About & Trust',
     'hero.h1': 'Independent Treasury Intelligence. Built by Practitioners, Engineered for CFOs.',
     'hero.sub': 'CashPoolModel is the proprietary simulation engine developed by Intercompany.io, an independent treasury advisory firm based in Switzerland. We provide the missing link in group finance: an objective, mathematical simulator that puts negotiation power back into the hands of the CFO.',
@@ -610,7 +610,7 @@ const T = {
     'footer.loc': 'Geneva, Switzerland',
     'footer.p.platform': 'Platform',
     'footer.home': 'Home',
-    'footer.access': 'Request Priority Access',
+    'footer.access': 'Open Simulator',
     'footer.simulator': 'Simulator',
     'footer.p.company': 'Company',
     'footer.about': 'About',
@@ -627,9 +627,9 @@ const T = {
   de: {
     'nav.blog': 'Blog',
     'nav.about': 'Über uns',
-    'nav.contact': 'Beratung buchen',
-    'nav.cta': 'Vorrangzugang anfragen',
-    'nav.cta_mobile': 'Vorrangzugang anfragen →',
+    'nav.contact': 'Kontakt',
+    'nav.cta': 'Simulator öffnen',
+    'nav.cta_mobile': 'Simulator öffnen →',
     'hero.eyebrow': 'Über uns & Vertrauen',
     'hero.h1': 'Unabhängige Treasury-Intelligence. Von Praktikern entwickelt, für CFOs konzipiert.',
     'hero.sub': 'CashPoolModel ist die proprietäre Simulations-Engine von Intercompany.io, einer unabhängigen Treasury-Beratungsfirma mit Sitz in der Schweiz. Wir liefern das fehlende Glied in der Konzernfinanzierung: einen objektiven, mathematischen Simulator, der die Verhandlungsmacht in die Hände des CFO zurückbringt.',
@@ -671,7 +671,7 @@ const T = {
     'footer.loc': 'Genf, Schweiz',
     'footer.p.platform': 'Plattform',
     'footer.home': 'Startseite',
-    'footer.access': 'Vorrangzugang anfragen',
+    'footer.access': 'Simulator öffnen',
     'footer.simulator': 'Simulator',
     'footer.p.company': 'Unternehmen',
     'footer.about': 'Über uns',
@@ -688,9 +688,9 @@ const T = {
   fr: {
     'nav.blog': 'Blog',
     'nav.about': 'À propos',
-    'nav.contact': 'Réserver une session',
-    'nav.cta': 'Accès prioritaire',
-    'nav.cta_mobile': 'Accès prioritaire →',
+    'nav.contact': 'Contact',
+    'nav.cta': 'Ouvrir le simulateur',
+    'nav.cta_mobile': 'Ouvrir le simulateur →',
     'hero.eyebrow': 'À propos & Confiance',
     'hero.h1': 'Intelligence en trésorerie indépendante. Conçue par des praticiens, engineered pour les CFO.',
     'hero.sub': 'CashPoolModel est le moteur de simulation propriétaire développé par Intercompany.io, un cabinet de conseil en trésorerie indépendant basé en Suisse. Nous fournissons le chaînon manquant dans la finance de groupe : un simulateur objectif et mathématique qui remet le pouvoir de négociation entre les mains du CFO.',
@@ -732,7 +732,7 @@ const T = {
     'footer.loc': 'Genève, Suisse',
     'footer.p.platform': 'Plateforme',
     'footer.home': 'Accueil',
-    'footer.access': 'Accès prioritaire',
+    'footer.access': 'Ouvrir le simulateur',
     'footer.simulator': 'Simulateur',
     'footer.p.company': 'Entreprise',
     'footer.about': 'À propos',
