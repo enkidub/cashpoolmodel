@@ -968,15 +968,10 @@ async function downloadDocx() {
   const colRight   = tableWidth - colLeft;              // ~4710 DXA
   const rowHeight  = Math.floor((pageHeight - margin * 2) / 4); // ~3849 DXA
 
-  // Borders — use string literals to avoid enum lookup issues
-  const dash = { style: "dashed", size: 6, color: "000000" };
-  const nil  = { style: "none",   size: 0, color: "auto"   };
+  const nil = { style: "none", size: 0, color: "auto" };
 
-  function leftBorders(isLast) {
-    return { top: nil, bottom: isLast ? nil : dash, left: nil, right: dash };
-  }
-  function rightBorders(isLast) {
-    return { top: nil, bottom: isLast ? nil : dash, left: dash, right: nil };
+  function noBorders() {
+    return { top: nil, bottom: nil, left: nil, right: nil };
   }
 
   // Left cell: full doložka text
@@ -997,7 +992,7 @@ async function downloadDocx() {
       emptyPara(),
       emptyPara(),
       emptyPara(),
-      para([run(`${a.jmeno}, ${a.role}`)], AlignmentType.RIGHT),
+      para([run(`${a.jmeno}, ${a.role}`)], AlignmentType.LEFT),
     ];
   }
 
@@ -1066,12 +1061,12 @@ async function downloadDocx() {
       children: [
         new TableCell({
           width: { size: colLeft, type: WidthType.DXA },
-          borders: leftBorders(isLast),
+          borders: noBorders(),
           children: makeLeft(),
         }),
         new TableCell({
           width: { size: colRight, type: WidthType.DXA },
-          borders: rightBorders(isLast),
+          borders: noBorders(),
           children: makeRight(),
         }),
       ],
