@@ -1,0 +1,6 @@
+name = "dolozka-ocr-proxy"
+main = "dolozka-worker/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://cashpoolmodel.com,http://localhost:8080"

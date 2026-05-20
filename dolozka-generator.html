@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Generátor doložky | CashPoolModel</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+:root {
+  --navy:    #0b1929;
+  --navy-h:  #132540;
+  --ink:     #1a2233;
+  --ink-mid: #3d4f6a;
+  --ink-lt:  #6b7d96;
+  --ink-fnt: #9babbe;
+  --paper:   #f9f8f5;
+  --paper-w: #f2f0eb;
+  --rule:    #ddd9d0;
+  --gold:    #9a6e10;
+  --gold-h:  #7d5808;
+  --gold-p:  #fdf8ec;
+  --white:   #ffffff;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --sans:    'DM Sans', system-ui, sans-serif;
+  --mono:    'DM Mono', monospace;
+  --max:     1000px;
+  --pad:     clamp(20px, 4vw, 44px);
+  --sh:      0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
+  --sh-lg:   0 8px 40px rgba(11,25,41,.11), 0 2px 8px rgba(11,25,41,.04);
+  --r:       5px;
+  --rl:      10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(249,248,245,.95); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-i {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
+  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  font-family: var(--serif); font-size: 20px; font-weight: 600;
+  color: var(--navy); letter-spacing: -.3px;
+}
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 4px; background: var(--navy);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.logo-text { display: flex; flex-direction: column; justify-content: center; line-height: 1; }
+.logo-sub { font-size: 11px; color: var(--ink-lt); font-weight: 400; letter-spacing: .2px; font-family: var(--sans); margin-top: 3px; line-height: 1; }
+.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-link { padding: 6px 12px; border-radius: var(--r); font-size: 13px; font-weight: 500; color: var(--ink-mid); transition: all .14s; }
+.nav-link:hover { background: var(--paper-w); color: var(--navy); }
+.nav-cta {
+  padding: 8px 17px; border-radius: var(--r); background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--sans);
+  transition: all .14s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--navy-h); transform: translateY(-1px); }
+.nav-burger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; cursor: pointer; border: none; background: none; padding: 4px; border-radius: var(--r);
+}
+.nav-burger span { display: block; height: 2px; background: var(--navy); border-radius: 2px; transition: all .2s; }
+.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-mobile {
+  display: none; flex-direction: column;
+  background: rgba(249,248,245,.98); border-top: 1px solid var(--rule);
+  padding: 8px 0 12px;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a { padding: 11px var(--pad); font-size: 15px; font-weight: 500; color: var(--ink-mid); }
+.nav-mobile a:hover { color: var(--navy); }
+.nav-mobile-cta {
+  margin: 6px var(--pad) 4px;
+  display: block; width: calc(100% - 2 * var(--pad));
+  padding: 13px; border-radius: var(--r);
+  background: var(--navy); color: #fff;
+  font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+  font-family: var(--sans); text-align: center; transition: background .14s;
+}
+.nav-mobile-cta:hover { background: var(--navy-h); }
+@media (max-width: 580px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .nav-burger { display: flex; }
+}
+
+/* ── LAYOUT ── */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.page { padding: clamp(32px, 5vw, 56px) 0 80px; }
+
+/* ── PAGE HEADER ── */
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+}
+.page-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--gold); }
+.page-title {
+  font-family: var(--serif); font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 600; line-height: 1.12; letter-spacing: -1px;
+  color: var(--navy); margin-bottom: 10px;
+}
+.page-sub { font-size: 14px; color: var(--ink-mid); line-height: 1.65; max-width: 56ch; margin-bottom: 36px; }
+
+/* ── STEP LABEL ── */
+.step-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.step-label::before { content: ''; width: 12px; height: 1px; background: var(--ink-fnt); }
+
+/* ── ADVOKÁTI KARTY ── */
+.advokati-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px; margin-bottom: 36px;
+}
+.advokat-card {
+  background: var(--white); border: 1.5px solid var(--rule);
+  border-radius: var(--rl); padding: 18px 20px;
+  cursor: pointer; transition: all .16s; user-select: none;
+}
+.advokat-card:hover { border-color: var(--ink-lt); box-shadow: var(--sh); }
+.advokat-card.active {
+  border-color: var(--gold); background: var(--gold-p);
+  box-shadow: 0 0 0 3px rgba(154,110,16,.12);
+}
+.advokat-name { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+.advokat-role { font-size: 12px; color: var(--ink-lt); }
+.advokat-detail { font-size: 11px; color: var(--ink-fnt); margin-top: 8px; line-height: 1.5; }
+.advokat-card.active .advokat-role { color: var(--gold); }
+
+/* ── UPLOAD ── */
+.upload-zone {
+  border: 2px dashed var(--rule); border-radius: var(--rl);
+  background: var(--white); padding: 36px 24px; text-align: center;
+  cursor: pointer; transition: all .18s; position: relative;
+  margin-bottom: 16px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--gold); background: var(--gold-p);
+}
+.upload-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.upload-icon { font-size: 28px; margin-bottom: 10px; }
+.upload-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--ink-lt); }
+
+.previews { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.preview-thumb {
+  position: relative; width: 80px; height: 60px;
+  border-radius: var(--r); overflow: hidden; border: 1.5px solid var(--rule);
+}
+.preview-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.preview-thumb-remove {
+  position: absolute; top: 2px; right: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(11,25,41,.7); color: #fff;
+  font-size: 11px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s;
+}
+.preview-thumb-remove:hover { background: rgba(11,25,41,.95); }
+
+.btn-ocr {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: var(--r);
+  background: var(--gold); color: #fff;
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .16s;
+  box-shadow: 0 2px 8px rgba(154,110,16,.25);
+}
+.btn-ocr:hover:not(:disabled) { background: var(--gold-h); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(154,110,16,.3); }
+.btn-ocr:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* ── LOADING ── */
+.ocr-loading {
+  display: none; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--ink-lt); padding: 12px 0;
+}
+.ocr-loading.visible { display: flex; }
+.spinner {
+  width: 18px; height: 18px; border: 2px solid var(--rule);
+  border-top-color: var(--gold); border-radius: 50%;
+  animation: spin .8s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── FORM ── */
+.form-section {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: var(--rl); padding: 28px; margin-bottom: 28px;
+  box-shadow: var(--sh);
+}
+.form-section-title {
+  font-family: var(--serif); font-size: 18px; font-weight: 600;
+  color: var(--navy); margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.form-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.form-group { display: flex; flex-direction: column; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--ink-lt); margin-bottom: 6px;
+}
+.form-input {
+  padding: 10px 13px; border-radius: var(--r); border: 1.5px solid var(--rule);
+  font-family: var(--sans); font-size: 14px; color: var(--ink);
+  background: var(--paper); transition: border-color .14s, box-shadow .14s;
+  outline: none;
+}
+.form-input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(11,25,41,.08); background: var(--white); }
+.form-input.warn { border-color: #d97706; box-shadow: 0 0 0 2px rgba(217,119,6,.12); }
+.form-input.warn:focus { border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,.18); }
+.form-input.danger { border-color: #dc2626; box-shadow: 0 0 0 2px rgba(220,38,38,.12); }
+.form-input.danger:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,.18); }
+.form-input.invalid { border-color: #dc2626; }
+.field-hint {
+  font-size: 11px; color: var(--ink-fnt); margin-top: 4px; line-height: 1.4;
+}
+.field-hint.warn { color: #d97706; }
+.field-hint.danger { color: #dc2626; }
+
+input[type=number].form-input { -moz-appearance: textfield; }
+input[type=number].form-input::-webkit-outer-spin-button,
+input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* ── PREVIEW ── */
+.preview-section {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: var(--rl); padding: 28px; margin-bottom: 28px;
+  box-shadow: var(--sh);
+}
+.preview-section-title {
+  font-family: var(--serif); font-size: 18px; font-weight: 600;
+  color: var(--navy); margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.dolozka-preview {
+  background: #fff; border: 1px solid #e8e4de;
+  border-radius: 4px; padding: 36px 40px; font-family: 'Times New Roman', Times, serif;
+  font-size: 13px; line-height: 1.7; color: #111;
+  max-width: 680px;
+}
+.dolozka-title {
+  text-align: center; font-weight: bold; text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 22px; font-size: 13px;
+}
+.dolozka-p { margin-bottom: 14px; text-align: justify; }
+.dolozka-sig { text-align: right; margin-top: 36px; }
+.dolozka-placeholder { color: #aaa; font-style: italic; }
+.dolozka-table {
+  width: 100%; border-collapse: collapse; margin-top: 28px; font-size: 12px;
+}
+.dolozka-table td {
+  border: 1px solid #888; padding: 8px 11px; vertical-align: top; line-height: 1.5;
+}
+.dolozka-table tr td:first-child { width: 48%; }
+
+/* ── DOWNLOAD ── */
+.btn-download {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: var(--r);
+  background: var(--gold); color: #fff;
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .16s;
+  box-shadow: 0 2px 10px rgba(154,110,16,.3);
+}
+.btn-download:hover:not(:disabled) { background: var(--gold-h); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(154,110,16,.35); }
+.btn-download:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn-download svg { flex-shrink: 0; }
+
+.gdpr-notice {
+  margin-top: 16px; padding: 12px 16px;
+  background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
+  border-radius: var(--r); font-size: 12px; color: var(--gold-h); line-height: 1.55;
+  display: none;
+}
+.gdpr-notice.visible { display: block; }
+
+/* ── VALIDATION ERRORS ── */
+.validation-errors {
+  background: #fff5f5; border: 1px solid #fed7d7; border-radius: var(--r);
+  padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: #dc2626;
+  display: none;
+}
+.validation-errors.visible { display: block; }
+.validation-errors ul { margin: 6px 0 0 16px; }
+.validation-errors li { margin-bottom: 3px; }
+
+/* ── FOOTER ── */
+footer { background: var(--navy); padding: 52px 0 0; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(24px, 3vw, 48px); padding-bottom: 44px;
+}
+.footer-brand { font-family: var(--serif); font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.footer-tagline { font-size: 11px; color: rgba(255,255,255,.32); line-height: 1.6; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.footer-co-logo { display: inline-flex; align-items: center; }
+.footer-co-logo img { height: 12px; width: auto; opacity: 0.7; transition: opacity .14s; }
+.footer-co-logo:hover img { opacity: 1; }
+.footer-co { color: rgba(255,255,255,.45); transition: color .14s; }
+.footer-co:hover { color: rgba(255,255,255,.75); }
+.footer-loc { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: rgba(255,255,255,.28); }
+.ch-flag { border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.35); flex-shrink: 0; }
+.footer-col { display: flex; flex-direction: column; }
+.footer-col-title {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.8px;
+  text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px;
+}
+.footer-col a { font-size: 12.5px; color: rgba(255,255,255,.45); transition: color .14s; padding: 4px 0; }
+.footer-col a:hover { color: rgba(255,255,255,.85); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 18px 0; font-size: 11px; color: rgba(255,255,255,.28);
+  flex-wrap: wrap; gap: 6px;
+}
+.footer-bottom a { color: rgba(255,255,255,.45); text-decoration: underline; text-underline-offset: 2px; transition: color .14s; }
+.footer-bottom a:hover { color: rgba(255,255,255,.8); }
+@media (max-width: 680px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+@media (max-width: 360px) { .footer-grid { grid-template-columns: 1fr; } }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
+  background: var(--navy); color: #fff; padding: 11px 22px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500; box-shadow: var(--sh-lg);
+  transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .dolozka-preview { padding: 20px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a class="logo" href="/">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="8" width="3" height="7" rx="1" fill="#60a5fa"/>
+          <rect x="6" y="4" width="3" height="11" rx="1" fill="#93c5fd"/>
+          <rect x="11" y="1" width="3" height="14" rx="1" fill="#bfdbfe"/>
+          <path d="M2 6.5l5.5-2.5 5.5-2.5" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div>CashPoolModel</div>
+        <div class="logo-sub">by Intercompany.io</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="/blog.html">Blog</a>
+      <a class="nav-link" href="/about.html">About</a>
+      <a class="nav-link" href="/contact.html">Contact</a>
+    </div>
+    <a class="nav-cta" href="/simulator-input.html">Open Simulator</a>
+    <button class="nav-burger" id="navBurger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile" id="navMobile">
+    <a href="/blog.html">Blog</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a class="nav-mobile-cta" href="/simulator-input.html">Open Simulator →</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="page">
+  <div class="wrap">
+    <div class="page-eyebrow">Interní nástroj</div>
+    <h1 class="page-title">Generátor doložky<br>o pravosti podpisu</h1>
+    <p class="page-sub">Nahrajte fotografii občanského průkazu, AI rozpozná údaje, zkontrolujte je a stáhněte vyplněnou doložku ve formátu .docx.</p>
+
+    <!-- KROK 1: Výběr advokáta -->
+    <div class="step-label">Krok 1 — Výběr advokáta</div>
+    <div class="advokati-grid" id="advokaciGrid"></div>
+
+    <!-- KROK 2: Nahrání fotografie -->
+    <div class="step-label">Krok 2 — Fotografie občanského průkazu</div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/heic,image/*" multiple>
+      <div class="upload-icon">📷</div>
+      <div class="upload-title">Přetáhněte fotografii sem nebo klikněte pro výběr</div>
+      <div class="upload-sub">JPG, PNG, HEIC · max. 2 soubory (přední a zadní strana)</div>
+    </div>
+    <div class="previews" id="previews"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:36px;">
+      <button class="btn-ocr" id="btnOcr" disabled onclick="runOcr()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3l2 2"/></svg>
+        Rozpoznat údaje
+      </button>
+      <div class="ocr-loading" id="ocrLoading">
+        <div class="spinner"></div>
+        <span>Zpracovávám fotografii…</span>
+      </div>
+    </div>
+
+    <!-- KROK 3: Formulář -->
+    <div class="step-label">Krok 3 — Kontrola a doplnění údajů</div>
+    <div class="form-section">
+      <div class="form-section-title">Údaje z občanského průkazu</div>
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label class="form-label" for="fJmeno">Jméno a příjmení *</label>
+          <input class="form-input" id="fJmeno" type="text" placeholder="Jan Novák" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fDatumNar">Datum narození *</label>
+          <input class="form-input" id="fDatumNar" type="text" placeholder="01.01.1980" oninput="updatePreview()">
+          <span class="field-hint">Formát DD.MM.YYYY</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fMistoNar">Místo narození *</label>
+          <input class="form-input" id="fMistoNar" type="text" placeholder="Praha 2" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="fAdresa">Adresa trvalého pobytu *</label>
+          <input class="form-input" id="fAdresa" type="text" placeholder="Ulice 1, Praha 1, 110 00" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fCisloOp">Číslo OP *</label>
+          <input class="form-input" id="fCisloOp" type="text" placeholder="123456789" maxlength="9" oninput="updatePreview()">
+          <span class="field-hint">9 číslic</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fStatOb">Státní občanství</label>
+          <input class="form-input" id="fStatOb" type="text" placeholder="Česká republika" oninput="updatePreview()" readonly tabindex="-1" style="background:var(--paper-w);color:var(--ink-lt);cursor:default;">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Údaje doložky</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="fCisloRadku">Číslo řádku knihy *</label>
+          <input class="form-input" id="fCisloRadku" type="number" min="1" step="1" placeholder="1" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fRok">Rok *</label>
+          <input class="form-input" id="fRok" type="number" min="2000" max="2099" step="1" placeholder="2026" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fDatumOver">Datum ověření *</label>
+          <input class="form-input" id="fDatumOver" type="text" placeholder="20.05.2026" oninput="updatePreview()">
+          <span class="field-hint">Formát DD.MM.YYYY</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fPocetVyh">Počet vyhotovení *</label>
+          <input class="form-input" id="fPocetVyh" type="number" min="1" step="1" value="1" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label" for="fListina">Specifikace listiny *</label>
+          <input class="form-input" id="fListina" type="text" placeholder="Kupní smlouva" oninput="updatePreview()">
+          <span class="field-hint">Název podpisované listiny</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- KROK 4: Náhled a stažení -->
+    <div class="step-label">Krok 4 — Náhled a stažení</div>
+    <div class="preview-section">
+      <div class="preview-section-title">Náhled doložky</div>
+      <div class="dolozka-preview" id="dolozkaPreview">
+        <!-- Generováno JS -->
+      </div>
+    </div>
+
+    <div class="validation-errors" id="validationErrors">
+      <strong>Před stažením vyplňte:</strong>
+      <ul id="validationList"></ul>
+    </div>
+
+    <button class="btn-download" id="btnDownload" onclick="downloadDocx()">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2.5" y="11" width="11" height="2.5" rx="1"/>
+      </svg>
+      Stáhnout doložku (.docx)
+    </button>
+
+    <div class="gdpr-notice" id="gdprNotice">
+      Fotografie a rozpoznané údaje jsou uloženy pouze v paměti prohlížeče a smažou se při zavření záložky.
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        <div class="footer-brand">CashPoolModel</div>
+        <div class="footer-tagline">by <a href="/about.html" class="footer-co footer-co-logo"><img src="/Intercompany.io_logo_gold.svg" alt="Intercompany.io"></a> <span style="opacity: 0.5;">·</span> <span>Independent Treasury Intelligence.</span></div>
+        <div class="footer-loc">
+          <svg class="ch-flag" width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" aria-label="Switzerland"><rect width="14" height="14" rx="2" fill="#D50000"/><rect x="5.6" y="2.1" width="2.8" height="9.8" fill="white"/><rect x="2.1" y="5.6" width="9.8" height="2.8" fill="white"/></svg>
+          <span>Geneva, Switzerland</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="/">Home</a>
+        <a href="/simulator-input.html">Open Simulator</a>
+        <a href="/guide.html">Guide</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="/about.html">About</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contact</a>
+        <a href="https://github.com/enkidub/cashpoolmodel" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Trust &amp; Legal</div>
+        <a href="/security.html">Security &amp; Privacy</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="/guide.html">Guide</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Intercompany.io. All rights reserved.</span>
+      <span>Built in Switzerland by <a href="https://www.linkedin.com/in/houserjakub/" rel="noopener" target="_blank">Jakub Houser</a>.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  workerUrl: "https://dolozka-ocr-proxy.kuba-houser.workers.dev"
+};
+
+const ADVOKATI = [
+  {
+    id: "honza",
+    jmeno: "Mgr. Ing. Jan Houser",
+    role: "advokát",
+    ev_cislo: "14724",
+    cislo_knihy: "016960",
+    sidlo: "Purkyňova 74/2, Praha 1, 110 00"
+  },
+  {
+    id: "aneta",
+    jmeno: "Mgr. Ing. Aneta Plachtovičová",
+    role: "advokátka",
+    ev_cislo: "20895",
+    cislo_knihy: "021802",
+    sidlo: "Purkyňova 74/2, Praha 1, 110 00"
+  }
+];
+
+let selectedAdvokat = null;
+let uploadedImages = [];
+let ocrData = null;
+let gdprShown = false;
+
+// ── Init ──────────────────────────────────────────────────────────
+function init() {
+  renderAdvokati();
+  prefillDates();
+  setupUpload();
+  updatePreview();
+}
+
+function renderAdvokati() {
+  const grid = document.getElementById('advokaciGrid');
+  grid.innerHTML = ADVOKATI.map((a, i) => `
+    <div class="advokat-card" id="advokat-${a.id}" onclick="selectAdvokat(${i})">
+      <div class="advokat-name">${a.jmeno}</div>
+      <div class="advokat-role">${a.role}</div>
+      <div class="advokat-detail">
+        ev. č. ${a.ev_cislo}<br>
+        č. knihy ${a.cislo_knihy}<br>
+        ${a.sidlo}
+      </div>
+    </div>
+  `).join('');
+}
+
+function prefillDates() {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const yyyy = today.getFullYear();
+  document.getElementById('fDatumOver').value = `${dd}.${mm}.${yyyy}`;
+  document.getElementById('fRok').value = yyyy;
+}
+
+// ── Advokát ───────────────────────────────────────────────────────
+function selectAdvokat(index) {
+  selectedAdvokat = ADVOKATI[index];
+  document.querySelectorAll('.advokat-card').forEach(c => c.classList.remove('active'));
+  document.getElementById(`advokat-${selectedAdvokat.id}`).classList.add('active');
+  updatePreview();
+}
+
+// ── Upload ────────────────────────────────────────────────────────
+function setupUpload() {
+  const zone = document.getElementById('uploadZone');
+  const input = document.getElementById('fileInput');
+
+  input.addEventListener('change', e => handleFiles(e.target.files));
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    handleFiles(e.dataTransfer.files);
+  });
+}
+
+function handleFiles(files) {
+  const allowed = ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/webp'];
+  const newFiles = Array.from(files).filter(f => allowed.includes(f.type) || f.name.toLowerCase().endsWith('.heic'));
+  const remaining = 2 - uploadedImages.length;
+  if (remaining <= 0) { showToast('Maximálně 2 fotografie.'); return; }
+
+  newFiles.slice(0, remaining).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedImages.push({ file, dataUrl: e.target.result, mediaType: file.type || 'image/jpeg' });
+      renderPreviews();
+      document.getElementById('btnOcr').disabled = false;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreviews() {
+  const container = document.getElementById('previews');
+  container.innerHTML = uploadedImages.map((img, i) => `
+    <div class="preview-thumb">
+      <img src="${img.dataUrl}" alt="Náhled ${i + 1}">
+      <button class="preview-thumb-remove" onclick="removeImage(${i})" title="Odstranit">×</button>
+    </div>
+  `).join('');
+}
+
+function removeImage(index) {
+  uploadedImages.splice(index, 1);
+  renderPreviews();
+  if (uploadedImages.length === 0) document.getElementById('btnOcr').disabled = true;
+}
+
+// ── OCR ───────────────────────────────────────────────────────────
+async function runOcr() {
+  if (!selectedAdvokat) { showToast('Nejprve vyberte advokáta.'); return; }
+  if (uploadedImages.length === 0) { showToast('Nahrajte fotografii OP.'); return; }
+
+  setOcrLoading(true);
+
+  const images = uploadedImages.map(img => ({
+    data: img.dataUrl.split(',')[1],
+    media_type: img.mediaType.startsWith('image/') ? img.mediaType : 'image/jpeg'
+  }));
+
+  try {
+    const res = await fetch(`${CONFIG.workerUrl}/ocr`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images })
+    });
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.message || 'OCR selhalo.');
+
+    ocrData = data;
+    fillForm(data);
+    showToast('Údaje rozpoznány. Zkontrolujte je prosím.');
+  } catch (err) {
+    showToast('Chyba: ' + err.message);
+  } finally {
+    setOcrLoading(false);
+  }
+}
+
+function setOcrLoading(on) {
+  document.getElementById('btnOcr').disabled = on;
+  document.getElementById('ocrLoading').classList.toggle('visible', on);
+}
+
+function fillForm(data) {
+  const fields = {
+    fJmeno: { key: 'jmeno_prijmeni' },
+    fDatumNar: { key: 'datum_narozeni' },
+    fMistoNar: { key: 'misto_narozeni' },
+    fAdresa: { key: 'adresa_trvaleho_pobytu' },
+    fCisloOp: { key: 'cislo_op' },
+    fStatOb: { key: 'statni_obcanstvi' },
+  };
+
+  const lowConf = new Set(data.pole_s_nizkou_jistotou || []);
+  const conf = data.confidence ?? 1;
+
+  Object.entries(fields).forEach(([elId, { key }]) => {
+    const el = document.getElementById(elId);
+    const val = data[key];
+    el.value = val ?? '';
+    el.classList.remove('warn', 'danger');
+
+    const hint = el.nextElementSibling;
+    if (hint && hint.classList.contains('field-hint')) {
+      hint.classList.remove('warn', 'danger');
+      hint.textContent = hint.dataset.orig || hint.textContent;
+    }
+
+    if (lowConf.has(key)) {
+      if (conf < 0.5) {
+        el.classList.add('danger');
+        if (hint && hint.classList.contains('field-hint')) {
+          hint.dataset.orig = hint.textContent;
+          hint.classList.add('danger');
+          hint.textContent = 'Nízká jistota rozpoznání — zkontrolujte ručně.';
+        }
+      } else {
+        el.classList.add('warn');
+        if (hint && hint.classList.contains('field-hint')) {
+          hint.dataset.orig = hint.textContent;
+          hint.classList.add('warn');
+          hint.textContent = 'Možná chyba rozpoznání — zkontrolujte.';
+        }
+      }
+    }
+  });
+
+  updatePreview();
+}
+
+// ── Preview ───────────────────────────────────────────────────────
+function ph(val, placeholder) {
+  if (!val || !val.trim()) return `<span class="dolozka-placeholder">${placeholder}</span>`;
+  return val;
+}
+
+function updatePreview() {
+  const a = selectedAdvokat;
+  const jmeno = document.getElementById('fJmeno').value.trim();
+  const datumNar = document.getElementById('fDatumNar').value.trim();
+  const mistoNar = document.getElementById('fMistoNar').value.trim();
+  const adresa = document.getElementById('fAdresa').value.trim();
+  const cisloOp = document.getElementById('fCisloOp').value.trim();
+  const cisloRadku = document.getElementById('fCisloRadku').value.trim();
+  const rok = document.getElementById('fRok').value.trim();
+  const datumOver = document.getElementById('fDatumOver').value.trim();
+  const pocet = document.getElementById('fPocetVyh').value.trim();
+  const listina = document.getElementById('fListina').value.trim();
+
+  const advokatJmeno = a ? a.jmeno : null;
+  const advokatRole = a ? a.role : null;
+  const cisloknihy = a ? a.cislo_knihy : null;
+  const evCislo = a ? a.ev_cislo : null;
+  const sidlo = a ? a.sidlo : null;
+
+  const knihaCislo = cisloRadku && rok
+    ? `${ph(cisloknihy,'[č. knihy')}/${cisloRadku}/${rok}`
+    : `${ph(cisloknihy,'[č. knihy')}/${ph(cisloRadku,'[č. řádku]')}/${ph(rok,'[rok]')}`;
+
+  const preview = document.getElementById('dolozkaPreview');
+  preview.innerHTML = `
+    <div class="dolozka-title">Prohlášení o pravosti podpisu</div>
+
+    <div class="dolozka-p">Běžné číslo knihy o prohlášeních o pravosti podpisu ${knihaCislo}</div>
+
+    <div class="dolozka-p">
+      ${ph(advokatJmeno,'[Jméno advokáta]')}, ${ph(advokatRole,'[role]')}, ev. č. ${ph(evCislo,'[č. ev.]')}, se sídlem ${ph(sidlo,'[sídlo]')};
+    </div>
+
+    <div class="dolozka-p">
+      Prohlašuji, že ${ph(jmeno,'[JMÉNO A PŘÍJMENÍ]')}, nar. ${ph(datumNar,'[DATUM NAROZENÍ]')}, místo
+      narození ${ph(mistoNar,'[MÍSTO NAROZENI]')}, bytem ${ph(adresa,'[ADRESA]')}, jehož/jejíž totožnost
+      byla prokázána z občanského průkazu č. ${ph(cisloOp,'[ČÍSLO OP]')},
+    </div>
+
+    <div class="dolozka-p">
+      tuto listinu v ${ph(pocet,'[POČET]')} vyhotovení(ch) přede mnou vlastnoručně podepsal/a.
+    </div>
+
+    <div class="dolozka-sig">
+      V Praze dne ${ph(datumOver,'[DATUM OVĚŘENÍ]')}<br><br>
+      ${ph(advokatJmeno,'[Jméno advokáta]')}, ${ph(advokatRole,'[role]')}
+    </div>
+
+    <table class="dolozka-table">
+      <tr>
+        <td>V Praze, ${ph(sidlo,'[sídlo]')} dne ${ph(datumOver,'[datum]')}</td>
+        <td>
+          ${ph(jmeno,'[JMÉNO]')} nar. ${ph(datumNar,'[DATUM]')}, místo narození
+          ${ph(mistoNar,'[MÍSTO]')}, bytem ${ph(adresa,'[ADRESA]')}
+        </td>
+      </tr>
+      <tr>
+        <td>OP: ${ph(cisloOp,'[ČÍSLO OP]')}</td>
+        <td>${ph(pocet,'[počet]')}x ${ph(listina,'[SPECIFIKACE LISTINY]')}</td>
+      </tr>
+    </table>
+  `;
+}
+
+// ── DOCX Download ─────────────────────────────────────────────────
+function validateForm() {
+  const errors = [];
+
+  if (!selectedAdvokat) errors.push('Vyberte advokáta');
+
+  const checks = [
+    ['fJmeno', 'Jméno a příjmení'],
+    ['fDatumNar', 'Datum narození', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v), 'Formát DD.MM.YYYY'],
+    ['fMistoNar', 'Místo narození'],
+    ['fAdresa', 'Adresa trvalého pobytu'],
+    ['fCisloOp', 'Číslo OP', v => /^\d{9}$/.test(v), '9 číslic'],
+    ['fCisloRadku', 'Číslo řádku knihy', v => parseInt(v) > 0, 'kladné celé číslo'],
+    ['fRok', 'Rok', v => /^\d{4}$/.test(v), '4 číslice'],
+    ['fDatumOver', 'Datum ověření', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v), 'Formát DD.MM.YYYY'],
+    ['fPocetVyh', 'Počet vyhotovení', v => parseInt(v) > 0, 'kladné celé číslo'],
+    ['fListina', 'Specifikace listiny'],
+  ];
+
+  checks.forEach(([id, label, validator, hint]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const val = el ? el.value.trim() : '';
+    el.classList.remove('invalid');
+    if (!val) {
+      errors.push(`${label} je povinné`);
+      el.classList.add('invalid');
+    } else if (validator && !validator(val)) {
+      errors.push(`${label}: ${hint}`);
+      el.classList.add('invalid');
+    }
+  });
+
+  return errors;
+}
+
+function slugify(str) {
+  return (str || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '');
+}
+
+function dateToDMY(str) {
+  const parts = str.split('.');
+  if (parts.length === 3) return { d: parts[0], m: parts[1], y: parts[2] };
+  return { d: '', m: '', y: '' };
+}
+
+function dateToYMD(str) {
+  const { d, m, y } = dateToDMY(str);
+  return `${y}${m}${d}`;
+}
+
+function getPrijmeni(jmenoPrijmeni) {
+  const parts = (jmenoPrijmeni || '').trim().split(/\s+/);
+  return parts[parts.length - 1] || 'klient';
+}
+
+async function downloadDocx() {
+  const errors = validateForm();
+  const errBox = document.getElementById('validationErrors');
+  const errList = document.getElementById('validationList');
+
+  if (errors.length > 0) {
+    errList.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+    errBox.classList.add('visible');
+    errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
+  }
+
+  errBox.classList.remove('visible');
+
+  const a = selectedAdvokat;
+  const jmeno = document.getElementById('fJmeno').value.trim();
+  const datumNar = document.getElementById('fDatumNar').value.trim();
+  const mistoNar = document.getElementById('fMistoNar').value.trim();
+  const adresa = document.getElementById('fAdresa').value.trim();
+  const cisloOp = document.getElementById('fCisloOp').value.trim();
+  const cisloRadku = document.getElementById('fCisloRadku').value.trim();
+  const rok = document.getElementById('fRok').value.trim();
+  const datumOver = document.getElementById('fDatumOver').value.trim();
+  const pocet = document.getElementById('fPocetVyh').value.trim();
+  const listina = document.getElementById('fListina').value.trim();
+
+  const { Document, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, BorderStyle, AlignmentType, convertInchesToTwip } = docx;
+
+  const sz = 13;
+  const font = 'Times New Roman';
+
+  function run(text, opts = {}) {
+    return new TextRun({ text, font, size: sz, ...opts });
+  }
+
+  function para(children, alignment = AlignmentType.BOTH) {
+    return new Paragraph({ children: Array.isArray(children) ? children : [children], alignment });
+  }
+
+  function emptyPara() {
+    return para([run('')], AlignmentType.LEFT);
+  }
+
+  const borderSingle = {
+    style: BorderStyle.SINGLE,
+    size: 6,
+    color: '000000',
+  };
+  const cellBorders = {
+    top: borderSingle,
+    bottom: borderSingle,
+    left: borderSingle,
+    right: borderSingle,
+  };
+
+  const doc = new Document({
+    sections: [{
+      properties: {
+        page: {
+          size: { width: 11906, height: 16838 },
+          margin: {
+            top: convertInchesToTwip(1.18),
+            bottom: convertInchesToTwip(0.98),
+            left: convertInchesToTwip(1.18),
+            right: convertInchesToTwip(0.79),
+          },
+        },
+      },
+      children: [
+        emptyPara(),
+        emptyPara(),
+
+        // Nadpis
+        para(
+          [run('Prohlášení o pravosti podpisu', { bold: true, allCaps: true })],
+          AlignmentType.CENTER
+        ),
+
+        emptyPara(),
+
+        // Číslo knihy
+        para([
+          run(`Běžné číslo knihy o prohlášeních o pravosti podpisu ${a.cislo_knihy}/${cisloRadku}/${rok}`)
+        ]),
+
+        emptyPara(),
+
+        // Identifikace advokáta
+        para([
+          run(`${a.jmeno}, ${a.role}, ev. č. ${a.ev_cislo}, se sídlem ${a.sidlo};`)
+        ]),
+
+        emptyPara(),
+
+        // Text prohlášení
+        para([
+          run(`Prohlašuji, že ${jmeno}, nar. ${datumNar}, místo narození ${mistoNar}, bytem ${adresa}, jehož/jejíž totožnost byla prokázána z občanského průkazu č. ${cisloOp},`)
+        ]),
+
+        emptyPara(),
+
+        para([
+          run(`tuto listinu v ${pocet} vyhotovení(ch) přede mnou vlastnoručně podepsal/a.`)
+        ]),
+
+        emptyPara(),
+        emptyPara(),
+
+        // Místo a datum
+        para([run(`V Praze dne ${datumOver}`)], AlignmentType.LEFT),
+
+        emptyPara(),
+        emptyPara(),
+        emptyPara(),
+
+        // Podpis advokáta
+        para([run(`${a.jmeno}, ${a.role}`)], AlignmentType.RIGHT),
+
+        emptyPara(),
+        emptyPara(),
+
+        // Tabulka záznamu
+        new Table({
+          width: { size: 9026, type: WidthType.DXA },
+          rows: [
+            new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: 4513, type: WidthType.DXA },
+                  borders: cellBorders,
+                  children: [
+                    new Paragraph({
+                      children: [run(`V Praze, ${a.sidlo} dne ${datumOver}`)],
+                      alignment: AlignmentType.LEFT,
+                    })
+                  ],
+                }),
+                new TableCell({
+                  width: { size: 4513, type: WidthType.DXA },
+                  borders: cellBorders,
+                  children: [
+                    new Paragraph({
+                      children: [run(`${jmeno} nar. ${datumNar}, místo narození ${mistoNar}, bytem ${adresa}`)],
+                      alignment: AlignmentType.LEFT,
+                    })
+                  ],
+                }),
+              ],
+            }),
+            new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: 4513, type: WidthType.DXA },
+                  borders: cellBorders,
+                  children: [
+                    new Paragraph({
+                      children: [run(`OP: ${cisloOp}`)],
+                      alignment: AlignmentType.LEFT,
+                    })
+                  ],
+                }),
+                new TableCell({
+                  width: { size: 4513, type: WidthType.DXA },
+                  borders: cellBorders,
+                  children: [
+                    new Paragraph({
+                      children: [run(`${pocet}x ${listina}`)],
+                      alignment: AlignmentType.LEFT,
+                    })
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }],
+  });
+
+  const blob = await docx.Packer.toBlob(doc);
+
+  const prijmeni = slugify(getPrijmeni(jmeno));
+  const datumSlug = dateToYMD(datumOver);
+  const filename = `dolozka_${a.id}_${datumSlug}_${prijmeni}.docx`;
+
+  saveAs(blob, filename);
+
+  if (!gdprShown) {
+    gdprShown = true;
+    document.getElementById('gdprNotice').classList.add('visible');
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function toggleMobileNav() {
+  document.getElementById('navBurger').classList.toggle('open');
+  document.getElementById('navMobile').classList.toggle('open');
+}
+
+init();
+</script>
+</body>
+</html>
