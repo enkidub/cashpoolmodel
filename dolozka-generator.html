@@ -798,6 +798,7 @@ async function downloadDocx() {
     const p = text => new Paragraph({ children:[run(text)], spacing:sp });
     return [new Table({
       width:{size:colRight-200,type:WidthType.DXA},
+      borders:{top:nil,bottom:nil,left:nil,right:nil,insideH:nil,insideV:nil},
       rows:[
         new TableRow({ children:[
           cell([p(`V Praze, ${a.sidlo}`), p(`dne ${datumOver}`)]),
@@ -822,7 +823,7 @@ async function downloadDocx() {
   const doc = new Document({ sections:[{ properties:{ page:{
     size:{width:pageWidth,height:pageHeight},
     margin:{top:margin,bottom:margin,left:margin,right:margin},
-  }}, children:[new Table({width:{size:tableWidth,type:WidthType.DXA},rows})] }] });
+  }}, children:[new Table({width:{size:tableWidth,type:WidthType.DXA},borders:{top:nil,bottom:nil,left:nil,right:nil,insideH:nil,insideV:nil},rows})] }] });
 
   let blob;
   try { blob = await docx.Packer.toBlob(doc); }
