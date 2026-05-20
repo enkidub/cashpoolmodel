@@ -521,7 +521,7 @@ footer { background: var(--navy); padding: 52px 0 0; }
       <ul id="validationList"></ul>
     </div>
 
-    <button class="btn-download" id="btnDownload" onclick="downloadDocx()">
+    <button class="btn-download" id="btnDownload" onclick="downloadDocx().catch(e => showToast('Chyba: ' + (e?.message || e)))">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2.5" y="11" width="11" height="2.5" rx="1"/>
       </svg>
@@ -1087,7 +1087,13 @@ async function downloadDocx() {
     }],
   });
 
-  const blob = await docx.Packer.toBlob(doc);
+  let blob;
+  try {
+    blob = await docx.Packer.toBlob(doc);
+  } catch (err) {
+    showToast('Chyba při generování DOCX: ' + (err?.message || err));
+    return;
+  }
 
   const prijmeni = slugify(getPrijmeni(jmeno));
   const datumSlug = dateToYMD(datumOver);
