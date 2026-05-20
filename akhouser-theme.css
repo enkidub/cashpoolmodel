@@ -1,0 +1,280 @@
+/* ============================================================
+   akhouser-theme.css
+   Vizuální styl odpovídající AK Houser & Plachtovičová
+   Přidej do <head> stránky dolozka-generator.html:
+   <link rel="stylesheet" href="akhouser-theme.css">
+   ============================================================ */
+
+/* ---------- 1. FONT ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ---------- 2. PROMĚNNÉ (design tokens) ---------- */
+:root {
+  --ak-green-dark:   #1b5e3b;   /* logo, hlavní CTA tlačítka */
+  --ak-green-mid:    #2e7d52;   /* hover stavy, akcenty */
+  --ak-green-light:  #eaf4ee;   /* pozadí sekcí, tagů */
+  --ak-green-border: #a8d5b8;   /* border karet, inputů */
+  --ak-text-dark:    #1a1a1a;   /* hlavní text */
+  --ak-text-muted:   #5a6472;   /* popisky, placeholder */
+  --ak-white:        #ffffff;
+  --ak-bg-page:      #f7faf8;   /* jemné zelenkavé pozadí stránky */
+  --ak-radius:       6px;
+  --ak-radius-lg:    10px;
+  --ak-font:         'Plus Jakarta Sans', system-ui, sans-serif;
+  --ak-shadow:       0 1px 3px rgba(27,94,59,0.08), 0 4px 12px rgba(27,94,59,0.06);
+}
+
+/* ---------- 3. ZÁKLADNÍ RESET & TĚLO ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--ak-font) !important;
+  background: var(--ak-bg-page) !important;
+  color: var(--ak-text-dark) !important;
+  margin: 0;
+}
+
+/* ---------- 4. HLAVIČKA / HEADER ---------- */
+header,
+.site-header,
+nav.navbar,
+.navbar,
+.header {
+  background: var(--ak-white) !important;
+  border-bottom: 1px solid var(--ak-green-border) !important;
+  box-shadow: 0 1px 4px rgba(27,94,59,0.07) !important;
+}
+
+/* Logo text */
+.logo, .brand, header h1 {
+  color: var(--ak-green-dark) !important;
+  font-weight: 700 !important;
+}
+
+/* Nav links */
+nav a, .navbar a, .nav-link {
+  color: var(--ak-text-dark) !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: color 0.18s;
+}
+nav a:hover, .nav-link:hover {
+  color: var(--ak-green-dark) !important;
+}
+
+/* ---------- 5. NADPISY ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--ak-font) !important;
+  color: var(--ak-text-dark) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.4rem; color: var(--ak-green-dark) !important; }
+h3 { font-size: 1.1rem; }
+
+/* ---------- 6. BADGE / TAG (viz "MŮŽETE SE NA NÁS SPOLEHNOUT") ---------- */
+.badge,
+.tag,
+.label,
+[class*="badge"],
+[class*="tag"] {
+  background: var(--ak-green-light) !important;
+  color: var(--ak-green-dark) !important;
+  border: 1px solid var(--ak-green-border) !important;
+  border-radius: 999px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 4px 14px !important;
+}
+
+/* ---------- 7. KARTY / SEKCE ---------- */
+.card,
+.section-box,
+.form-section,
+[class*="card"],
+[class*="panel"],
+[class*="box"] {
+  background: var(--ak-white) !important;
+  border: 1px solid var(--ak-green-border) !important;
+  border-radius: var(--ak-radius-lg) !important;
+  box-shadow: var(--ak-shadow) !important;
+  padding: 1.5rem !important;
+}
+
+/* Alternativní zelené pozadí sekcí */
+.section-alt,
+.bg-light,
+.bg-secondary {
+  background: var(--ak-green-light) !important;
+  border-color: var(--ak-green-border) !important;
+}
+
+/* ---------- 8. FORMULÁŘOVÉ PRVKY ---------- */
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="email"],
+textarea,
+select {
+  font-family: var(--ak-font) !important;
+  border: 1px solid var(--ak-green-border) !important;
+  border-radius: var(--ak-radius) !important;
+  background: var(--ak-white) !important;
+  color: var(--ak-text-dark) !important;
+  padding: 0.55rem 0.85rem !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  outline: none;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--ak-green-mid) !important;
+  box-shadow: 0 0 0 3px rgba(46,125,82,0.15) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ak-text-muted) !important;
+}
+
+label {
+  font-family: var(--ak-font) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: var(--ak-text-muted) !important;
+  letter-spacing: 0.01em;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* ---------- 9. TLAČÍTKA ---------- */
+
+/* Primární – zelené (CTA jako "Stáhnout doložku") */
+button,
+.btn,
+.btn-primary,
+input[type="submit"],
+input[type="button"] {
+  font-family: var(--ak-font) !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  border-radius: var(--ak-radius) !important;
+  padding: 0.6rem 1.25rem !important;
+  cursor: pointer !important;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.1s !important;
+  border: none !important;
+  background: var(--ak-green-dark) !important;
+  color: var(--ak-white) !important;
+}
+
+button:hover,
+.btn:hover,
+.btn-primary:hover {
+  background: var(--ak-green-mid) !important;
+  box-shadow: 0 3px 10px rgba(27,94,59,0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+button:active,
+.btn:active {
+  transform: translateY(0) !important;
+}
+
+/* Sekundární / outline varianta */
+.btn-secondary,
+.btn-outline,
+button.secondary {
+  background: transparent !important;
+  color: var(--ak-green-dark) !important;
+  border: 1.5px solid var(--ak-green-dark) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--ak-green-light) !important;
+}
+
+/* Upload tlačítko */
+.upload-btn,
+label[for*="file"],
+.file-label {
+  background: var(--ak-green-light) !important;
+  color: var(--ak-green-dark) !important;
+  border: 1.5px dashed var(--ak-green-border) !important;
+  border-radius: var(--ak-radius) !important;
+  font-weight: 600 !important;
+  padding: 0.7rem 1.25rem !important;
+  display: inline-block;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.upload-btn:hover,
+label[for*="file"]:hover {
+  background: var(--ak-green-border) !important;
+}
+
+/* ---------- 10. NÁHLED DOLOŽKY ---------- */
+.preview,
+.dolozka-preview,
+[class*="preview"] {
+  background: var(--ak-white) !important;
+  border: 1px solid var(--ak-green-border) !important;
+  border-left: 4px solid var(--ak-green-dark) !important;
+  border-radius: var(--ak-radius) !important;
+  font-family: 'Georgia', serif !important; /* právnický dokument — patky */
+  font-size: 0.9rem !important;
+  line-height: 1.8 !important;
+  color: var(--ak-text-dark) !important;
+  padding: 1.5rem !important;
+}
+
+/* ---------- 11. ZÁPATÍ ---------- */
+footer,
+.site-footer {
+  background: var(--ak-green-dark) !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-family: var(--ak-font) !important;
+  padding: 2rem 1.5rem !important;
+}
+
+footer a { color: rgba(255,255,255,0.7) !important; }
+footer a:hover { color: var(--ak-white) !important; }
+
+/* ---------- 12. STAVOVÝ TEXT / UPOZORNĚNÍ ---------- */
+.info-note,
+.privacy-note,
+.note,
+[class*="note"],
+[class*="info"] {
+  background: var(--ak-green-light) !important;
+  border: 1px solid var(--ak-green-border) !important;
+  border-radius: var(--ak-radius) !important;
+  color: var(--ak-green-dark) !important;
+  font-size: 0.82rem !important;
+  padding: 0.6rem 1rem !important;
+}
+
+/* ---------- 13. SPINNER / LOADING ---------- */
+.spinner,
+[class*="spinner"],
+[class*="loading"] {
+  border-color: var(--ak-green-light) !important;
+  border-top-color: var(--ak-green-dark) !important;
+}
+
+/* ---------- 14. SELECT (dropdown advokát) ---------- */
+select option {
+  color: var(--ak-text-dark) !important;
+}
+
+/* ---------- 15. MALÉ POMOCNÉ TŘÍDY ---------- */
+.text-green  { color: var(--ak-green-dark) !important; }
+.bg-green    { background: var(--ak-green-light) !important; }
+.border-green { border-color: var(--ak-green-border) !important; }
