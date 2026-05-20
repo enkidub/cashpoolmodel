@@ -936,7 +936,7 @@ async function downloadDocx() {
 
   const {
     Document, Paragraph, TextRun, Table, TableRow, TableCell,
-    WidthType, BorderStyle, AlignmentType, HeightRule,
+    WidthType, AlignmentType, HeightRule,
   } = docx;
 
   const sz = 13;
@@ -968,11 +968,9 @@ async function downloadDocx() {
   const colRight   = tableWidth - colLeft;              // ~4710 DXA
   const rowHeight  = Math.floor((pageHeight - margin * 2) / 4); // ~3849 DXA
 
-  // Borders
-  const dash    = { style: BorderStyle.DASHED, size: 6, color: '000000' };
-  const nil     = { style: BorderStyle.NONE,    size: 0, color: 'FFFFFF' };
-  const cellPad = { top: { size: 80, type: WidthType.DXA }, bottom: { size: 80, type: WidthType.DXA },
-                    left: { size: 100, type: WidthType.DXA }, right: { size: 100, type: WidthType.DXA } };
+  // Borders — use string literals to avoid enum lookup issues
+  const dash = { style: "dashed", size: 6, color: "000000" };
+  const nil  = { style: "none",   size: 0, color: "auto"   };
 
   function leftBorders(isLast) {
     return { top: nil, bottom: isLast ? nil : dash, left: nil, right: dash };
@@ -1004,18 +1002,21 @@ async function downloadDocx() {
   }
 
   // Right cell: inner 2×2 table (no borders) — záznam do knihy
+  function noB() {
+    return { top: nil, bottom: nil, left: nil, right: nil };
+  }
+
   function makeRight() {
     const innerHalf = Math.floor((colRight - 200) / 2);
     return [
       new Table({
         width: { size: colRight - 200, type: WidthType.DXA },
-        borders: { top: nil, bottom: nil, left: nil, right: nil, insideH: nil, insideV: nil },
         rows: [
           new TableRow({
             children: [
               new TableCell({
                 width: { size: innerHalf, type: WidthType.DXA },
-                borders: { top: nil, bottom: nil, left: nil, right: nil },
+                borders: noB(),
                 children: [
                   new Paragraph({ children: [run(`V Praze, ${a.sidlo}`)], spacing: sp }),
                   new Paragraph({ children: [run(`dne ${datumOver}`)], spacing: sp }),
@@ -1023,7 +1024,7 @@ async function downloadDocx() {
               }),
               new TableCell({
                 width: { size: innerHalf, type: WidthType.DXA },
-                borders: { top: nil, bottom: nil, left: nil, right: nil },
+                borders: noB(),
                 children: [
                   new Paragraph({ children: [run(jmeno)], spacing: sp }),
                   new Paragraph({ children: [run(`nar. ${datumNar}, místo`)], spacing: sp }),
@@ -1037,14 +1038,14 @@ async function downloadDocx() {
             children: [
               new TableCell({
                 width: { size: innerHalf, type: WidthType.DXA },
-                borders: { top: nil, bottom: nil, left: nil, right: nil },
+                borders: noB(),
                 children: [
                   new Paragraph({ children: [run(`OP: ${cisloOp}`)], spacing: sp }),
                 ],
               }),
               new TableCell({
                 width: { size: innerHalf, type: WidthType.DXA },
-                borders: { top: nil, bottom: nil, left: nil, right: nil },
+                borders: noB(),
                 children: [
                   new Paragraph({ children: [run(`${pocet}x`)], spacing: sp }),
                   new Paragraph({ children: [run(listina)], spacing: sp }),
@@ -1066,13 +1067,11 @@ async function downloadDocx() {
         new TableCell({
           width: { size: colLeft, type: WidthType.DXA },
           borders: leftBorders(isLast),
-          margins: cellPad,
           children: makeLeft(),
         }),
         new TableCell({
           width: { size: colRight, type: WidthType.DXA },
           borders: rightBorders(isLast),
-          margins: cellPad,
           children: makeRight(),
         }),
       ],
@@ -1090,7 +1089,6 @@ async function downloadDocx() {
       children: [
         new Table({
           width: { size: tableWidth, type: WidthType.DXA },
-          borders: { top: nil, bottom: nil, left: nil, right: nil, insideH: nil, insideV: nil },
           rows,
         }),
       ],
