@@ -7,195 +7,161 @@
 <title>Generátor doložky | AK Houser &amp; Plachtovičová</title>
 <link rel="icon" type="image/png" href="/AK.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
 <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 <style>
 :root {
-  --navy:    #0b1929;
-  --navy-h:  #132540;
-  --ink:     #1a2233;
-  --ink-mid: #3d4f6a;
-  --ink-lt:  #6b7d96;
-  --ink-fnt: #9babbe;
-  --paper:   #f9f8f5;
-  --paper-w: #f2f0eb;
-  --rule:    #ddd9d0;
-  --gold:    #9a6e10;
-  --gold-h:  #7d5808;
-  --gold-p:  #fdf8ec;
-  --white:   #ffffff;
-  --serif:   'Cormorant Garamond', Georgia, serif;
-  --sans:    'DM Sans', system-ui, sans-serif;
-  --mono:    'DM Mono', monospace;
-  --max:     1160px;
-  --pad:     clamp(16px, 3vw, 36px);
-  --sh:      0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
-  --sh-lg:   0 8px 40px rgba(11,25,41,.11), 0 2px 8px rgba(11,25,41,.04);
-  --r:       5px;
-  --rl:      10px;
+  --navy:   #0b1929;
+  --navy-h: #132540;
+  --ink:    #1a2233;
+  --ink-mid:#3d4f6a;
+  --ink-lt: #6b7d96;
+  --ink-fnt:#9babbe;
+  --paper:  #f9f8f5;
+  --paper-w:#f2f0eb;
+  --rule:   #ddd9d0;
+  --gold:   #9a6e10;
+  --gold-h: #7d5808;
+  --gold-p: #fdf8ec;
+  --white:  #ffffff;
+  --serif:  'Cormorant Garamond', Georgia, serif;
+  --sans:   'DM Sans', system-ui, sans-serif;
+  --sh:     0 1px 3px rgba(11,25,41,.06), 0 4px 16px rgba(11,25,41,.06);
+  --sh-lg:  0 8px 40px rgba(11,25,41,.13), 0 2px 8px rgba(11,25,41,.05);
+  --r:      5px; --rl: 10px;
+  --max:    1160px; --pad: clamp(16px, 3vw, 36px);
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; -webkit-font-smoothing: antialiased; }
 body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6; }
-a { color: inherit; text-decoration: none; }
 
 /* ── HEADER ── */
-.ak-header {
-  background: var(--white); border-bottom: 1px solid var(--rule);
-  padding: 0 var(--pad);
-}
+.ak-header { background: var(--white); border-bottom: 1px solid var(--rule); padding: 0 var(--pad); }
 .ak-header-i {
-  max-width: var(--max); margin: 0 auto;
-  height: 62px; display: flex; align-items: center; gap: 14px;
+  max-width: var(--max); margin: 0 auto; height: 62px;
+  display: flex; align-items: center; gap: 14px;
 }
-.ak-logo { height: 36px; width: auto; display: block; flex-shrink: 0; }
-.ak-header-title {
-  font-family: var(--serif); font-size: 19px; font-weight: 600;
-  color: var(--navy); letter-spacing: -.2px; line-height: 1.1;
-}
-.ak-header-sub { font-size: 11px; color: var(--ink-lt); font-family: var(--sans); margin-top: 1px; }
-.ak-header-div { width: 1px; height: 28px; background: var(--rule); flex-shrink: 0; }
+.ak-logo { height: 34px; width: auto; display: block; flex-shrink: 0; }
+.ak-div { width: 1px; height: 26px; background: var(--rule); flex-shrink: 0; }
+.ak-title { font-family: var(--serif); font-size: 19px; font-weight: 600; color: var(--navy); letter-spacing: -.2px; line-height: 1.1; }
+.ak-sub { font-size: 11px; color: var(--ink-fnt); margin-top: 1px; }
 
 /* ── LAYOUT ── */
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
 .page { padding: clamp(24px, 3vw, 40px) 0 60px; }
-
-.main-cols {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  gap: 28px;
-  align-items: start;
-}
+.main-cols { display: grid; grid-template-columns: 340px 1fr; gap: 28px; align-items: start; }
 @media (max-width: 800px) { .main-cols { grid-template-columns: 1fr; } }
 
-/* ── SECTION LABEL ── */
 .sec-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--ink-fnt); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ink-fnt); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
 }
 .sec-label::before { content: ''; width: 10px; height: 1px; background: var(--ink-fnt); }
+.left-block { margin-bottom: 20px; }
 
-/* ── ADVOKÁTI ── */
-.advokati-grid {
-  display: grid; grid-template-columns: 1fr;
-  gap: 8px; margin-bottom: 10px;
+/* ── CUSTOM DROPDOWN ── */
+.ak-select { position: relative; }
+.ak-select-trigger {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 14px; background: var(--white); border: 1.5px solid var(--rule);
+  border-radius: var(--rl); cursor: pointer; transition: all .15s; user-select: none;
 }
-.advokat-card {
-  background: var(--white); border: 1.5px solid var(--rule);
-  border-radius: var(--rl); padding: 13px 16px;
-  cursor: pointer; transition: all .16s; user-select: none;
-  display: flex; justify-content: space-between; align-items: center;
+.ak-select-trigger:hover { border-color: var(--ink-lt); box-shadow: var(--sh); }
+.ak-select-trigger.open { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(11,25,41,.08); border-radius: var(--rl) var(--rl) 0 0; }
+.ak-select-trigger.has-value { border-color: var(--gold); background: var(--gold-p); }
+.ak-select-trigger.has-value.open { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(154,110,16,.12); }
+.ak-select-val { flex: 1; min-width: 0; }
+.ak-select-name { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ak-select-role { font-size: 11px; color: var(--ink-lt); }
+.ak-select-placeholder { font-size: 13px; color: var(--ink-fnt); }
+.ak-select-chevron { flex-shrink: 0; color: var(--ink-lt); transition: transform .2s; }
+.ak-select-chevron.open { transform: rotate(180deg); }
+.ak-select-menu {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--white); border: 1.5px solid var(--navy);
+  border-top: none; border-radius: 0 0 var(--rl) var(--rl);
+  box-shadow: var(--sh-lg); z-index: 100; display: none; overflow: hidden;
 }
-.advokat-card:hover { border-color: var(--ink-lt); box-shadow: var(--sh); }
-.advokat-card.active {
-  border-color: var(--gold); background: var(--gold-p);
-  box-shadow: 0 0 0 3px rgba(154,110,16,.12);
+.ak-select-menu.open { display: block; }
+.ak-select-item {
+  padding: 11px 14px; cursor: pointer; transition: background .12s;
+  border-top: 1px solid var(--rule);
 }
-.advokat-card-left { flex: 1; min-width: 0; }
-.advokat-name { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--navy); }
-.advokat-role { font-size: 11px; color: var(--ink-lt); margin-top: 1px; }
-.advokat-card.active .advokat-role { color: var(--gold); }
-.advokat-detail { font-size: 10px; color: var(--ink-fnt); margin-top: 5px; line-height: 1.5; }
-.advokat-check {
-  width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--rule);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  transition: all .14s;
-}
-.advokat-card.active .advokat-check {
-  background: var(--gold); border-color: var(--gold); color: #fff;
-}
+.ak-select-item:first-child { border-top: none; }
+.ak-select-item:hover { background: var(--paper); }
+.ak-select-item.active { background: var(--gold-p); }
+.ak-select-item-name { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--navy); }
+.ak-select-item-sub { font-size: 11px; color: var(--ink-lt); margin-top: 1px; }
+.ak-select-item.is-custom .ak-select-item-name { color: var(--gold); }
+.ak-select-item.is-custom .ak-select-item-sub { color: var(--gold); opacity: .7; }
 
-/* ── CUSTOM ADVOKÁT ── */
+/* ── CUSTOM ADVOKÁT FIELDS ── */
 .custom-form {
   background: var(--white); border: 1.5px solid var(--gold);
-  border-radius: var(--rl); padding: 16px;
-  margin-bottom: 18px; display: none;
-  box-shadow: 0 0 0 3px rgba(154,110,16,.08);
+  border-top: none; border-radius: 0 0 var(--rl) var(--rl);
+  padding: 14px 14px 16px; display: none;
+  box-shadow: 0 4px 16px rgba(154,110,16,.1);
 }
 .custom-form.visible { display: block; }
-.custom-form .form-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+.custom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.custom-grid .full { grid-column: 1 / -1; }
 
-/* ── UPLOAD ── */
-.upload-zone {
-  border: 2px dashed var(--rule); border-radius: var(--rl);
-  background: var(--white); padding: 22px 16px; text-align: center;
-  cursor: pointer; transition: all .18s; position: relative;
-  margin-bottom: 10px;
+/* ── UPLOAD COMPACT ── */
+.upload-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.btn-upload {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: var(--r);
+  background: var(--white); color: var(--navy);
+  border: 1.5px solid var(--rule);
+  font-family: var(--sans); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .14s; flex-shrink: 0;
 }
-.upload-zone:hover, .upload-zone.drag-over {
-  border-color: var(--gold); background: var(--gold-p);
-}
-.upload-zone input[type=file] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
-.upload-icon { font-size: 22px; margin-bottom: 6px; }
-.upload-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
-.upload-sub { font-size: 11px; color: var(--ink-lt); }
+.btn-upload:hover { border-color: var(--ink-lt); background: var(--paper-w); box-shadow: var(--sh); }
+.btn-upload svg { flex-shrink: 0; color: var(--ink-lt); }
 
-.previews { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-.preview-thumb {
-  position: relative; width: 72px; height: 54px;
-  border-radius: var(--r); overflow: hidden; border: 1.5px solid var(--rule);
+.photo-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.photo-chip {
+  position: relative; width: 58px; height: 42px;
+  border-radius: var(--r); overflow: hidden; border: 1.5px solid var(--rule); flex-shrink: 0;
 }
-.preview-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.preview-thumb-remove {
-  position: absolute; top: 2px; right: 2px;
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(11,25,41,.7); color: #fff;
-  font-size: 10px; border: none; cursor: pointer;
+.photo-chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-chip-x {
+  position: absolute; top: 1px; right: 1px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(11,25,41,.75); color: #fff;
+  font-size: 9px; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
 }
-.preview-thumb-remove:hover { background: rgba(11,25,41,.95); }
-
-.ocr-row { display: flex; align-items: center; gap: 14px; }
-.btn-ocr {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 10px 20px; border-radius: var(--r);
-  background: var(--gold); color: #fff;
-  font-family: var(--sans); font-size: 13px; font-weight: 600;
-  cursor: pointer; border: none; transition: all .16s;
-  box-shadow: 0 2px 8px rgba(154,110,16,.25);
-}
-.btn-ocr:hover:not(:disabled) { background: var(--gold-h); transform: translateY(-1px); }
-.btn-ocr:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
 .ocr-loading {
-  display: none; align-items: center; gap: 8px;
+  display: none; align-items: center; gap: 7px;
   font-size: 12px; color: var(--ink-lt);
 }
 .ocr-loading.visible { display: flex; }
 .spinner {
-  width: 16px; height: 16px; border: 2px solid var(--rule);
+  width: 15px; height: 15px; border: 2px solid var(--rule);
   border-top-color: var(--gold); border-radius: 50%;
   animation: spin .8s linear infinite; flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+.upload-hint { font-size: 11px; color: var(--ink-fnt); margin-top: 6px; }
 
-/* ── CARD (right column sections) ── */
+/* ── CARDS (right column) ── */
 .card {
   background: var(--white); border: 1px solid var(--rule);
-  border-radius: var(--rl); padding: 20px; margin-bottom: 18px;
-  box-shadow: var(--sh);
+  border-radius: var(--rl); padding: 20px; margin-bottom: 16px; box-shadow: var(--sh);
 }
 .card-title {
   font-family: var(--serif); font-size: 16px; font-weight: 600;
-  color: var(--navy); margin-bottom: 16px; padding-bottom: 12px;
+  color: var(--navy); margin-bottom: 14px; padding-bottom: 11px;
   border-bottom: 1px solid var(--rule);
 }
 
 /* ── FORM ── */
-.form-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-group { display: flex; flex-direction: column; }
 .form-group.full { grid-column: 1 / -1; }
-.form-label {
-  font-size: 10px; font-weight: 600; letter-spacing: .5px;
-  text-transform: uppercase; color: var(--ink-lt); margin-bottom: 5px;
-}
+.form-label { font-size: 10px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--ink-lt); margin-bottom: 5px; }
 .form-input {
   padding: 9px 12px; border-radius: var(--r); border: 1.5px solid var(--rule);
   font-family: var(--sans); font-size: 13px; color: var(--ink);
@@ -213,60 +179,42 @@ input[type=number].form-input::-webkit-outer-spin-button,
 input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
 /* ── PREVIEW ── */
-.preview-toggle {
-  display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer; user-select: none;
-}
-.preview-toggle-arrow {
-  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
-  color: var(--ink-lt); transition: transform .2s;
-}
-.preview-toggle-arrow.open { transform: rotate(180deg); }
+.preview-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.preview-arrow { color: var(--ink-lt); transition: transform .2s; }
+.preview-arrow.open { transform: rotate(180deg); }
 .preview-body { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
 .preview-body.open { display: block; }
-
 .dolozka-preview {
-  background: #fff; border: 1px solid #e8e4de;
-  border-radius: 4px; padding: 24px 28px; font-family: 'Times New Roman', Times, serif;
+  background: #fff; border: 1px solid #e8e4de; border-radius: 4px;
+  padding: 22px 26px; font-family: 'Times New Roman', Times, serif;
   font-size: 12px; line-height: 1.65; color: #111;
 }
-.dolozka-title {
-  text-align: center; font-weight: bold; text-transform: uppercase;
-  letter-spacing: .5px; margin-bottom: 16px; font-size: 12px;
-}
-.dolozka-p { margin-bottom: 10px; text-align: justify; }
-.dolozka-sig { margin-top: 24px; }
-.dolozka-placeholder { color: #aaa; font-style: italic; }
-.dolozka-table {
-  width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px;
-}
-.dolozka-table td { border: 1px solid #888; padding: 6px 8px; vertical-align: top; line-height: 1.5; }
+.dolozka-title { text-align: center; font-weight: bold; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 14px; font-size: 12px; }
+.dolozka-p { margin-bottom: 9px; text-align: justify; }
+.dolozka-sig { margin-top: 20px; }
+.dolozka-placeholder { color: #bbb; font-style: italic; }
+.dolozka-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 11px; }
+.dolozka-table td { border: 1px solid #888; padding: 5px 7px; vertical-align: top; line-height: 1.5; }
 .dolozka-table tr td:first-child { width: 48%; }
 
 /* ── DOWNLOAD ── */
 .btn-download {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 28px; border-radius: var(--r);
-  background: var(--gold); color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  padding: 13px; border-radius: var(--r); background: var(--gold); color: #fff;
   font-family: var(--sans); font-size: 14px; font-weight: 600;
   cursor: pointer; border: none; transition: all .16s;
-  box-shadow: 0 2px 10px rgba(154,110,16,.3); width: 100%; justify-content: center;
+  box-shadow: 0 2px 10px rgba(154,110,16,.3);
 }
-.btn-download:hover:not(:disabled) { background: var(--gold-h); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(154,110,16,.35); }
-.btn-download:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
+.btn-download:hover { background: var(--gold-h); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(154,110,16,.35); }
 .gdpr-notice {
-  margin-top: 12px; padding: 10px 14px;
+  margin-top: 10px; padding: 9px 13px;
   background: var(--gold-p); border: 1px solid rgba(154,110,16,.2);
-  border-radius: var(--r); font-size: 11px; color: var(--gold-h); line-height: 1.5;
-  display: none;
+  border-radius: var(--r); font-size: 11px; color: var(--gold-h); line-height: 1.5; display: none;
 }
 .gdpr-notice.visible { display: block; }
-
 .validation-errors {
   background: #fff5f5; border: 1px solid #fed7d7; border-radius: var(--r);
-  padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #dc2626;
-  display: none;
+  padding: 9px 13px; margin-bottom: 10px; font-size: 12px; color: #dc2626; display: none;
 }
 .validation-errors.visible { display: block; }
 .validation-errors ul { margin: 4px 0 0 14px; }
@@ -280,40 +228,46 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
   transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 300; white-space: nowrap;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
-
-.left-col-block { margin-bottom: 22px; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="ak-header">
   <div class="ak-header-i">
-    <img src="/AK.png" alt="AK Houser &amp; Plachtovičová" class="ak-logo">
-    <div class="ak-header-div"></div>
+    <img src="/AK.png" alt="AK" class="ak-logo">
+    <div class="ak-div"></div>
     <div>
-      <div class="ak-header-title">Generátor doložky o pravosti podpisu</div>
-      <div class="ak-header-sub">AI rozpozná údaje z OP a vyplní formulář automaticky</div>
+      <div class="ak-title">Generátor doložky o pravosti podpisu</div>
+      <div class="ak-sub">AI rozpozná údaje z OP a vyplní formulář automaticky</div>
     </div>
   </div>
 </header>
 
-<!-- MAIN -->
 <main class="page">
   <div class="wrap">
     <div class="main-cols">
 
-      <!-- ── LEVÝ SLOUPEC ── -->
+      <!-- LEFT -->
       <div>
-
-        <!-- Výběr advokáta -->
-        <div class="left-col-block">
+        <!-- Advokát dropdown -->
+        <div class="left-block">
           <div class="sec-label">Advokát</div>
-          <div class="advokati-grid" id="advokaciGrid"></div>
-
-          <!-- Vlastní advokát formulář -->
+          <div class="ak-select" id="akSelect">
+            <div class="ak-select-trigger" id="akTrigger" onclick="toggleDropdown(event)">
+              <div class="ak-select-val">
+                <div class="ak-select-placeholder" id="akPlaceholder">Vyberte advokáta</div>
+                <div class="ak-select-name" id="akName" style="display:none"></div>
+                <div class="ak-select-role" id="akRole" style="display:none"></div>
+              </div>
+              <div class="ak-select-chevron" id="akChevron">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5l4 4 4-4"/></svg>
+              </div>
+            </div>
+            <div class="ak-select-menu" id="akMenu"></div>
+          </div>
+          <!-- Vlastní advokát fields -->
           <div class="custom-form" id="customForm">
-            <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="custom-grid">
               <div class="form-group full">
                 <label class="form-label" for="cJmeno">Celé jméno *</label>
                 <input class="form-input" id="cJmeno" type="text" placeholder="JUDr. Jana Nováková" oninput="syncCustomAdvokat()">
@@ -338,33 +292,27 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
           </div>
         </div>
 
-        <!-- Fotografie OP -->
-        <div class="left-col-block">
+        <!-- Upload -->
+        <div class="left-block">
           <div class="sec-label">Fotografie OP</div>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/heic,image/*" multiple>
-            <div class="upload-icon">📷</div>
-            <div class="upload-title">Přetáhněte nebo klikněte pro výběr</div>
-            <div class="upload-sub">JPG · PNG · HEIC · max. 2 soubory</div>
-          </div>
-          <div class="previews" id="previews"></div>
-          <div class="ocr-row">
-            <button class="btn-ocr" id="btnOcr" disabled onclick="runOcr()">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3l2 2"/></svg>
-              Rozpoznat údaje
+          <div class="upload-row">
+            <button class="btn-upload" id="btnUpload" onclick="triggerUpload()">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="14" height="11" rx="2"/><circle cx="8" cy="8.5" r="2.5"/><path d="M5.5 3V2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1"/></svg>
+              <span id="btnUploadLabel">Nahrát a rozpoznat</span>
             </button>
+            <div class="photo-chips" id="photoChips"></div>
             <div class="ocr-loading" id="ocrLoading">
               <div class="spinner"></div>
-              <span>Zpracovávám…</span>
+              <span>Rozpoznávám…</span>
             </div>
           </div>
+          <div class="upload-hint" id="uploadHint">JPG · PNG · HEIC · max. 2 fotografie (přední a zadní strana)</div>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/heic,image/*" multiple style="display:none">
         </div>
-
       </div>
 
-      <!-- ── PRAVÝ SLOUPEC ── -->
+      <!-- RIGHT -->
       <div>
-
         <!-- Údaje z OP -->
         <div class="card">
           <div class="card-title">Údaje z občanského průkazu</div>
@@ -428,10 +376,10 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
         </div>
 
         <!-- Náhled -->
-        <div class="card" style="margin-bottom:18px;">
+        <div class="card" style="margin-bottom:16px;">
           <div class="preview-toggle" onclick="togglePreview()">
             <div class="card-title" style="margin:0;padding:0;border:none;">Náhled doložky</div>
-            <div class="preview-toggle-arrow" id="previewArrow">
+            <div class="preview-arrow" id="previewArrow">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5l4 4 4-4"/></svg>
             </div>
           </div>
@@ -445,7 +393,7 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
           <strong>Před stažením vyplňte:</strong>
           <ul id="validationList"></ul>
         </div>
-        <button class="btn-download" id="btnDownload" onclick="downloadDocx().catch(e => showToast('Chyba: ' + (e?.message || e)))">
+        <button class="btn-download" onclick="downloadDocx().catch(e => showToast('Chyba: ' + (e?.message || e)))">
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2.5" y="11" width="11" height="2.5" rx="1"/>
           </svg>
@@ -454,8 +402,8 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
         <div class="gdpr-notice" id="gdprNotice">
           Fotografie a rozpoznané údaje jsou uloženy pouze v paměti prohlížeče a smažou se při zavření záložky.
         </div>
-
       </div>
+
     </div>
   </div>
 </main>
@@ -463,120 +411,114 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
 <div class="toast" id="toast"></div>
 
 <script>
-const CONFIG = {
-  workerUrl: "https://dolozka-ocr-proxy.kuba-houser.workers.dev"
-};
+const CONFIG = { workerUrl: "https://dolozka-ocr-proxy.kuba-houser.workers.dev" };
 
 const ADVOKATI = [
-  {
-    id: "honza",
-    jmeno: "Mgr. Ing. Jan Houser",
-    role: "advokát",
-    ev_cislo: "14724",
-    cislo_knihy: "016960",
-    sidlo: "Purkyňova 74/2, Praha 1, 110 00"
-  },
-  {
-    id: "aneta",
-    jmeno: "Mgr. Ing. Aneta Plachtovičová",
-    role: "advokátka",
-    ev_cislo: "20895",
-    cislo_knihy: "021802",
-    sidlo: "Purkyňova 74/2, Praha 1, 110 00"
-  },
-  {
-    id: "vlastni",
-    jmeno: "Vlastní advokát",
-    role: "",
-    ev_cislo: "",
-    cislo_knihy: "",
-    sidlo: ""
-  }
+  { id: "honza",  jmeno: "Mgr. Ing. Jan Houser",            role: "advokát",   ev_cislo: "14724", cislo_knihy: "016960", sidlo: "Purkyňova 74/2, Praha 1, 110 00" },
+  { id: "aneta",  jmeno: "Mgr. Ing. Aneta Plachtovičová",   role: "advokátka", ev_cislo: "20895", cislo_knihy: "021802", sidlo: "Purkyňova 74/2, Praha 1, 110 00" },
+  { id: "vlastni", jmeno: "", role: "", ev_cislo: "", cislo_knihy: "", sidlo: "" },
 ];
 
 let selectedAdvokat = null;
 let uploadedImages = [];
-let ocrData = null;
+let ocrDone = false;
 let gdprShown = false;
 
 // ── Init ──────────────────────────────────────────────────────────
 function init() {
-  renderAdvokati();
+  buildMenu();
   prefillDates();
-  setupUpload();
+  document.getElementById('fileInput').addEventListener('change', e => handleFiles(e.target.files));
+  document.addEventListener('click', e => {
+    if (!document.getElementById('akSelect').contains(e.target)) closeDropdown();
+  });
   updatePreview();
 }
 
-function renderAdvokati() {
-  const grid = document.getElementById('advokaciGrid');
-  grid.innerHTML = ADVOKATI.map((a, i) => {
+// ── Dropdown ──────────────────────────────────────────────────────
+function buildMenu() {
+  const menu = document.getElementById('akMenu');
+  menu.innerHTML = ADVOKATI.map((a, i) => {
     const isCustom = a.id === 'vlastni';
-    const detail = isCustom
-      ? `<div class="advokat-detail">Zadejte vlastní údaje</div>`
-      : `<div class="advokat-detail">ev. č. ${a.ev_cislo}<br>č. knihy ${a.cislo_knihy}</div>`;
-    return `
-      <div class="advokat-card" id="advokat-${a.id}" onclick="selectAdvokat(${i})">
-        <div class="advokat-card-left">
-          <div class="advokat-name">${a.jmeno}</div>
-          <div class="advokat-role">${isCustom ? 'vlastní' : a.role}</div>
-          ${detail}
-        </div>
-        <div class="advokat-check">
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 5l2.5 2.5L8 3"/></svg>
-        </div>
-      </div>`;
+    return `<div class="ak-select-item${isCustom ? ' is-custom' : ''}" onclick="pickAdvokat(${i})">
+      <div class="ak-select-item-name">${isCustom ? '✏ Vlastní advokát' : a.jmeno}</div>
+      <div class="ak-select-item-sub">${isCustom ? 'Zadat vlastní údaje' : `${a.role} · ev. č. ${a.ev_cislo}`}</div>
+    </div>`;
   }).join('');
 }
 
-function prefillDates() {
-  const today = new Date();
-  const dd = String(today.getDate()).padStart(2, '0');
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const yyyy = today.getFullYear();
-  document.getElementById('fDatumOver').value = `${dd}.${mm}.${yyyy}`;
-  document.getElementById('fRok').value = yyyy;
+function toggleDropdown(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('akMenu');
+  const chevron = document.getElementById('akChevron');
+  const trigger = document.getElementById('akTrigger');
+  const open = menu.classList.contains('open');
+  if (open) { closeDropdown(); } else {
+    menu.classList.add('open');
+    trigger.classList.add('open');
+    chevron.classList.add('open');
+  }
 }
 
-// ── Advokát ───────────────────────────────────────────────────────
-function selectAdvokat(index) {
-  selectedAdvokat = ADVOKATI[index];
-  document.querySelectorAll('.advokat-card').forEach(c => c.classList.remove('active'));
-  document.getElementById(`advokat-${selectedAdvokat.id}`).classList.add('active');
+function closeDropdown() {
+  document.getElementById('akMenu').classList.remove('open');
+  document.getElementById('akTrigger').classList.remove('open');
+  document.getElementById('akChevron').classList.remove('open');
+}
 
+function pickAdvokat(index) {
+  closeDropdown();
+  selectedAdvokat = ADVOKATI[index];
+
+  // Update trigger display
+  const trigger = document.getElementById('akTrigger');
+  const isCustom = selectedAdvokat.id === 'vlastni';
+  document.getElementById('akPlaceholder').style.display = 'none';
+  const nameEl = document.getElementById('akName');
+  const roleEl = document.getElementById('akRole');
+  nameEl.style.display = 'block';
+  roleEl.style.display = 'block';
+  nameEl.textContent = isCustom ? 'Vlastní advokát' : selectedAdvokat.jmeno;
+  roleEl.textContent = isCustom ? 'vyplňte níže' : selectedAdvokat.role;
+  trigger.classList.add('has-value');
+
+  // Mark active item
+  document.querySelectorAll('.ak-select-item').forEach((el, i) => el.classList.toggle('active', i === index));
+
+  // Show/hide custom form
   const customForm = document.getElementById('customForm');
-  if (selectedAdvokat.id === 'vlastni') {
+  if (isCustom) {
     customForm.classList.add('visible');
-    syncCustomAdvokat();
+    document.getElementById('cJmeno').focus();
   } else {
     customForm.classList.remove('visible');
   }
+
+  // Auto-trigger OCR if images ready
+  if (!isCustom && uploadedImages.length > 0 && !ocrDone) runOcr();
+
   updatePreview();
 }
 
 function syncCustomAdvokat() {
-  if (!selectedAdvokat || selectedAdvokat.id !== 'vlastni') return;
   const idx = ADVOKATI.findIndex(a => a.id === 'vlastni');
-  ADVOKATI[idx].jmeno    = document.getElementById('cJmeno').value.trim()      || 'Vlastní advokát';
-  ADVOKATI[idx].role     = document.getElementById('cRole').value.trim();
-  ADVOKATI[idx].ev_cislo = document.getElementById('cEvCislo').value.trim();
+  const jmeno = document.getElementById('cJmeno').value.trim();
+  ADVOKATI[idx].jmeno      = jmeno || '';
+  ADVOKATI[idx].role       = document.getElementById('cRole').value.trim();
+  ADVOKATI[idx].ev_cislo   = document.getElementById('cEvCislo').value.trim();
   ADVOKATI[idx].cislo_knihy = document.getElementById('cCisloKnihy').value.trim();
-  ADVOKATI[idx].sidlo    = document.getElementById('cSidlo').value.trim();
+  ADVOKATI[idx].sidlo      = document.getElementById('cSidlo').value.trim();
   selectedAdvokat = ADVOKATI[idx];
+
+  const nameEl = document.getElementById('akName');
+  nameEl.textContent = jmeno || 'Vlastní advokát';
   updatePreview();
 }
 
 // ── Upload ────────────────────────────────────────────────────────
-function setupUpload() {
-  const zone = document.getElementById('uploadZone');
-  const input = document.getElementById('fileInput');
-  input.addEventListener('change', e => handleFiles(e.target.files));
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('drag-over');
-    handleFiles(e.dataTransfer.files);
-  });
+function triggerUpload() {
+  if (!selectedAdvokat) { showToast('Vyberte nejprve advokáta.'); return; }
+  document.getElementById('fileInput').click();
 }
 
 function handleFiles(files) {
@@ -584,37 +526,42 @@ function handleFiles(files) {
   const newFiles = Array.from(files).filter(f => allowed.includes(f.type) || f.name.toLowerCase().endsWith('.heic'));
   const remaining = 2 - uploadedImages.length;
   if (remaining <= 0) { showToast('Maximálně 2 fotografie.'); return; }
+  let loaded = 0;
   newFiles.slice(0, remaining).forEach(file => {
     const reader = new FileReader();
     reader.onload = e => {
       uploadedImages.push({ file, dataUrl: e.target.result, mediaType: file.type || 'image/jpeg' });
-      renderPreviews();
-      document.getElementById('btnOcr').disabled = false;
+      loaded++;
+      renderChips();
+      if (loaded === Math.min(newFiles.length, remaining)) {
+        ocrDone = false;
+        runOcr();
+      }
     };
     reader.readAsDataURL(file);
   });
+  // reset input so same file can be re-selected
+  document.getElementById('fileInput').value = '';
 }
 
-function renderPreviews() {
-  const container = document.getElementById('previews');
-  container.innerHTML = uploadedImages.map((img, i) => `
-    <div class="preview-thumb">
-      <img src="${img.dataUrl}" alt="Náhled ${i + 1}">
-      <button class="preview-thumb-remove" onclick="removeImage(${i})" title="Odstranit">×</button>
-    </div>
-  `).join('');
+function renderChips() {
+  document.getElementById('photoChips').innerHTML = uploadedImages.map((img, i) => `
+    <div class="photo-chip">
+      <img src="${img.dataUrl}" alt="foto ${i+1}">
+      <button class="photo-chip-x" onclick="removePhoto(${i})" title="Odstranit">×</button>
+    </div>`).join('');
+  document.getElementById('btnUploadLabel').textContent = uploadedImages.length > 0 ? 'Přidat / změnit' : 'Nahrát a rozpoznat';
 }
 
-function removeImage(index) {
+function removePhoto(index) {
   uploadedImages.splice(index, 1);
-  renderPreviews();
-  if (uploadedImages.length === 0) document.getElementById('btnOcr').disabled = true;
+  ocrDone = false;
+  renderChips();
 }
 
 // ── OCR ───────────────────────────────────────────────────────────
 async function runOcr() {
-  if (!selectedAdvokat) { showToast('Nejprve vyberte advokáta.'); return; }
-  if (uploadedImages.length === 0) { showToast('Nahrajte fotografii OP.'); return; }
+  if (!selectedAdvokat || uploadedImages.length === 0) return;
   setOcrLoading(true);
   const images = uploadedImages.map(img => ({
     data: img.dataUrl.split(',')[1],
@@ -622,16 +569,15 @@ async function runOcr() {
   }));
   try {
     const res = await fetch(`${CONFIG.workerUrl}/ocr`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ images })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.message || 'OCR selhalo.');
-    ocrData = data;
     fillForm(data);
-    showToast('Údaje rozpoznány. Zkontrolujte je prosím.');
+    ocrDone = true;
     openPreview();
+    showToast('Údaje rozpoznány — zkontrolujte prosím.');
   } catch (err) {
     showToast('Chyba: ' + err.message);
   } finally {
@@ -640,35 +586,34 @@ async function runOcr() {
 }
 
 function setOcrLoading(on) {
-  document.getElementById('btnOcr').disabled = on;
   document.getElementById('ocrLoading').classList.toggle('visible', on);
+  document.getElementById('uploadHint').style.visibility = on ? 'hidden' : 'visible';
 }
 
 function fillForm(data) {
   const fields = {
-    fJmeno:    { key: 'jmeno_prijmeni' },
-    fDatumNar: { key: 'datum_narozeni' },
-    fMistoNar: { key: 'misto_narozeni' },
-    fAdresa:   { key: 'adresa_trvaleho_pobytu' },
-    fCisloOp:  { key: 'cislo_op' },
-    fStatOb:   { key: 'statni_obcanstvi' },
+    fJmeno:    'jmeno_prijmeni',
+    fDatumNar: 'datum_narozeni',
+    fMistoNar: 'misto_narozeni',
+    fAdresa:   'adresa_trvaleho_pobytu',
+    fCisloOp:  'cislo_op',
+    fStatOb:   'statni_obcanstvi',
   };
   const lowConf = new Set(data.pole_s_nizkou_jistotou || []);
   const conf = data.confidence ?? 1;
-  Object.entries(fields).forEach(([elId, { key }]) => {
+  Object.entries(fields).forEach(([elId, key]) => {
     const el = document.getElementById(elId);
-    const val = data[key];
-    el.value = val ?? '';
+    el.value = data[key] ?? '';
     el.classList.remove('warn', 'danger');
     const hint = el.nextElementSibling;
-    if (hint && hint.classList.contains('field-hint')) {
+    if (hint?.classList.contains('field-hint')) {
       hint.classList.remove('warn', 'danger');
       hint.textContent = hint.dataset.orig || hint.textContent;
     }
     if (lowConf.has(key)) {
       const cls = conf < 0.5 ? 'danger' : 'warn';
       el.classList.add(cls);
-      if (hint && hint.classList.contains('field-hint')) {
+      if (hint?.classList.contains('field-hint')) {
         hint.dataset.orig = hint.textContent;
         hint.classList.add(cls);
         hint.textContent = conf < 0.5 ? 'Nízká jistota — zkontrolujte.' : 'Možná chyba — zkontrolujte.';
@@ -679,321 +624,192 @@ function fillForm(data) {
 }
 
 // ── Preview ───────────────────────────────────────────────────────
-function ph(val, placeholder) {
-  if (!val || !val.trim()) return `<span class="dolozka-placeholder">${placeholder}</span>`;
-  return val;
+function ph(val, fb) {
+  return (val && val.trim()) ? val : `<span class="dolozka-placeholder">${fb}</span>`;
 }
-
 function togglePreview() {
-  const body = document.getElementById('previewBody');
-  const arrow = document.getElementById('previewArrow');
-  body.classList.toggle('open');
-  arrow.classList.toggle('open');
+  document.getElementById('previewBody').classList.toggle('open');
+  document.getElementById('previewArrow').classList.toggle('open');
 }
-
 function openPreview() {
   document.getElementById('previewBody').classList.add('open');
   document.getElementById('previewArrow').classList.add('open');
 }
-
 function updatePreview() {
   const a = selectedAdvokat;
-  const jmeno    = document.getElementById('fJmeno').value.trim();
-  const datumNar = document.getElementById('fDatumNar').value.trim();
-  const mistoNar = document.getElementById('fMistoNar').value.trim();
-  const adresa   = document.getElementById('fAdresa').value.trim();
-  const cisloOp  = document.getElementById('fCisloOp').value.trim();
-  const cisloRadku = document.getElementById('fCisloRadku').value.trim();
-  const rok      = document.getElementById('fRok').value.trim();
-  const datumOver = document.getElementById('fDatumOver').value.trim();
-  const pocet    = document.getElementById('fPocetVyh').value.trim();
-  const listina  = document.getElementById('fListina').value.trim();
-
-  const aJmeno = a ? a.jmeno : null;
-  const aRole  = a ? a.role  : null;
-  const aKniha = a ? a.cislo_knihy : null;
-  const aEv    = a ? a.ev_cislo    : null;
-  const aSidlo = a ? a.sidlo       : null;
-
-  const knihaCislo = cisloRadku && rok
-    ? `${ph(aKniha,'[č. knihy]')}/${cisloRadku}/${rok}`
-    : `${ph(aKniha,'[č. knihy]')}/${ph(cisloRadku,'[č. řádku]')}/${ph(rok,'[rok]')}`;
-
+  const v = id => document.getElementById(id).value.trim();
+  const jmeno = v('fJmeno'), datumNar = v('fDatumNar'), mistoNar = v('fMistoNar');
+  const adresa = v('fAdresa'), cisloOp = v('fCisloOp');
+  const cisloRadku = v('fCisloRadku'), rok = v('fRok');
+  const datumOver = v('fDatumOver'), pocet = v('fPocetVyh'), listina = v('fListina');
+  const aJ = a?.jmeno||null, aR = a?.role||null, aK = a?.cislo_knihy||null;
+  const aE = a?.ev_cislo||null, aS = a?.sidlo||null;
+  const kniha = (cisloRadku && rok)
+    ? `${ph(aK,'[č.knihy]')}/${cisloRadku}/${rok}`
+    : `${ph(aK,'[č.knihy]')}/${ph(cisloRadku,'[č.řádku]')}/${ph(rok,'[rok]')}`;
   document.getElementById('dolozkaPreview').innerHTML = `
     <div class="dolozka-title">Prohlášení o pravosti podpisu</div>
-    <div class="dolozka-p">Běžné číslo knihy o prohlášeních o pravosti podpisu ${knihaCislo}</div>
-    <div class="dolozka-p">${ph(aJmeno,'[Jméno advokáta]')}, ${ph(aRole,'[role]')}, ev. č. ${ph(aEv,'[č. ev.]')}, se sídlem ${ph(aSidlo,'[sídlo]')};</div>
-    <div class="dolozka-p">Prohlašuji, že ${ph(jmeno,'[JMÉNO A PŘÍJMENÍ]')}, nar. ${ph(datumNar,'[DATUM NAROZENÍ]')}, místo narození ${ph(mistoNar,'[MÍSTO NAROZENÍ]')}, bytem ${ph(adresa,'[ADRESA]')}, jehož/jejíž totožnost byla prokázána z občanského průkazu č. ${ph(cisloOp,'[ČÍSLO OP]')},</div>
+    <div class="dolozka-p">Běžné číslo knihy o prohlášeních o pravosti podpisu ${kniha}</div>
+    <div class="dolozka-p">${ph(aJ,'[advokát]')}, ${ph(aR,'[role]')}, ev. č. ${ph(aE,'[č.ev.]')}, se sídlem ${ph(aS,'[sídlo]')};</div>
+    <div class="dolozka-p">Prohlašuji, že ${ph(jmeno,'[JMÉNO]')}, nar. ${ph(datumNar,'[DATUM NAR.]')}, místo narození ${ph(mistoNar,'[MÍSTO]')}, bytem ${ph(adresa,'[ADRESA]')}, jehož/jejíž totožnost byla prokázána z občanského průkazu č. ${ph(cisloOp,'[ČÍSLO OP]')},</div>
     <div class="dolozka-p">tuto listinu v ${ph(pocet,'[POČET]')} vyhotovení(ch) přede mnou vlastnoručně podepsal/a.</div>
-    <div class="dolozka-sig">V Praze dne ${ph(datumOver,'[DATUM OVĚŘENÍ]')}<br><br>${ph(aJmeno,'[Jméno advokáta]')}, ${ph(aRole,'[role]')}</div>
+    <div class="dolozka-sig">V Praze dne ${ph(datumOver,'[DATUM]')}<br><br>${ph(aJ,'[advokát]')}, ${ph(aR,'[role]')}</div>
     <table class="dolozka-table">
       <tr>
-        <td>V Praze, ${ph(aSidlo,'[sídlo]')} dne ${ph(datumOver,'[datum]')}</td>
+        <td>V Praze, ${ph(aS,'[sídlo]')} dne ${ph(datumOver,'[datum]')}</td>
         <td>${ph(jmeno,'[JMÉNO]')} nar. ${ph(datumNar,'[DATUM]')}, místo narození ${ph(mistoNar,'[MÍSTO]')}, bytem ${ph(adresa,'[ADRESA]')}</td>
       </tr>
       <tr>
         <td>OP: ${ph(cisloOp,'[ČÍSLO OP]')}</td>
-        <td>${ph(pocet,'[počet]')}x ${ph(listina,'[SPECIFIKACE]')}</td>
+        <td>${ph(pocet,'[počet]')}x ${ph(listina,'[LISTINA]')}</td>
       </tr>
     </table>`;
+}
+
+// ── Dates ─────────────────────────────────────────────────────────
+function prefillDates() {
+  const t = new Date();
+  const dd = String(t.getDate()).padStart(2,'0');
+  const mm = String(t.getMonth()+1).padStart(2,'0');
+  const yyyy = t.getFullYear();
+  document.getElementById('fDatumOver').value = `${dd}.${mm}.${yyyy}`;
+  document.getElementById('fRok').value = yyyy;
 }
 
 // ── Validation ────────────────────────────────────────────────────
 function validateForm() {
   const errors = [];
-
-  if (!selectedAdvokat) {
-    errors.push('Vyberte advokáta');
-  } else if (selectedAdvokat.id === 'vlastni') {
-    if (!selectedAdvokat.jmeno || selectedAdvokat.jmeno === 'Vlastní advokát') errors.push('Vlastní advokát: zadejte jméno');
-    if (!selectedAdvokat.role)       errors.push('Vlastní advokát: zadejte roli');
-    if (!selectedAdvokat.ev_cislo)   errors.push('Vlastní advokát: zadejte ev. číslo');
-    if (!selectedAdvokat.cislo_knihy) errors.push('Vlastní advokát: zadejte číslo knihy');
-    if (!selectedAdvokat.sidlo)      errors.push('Vlastní advokát: zadejte sídlo');
+  if (!selectedAdvokat) { errors.push('Vyberte advokáta'); }
+  else if (selectedAdvokat.id === 'vlastni') {
+    if (!selectedAdvokat.jmeno)       errors.push('Vlastní advokát: jméno');
+    if (!selectedAdvokat.role)        errors.push('Vlastní advokát: role');
+    if (!selectedAdvokat.ev_cislo)    errors.push('Vlastní advokát: ev. číslo');
+    if (!selectedAdvokat.cislo_knihy) errors.push('Vlastní advokát: číslo knihy');
+    if (!selectedAdvokat.sidlo)       errors.push('Vlastní advokát: sídlo');
   }
-
   const checks = [
-    ['fJmeno', 'Jméno a příjmení'],
-    ['fDatumNar', 'Datum narození', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v), 'Formát DD.MM.YYYY'],
-    ['fMistoNar', 'Místo narození'],
-    ['fAdresa', 'Adresa trvalého pobytu'],
-    ['fCisloOp', 'Číslo OP', v => /^\d{9}$/.test(v), '9 číslic'],
-    ['fCisloRadku', 'Číslo řádku knihy', v => parseInt(v) > 0, 'kladné číslo'],
-    ['fRok', 'Rok', v => /^\d{4}$/.test(v), '4 číslice'],
-    ['fDatumOver', 'Datum ověření', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v), 'Formát DD.MM.YYYY'],
-    ['fPocetVyh', 'Počet vyhotovení', v => parseInt(v) > 0, 'kladné číslo'],
-    ['fListina', 'Specifikace listiny'],
+    ['fJmeno','Jméno a příjmení'],
+    ['fDatumNar','Datum narození', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v),'DD.MM.YYYY'],
+    ['fMistoNar','Místo narození'],
+    ['fAdresa','Adresa trvalého pobytu'],
+    ['fCisloOp','Číslo OP', v => /^\d{9}$/.test(v),'9 číslic'],
+    ['fCisloRadku','Číslo řádku', v => parseInt(v) > 0,'kladné číslo'],
+    ['fRok','Rok', v => /^\d{4}$/.test(v),'4 číslice'],
+    ['fDatumOver','Datum ověření', v => /^\d{2}\.\d{2}\.\d{4}$/.test(v),'DD.MM.YYYY'],
+    ['fPocetVyh','Počet vyhotovení', v => parseInt(v) > 0,'kladné číslo'],
+    ['fListina','Specifikace listiny'],
   ];
-
   checks.forEach(([id, label, validator, hint]) => {
     const el = document.getElementById(id);
     if (!el) return;
     const val = el.value.trim();
     el.classList.remove('invalid');
-    if (!val) {
-      errors.push(`${label} je povinné`);
-      el.classList.add('invalid');
-    } else if (validator && !validator(val)) {
-      errors.push(`${label}: ${hint}`);
-      el.classList.add('invalid');
-    }
+    if (!val) { errors.push(`${label} je povinné`); el.classList.add('invalid'); }
+    else if (validator && !validator(val)) { errors.push(`${label}: ${hint}`); el.classList.add('invalid'); }
   });
-
   return errors;
 }
 
-function slugify(str) {
-  return (str || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+function slugify(s) {
+  return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
 }
-
-function dateToDMY(str) {
-  const parts = str.split('.');
-  if (parts.length === 3) return { d: parts[0], m: parts[1], y: parts[2] };
-  return { d: '', m: '', y: '' };
+function dateToYMD(s) {
+  const p = s.split('.'); return p.length===3 ? `${p[2]}${p[1]}${p[0]}` : s;
 }
+function getPrijmeni(s) { const p=(s||'').trim().split(/\s+/); return p[p.length-1]||'klient'; }
 
-function dateToYMD(str) {
-  const { d, m, y } = dateToDMY(str);
-  return `${y}${m}${d}`;
-}
-
-function getPrijmeni(jmenoPrijmeni) {
-  const parts = (jmenoPrijmeni || '').trim().split(/\s+/);
-  return parts[parts.length - 1] || 'klient';
-}
-
-// ── DOCX Download ─────────────────────────────────────────────────
+// ── DOCX ──────────────────────────────────────────────────────────
 async function downloadDocx() {
   const errors = validateForm();
   const errBox = document.getElementById('validationErrors');
   const errList = document.getElementById('validationList');
-
   if (errors.length > 0) {
-    errList.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+    errList.innerHTML = errors.map(e=>`<li>${e}</li>`).join('');
     errBox.classList.add('visible');
-    errBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    errBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
     return;
   }
-
   errBox.classList.remove('visible');
 
   const a = selectedAdvokat;
-  const jmeno      = document.getElementById('fJmeno').value.trim();
-  const datumNar   = document.getElementById('fDatumNar').value.trim();
-  const mistoNar   = document.getElementById('fMistoNar').value.trim();
-  const adresa     = document.getElementById('fAdresa').value.trim();
-  const cisloOp    = document.getElementById('fCisloOp').value.trim();
-  const cisloRadku = document.getElementById('fCisloRadku').value.trim();
-  const rok        = document.getElementById('fRok').value.trim();
-  const datumOver  = document.getElementById('fDatumOver').value.trim();
-  const pocet      = document.getElementById('fPocetVyh').value.trim();
-  const listina    = document.getElementById('fListina').value.trim();
+  const v = id => document.getElementById(id).value.trim();
+  const jmeno=v('fJmeno'), datumNar=v('fDatumNar'), mistoNar=v('fMistoNar');
+  const adresa=v('fAdresa'), cisloOp=v('fCisloOp'), cisloRadku=v('fCisloRadku');
+  const rok=v('fRok'), datumOver=v('fDatumOver'), pocet=v('fPocetVyh'), listina=v('fListina');
 
-  const {
-    Document, Paragraph, TextRun, Table, TableRow, TableCell,
-    WidthType, AlignmentType, HeightRule,
-  } = docx;
+  const { Document, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, HeightRule } = docx;
 
-  const sz = 13;
-  const font = 'Times New Roman';
-  const sp = { before: 0, after: 40 };
+  const sz=13, font='Times New Roman', sp={before:0,after:40};
+  const run = (text, opts={}) => new TextRun({text, font, size:sz, ...opts});
+  const para = (children, alignment=AlignmentType.BOTH) =>
+    new Paragraph({ children: Array.isArray(children)?children:[children], alignment, spacing:sp });
+  const emptyPara = () => new Paragraph({ children:[run('')], spacing:sp });
+  const nil = { style:"none", size:0, color:"auto" };
+  const noB = () => ({ top:nil, bottom:nil, left:nil, right:nil });
 
-  function run(text, opts = {}) {
-    return new TextRun({ text, font, size: sz, ...opts });
-  }
+  const pageWidth=11906, pageHeight=16838, margin=720;
+  const tableWidth = pageWidth - margin*2;
+  const colLeft = Math.round(tableWidth*0.55);
+  const colRight = tableWidth - colLeft;
+  const rowHeight = Math.floor((pageHeight - margin*2) / 4);
 
-  function para(children, alignment = AlignmentType.BOTH) {
-    return new Paragraph({
-      children: Array.isArray(children) ? children : [children],
-      alignment, spacing: sp,
-    });
-  }
+  const makeLeft = () => [
+    para([run('Prohlášení o pravosti podpisu',{bold:true,allCaps:true})], AlignmentType.CENTER),
+    emptyPara(),
+    para([run(`Běžné číslo knihy o prohlášeních o pravosti podpisu ${a.cislo_knihy}/${cisloRadku}/${rok}`)]),
+    emptyPara(),
+    para([run(`${a.jmeno}, ${a.role}, ev. č. ${a.ev_cislo}, se sídlem ${a.sidlo};`)]),
+    emptyPara(),
+    para([run(`Prohlašuji, že ${jmeno}, nar. ${datumNar}, místo narození ${mistoNar}, bytem ${adresa}, jehož/jejíž totožnost byla prokázána z občanského průkazu č. ${cisloOp},`)]),
+    emptyPara(),
+    para([run(`tuto listinu v ${pocet} vyhotovení(ch) přede mnou vlastnoručně podepsal/a.`)]),
+    emptyPara(), emptyPara(),
+    para([run(`V Praze dne ${datumOver}`)], AlignmentType.LEFT),
+    emptyPara(), emptyPara(), emptyPara(),
+    para([run(`${a.jmeno}, ${a.role}`)], AlignmentType.LEFT),
+  ];
 
-  function emptyPara() {
-    return new Paragraph({ children: [run('')], spacing: sp });
-  }
-
-  const pageWidth  = 11906;
-  const pageHeight = 16838;
-  const margin     = 720;
-  const tableWidth = pageWidth - margin * 2;
-  const colLeft    = Math.round(tableWidth * 0.55);
-  const colRight   = tableWidth - colLeft;
-  const rowHeight  = Math.floor((pageHeight - margin * 2) / 4);
-
-  const nil = { style: "none", size: 0, color: "auto" };
-
-  function noB() {
-    return { top: nil, bottom: nil, left: nil, right: nil };
-  }
-
-  function makeLeft() {
-    return [
-      para([run('Prohlášení o pravosti podpisu', { bold: true, allCaps: true })], AlignmentType.CENTER),
-      emptyPara(),
-      para([run(`Běžné číslo knihy o prohlášeních o pravosti podpisu ${a.cislo_knihy}/${cisloRadku}/${rok}`)]),
-      emptyPara(),
-      para([run(`${a.jmeno}, ${a.role}, ev. č. ${a.ev_cislo}, se sídlem ${a.sidlo};`)]),
-      emptyPara(),
-      para([run(`Prohlašuji, že ${jmeno}, nar. ${datumNar}, místo narození ${mistoNar}, bytem ${adresa}, jehož/jejíž totožnost byla prokázána z občanského průkazu č. ${cisloOp},`)]),
-      emptyPara(),
-      para([run(`tuto listinu v ${pocet} vyhotovení(ch) přede mnou vlastnoručně podepsal/a.`)]),
-      emptyPara(),
-      emptyPara(),
-      para([run(`V Praze dne ${datumOver}`)], AlignmentType.LEFT),
-      emptyPara(),
-      emptyPara(),
-      emptyPara(),
-      para([run(`${a.jmeno}, ${a.role}`)], AlignmentType.LEFT),
-    ];
-  }
-
-  function makeRight() {
-    const innerHalf = Math.floor((colRight - 200) / 2);
-    return [
-      new Table({
-        width: { size: colRight - 200, type: WidthType.DXA },
-        rows: [
-          new TableRow({
-            children: [
-              new TableCell({
-                width: { size: innerHalf, type: WidthType.DXA },
-                borders: noB(),
-                children: [
-                  new Paragraph({ children: [run(`V Praze, ${a.sidlo}`)], spacing: sp }),
-                  new Paragraph({ children: [run(`dne ${datumOver}`)], spacing: sp }),
-                ],
-              }),
-              new TableCell({
-                width: { size: innerHalf, type: WidthType.DXA },
-                borders: noB(),
-                children: [
-                  new Paragraph({ children: [run(jmeno)], spacing: sp }),
-                  new Paragraph({ children: [run(`nar. ${datumNar}, místo`)], spacing: sp }),
-                  new Paragraph({ children: [run(`narození ${mistoNar},`)], spacing: sp }),
-                  new Paragraph({ children: [run(`bytem ${adresa}`)], spacing: sp }),
-                ],
-              }),
-            ],
-          }),
-          new TableRow({
-            children: [
-              new TableCell({
-                width: { size: innerHalf, type: WidthType.DXA },
-                borders: noB(),
-                children: [new Paragraph({ children: [run(`OP: ${cisloOp}`)], spacing: sp })],
-              }),
-              new TableCell({
-                width: { size: innerHalf, type: WidthType.DXA },
-                borders: noB(),
-                children: [
-                  new Paragraph({ children: [run(`${pocet}x`)], spacing: sp }),
-                  new Paragraph({ children: [run(listina)], spacing: sp }),
-                ],
-              }),
-            ],
-          }),
-        ],
-      }),
-    ];
-  }
-
-  const rows = Array.from({ length: 4 }, (_, i) => {
-    return new TableRow({
-      height: { value: rowHeight, rule: HeightRule.ATLEAST },
-      children: [
-        new TableCell({
-          width: { size: colLeft, type: WidthType.DXA },
-          borders: noB(),
-          children: makeLeft(),
-        }),
-        new TableCell({
-          width: { size: colRight, type: WidthType.DXA },
-          borders: noB(),
-          children: makeRight(),
-        }),
+  const makeRight = () => {
+    const half = Math.floor((colRight-200)/2);
+    const cell = (children) => new TableCell({ width:{size:half,type:WidthType.DXA}, borders:noB(), children });
+    const p = text => new Paragraph({ children:[run(text)], spacing:sp });
+    return [new Table({
+      width:{size:colRight-200,type:WidthType.DXA},
+      rows:[
+        new TableRow({ children:[
+          cell([p(`V Praze, ${a.sidlo}`), p(`dne ${datumOver}`)]),
+          cell([p(jmeno), p(`nar. ${datumNar}, místo`), p(`narození ${mistoNar},`), p(`bytem ${adresa}`)]),
+        ]}),
+        new TableRow({ children:[
+          cell([p(`OP: ${cisloOp}`)]),
+          cell([p(`${pocet}x`), p(listina)]),
+        ]}),
       ],
-    });
-  });
+    })];
+  };
 
-  const doc = new Document({
-    sections: [{
-      properties: {
-        page: {
-          size: { width: pageWidth, height: pageHeight },
-          margin: { top: margin, bottom: margin, left: margin, right: margin },
-        },
-      },
-      children: [
-        new Table({
-          width: { size: tableWidth, type: WidthType.DXA },
-          rows,
-        }),
-      ],
-    }],
-  });
+  const rows = Array.from({length:4}, () => new TableRow({
+    height:{value:rowHeight, rule:HeightRule.ATLEAST},
+    children:[
+      new TableCell({ width:{size:colLeft,type:WidthType.DXA}, borders:noB(), children:makeLeft() }),
+      new TableCell({ width:{size:colRight,type:WidthType.DXA}, borders:noB(), children:makeRight() }),
+    ],
+  }));
+
+  const doc = new Document({ sections:[{ properties:{ page:{
+    size:{width:pageWidth,height:pageHeight},
+    margin:{top:margin,bottom:margin,left:margin,right:margin},
+  }}, children:[new Table({width:{size:tableWidth,type:WidthType.DXA},rows})] }] });
 
   let blob;
-  try {
-    blob = await docx.Packer.toBlob(doc);
-  } catch (err) {
-    showToast('Chyba při generování DOCX: ' + (err?.message || err));
-    return;
-  }
+  try { blob = await docx.Packer.toBlob(doc); }
+  catch(err) { showToast('Chyba DOCX: '+(err?.message||err)); return; }
 
-  const prijmeni = slugify(getPrijmeni(jmeno));
-  const datumSlug = dateToYMD(datumOver);
-  const filename = `dolozka_${a.id}_${datumSlug}_${prijmeni}.docx`;
-  saveAs(blob, filename);
-
-  if (!gdprShown) {
-    gdprShown = true;
-    document.getElementById('gdprNotice').classList.add('visible');
-  }
+  saveAs(blob, `dolozka_${a.id}_${dateToYMD(datumOver)}_${slugify(getPrijmeni(jmeno))}.docx`);
+  if (!gdprShown) { gdprShown=true; document.getElementById('gdprNotice').classList.add('visible'); }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
