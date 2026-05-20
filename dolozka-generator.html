@@ -198,6 +198,12 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
 .dolozka-table tr td:first-child { width: 48%; }
 
 /* ── DOWNLOAD ── */
+.sticky-download {
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  margin-bottom: 16px;
+}
 .btn-download {
   display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
   padding: 13px; border-radius: var(--r); background: var(--gold); color: #fff;
@@ -234,8 +240,6 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
 
 <header class="ak-header">
   <div class="ak-header-i">
-    <img src="/AK.png" alt="AK" class="ak-logo">
-    <div class="ak-div"></div>
     <div>
       <div class="ak-title">Generátor doložky o pravosti podpisu</div>
       <div class="ak-sub">AI rozpozná údaje z OP a vyplní formulář automaticky</div>
@@ -313,6 +317,20 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
 
       <!-- RIGHT -->
       <div>
+        <!-- Download — sticky nahoře -->
+        <div class="sticky-download">
+          <div class="validation-errors" id="validationErrors">
+            <strong>Před stažením vyplňte:</strong>
+            <ul id="validationList"></ul>
+          </div>
+          <button class="btn-download" onclick="downloadDocx().catch(e => showToast('Chyba: ' + (e?.message || e)))">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2.5" y="11" width="11" height="2.5" rx="1"/>
+            </svg>
+            Stáhnout doložku (.docx)
+          </button>
+        </div>
+
         <!-- Údaje z OP -->
         <div class="card">
           <div class="card-title">Údaje z občanského průkazu</div>
@@ -388,17 +406,6 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
           </div>
         </div>
 
-        <!-- Download -->
-        <div class="validation-errors" id="validationErrors">
-          <strong>Před stažením vyplňte:</strong>
-          <ul id="validationList"></ul>
-        </div>
-        <button class="btn-download" onclick="downloadDocx().catch(e => showToast('Chyba: ' + (e?.message || e)))">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2.5" y="11" width="11" height="2.5" rx="1"/>
-          </svg>
-          Stáhnout doložku (.docx)
-        </button>
         <div class="gdpr-notice" id="gdprNotice">
           Fotografie a rozpoznané údaje jsou uloženy pouze v paměti prohlížeče a smažou se při zavření záložky.
         </div>
