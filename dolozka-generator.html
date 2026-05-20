@@ -767,7 +767,7 @@ async function downloadDocx() {
   const para = (children, alignment=AlignmentType.BOTH) =>
     new Paragraph({ children: Array.isArray(children)?children:[children], alignment, spacing:sp });
   const emptyPara = () => new Paragraph({ children:[run('')], spacing:sp });
-  const nil = { style:"none", size:0, color:"auto" };
+  const nil = { style:"nil", size:0, color:"auto" };
   const noB = () => ({ top:nil, bottom:nil, left:nil, right:nil });
 
   const pageWidth=11906, pageHeight=16838, margin=720;
