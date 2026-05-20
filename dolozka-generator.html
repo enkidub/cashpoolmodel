@@ -226,6 +226,22 @@ input[type=number].form-input::-webkit-inner-spin-button { -webkit-appearance: n
 .validation-errors ul { margin: 4px 0 0 14px; }
 .validation-errors li { margin-bottom: 2px; }
 
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .ak-title { font-size: 16px; }
+  .ak-sub { display: none; }
+  .page { padding: 16px 0 40px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .custom-grid { grid-template-columns: 1fr; }
+  .custom-grid .full { grid-column: 1; }
+  .sticky-download { position: static; margin-bottom: 16px; }
+  .btn-download { width: 100%; justify-content: center; }
+  .upload-row { flex-direction: column; align-items: flex-start; }
+  .card { padding: 16px; }
+  .dolozka-preview { padding: 16px; }
+}
+
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(70px);
